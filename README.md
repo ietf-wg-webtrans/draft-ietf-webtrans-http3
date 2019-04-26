@@ -20,6 +20,14 @@ Other documents related to WebTransport:
 * [Individual Draft](https://tools.ietf.org/html/draft-vvv-webtransport-quic)
 * [Compare Editor's Copy to Individual Draft](https://vasilvv.github.io/webtransport/#go.draft-vvv-webtransport-quic.diff)
 
+## Use of HTTP/3 Protocol in WebTransport
+
+Coming soon!  WebTransport sessions within HTTP/3 connections.
+
+## WebSocket-based Multiplxed Protocol for WebTransport
+
+Coming soon!  A TCP-based WebTransport protocol for cases when QUIC is not available.
+
 ## Building the Draft
 
 Formatted text and HTML versions of the draft can be built using `make`.
