@@ -10,7 +10,7 @@ Other documents related to WebTransport:
 
 ## The WebTransport Protocol Framework
 
-* [Editor's Copy](https://vasilvv.github.io/webtransport/#draft-vvv-webtransport-overview.html)
+* [Editor's Copy](https://vasilvv.github.io/webtransport/draft-vvv-webtransport-overview.html)
 * [Individual Draft](https://tools.ietf.org/html/draft-vvv-webtransport-overview)
 * [Compare Editor's Copy to Individual Draft](https://vasilvv.github.io/webtransport/#go.draft-vvv-webtransport-overview.diff)
 
