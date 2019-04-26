@@ -1,6 +1,12 @@
-# WEBTRANSPORT Drafts
+# WebTransport Drafts
 
-This is the working area for individual Internet-Drafts.
+This is the working area for individual Internet-Drafts related to WebTransport.
+
+Other documents related to WebTransport:
+
+* [Overview](https://discourse.wicg.io/t/webtransport-proposal/3508)
+* [Explainer](https://github.com/pthatcherg/web-transport/blob/master/explainer.md)
+* [Web API Spec](https://pthatcherg.github.io/web-transport/)
 
 ## The WebTransport Protocol Framework
 
