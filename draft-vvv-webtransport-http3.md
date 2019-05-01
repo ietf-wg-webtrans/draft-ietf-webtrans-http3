@@ -257,6 +257,13 @@ applications have to know the maximum size of the datagram they can send.
 However, when proxying the datagrams, the hop-by-hop MTUs can vary.  TODO:
 describe how the path MTU can be computed.
 
+# Session Termination
+
+An Http3Transport is terminated when either peer closes the stream associated
+with the CONNECT request that initiated the session.  Upon learning about the
+session being terminated, the endpoint MUST stop sending new datagrams and reset
+all of the streams associated with the session.
+
 # Transport Properties
 
 Http3Transport supports most of WebTransport features as described in
