@@ -22,7 +22,9 @@ Other documents related to WebTransport:
 
 ## Use of HTTP/3 Protocol in WebTransport
 
-Coming soon!  WebTransport sessions within HTTP/3 connections.
+* [Editor's Copy](https://vasilvv.github.io/webtransport/draft-vvv-webtransport-http3.html)
+* [Individual Draft](https://tools.ietf.org/html/draft-vvv-webtransport-http3)
+* [Compare Editor's Copy to Individual Draft](https://vasilvv.github.io/webtransport/#go.draft-vvv-webtransport-http3.diff)
 
 ## WebSocket-based Multiplxed Protocol for WebTransport
 
