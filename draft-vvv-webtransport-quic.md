@@ -191,6 +191,13 @@ In order to avoid the use of QuicTransport, the user agents MUST NOT allow the
 clients to distinguish different connection errors before the correct ALPN is
 received from the server.
 
+Since each instance of QuicTransport opens a new connection, a malicious client
+can cause resource exhaustion, both on the local system (through depleting file
+descriptor space or other per-connection resources) and on a given remote
+server.  Because of that, the user agegts SHOULD limit the amount of
+simultaneous connections opened.  The server MAY limit the amount of connections
+open by the same client.
+
 # IANA Considerations
 
 ## ALPN Value Registration
