@@ -23,7 +23,7 @@ normative:
     title: "QUIC: A UDP-Based Multiplexed and Secure Transport"
     date: {DATE}
     seriesinfo:
-      Internet-Draft: draft-ietf-quic-transport-latest
+      Internet-Draft: draft-ietf-quic-transport
     author:
       -
         ins: J. Iyengar
@@ -39,7 +39,7 @@ normative:
     title: "An Unreliable Datagram Extension to QUIC"
     date: {DATE}
     seriesinfo:
-      Internet-Draft: draft-pauly-quic-datagram-latest
+      Internet-Draft: draft-pauly-quic-datagram
     author:
       -
         ins: T. Pauly
@@ -57,7 +57,7 @@ normative:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
     date: {DATE}
     seriesinfo:
-      Internet-Draft: draft-ietf-quic-http-latest
+      Internet-Draft: draft-ietf-quic-http
     author:
       -
         ins: M. Bishop
@@ -156,7 +156,7 @@ Http3Transport is terminated when the corresponding CONNECT stream is closed.
 
 In order to allow multiple Http3Transport sessions to occur within the same
 HTTP/3 connection, Http3Transport assigns every session a unique ID, further
-referred to as Session ID.  A session ID is a 62-bit number that is unique
+referred to as session ID.  A session ID is a 62-bit number that is unique
 within the scope of HTTP/3 connection, and is never reused even after the
 session is closed.  The client unilaterally picks the session ID.  As the IDs
 are encoded using variable length integers, the client SHOULD start with zero
@@ -211,7 +211,7 @@ If it does, it MAY accept the session by replying with status code 200.
 Before accepting it, the HTTP/3 server MUST verify that the proposed session ID
 does not conflict with any currently open sessions, and it MAY verify that it
 was not used ever before on this connection.  The WebTransport server MUST
-verify the Origin header to ensure that the specified origin is allowed to
+verify the `Origin` header to ensure that the specified origin is allowed to
 access the server in question.
 
 From the client perspective, an Http3Transport session is established when the
@@ -223,7 +223,7 @@ does not support 0-RTT.
 ## Limiting Number of Simultaneous Sessions
 
 From the flow control perspective, Http3Transport sessions count against the
-stream flow control just like regular HTTP request, since they are established
+stream flow control just like regular HTTP requests, since they are established
 via an HTTP CONNECT request.  This document does not make any effort to
 introduce a separate flow control mechanism for sessions, nor to separate HTTP
 requests from WebTransport data streams.  If the server needs to limit the rate
@@ -249,7 +249,7 @@ length integer scheme described in [QUIC-TRANSPORT].
 
 Once established, both endpoints can open unidirectional streams.  The HTTP/3
 control stream type SHALL be 0x54.  The body of the stream SHALL be the stream
-type, followed by the Session ID, encoded as a variable-length integer, followed
+type, followed by the session ID, encoded as a variable-length integer, followed
 by the user-specified stream data ({{fig-unidi}}).
 
 ~~~~~~~~~~ drawing
@@ -424,7 +424,7 @@ The `WEBTRANSPORT_STREAM` frame allows HTTP/3 client-initiated bidirectional
 streams to be used by WebTransport:
 
   Code:
-  : 0x41
+  : 0x54
 
   Frame Type:
   : WEBTRANSPORT_STREAM
