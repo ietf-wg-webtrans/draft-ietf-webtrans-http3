@@ -1,5 +1,5 @@
 ---
-title: Use of HTTP/3 Protocol in WebTransport
+title: WebTransport over HTTP/3
 abbrev: Http3Transport
 docname: draft-vvv-webtransport-http3-latest
 date: {DATE}
@@ -19,33 +19,94 @@ author:
     email: vasilvv@google.com
 
 normative:
-  I-D.ietf-quic-transport:
-  I-D.ietf-quic-http:
-  I-D.pauly-quic-datagram:
+  QUIC-TRANSPORT:
+    title: "QUIC: A UDP-Based Multiplexed and Secure Transport"
+    date: {DATE}
+    seriesinfo:
+      Internet-Draft: draft-ietf-quic-transport-latest
+    author:
+      -
+        ins: J. Iyengar
+        name: Jana Iyengar
+        org: Fastly
+        role: editor
+      -
+        ins: M. Thomson
+        name: Martin Thomson
+        org: Mozilla
+        role: editor
+  QUIC-DATAGRAM:
+    title: "An Unreliable Datagram Extension to QUIC"
+    date: {DATE}
+    seriesinfo:
+      Internet-Draft: draft-pauly-quic-datagram-latest
+    author:
+      -
+        ins: T. Pauly
+        name: Tommy Pauly
+        org: Apple
+      -
+        ins: E. Kinnear
+        name: Eric Kinnear
+        org: Apple
+      -
+        ins: D. Schinazi
+        name: David Schinazi
+        org: Google
+  HTTP3:
+    title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
+    date: {DATE}
+    seriesinfo:
+      Internet-Draft: draft-ietf-quic-http-latest
+    author:
+      -
+        ins: M. Bishop
+        name: Mike Bishop
+        org: Akamai
+        role: editor
+  OVERVIEW:
+    title: "The WebTransport Protocol Framework"
+    date: {DATE}
+    seriesinfo:
+      Internet-Draft: draft-vvv-webtransport-overview-latest
+    author:
+      -
+        ins: V. Vasiliev
+        name: Victor Vasiliev
+        organization: Google
 
 informative:
+  WEBTRANSPORT-QUIC:
+    title: "WebTransport over QUIC"
+    date: {DATE}
+    seriesinfo:
+      Internet-Draft: draft-vvv-webtransport-quic-latest
+    author:
+      -
+        ins: V. Vasiliev
+        name: Victor Vasiliev
+        organization: Google
 
 --- abstract
 
-WebTransport [I-D.vvv-webtransport-overview] is a protocol framework that
-enables clients constrained by the Web security model to communicate with a
-remote server using a secure multiplexed transport.  This document describes
-Http3Transport, a WebTransport protocol that is based on HTTP/3
-[I-D.ietf-quic-http3] and provides support for unidirectional streams,
-bidirectional streams and datagrams, all multiplexed within the same HTTP/3
-connection.
+WebTransport [OVERVIEW] is a protocol framework that enables clients
+constrained by the Web security model to communicate with a remote server using
+a secure multiplexed transport.  This document describes Http3Transport, a
+WebTransport protocol that is based on HTTP/3 [HTTP3] and provides support for
+unidirectional streams, bidirectional streams and datagrams, all multiplexed
+within the same HTTP/3 connection.
 
 --- middle
 
 # Introduction
 
-HTTP/3 [I-D.ietf-quic-http] is a protocol defined on top of QUIC
-[I-D.ietf-quic-transport] that can provide multiplexed HTTP requests within the
-same QUIC connection.  This document defines Http3Transport, a mechanism for
-embedding arbitrary streams of non-HTTP data into HTTP/3 in a manner that it can
-be used within WebTransport model [I-D.vvv-webtransport-overview].  Using the
-mechanism described here, multiple Http3Transport can be transmitted
-simultaneously with regular HTTP traffic on the same HTTP/3 connection.
+HTTP/3 [HTTP3] is a protocol defined on top of QUIC [QUIC-TRANSPORT] that can
+provide multiplexed HTTP requests within the same QUIC connection.  This
+document defines Http3Transport, a mechanism for embedding arbitrary streams of
+non-HTTP data into HTTP/3 in a manner that it can be used within WebTransport
+model [OVERVIEW].  Using the mechanism described here, multiple Http3Transport
+can be transmitted simultaneously with regular HTTP traffic on the same HTTP/3
+connection.
 
 ## Terminology
 
@@ -54,12 +115,12 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 document are to be interpreted as described in BCP 14 {{!RFC2119}} {{!RFC8174}}
 when, and only when, they appear in all capitals, as shown here.
 
-This document follows terminology defined in Section 1.2 of
-[I-D.vvv-webtransport-overview].  Note that this document distinguishes between
-a WebTransport server and an HTTP/3 server.  An HTTP/3 server is the server that
-terminates HTTP/3 connection; a WebTransport is one of potentially many
-applications that accepts WebTransport sessions, which HTTP/3 server can
-multiplex using the mechanisms defined in this document.
+This document follows terminology defined in Section 1.2 of [OVERVIEW].  Note
+that this document distinguishes between a WebTransport server and an HTTP/3
+server.  An HTTP/3 server is the server that terminates HTTP/3 connection; a
+WebTransport is one of potentially many applications that accepts WebTransport
+sessions, which HTTP/3 server can multiplex using the mechanisms defined in
+this document.
 
 # Protocol Overview
 
@@ -87,7 +148,7 @@ After the session is established, the peers can exchange data in following ways:
   does not define any semantics for server-initiated bidirectional streams.
 * Both client and server can create a unidirectional stream using a special
   stream type.
-* A datagram can be sent using QUIC DATAGRAM frame [I-D.pauly-quic-datagram].
+* A datagram can be sent using QUIC DATAGRAM frame [QUIC-DATAGRAM].
 
 Http3Transport is terminated when the corresponding CONNECT stream is closed.
 
@@ -122,7 +183,7 @@ which server transport parameters to send.
 
 If `http3_transport_support` is negotiated, support for QUIC DATAGRAM frame MUST
 be negotiated.  The `initial_max_bidi_streams` MUST be greater than zero,
-overriding the existing requirement in [I-D.ietf-quic-http].
+overriding the existing requirement in [HTTP3].
 
 ## Extended CONNECT in HTTP/3
 
@@ -168,21 +229,21 @@ introduce a separate flow control mechanism for sessions, nor to separate HTTP
 requests from WebTransport data streams.  If the server needs to limit the rate
 of incoming requests, it has alternative mechanisms at its disposal:
 
-* `HTTP_REQUEST_REJECTED` error code defined in [I-D.ietf-quic-http] indicates
-  the receiving HTTP/3 stack that the request was not processed in any way.
+* `HTTP_REQUEST_REJECTED` error code defined in [HTTP3] indicates the receiving
+  HTTP/3 stack that the request was not processed in any way.
 * HTTP status code 429 indicates that the request was rejected due to rate
   limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
   propagated to the application.
 
 # WebTransport Features
 
-Http3Transport provides a full set of features described in
-[I-D.vvv-webtransport-overview]: unidirectional streams, bidirectional streams
-and datagrams, initiated by either endpoint.
+Http3Transport provides a full set of features described in [OVERVIEW]:
+unidirectional streams, bidirectional streams and datagrams, initiated by
+either endpoint.
 
 Session IDs are used to demultiplex streams and datagrams belonging to different
 Http3Transport sessions.  On the wire, those are encoded using QUIC variable
-length integer scheme described in [I-D.ietf-quic-transport].
+length integer scheme described in [QUIC-TRANSPORT].
 
 ## Unidirectional streams
 
@@ -251,7 +312,7 @@ variable-length integer, followed by the user-specified stream data
 ## Datagrams
 
 Datagrams can be sent using the DATAGRAM frame as defined in
-[I-D.pauly-quic-datagram].  Just as with server-initiated bidirectional streams,
+[QUIC-DATAGRAM].  Just as with server-initiated bidirectional streams,
 the HTTP/3 specification does not assign any semantics to the datagrams, hence
 making this document a normative reference for all HTTP/3 connections in which
 the `http3_transport_support` option is negotiated.  The format of those
@@ -297,10 +358,10 @@ Http3Transport supports most of WebTransport features as described in
 # Security Considerations
 
 Http3Transport satisfies all of the security requirements imposed by
-[I-D.ietf-quic-transport] on WebTransport protocols, thus providing a secure
-framework for client-server communication in cases when the the client is
-potentially untrusted.  Since HTTP/3 is QUIC-based, a lot of the analysis in
-[I-D.vvv-webtransport-quic] applies here.
+[QUIC-TRANSPORT] on WebTransport protocols, thus providing a secure framework
+for client-server communication in cases when the the client is potentially
+untrusted.  Since HTTP/3 is QUIC-based, a lot of the analysis in
+[WEBTRANSPORT-QUIC] applies here.
 
 Http3Transport requires explicit opt-in through the use of a QUIC transport
 parameter; this avoids potential protocol confusion attacks by ensuring the
@@ -340,7 +401,7 @@ The "webtransport" label identifies HTTP/3 used as a protocol for WebTransport:
 ## QUIC Transport Parameter Registration
 
 The following entry is added to the "QUIC Transport Parameter Registry" registry
-established by [I-D.ietf-quic-transport]:
+established by [QUIC-TRANSPORT]:
 
 The `http3_transport_support` parameter indicates that the specified HTTP/3
 connection is Http3Transport-capable.
@@ -357,7 +418,7 @@ connection is Http3Transport-capable.
 ## Frame Type Registration
 
 The following entry is added to the "HTTP/3 Frame Type" registry established by
-[I-D.ietf-quic-http]:
+[HTTP3]:
 
 The `WEBTRANSPORT_STREAM` frame allows HTTP/3 client-initiated bidirectional
 streams to be used by WebTransport:
@@ -374,7 +435,7 @@ streams to be used by WebTransport:
 ## Stream Type Registration
 
 The following entry is added to the "HTTP/3 Stream Type" registry established by
-[I-D.ietf-quic-http]:
+[HTTP3]:
 
 The "WebTransport stream" type allows unidirectional streams to be used by
 WebTransport:
