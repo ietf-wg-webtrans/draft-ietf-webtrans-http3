@@ -43,7 +43,9 @@ HTTP/3 [I-D.ietf-quic-http] is a protocol defined on top of QUIC
 [I-D.ietf-quic-transport] that can provide multiplexed HTTP requests within the
 same QUIC connection.  This document defines Http3Transport, a mechanism for
 embedding arbitrary streams of non-HTTP data into HTTP/3 in a manner that it can
-be used within WebTransport model [I-D.vvv-webtransport-overview].
+be used within WebTransport model [I-D.vvv-webtransport-overview].  Using the
+mechanism described here, multiple Http3Transport can be transmitted
+simultaneously with regular HTTP traffic on the same HTTP/3 connection.
 
 ## Terminology
 
@@ -80,7 +82,7 @@ with the specific session.
 After the session is established, the peers can exchange data in following ways:
 
 * A client can create a bidirectional stream using a special indefinite-length
-  HTTP frame that transfers ownership of the stream to Http3Transport.
+  HTTP/3 frame that transfers ownership of the stream to Http3Transport.
 * A server can create a bidirectional stream, which is possible since HTTP/3
   does not define any semantics for server-initiated bidirectional streams.
 * Both client and server can create a unidirectional stream using a special
@@ -157,6 +159,21 @@ established once it sends a 200 response.  Both endpoints MUST NOT open any
 streams or send any datagrams before the session is established.  Http3Transport
 does not support 0-RTT.
 
+## Limiting Number of Simultaneous Sessions
+
+From the flow control perspective, Http3Transport sessions count against the
+stream flow control just like regular HTTP request, since they are established
+via an HTTP CONNECT request.  This document does not make any effort to
+introduce a separate flow control mechanism for sessions, nor to separate HTTP
+requests from WebTransport data streams.  If the server needs to limit the rate
+of incoming requests, it has alternative mechanisms at its disposal:
+
+* `HTTP_REQUEST_REJECTED` error code defined in [I-D.ietf-quic-http] indicates
+  the receiving HTTP/3 stack that the request was not processed in any way.
+* HTTP status code 429 indicates that the request was rejected due to rate
+  limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
+  propagated to the application.
+
 # WebTransport Features
 
 Http3Transport provides a full set of features described in
@@ -172,7 +189,7 @@ length integer scheme described in [I-D.ietf-quic-transport].
 Once established, both endpoints can open unidirectional streams.  The HTTP/3
 control stream type SHALL be 0x54.  The body of the stream SHALL be the stream
 type, followed by the Session ID, encoded as a variable-length integer, followed
-by the used-specified stream data ({{fig-unidi}}).
+by the user-specified stream data ({{fig-unidi}}).
 
 ~~~~~~~~~~ drawing
   0                   1                   2                   3
@@ -190,11 +207,11 @@ by the used-specified stream data ({{fig-unidi}}).
 ## Client-Initiated Bidirectional Streams
 
 Http3Transport clients can initiate bidirectional streams by opening an HTTP/3
-bidirectional stream and sending a frame with type `WEBTRANSPORT_STREAM`
-(type=0x41).  The format of the frame SHALL be the frame type, followed by the
-session ID, encoded as a variable-length integer, followed by the user-specified
-stream data ({{fig-bidi-client}}).  The frame SHALL last until the end of the
-stream.
+bidirectional stream and sending an HTTP/3 frame with type
+`WEBTRANSPORT_STREAM` (type=0x41).  The format of the frame SHALL be the frame
+type, followed by the session ID, encoded as a variable-length integer,
+followed by the user-specified stream data ({{fig-bidi-client}}).  The frame
+SHALL last until the end of the stream.
 
 ~~~~~~~~~~ drawing
   0                   1                   2                   3
@@ -255,7 +272,7 @@ datagrams SHALL be the session ID, followed by the user-specified payload
 In QUIC, a datagram frame can span at most one packet.  Because of that, the
 applications have to know the maximum size of the datagram they can send.
 However, when proxying the datagrams, the hop-by-hop MTUs can vary.  TODO:
-describe how the path MTU can be computed.
+describe how the path MTU can be computed, specifically propagation across HTTP proxies.
 
 # Session Termination
 
