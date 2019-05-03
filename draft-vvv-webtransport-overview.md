@@ -18,21 +18,6 @@ author:
     organization: Google
     email: vasilvv@google.com
 
-normative:
-  RFC8441:
-  RFC8446:
-  I-D.ietf-quic-transport:
-  I-D.ietf-quic-http:
-
-informative:
-  RFC5681:
-  RFC6455:
-  RFC8445:
-  I-D.ietf-quic-recovery:
-  I-D.ietf-rtcweb-data-channel:
-  I-D.ietf-taps-interface:
-  I-D.ietf-tls-dtls13:
-
 --- abstract
 
 The WebTransport Protocol Framework enables clients constrained by the Web
@@ -52,7 +37,7 @@ of which may be optional.
 ## Background
 
 Historically, web applications that needed bidirectional data stream between a
-client and a server could rely on WebSockets [RFC6455], a message-based
+client and a server could rely on WebSockets {{?RFC6455}}, a message-based
 protocol compatible with Web security model.  However, since the abstraction it
 provides is a single ordered stream of messages, it suffers from head-of-line
 blocking (HOLB), meaning that all messages must be sent and received in order
@@ -61,7 +46,7 @@ it a poor fit for latency sensitive applications which rely on partial
 reliability and stream independence for performance.
 
 One existing option available to the Web developers are WebRTC data channels
-[I-D.ietf-rtcweb-data-channel], which provide a WebSocket-like API for a
+{{?I-D.ietf-rtcweb-data-channel}}, which provide a WebSocket-like API for a
 peer-to-peer SCTP channel protected by DTLS.  In general, it is possible to use
 it for the use cases addressed by this specification; however, in practice, its
 adoption in a non-browser-to-browser by the web developers has been quite low
@@ -69,9 +54,9 @@ due to dependency on ICE (which fits poorly with the Web model) and userspace
 SCTP (which has very few implementations available).
 
 Another option potentially available is layering WebSockets over HTTP/3
-[I-D.ietf-quic-http] in a manner similar to how they are currently layered over
-HTTP/2 [RFC8441].  That would avoid head-of-line blocking and provide an
-ability to cancel a stream by closing the corresponding WebSocket object.
+{{?I-D.ietf-quic-http}} in a manner similar to how they are currently layered
+over HTTP/2 {{?RFC8441}}.  That would avoid head-of-line blocking and provide
+an ability to cancel a stream by closing the corresponding WebSocket object.
 However, this approach has a number of drawbacks, which all stem primarily from
 the fact that semantically each WebSocket is a completely independent entity:
 
@@ -141,7 +126,7 @@ Message:
   as a primitive, since from the transport perspective they can be simulated
   by fully buffering a stream before passing it to the application.  However,
   this distinction is important to highlight since some of the similar protocols
-  and APIs (notably WebSocket [RFC6455]) use messages as a core abstraction.
+  and APIs (notably WebSocket {{?RFC6455}}) use messages as a core abstraction.
 
 Transport feature:
 
@@ -180,20 +165,20 @@ Since the clients are potentially untrusted and have to be constrained by the
 Web security model, WebTransport imposes certain requirements on any specific
 transport protocol used.
 
-Any transport protocol used MUST use TLS [RFC8446] or a semantically equivalent
-security protocol (for instance, DTLS [I-D.ietf-tls-dtls13]).  The protocols
-SHOULD use TLS version 1.3 or later, unless they aim for backwards compatibility
-with legacy systems.
+Any transport protocol used MUST use TLS {{!RFC8446}} or a semantically
+equivalent security protocol (for instance, DTLS {{?I-D.ietf-tls-dtls13}}).
+The protocols SHOULD use TLS version 1.3 or later, unless they aim for
+backwards compatibility with legacy systems.
 
 Any transport protocol used MUST require the user agent to obtain and maintain
 an explicit consent from the server to send data.  For connection-oriented
 protocols (such as TCP or QUIC), the connection establishment and keep-alive
-mechanisms suffice.  For other protocols, a mechanism such as ICE [RFC8445] may
+mechanisms suffice.  For other protocols, a mechanism such as ICE {{?RFC8445}} may
 be used.
 
 Any transport protocol used MUST limit the rate at which the client sends data.
 This SHOULD be accomplished via a feedback-based congestion control mechanism
-(such as [RFC5681] or [I-D.ietf-quic-recovery]).
+(such as {{?RFC5681}} or {{?I-D.ietf-quic-recovery}}).
 
 Any transport protocol used MUST support simultaneously establishing multiple
 sessions between the same client and server.
@@ -209,10 +194,10 @@ clients that can access it by the origin {{!RFC6454}}.
 WebTransport session establishment is in general asynchronous, although in
 some transports it can succeed instantaneously (for instance, if a transport is
 immediately pooled with an existing connection).  A session MUST NOT be
-considered established until it is secure against replay attacks.  For instance,
-in protocols creating a new TLS 1.3 session [RFC8446] this would mean that the
-user agent MUST NOT treat the session as established until it received a
-Finished message from the server.
+considered established until it is secure against replay attacks.  For
+instance, in protocols creating a new TLS 1.3 session {{!RFC8446}} this would
+mean that the user agent MUST NOT treat the session as established until it
+received a Finished message from the server.
 
 The client MUST NOT open streams or send datagrams until the session is
 established.  In some situations, it might be possible for the client to be able
@@ -256,7 +241,7 @@ allows both endpoints to send data and can be conceptually represented as a pair
 of unidirectional streams.
 
 The streams are in general expected to follow the semantics and the state
-machine of QUIC streams ([I-D.ietf-quic-transport], Sections 2 and 3).
+machine of QUIC streams ({{?I-D.ietf-quic-transport}}, Sections 2 and 3).
 TODO: describe the stream state machine explicitly.
 
 A WebTransport stream can be reset, indicating that the endpoint is not
@@ -279,19 +264,46 @@ application payload.  WebTransport does not impose any other specific
 restrictions on the structure of stream IDs, and they should be treated as
 opaque 64-bit blobs.
 
+## Protocol-Specific Features
+
+In addition to features described above, there are some capabilities that may
+be provided by an individual protocol but are not universally applicable to all
+protocols.  Those are allowed, but any protocol is expected to be useful without
+those features, and portable clients should not rely on them.
+
+A notable class of protocol-specific features are features available only in
+non-pooled transports.  Since those transports have a dedicated connection, a
+user agent can provide clients with an extensive amount of transport-level data
+that would be too noisy and difficult to interpret when the connection is shared
+with unrelated traffic.  For instance, a user agent can provide the number of
+packets lost, or the number of times stream data was delayed due to flow
+control.  It can also expose variables related to congestion control, such as
+the size of the congestion window or the current pacing rate.
+
+## Bandwidth Prediction
+
+Using congestion control state and transport metrics, the client can predict the
+rate at which it can send data.  That is essential for a lot of WebTransport use
+cases; for instance, real time media applications adapt the video bitrate to be
+a fraction of throughput they expect to be available.  While not all transport
+protocols can provide low-level transport details, any protocol SHOULD provide a
+way to estimate the bandwidth available to the client.
+
 # Buffering and Prioritization
 
 TODO: expand this outline into a full summary.
 
 * Datagrams are intended for low-latency communications, so the buffers for them
   should be small, and prioritized over stream data.
-* In general, the transport should not use any Nagle-style {{!RFC0896}}
-  aggregation.
+* In general, the transport should not use any aggregation algorithms, e.g.
+  Nagle's algorithm {{?RFC0896}}.
 
 # Transport Properties
 
 In addition to common requirements, each transport can have multiple optional
-properties associated with it.
+properties associated with it.  Querying them allows the client to ascertain
+the nature of transport without being aware of a specific implementation, thus
+simplifying introducing new transports as a drop-in replacement.
 
 The following properties are defined in this specification:
 
@@ -316,7 +328,7 @@ WebTransport mandates the use of TLS for all protocols implementing it.  This
 has a dual purpose.  On one hand, it protects the transport from the network,
 including both potential attackers and ossification by middleboxes.  On the
 other hand, it protects the network elements from potential confusion attacks
-such as the one discussed in Section 10.3 of [RFC6455].
+such as the one discussed in Section 10.3 of {{?RFC6455}}.
 
 One potential concern is that even when a transport cannot be created, the
 connection error would reveal enough information to allow an attacker to scan
