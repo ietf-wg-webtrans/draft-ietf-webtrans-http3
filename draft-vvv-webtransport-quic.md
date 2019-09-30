@@ -240,13 +240,13 @@ open by the same client.
 The following entry is added to the "Application Layer Protocol Negotiation
 (ALPN) Protocol IDs" registry established by {{!RFC7301}}:
 
-The "wq" label identifies QUIC used as a protocol for WebTransport:
+The "wq-draft01" label identifies QUIC used as a protocol for WebTransport:
 
   Protocol:
   : QuicTransport
 
   Identification Sequence:
-  : 0x77 0x71 ("wq")
+  : 0x77 0x71 0x2d 0x64 0x72 0x61 0x66 0x74 0x30 0x31 ("wq-draft01")
 
   Specification:
   : This document
@@ -260,7 +260,7 @@ The "web_accepted_origins" parameter allows the server to indicate origins that
 are permitted to connect to it:
 
   Value:
-  : 0x????
+  : 0xffc8
 
   Parameter Name:
   : web_accepted_origins
