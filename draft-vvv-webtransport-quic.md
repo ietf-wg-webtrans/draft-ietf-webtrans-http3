@@ -131,16 +131,15 @@ the client receives a TLS Finished message from the server.
 
 In order to identify itself as a WebTransport application, QuicTransport relies
 on TLS Application-Layer Protocol Negotiation {{!RFC7301}}.  The user agent MUST
-request the ALPN value of "wq-draft01" and it MUST NOT establish the session
-unless that value is accepted.
+request the ALPN value of "wq-vvv-01" and it MUST close the connection unless
+the server confirms that ALPN value.
 
 ## Client Indication
 
 In order to verify that the client's origin is allowed to connect to the server
 in question, the user agent has to communicate the origin to the server.  This
-is accomplished by sending a special handshake message, called *client
-indication*, on stream 2, which is the first client-initiated unidirectional
-stream.
+is accomplished by sending a special message, called *client indication*, on
+stream 2, which is the first client-initiated unidirectional stream.
 
 The client indication is a sequence of key-value pairs that are formatted in the
 following way:
@@ -149,9 +148,9 @@ following way:
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                           Key (2)                           ...
+|                           Key (16)                          ...
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                          Length (2)                         ...
+|                          Length (16)                        ...
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                           Value ( )                         ...
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -170,9 +169,15 @@ The pair includes the following fields:
   Value:
   : The value of the field, the semantics of which are determined by the key.
 
-The total length of the client indication MUST NOT exceed 65,535 bytes.  The
-keys MAY be duplicate, depending on the definition of the field.  The server
-MUST ignore the fields it does not recognize.
+A FIN on the stream 2 SHALL indicate that the message is complete.  The client
+MUST send the entirety of the client indication and a FIN immediately after
+opening the connection.  The server MUST NOT process any application data before
+receiving the entirety of the client indication.  The total length of the client
+indication MUST NOT exceed 65,535 bytes.
+
+The server MUST ignore the fields it does not recognize.  All of the fields MUST
+be unique;  the server MAY close the connection if any of the keys is used more
+than once.
 
 ### Origin Field
 
@@ -188,9 +193,6 @@ the "Origin" field:
 
   Description:
   : The origin {{!RFC6454}} of the client initiating the connection.
-
-  Can be duplicate:
-  : No.
 
 The user agent MUST send the Origin field.  The origin field MUST be set to the
 origin of the client initiating the connection, serialized as described in
@@ -287,13 +289,13 @@ open by the same client.
 The following entry is added to the "Application Layer Protocol Negotiation
 (ALPN) Protocol IDs" registry established by {{!RFC7301}}:
 
-The "wq-draft01" label identifies QUIC used as a protocol for WebTransport:
+The "wq-vvv-01" label identifies QUIC used as a protocol for WebTransport:
 
   Protocol:
   : QuicTransport
 
   Identification Sequence:
-  : 0x77 0x71 0x2d 0x64 0x72 0x61 0x66 0x74 0x30 0x31 ("wq-draft01")
+  : 0x77 0x71 0x2d 0x76 0x76 0x76 0x2d 0x30 0x31 ("wq-vvv-01")
 
   Specification:
   : This document
@@ -311,9 +313,6 @@ Every entry in the registry SHALL include the following fields:
 
   Description:
   : A brief description of what the parameter does.
-
-  Can be duplicate:
-  : Indicates whether the parameter can be present multiple times in the header.
 
   Reference:
   : The document that describes the parameter.
