@@ -63,6 +63,12 @@ normative:
         ins: V. Vasiliev
         name: Victor Vasiliev
         organization: Google
+  FETCH:
+    target: https://fetch.spec.whatwg.org/
+    title: "Fetch Standard"
+    author:
+      org: WHATWG
+    date: Living Standard
 
 --- abstract
 
@@ -196,7 +202,8 @@ the "Origin" field:
 
 The user agent MUST send the Origin field.  The origin field MUST be set to the
 origin of the client initiating the connection, serialized as described in
-Section 6 of {{!RFC6454}}.
+[serializing a request
+origin](https://fetch.spec.whatwg.org/#serializing-a-request-origin) of [FETCH].
 
 ## 0-RTT
 
