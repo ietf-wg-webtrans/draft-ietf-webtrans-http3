@@ -63,6 +63,12 @@ normative:
         ins: V. Vasiliev
         name: Victor Vasiliev
         organization: Google
+  FETCH:
+    target: https://fetch.spec.whatwg.org/
+    title: "Fetch Standard"
+    author:
+      org: WHATWG
+    date: Living Standard
 
 --- abstract
 
@@ -96,7 +102,9 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 document are to be interpreted as described in BCP 14 {{!RFC2119}} {{!RFC8174}}
 when, and only when, they appear in all capitals, as shown here.
 
-This document follows terminology defined in Section 1.2 of [OVERVIEW].
+This document follows terminology defined in Section 1.2 of [OVERVIEW].  The
+diagrams describe encoding following the conventions described in Section 1.3 of
+[QUIC-TRANSPORT].
 
 # Protocol Overview
 
@@ -110,10 +118,10 @@ beneficial.
 
 When a client requests a QuicTransport to be created, the user agent establishes
 a QUIC connection to the specified address.  It verifies that the the server is
-a QuicTransport endpoint using ALPN, and that the client is allowed to connect
-to the specified endpoint using `web_accepted_origins` transport parameter.
-Once the verification succeeds and the QUIC connection is ready, the client can
-send and receive streams and datagrams.
+a QuicTransport endpoint using ALPN, and sends a *client indication* containing
+the origin of the initiating website to the server.  At that point, the
+connection is ready from the client's perspective.  The server MUST wait until
+the indication is received before processing any application data.
 
 WebTransport streams are provided by creating an individual unidirectional or
 bidirectional QUIC stream.  WebTransport datagrams are provided through the QUIC
@@ -129,23 +137,73 @@ the client receives a TLS Finished message from the server.
 
 In order to identify itself as a WebTransport application, QuicTransport relies
 on TLS Application-Layer Protocol Negotiation {{!RFC7301}}.  The user agent MUST
-request the ALPN value of "wq" and it MUST NOT establish the session unless that
-value is accepted.
+request the ALPN value of "wq-vvv-01" and it MUST close the connection unless
+the server confirms that ALPN value.
 
-## Verifying the Origin
+## Client Indication
 
-In order to verify that the client is authorized to access a specific
-WebTransport server, QuicTransport has a mechanism to verify the origin
-{{!RFC6454}} associated with the client.  The server MUST send a
-`web_accepted_origins` transport parameter which SHALL be one of the following:
+In order to verify that the client's origin is allowed to connect to the server
+in question, the user agent has to communicate the origin to the server.  This
+is accomplished by sending a special message, called *client indication*, on
+stream 2, which is the first client-initiated unidirectional stream.
 
-* A value `*`, indicating that any origin is accepted.
-* A comma-separated list of accepted origins, serialized as described in
-  Section 6 of {{!RFC6454}}.
+The client indication is a sequence of key-value pairs that are formatted in the
+following way:
 
-In the latter case, the user agent MUST verify that one of the origins is
-identical (as defined in Section 5 of {{!RFC6454}}) to the origin of the client;
-otherwise, it MUST abort the session establishment.
+~~~~~~~~~~ drawing
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                           Key (16)                          ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                          Length (16)                        ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                           Value (*)                         ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+~~~~~~~~~~
+{: #fig-frame title="Client indication format" :}
+
+The pair includes the following fields:
+
+  Key:
+  : Indicates the field that is being expressed.
+
+  Length:
+  : Indicates the length of the value (the length of the key and the length
+    itself are not included).
+
+  Value:
+  : The value of the field, the semantics of which are determined by the key.
+
+A FIN on the stream 2 SHALL indicate that the message is complete.  The client
+MUST send the entirety of the client indication and a FIN immediately after
+opening the connection.  The server MUST NOT process any application data before
+receiving the entirety of the client indication.  The total length of the client
+indication MUST NOT exceed 65,535 bytes.
+
+The server MUST ignore the fields it does not recognize.  All of the fields MUST
+be unique;  the server MAY close the connection if any of the keys is used more
+than once.
+
+### Origin Field
+
+In order to allow the server to enforce the origin policy, the user agent has to
+communicate the origin in the client indication.  This can be accomplished using
+the "Origin" field:
+
+  Name:
+  : Origin
+
+  Key:
+  : 0x0000
+
+  Description:
+  : The origin {{!RFC6454}} of the client initiating the connection.
+
+The user agent MUST send the Origin field.  The origin field MUST be set to the
+origin of the client initiating the connection, serialized as described in
+[serializing a request
+origin](https://fetch.spec.whatwg.org/#serializing-a-request-origin) of [FETCH].
 
 ## 0-RTT
 
@@ -217,10 +275,8 @@ negotiation is mandatory in QUIC.  Thus, unless the server explicitly picks `wq`
 as the ALPN value, the TLS handshake will fail.  It will also fail unless the
 `web_accepted_origins` is present.
 
-QuicTransport uses a QUIC transport parameter to provide the user agent with an
-origin whitelist.  The origin is not sent explicitly, as TLS ClientHello
-messages are sent in cleartext; instead, the server provides the user agent with
-a whitelist of origins that are allowed to connect to it.
+QuicTransport uses a unidirectional QUIC stream to provide the server with the
+origin of the client.
 
 In order to avoid the use of QuicTransport, the user agents MUST NOT allow the
 clients to distinguish different connection errors before the correct ALPN is
@@ -240,32 +296,36 @@ open by the same client.
 The following entry is added to the "Application Layer Protocol Negotiation
 (ALPN) Protocol IDs" registry established by {{!RFC7301}}:
 
-The "wq-draft01" label identifies QUIC used as a protocol for WebTransport:
+The "wq-vvv-01" label identifies QUIC used as a protocol for WebTransport:
 
   Protocol:
   : QuicTransport
 
   Identification Sequence:
-  : 0x77 0x71 0x2d 0x64 0x72 0x61 0x66 0x74 0x30 0x31 ("wq-draft01")
+  : 0x77 0x71 0x2d 0x76 0x76 0x76 0x2d 0x30 0x31 ("wq-vvv-01")
 
   Specification:
   : This document
 
-## QUIC Transport Parameter Registration
+## Client Indication Fields Registry
 
-The following entry is added to the "QUIC Transport Parameter Registry" registry
-established by [QUIC-TRANSPORT]:
+IANA SHALL add a registry for "QuicTransport Client Indication Fields" registry.
+Every entry in the registry SHALL include the following fields:
 
-The "web_accepted_origins" parameter allows the server to indicate origins that
-are permitted to connect to it:
+  Name:
+  : The name of the field.
 
-  Value:
-  : 0xffc8
+  Key:
+  : The 16-bit uniquie identifier that is used on the wire.
 
-  Parameter Name:
-  : web_accepted_origins
+  Description:
+  : A brief description of what the parameter does.
 
-  Specification:
-  : This document
+  Reference:
+  : The document that describes the parameter.
+
+The IANA policy, as descrbied in {{!RFC8126}}, SHALL be Standards Action for
+values between 0x0000 and 0x03ff; Specification Required for values between
+0x0400 and 0xefff; and Private Use for values between 0xf000 and 0xffff.
 
 --- back
