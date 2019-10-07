@@ -272,8 +272,7 @@ malicious clients from overloading the network.
 QuicTransport prevents the WebTransport clients connecting to arbitrary non-Web
 servers through the use of ALPN.  Unlike TLS over TCP, successfully ALPN
 negotiation is mandatory in QUIC.  Thus, unless the server explicitly picks `wq`
-as the ALPN value, the TLS handshake will fail.  It will also fail unless the
-`web_accepted_origins` is present.
+as the ALPN value, the TLS handshake will fail.
 
 QuicTransport uses a unidirectional QUIC stream to provide the server with the
 origin of the client.
