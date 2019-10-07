@@ -278,9 +278,9 @@ as the ALPN value, the TLS handshake will fail.  It will also fail unless the
 QuicTransport uses a unidirectional QUIC stream to provide the server with the
 origin of the client.
 
-In order to avoid the use of QuicTransport, the user agents MUST NOT allow the
-clients to distinguish different connection errors before the correct ALPN is
-received from the server.
+In order to avoid the use of QuicTransport to scan internal networks, the user
+agents MUST NOT allow the clients to distinguish different connection errors
+before the correct ALPN is received from the server.
 
 Since each instance of QuicTransport opens a new connection, a malicious client
 can cause resource exhaustion, both on the local system (through depleting file
