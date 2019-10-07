@@ -269,6 +269,12 @@ QUIC provides a congestion control mechanism {{?I-D.ietf-quic-recovery}} that
 limits the rate at which the traffic is sent.  This prevents potentially
 malicious clients from overloading the network.
 
+WebTransport requires user agents to continually verify that the server is still
+interested in talking to them.  QuicTransport accomplishes that by virtue of
+QUIC being an ACK-based protocol; if the client is attempting to send data, and
+the server does not send any ACK frames in response, the client side of the QUIC
+connection will time out.
+
 QuicTransport prevents the WebTransport clients connecting to arbitrary non-Web
 servers through the use of ALPN.  Unlike TLS over TCP, successfully ALPN
 negotiation is mandatory in QUIC.  Thus, unless the server explicitly picks `wq`
