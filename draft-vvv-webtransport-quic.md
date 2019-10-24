@@ -248,6 +248,7 @@ adopted from {{!RFC3986}}.  The syntax of a QuicTransport URI SHALL be:
 ~~~~~~~~~~~~~~~
 quic-transport-URI = "quic-transport:" "//"
                              host [ ":" port ]
+                             path-abempty
                              [ "?" query ]
                              [ "#" fragment ]
 ~~~~~~~~~~~~~~~
@@ -260,14 +261,14 @@ specification assigns semantics to those.
 The `host` component MUST NOT be empty.  If the `port` component is missing, the
 port SHALL be assumed to be 0.
 
+NOTE: this effectively requires the port number to be specified.  This
+specification may include an actually usable default port number in the future.
+At this point, we are unable to provide such until IANA allocates one.
+
 In order to connect to a QuicTransport server identified by a given URI, the
 user agent SHALL establish a QUIC connection to the specified `host` and `port`
 as described in {{connection}}.  It MUST immediately signal an error to the user
 if the port value is 0.
-
-NOTE: this effectively requires the port number to be specified.  This
-specification may include an actually usable default port number in the future.
-At this point, we are unable to provide such until IANA allocates one.
 
 # Transport Properties
 
