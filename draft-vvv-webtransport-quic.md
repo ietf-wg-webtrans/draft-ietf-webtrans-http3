@@ -233,12 +233,12 @@ datagram ID SHALL be absent.
 
 The datagrams sent using QuicTransport MUST be subject to congestion control.
 
-# QuicTransport URI Scheme {#uri}
+# QuicTransport URI Scheme  {#uri}
 
 NOTE: the URI scheme defintion in this section is provisional and subject to
 change, especially the name of the scheme.
 
-QuicTransport uses `quic-transport` URI scheme for identifying QuicTransport
+QuicTransport uses the `quic-transport` URI scheme for identifying QuicTransport
 servers.
 
 The syntax definition below uses Augmented Backus-Naur Form (ABNF) {{!RFC5234}}.
@@ -253,7 +253,7 @@ quic-transport-URI = "quic-transport:" "//"
                              [ "#" fragment ]
 ~~~~~~~~~~~~~~~
 
-This document does not define any semantics to `path-abemtpy`, `query` or
+This document does not define any semantics to `path-abempty`, `query` or
 `fragment` portions of the URI, nor does it delegate those to the host owners.
 Any QuicTransport implementation MUST ignore those until a subsequent
 specification assigns semantics to those.
@@ -263,12 +263,11 @@ port SHALL be assumed to be 0.
 
 NOTE: this effectively requires the port number to be specified.  This
 specification may include an actually usable default port number in the future.
-At this point, we are unable to provide such until IANA allocates one.
 
 In order to connect to a QuicTransport server identified by a given URI, the
 user agent SHALL establish a QUIC connection to the specified `host` and `port`
-as described in {{connection}}.  It MUST immediately signal an error to the user
-if the port value is 0.
+as described in {{connection}}.  It MUST immediately signal an error to the
+client if the port value is 0.
 
 # Transport Properties
 
