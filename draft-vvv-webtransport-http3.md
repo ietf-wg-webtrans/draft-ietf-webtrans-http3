@@ -195,6 +195,9 @@ parameter implies that a peer understands extended CONNECT.
 
 ## Creating a New Session
 
+As Http3Transport sessions are established over HTTP, they are identified using
+the `https` URI scheme {{!RFC7230}}.
+
 In order to create a new Http3Transport session, a client can send an HTTP
 CONNECT request.  The `:protocol` pseudo-header field MUST be set to
 `webtransport`.  The `:scheme` field MUST be `https`.  Both the `:authority` and

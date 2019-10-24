@@ -18,6 +18,14 @@ author:
     organization: Google
     email: vasilvv@google.com
 
+informative:
+  CSP:
+    target: https://www.w3.org/TR/CSP/
+    title: "Content Security Policy Level 3"
+    author:
+      org: W3C
+    date: Working Draft
+
 --- abstract
 
 The WebTransport Protocol Framework enables clients constrained by the Web
@@ -188,6 +196,11 @@ sessions to the network endpoints that are not WebTransport servers.
 
 Any transport protocol used MUST provide a way for the server to filter the
 clients that can access it by the origin {{!RFC6454}}.
+
+Any transprot protocol used MUST provide a way for a server endpoint location to
+be described using a URI {{!RFC3986}}.  They can be used for integration with
+various Web platform features that represent resources as URIs, such as Content
+Security Policy [CSP].
 
 # Session Establishment
 
