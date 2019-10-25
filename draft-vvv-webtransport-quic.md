@@ -127,7 +127,7 @@ WebTransport streams are provided by creating an individual unidirectional or
 bidirectional QUIC stream.  WebTransport datagrams are provided through the QUIC
 datagram extension [QUIC-DATAGRAM].
 
-# Connection Establishment
+# Connection Establishment  {#connection}
 
 In order to establish a QuicTransport session, a QUIC connection must be
 established.  From the client perspective, the session becomes established when
@@ -233,6 +233,42 @@ datagram ID SHALL be absent.
 
 The datagrams sent using QuicTransport MUST be subject to congestion control.
 
+# QuicTransport URI Scheme  {#uri}
+
+NOTE: the URI scheme defintion in this section is provisional and subject to
+change, especially the name of the scheme.
+
+QuicTransport uses the `quic-transport` URI scheme for identifying QuicTransport
+servers.
+
+The syntax definition below uses Augmented Backus-Naur Form (ABNF) {{!RFC5234}}.
+The definitions of `host`, `port`, `path-abempty`, `query` and `fragment` are
+adopted from {{!RFC3986}}.  The syntax of a QuicTransport URI SHALL be:
+
+~~~~~~~~~~~~~~~
+quic-transport-URI = "quic-transport:" "//"
+                             host [ ":" port ]
+                             path-abempty
+                             [ "?" query ]
+                             [ "#" fragment ]
+~~~~~~~~~~~~~~~
+
+This document does not define any semantics to `path-abempty`, `query` or
+`fragment` portions of the URI, nor does it delegate those to the host owners.
+Any QuicTransport implementation MUST ignore those until a subsequent
+specification assigns semantics to those.
+
+The `host` component MUST NOT be empty.  If the `port` component is missing, the
+port SHALL be assumed to be 0.
+
+NOTE: this effectively requires the port number to be specified.  This
+specification may include an actually usable default port number in the future.
+
+In order to connect to a QuicTransport server identified by a given URI, the
+user agent SHALL establish a QUIC connection to the specified `host` and `port`
+as described in {{connection}}.  It MUST immediately signal an error to the
+client if the port value is 0.
+
 # Transport Properties
 
 QuicTransport supports most of WebTransport features as described in
@@ -332,5 +368,28 @@ Every entry in the registry SHALL include the following fields:
 The IANA policy, as descrbied in {{!RFC8126}}, SHALL be Standards Action for
 values between 0x0000 and 0x03ff; Specification Required for values between
 0x0400 and 0xefff; and Private Use for values between 0xf000 and 0xffff.
+
+## URI Scheme Registration
+
+This document contains the request for the registration of the URI scheme
+`quic-transport`.  The registration request is in accordance with {{!RFC7595}}.
+
+  Scheme name:
+  : quic-transport
+
+  Status:
+  : Permanent
+
+  Applications/protocols that use this scheme name:
+  : QuicTransport
+
+  Contact:
+  : IETF Chair <chair@ietf.org>
+
+  Change controller:
+  : IESG <iesg@ietf.org>
+
+  Reference:
+  : {{uri}} of this document.
 
 --- back

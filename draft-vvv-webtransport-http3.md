@@ -152,7 +152,7 @@ After the session is established, the peers can exchange data in following ways:
 
 Http3Transport is terminated when the corresponding CONNECT stream is closed.
 
-# Session IDs {#session-ids}
+# Session IDs  {#session-ids}
 
 In order to allow multiple Http3Transport sessions to occur within the same
 HTTP/3 connection, Http3Transport assigns every session a unique ID, further
@@ -194,6 +194,9 @@ CONNECT in general HTTP/3 context; instead, `http3_transport_support` transport
 parameter implies that a peer understands extended CONNECT.
 
 ## Creating a New Session
+
+As Http3Transport sessions are established over HTTP/3, they are identified
+using the `https` URI scheme {{!RFC7230}}.
 
 In order to create a new Http3Transport session, a client can send an HTTP
 CONNECT request.  The `:protocol` pseudo-header field MUST be set to
