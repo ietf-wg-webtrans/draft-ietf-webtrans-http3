@@ -205,6 +205,30 @@ origin of the client initiating the connection, serialized as described in
 [serializing a request
 origin](https://fetch.spec.whatwg.org/#serializing-a-request-origin) of [FETCH].
 
+### Path Field  {#path-field}
+
+In order to allow multiplexing multiple application on the same host-port tuple,
+QuicTransport allows specifying extra routing information in the path component
+of the URI.  That component is communicated using the "Path" field in the client
+indication:
+
+  Name:
+  : Path
+
+  Key:
+  : 0x0001
+
+  Description:
+  : The path component of the QuicTransport URI.
+
+The user agent MUST send a non-empty "Path" field.  When the connection is
+initiated through a URI ({{uri}}), that value SHALL be the `path-abempty` part,
+followed a concatenation of the `?` literal and the `query` componenet if such
+is present.  In case when `path-abempty` is empty, the value sent SHALL be `/`.
+
+The server MAY use the value of the "Path" field in any way defined by the
+target application.
+
 ## 0-RTT
 
 QuicTransport provides applications with ability to use the 0-RTT feature
@@ -253,9 +277,13 @@ quic-transport-URI = "quic-transport:" "//"
                              [ "#" fragment ]
 ~~~~~~~~~~~~~~~
 
-This document does not define any semantics to `path-abempty`, `query` or
-`fragment` portions of the URI, nor does it delegate those to the host owners.
-Any QuicTransport implementation MUST ignore those until a subsequent
+The `path-abempty` and the `query` portions of the URI are communicated to the
+server in the client indication as described in {{path-field}}.  The
+`quic-transport` URI scheme supports the `/.well-known/` path prefix defined in
+{{!RFC8615}}.
+
+This document does not define any semantics to the `fragment` portion of the
+URI.  Any QuicTransport implementation MUST ignore those until a subsequent
 specification assigns semantics to those.
 
 The `host` component MUST NOT be empty.  If the `port` component is missing, the
@@ -390,6 +418,9 @@ This document contains the request for the registration of the URI scheme
   : IESG <iesg@ietf.org>
 
   Reference:
+  : {{uri}} of this document.
+
+  Well-Known URI Support:
   : {{uri}} of this document.
 
 --- back
