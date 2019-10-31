@@ -131,7 +131,9 @@ datagram extension [QUIC-DATAGRAM].
 
 In order to establish a QuicTransport session, a QUIC connection must be
 established.  From the client perspective, the session becomes established when
-the client receives a TLS Finished message from the server.
+the client both have received a TLS Finished message from the server and has
+sent a client indication.  From the server perspective, the session is
+established after the client indication has been successfully processed.
 
 ## Identifying as QuicTransport
 
