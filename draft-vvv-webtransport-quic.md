@@ -19,7 +19,7 @@ author:
     email: vasilvv@google.com
 
 normative:
-  QUIC-TRANSPORT:
+  QUIC:
     title: "QUIC: A UDP-Based Multiplexed and Secure Transport"
     date: {DATE}
     seriesinfo:
@@ -75,18 +75,17 @@ normative:
 WebTransport [OVERVIEW] is a protocol framework that enables clients constrained
 by the Web security model to communicate with a remote server using a secure
 multiplexed transport.  This document describes QuicTransport, a transport
-protocol that uses a dedicated QUIC [QUIC-TRANSPORT] connection and provides
-support for unidirectional streams, bidirectional streams and datagrams.
+protocol that uses a dedicated QUIC [QUIC] connection and provides support for
+unidirectional streams, bidirectional streams and datagrams.
 
 --- middle
 
 # Introduction
 
-QUIC [QUIC-TRANSPORT] is a UDP-based multiplexed secure transport.  It is the
-underlying protocol for HTTP/3 {{?I-D.ietf-quic-http}}, and as such is
-reasonably expected to be available in web browsers and server-side web
-frameworks.  This makes it a compelling transport to base a WebTransport
-protocol on.
+QUIC [QUIC] is a UDP-based multiplexed secure transport.  It is the underlying
+protocol for HTTP/3 {{?I-D.ietf-quic-http}}, and as such is reasonably expected
+to be available in web browsers and server-side web frameworks.  This makes it a
+compelling transport to base a WebTransport protocol on.
 
 This document defines QuicTransport, an adaptation of QUIC to WebTransport
 model.  The protocol is designed to be low-overhead on the server side, meaning
@@ -104,7 +103,7 @@ when, and only when, they appear in all capitals, as shown here.
 
 This document follows terminology defined in Section 1.2 of [OVERVIEW].  The
 diagrams describe encoding following the conventions described in Section 1.3 of
-[QUIC-TRANSPORT].
+[QUIC].
 
 # Protocol Overview
 
@@ -233,11 +232,11 @@ target application.
 ## 0-RTT
 
 QuicTransport provides applications with ability to use the 0-RTT feature
-described in {{!RFC8446}} and [QUIC-TRANSPORT].  0-RTT allows a client to send
-data before the TLS session is fully established.  It provides a lower latency,
-but has the drawback of being vulnerable to replay attacks as a result.  Since
-only the application can make the decision of whether some data is safe to send
-in that context, 0-RTT requires the client API to only send data over 0-RTT when
+described in {{!RFC8446}} and [QUIC].  0-RTT allows a client to send data before
+the TLS session is fully established.  It provides a lower latency, but has the
+drawback of being vulnerable to replay attacks as a result.  Since only the
+application can make the decision of whether some data is safe to send in that
+context, 0-RTT requires the client API to only send data over 0-RTT when
 specifically requested.
 
 0-RTT support in QuicTransport is OPTIONAL, as it is in QUIC and TLS 1.3.
@@ -246,8 +245,8 @@ specifically requested.
 
 QuicTransport unidirectional and bidirectional streams are created by creating a
 QUIC stream of corresponding type.  All other operations (read, write, close)
-are also mapped directly to the operations as defined in [QUIC-TRANSPORT].  The
-QUIC stream IDs are the stream IDs that are exposed to the application.
+are also mapped directly to the operations as defined in [QUIC].  The QUIC
+stream IDs are the stream IDs that are exposed to the application.
 
 # Datagrams
 
