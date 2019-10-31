@@ -223,8 +223,9 @@ indication:
 
 The user agent MUST send a non-empty "Path" field.  When the connection is
 initiated through a URI ({{uri}}), that value SHALL be the `path-abempty` part,
-followed a concatenation of the `?` literal and the `query` componenet if such
-is present.  In case when `path-abempty` is empty, the value sent SHALL be `/`.
+followed by a concatenation of the `?` literal and the `query` componenet if
+such is present.  In case when `path-abempty` is empty, the value sent SHALL be
+`/`.
 
 The server MAY use the value of the "Path" field in any way defined by the
 target application.
