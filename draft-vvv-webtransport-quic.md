@@ -230,6 +230,11 @@ followed by a concatenation of the `?` literal and the `query` componenet if
 such is present.  In case when `path-abempty` is empty, the value sent SHALL be
 `/`.
 
+Unlike HTTP, the `authority` portion of the URL is not communicated in the
+client indication.  As QuicTransport has its own connection dedicated to it, the
+host name portion can be retrieved from the `server_name` TLS extension
+({{?RFC6066}}).
+
 The server MAY use the value of the "Path" field in any way defined by the
 target application.
 
