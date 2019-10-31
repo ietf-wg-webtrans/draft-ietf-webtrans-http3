@@ -44,7 +44,7 @@ of which may be optional.
 
 ## Background
 
-Historically, web applications that needed bidirectional data stream between a
+Historically, web applications that needed a bidirectional data stream between a
 client and a server could rely on WebSockets {{?RFC6455}}, a message-based
 protocol compatible with Web security model.  However, since the abstraction it
 provides is a single ordered stream of messages, it suffers from head-of-line
@@ -98,13 +98,13 @@ WebTransport is a framework that aims to abstract away the underlying transport
 protocol while still exposing the specific transport-layer aspects of it to the
 application developers.  It is structured around the following concepts:
 
-Transport:
+Transport session:
 
-: A transport is a session established between a client and a server.  It may
-  correspond to a specific physical connection on the transport layer, or it may
-  be a logical entity within an existing multiplexed connection.  Each instance
-  of a transport is logically independent of each other even if some transports
-  can share same connection underneath.
+: A transport session is a single communication context established between a
+  client and a server.  It may correspond to a specific physical connection on
+  the transport layer, or it may be a logical entity within an existing
+  multiplexed connection.  Each transport session is logically independent
+  of each other even if some sessions can share same connection underneath.
 
 Transport protocol:
 
@@ -124,8 +124,8 @@ Stream:
 : A stream is a sequence of bytes that is delivered to the receiving application
   in the same order as it is transmitted by the sender.  Streams are assumed to
   be sufficiently long that they cannot be buffered entirely into memory, thus
-  requiring the transport protocol and the API to provide stream data before the
-  stream is finished.
+  requiring the transport protocol and the API to provide partial stream data
+  before the stream is finished.
 
 Message:
 
@@ -165,7 +165,7 @@ User agent:
 
 : A WebTransport user agent is a software system that has an unrestricted
   access to the host network stack and can create transports on behalf
-  of the client, for instance, the web browser.
+  of the client.
 
 # Common Transport Requirements  {#common-requirements}
 
@@ -198,9 +198,9 @@ Any transport protocol used MUST provide a way for the server to filter the
 clients that can access it by the origin {{!RFC6454}}.
 
 Any transport protocol used MUST provide a way for a server endpoint location to
-be described using a URI {{!RFC3986}}.  They can be used for integration with
-various Web platform features that represent resources as URIs, such as Content
-Security Policy [CSP].
+be described using a URI {{!RFC3986}}.  This enables integration with various
+Web platform features that represent resources as URIs, such as Content Security
+Policy [CSP].
 
 # Session Establishment
 
@@ -353,12 +353,12 @@ address that is unreachable and that is reachable but is not a WebTransport
 server.
 
 WebTransport does not support any traditional means of browser-based
-authentication.  It is not based on HTTP, and hence does not support HTTP
-cookies or HTTP authentication.  Since it uses TLS, individual transport
-protocols MAY expose TLS-based authentication capabilities such as client
-certificates.  However, since in some of those protocols, multiple transports
-can be pooled within the same TLS connection, such features would not be
-universally available.
+authentication.  It is not necessarily based on HTTP, and hence does not support
+HTTP cookies or HTTP authentication.  Since it requires TLS, individual
+transport protocols MAY expose TLS-based authentication capabilities such as
+client certificates.  However, in some of those protocols multiple transports
+can be pooled within the same TLS connection, precluding any individual
+transports from using TLS client authentication.
 
 # IANA Considerations
 
