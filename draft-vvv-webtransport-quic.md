@@ -107,20 +107,21 @@ diagrams describe encoding following the conventions described in Section 1.3 of
 
 # Protocol Overview
 
-Each QuicTransport uses a single dedicated QUIC connection.  This allows the
-peers to exercise a greater level of control over the way their data is being
-transmitted.  However, this also means that multiple instances of QuicTransport
-cannot be pooled, and thus do not benefit from sharing congestion control
-context with other potentially already existing connections.  Http3Transport
-[I-D.vvv-webtransport-http3] can be used in situations where such pooling is
-beneficial.
+Each instance of QuicTransport uses a single dedicated QUIC connection.  This
+allows the peers to exercise a greater level of control over the way their data
+is being transmitted.  However, this also means that multiple instances of
+QuicTransport cannot be pooled, and thus do not benefit from sharing congestion
+control context with other potentially already existing connections.
+Http3Transport [I-D.vvv-webtransport-http3] can be used in situations where such
+pooling is beneficial.
 
-When a client requests a QuicTransport to be created, the user agent establishes
-a QUIC connection to the specified address.  It verifies that the the server is
-a QuicTransport endpoint using ALPN, and sends a *client indication* containing
-the origin of the initiating website to the server.  At that point, the
-connection is ready from the client's perspective.  The server MUST wait until
-the indication is received before processing any application data.
+When a client requests a QuicTransport session to be created, the user agent
+establishes a QUIC connection to the specified address.  It verifies that the
+the server is a QuicTransport endpoint using ALPN, and sends a *client
+indication* containing the requested path and the origin of the initiating
+website to the server.  At that point, the connection is ready from the client's
+perspective.  The server MUST wait until the indication is received before
+processing any application data.
 
 WebTransport streams are provided by creating an individual unidirectional or
 bidirectional QUIC stream.  WebTransport datagrams are provided through the QUIC
@@ -186,7 +187,7 @@ than once.
 
 ### Origin Field
 
-In order to allow the server to enforce the origin policy, the user agent has to
+In order to allow the server to enforce its origin policy, the user agent has to
 communicate the origin in the client indication.  This can be accomplished using
 the "Origin" field:
 
@@ -199,10 +200,11 @@ the "Origin" field:
   Description:
   : The origin {{!RFC6454}} of the client initiating the connection.
 
-The user agent MUST send the Origin field.  The origin field MUST be set to the
-origin of the client initiating the connection, serialized as described in
-[serializing a request
-origin](https://fetch.spec.whatwg.org/#serializing-a-request-origin) of [FETCH].
+The user agent MUST send the "Origin" field.  The "Origin" field MUST be set to
+the origin of the client initiating the connection, serialized as described in
+["serializing a request
+origin"](https://fetch.spec.whatwg.org/#serializing-a-request-origin) of
+[FETCH].
 
 ### Path Field  {#path-field}
 
@@ -244,8 +246,8 @@ specifically requested.
 # Streams
 
 QuicTransport unidirectional and bidirectional streams are created by creating a
-QUIC stream of corresponding type.  All other operations (read, write, close)
-are also mapped directly to the operations as defined in [QUIC].  The QUIC
+QUIC stream of the corresponding type.  All other operations (read, write,
+close) are also mapped directly to the operations defined in [QUIC].  The QUIC
 stream IDs are the stream IDs that are exposed to the application.
 
 # Datagrams
@@ -282,7 +284,7 @@ server in the client indication as described in {{path-field}}.  The
 `quic-transport` URI scheme supports the `/.well-known/` path prefix defined in
 {{!RFC8615}}.
 
-This document does not define any semantics to the `fragment` portion of the
+This document does not assign any semantics to the `fragment` portion of the
 URI.  Any QuicTransport implementation MUST ignore those until a subsequent
 specification assigns semantics to those.
 
@@ -322,12 +324,12 @@ authentication of the server.
 
 QUIC is a client-server protocol where a client cannot send data until either
 the handshake is complete or a previously established session is resumed.  This
-ensures that the user agent will prevent the client from sending data to network
-endpoints that are not QuicTransport endpoints.  Furthermore, the QuicTransport
-session can be immediately aborted by the server through a connection close or a
-stateless reset, causing the user agent to stop the traffic from the client.
-This provides a defense against potential denial-of-service attacks on the
-network by untrusted clients.
+ensures that clients cannot send data to a network endpoint that has not
+accepted an incoming connection.  Furthermore, the QuicTransport session can be
+immediately aborted by the server through a connection close or a stateless
+reset, causing the user agent to stop the traffic from the client.  This
+provides a defense against potential denial-of-service attacks on the network by
+untrusted clients.
 
 QUIC provides a congestion control mechanism {{?I-D.ietf-quic-recovery}} that
 limits the rate at which the traffic is sent.  This prevents potentially
@@ -339,8 +341,8 @@ QUIC being an ACK-based protocol; if the client is attempting to send data, and
 the server does not send any ACK frames in response, the client side of the QUIC
 connection will time out.
 
-QuicTransport prevents the WebTransport clients connecting to arbitrary non-Web
-servers through the use of ALPN.  Unlike TLS over TCP, successfully ALPN
+QuicTransport prevents WebTransport clients from connecting to arbitrary non-Web
+servers through the use of ALPN.  Unlike TLS over TCP, successful ALPN
 negotiation is mandatory in QUIC.  Thus, unless the server explicitly picks `wq`
 as the ALPN value, the TLS handshake will fail.
 
