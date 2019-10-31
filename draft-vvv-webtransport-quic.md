@@ -112,8 +112,13 @@ allows the peers to exercise a greater level of control over the way their data
 is being transmitted.  However, this also means that multiple instances of
 QuicTransport cannot be pooled, and thus do not benefit from sharing congestion
 control context with other potentially already existing connections.
-Http3Transport [I-D.vvv-webtransport-http3] can be used in situations where such
-pooling is beneficial.
+
+QuicTransport is designed to be a minimal extension of QUIC, and as such does
+not provide a lot of commonly desired higher-level functionality, such as
+pooling, exchanging metadata at session establishment, redirects, and other
+similar capabilties not provided by QUIC itself.  Http3Transport
+[I-D.vvv-webtransport-http3] can be used in situations where a higher-level
+approach is desired.
 
 When a client requests a QuicTransport session to be created, the user agent
 establishes a QUIC connection to the specified address.  It verifies that the
