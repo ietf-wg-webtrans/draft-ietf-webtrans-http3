@@ -93,12 +93,13 @@ protocol for HTTP/3 {{?I-D.ietf-quic-http}}, and as such is reasonably expected
 to be available in web browsers and server-side web frameworks.  This makes it a
 compelling transport to base a WebTransport protocol on.
 
-This document defines QuicTransport, an instantiation of WebTransport which is
-an application protocol running directly over QUIC.  The protocol is designed to
-have low implementation overhead on the server side, meaning that server
-software that already has a working QUIC implementation available would not
-require large amounts of code to implement QuicTransport.  Where possible,
-WebTransport concepts are mapped directly to the corresponding QUIC concepts.
+This document defines QuicTransport, a protocol conforming to the WebTransport
+protocol framework. QuicTransport is an application protocol running directly
+over QUIC.  The protocol is designed to have low implementation overhead on the
+server side, meaning that server software that already has a working QUIC
+implementation available would not require large amounts of code to implement
+QuicTransport.  Where possible, WebTransport concepts are mapped directly to
+the corresponding QUIC concepts.
 
 ## Terminology
 
@@ -122,7 +123,7 @@ congestion controller with other connections.
 QuicTransport is designed to be a minimal extension of QUIC, and as such does
 not provide much higher-level functionality, such as pooling, exchanging
 metadata at session establishment, redirects, and other similar capabilties
-not provided by QUIC itself.  Http3Transport [I-D.vvv-webtransport-http3] can
+not provided by QUIC itself.  Http3Transport {{?I-D.vvv-webtransport-http3}} can
 be used in situations where these features are desired.
 
 When a client requests a QuicTransport session to be created, the user agent
@@ -240,14 +241,14 @@ Description:
 : The path component of the QuicTransport URI.
 
 The user agent MUST send a non-empty "Path" field.  When the connection is
-initiated through a URI {{uri}}, that value SHALL be the path-abempty part,
-followed by a concatenation of the "?" literal and the query componenet if
-such is present.  In case when "path-abempty" is empty, the value sent SHALL be
-"/".
+initiated through a URI {{uri}}, that value SHALL be the `path-abempty` part,
+followed by a concatenation of the `?` literal and the `query` componenet if
+such is present.  In case when `path-abempty` is empty, the value sent SHALL be
+`/`.
 
-Unlike HTTP, the authority portion of the URL is not communicated in the
+Unlike HTTP, the `authority` portion of the URL is not communicated in the
 client indication.  As QuicTransport has its own connection dedicated to it, the
-host name portion can be retrieved from the server_name TLS extension
+host name portion can be retrieved from the `server_name` TLS extension
 {{?RFC6066}}.
 
 The server MAY use the value of the "Path" field in any way defined by the
@@ -283,11 +284,11 @@ DATAGRAM frame.  The datagrams provided by the application are sent as-is.
 NOTE: the URI scheme definition in this section is provisional and subject to
 change, especially the name of the scheme.
 
-QuicTransport uses the "quic-transport" URI scheme for identifying QuicTransport
+QuicTransport uses the `quic-transport` URI scheme for identifying QuicTransport
 servers.
 
 The syntax definition below uses Augmented Backus-Naur Form (ABNF) {{!RFC5234}}.
-The definitions of host, port, path-abempty, query and fragment are
+The definitions of `host`, `port`, `path-abempty`, `query` and `fragment` are
 adopted from {{!RFC3986}}.  The syntax of a QuicTransport URI SHALL be:
 
 ~~~~~~~~~~~~~~~
@@ -298,20 +299,20 @@ quic-transport-URI = "quic-transport:" "//"
                              [ "#" fragment ]
 ~~~~~~~~~~~~~~~
 
-The path-abempty and the query portions of the URI are communicated to the
+The `path-abempty` and the `query` portions of the URI are communicated to the
 server in the client indication as described in {{path-field}}.  The
-quic-transport URI scheme supports the "/.well-known/" path prefix defined in
+`quic-transport` URI scheme supports the `/.well-known/` path prefix defined in
 {{!RFC8615}}.
 
-This document does not assign any semantics to the fragment portion of the
+This document does not assign any semantics to the `fragment` portion of the
 URI.  Any QuicTransport implementation MUST ignore those until a subsequent
 specification assigns semantics to those.
 
-The host component MUST NOT be empty.  If the port component is missing, the
+The `host` component MUST NOT be empty.  If the `port` component is missing, the
 port SHALL be assumed to be 0.
 
 In order to connect to a QuicTransport server identified by a given URI, the
-user agent SHALL establish a QUIC connection to the specified host and port
+user agent SHALL establish a QUIC connection to the specified `host` and `port`
 as described in {{connection}}.  It MUST immediately signal an error to the
 client if the port value is 0.
 
@@ -363,7 +364,7 @@ side of the QUIC connection will time out.
 QuicTransport prevents WebTransport clients from connecting to arbitrary non-Web
 servers through the use of ALPN.  Unlike TLS over TCP, successful ALPN
 negotiation is mandatory in QUIC.  Thus, unless the server explicitly picks the
-WebTransport ALPN value, the TLS handshake will fail.
+QuicTransport ALPN value, the TLS handshake will fail.
 
 QuicTransport uses a unidirectional QUIC stream to provide the server with the
 origin of the client.
@@ -425,7 +426,7 @@ values between 0x0000 and 0x03ff; Specification Required for values between
 ## URI Scheme Registration
 
 This document contains the request for the registration of the URI scheme
-"quic-transport".  The registration request is in accordance with {{!RFC7595}}.
+`quic-transport`.  The registration request is in accordance with {{!RFC7595}}.
 
 Scheme name:
 
