@@ -195,6 +195,11 @@ opening the connection.  The server MUST NOT process any application data before
 receiving the entirety of the client indication.  The total length of the client
 indication MUST NOT exceed 65,535 bytes.
 
+In order to ensure that the user agent can send the client indication
+immediately, the server MUST set `initial_max_streams_uni` transport parameter
+to at least `1`.  The user agent MUST close the connection if the server sets
+`initial_max_streams_uni` to `0`.
+
 The server MUST ignore any field it does not recognize.  All of the fields MUST
 be unique;  the server MAY close the connection if any of the keys is used more
 than once.
