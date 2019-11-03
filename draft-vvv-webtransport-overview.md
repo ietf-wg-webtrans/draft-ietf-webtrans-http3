@@ -144,12 +144,6 @@ Message:
   this distinction is important to highlight since some of the similar protocols
   and APIs (notably WebSocket {{?RFC6455}}) use messages as a core abstraction.
 
-Transport feature:
-
-: A transport feature refers to the ability of a specific transport to
-  provide a specific mechanism to communicate data.  An example is the ability
-  to send datagrams that are not retransmitted in case of packet loss.
-
 Transport property:
 
 : A transport property is a specific behavior that may or may not be exhibited
