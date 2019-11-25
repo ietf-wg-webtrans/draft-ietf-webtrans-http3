@@ -38,6 +38,17 @@ This document defines the overall requirements on the protocols used in
 WebTransport, as well as the common features of the protocols, support for some
 of which may be optional.
 
+--- note_Note_to_Readers
+
+Discussion of this draft takes place on the WebTransport mailing list
+(webtransport@ietf.org), which is archived at
+\<https://mailarchive.ietf.org/arch/search/?email_list=webtransport\>.
+
+The repository tracking the issues for this draft can be found at
+\<https://github.com/vasilvv/webtransport/issues\>.  The web API draft
+corresponding to this document can be found at
+\<https://wicg.github.io/web-transport/\>.
+
 --- middle
 
 # Introduction
