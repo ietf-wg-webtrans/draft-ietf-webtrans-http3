@@ -194,8 +194,8 @@ backwards compatibility with legacy systems.
 Any transport protocol used MUST require the user agent to obtain and maintain
 explicit consent from the server to send data.  For connection-oriented
 protocols (such as TCP or QUIC), the connection establishment and keep-alive
-mechanisms suffice.  For other protocols, a mechanism such as ICE {{?RFC8445}} can
-be used.
+mechanisms suffice.  STUN Consent Freshness {{?RFC7675}} is another example of
+the mechanism satisfying this requirement.
 
 Any transport protocol used MUST limit the rate at which the client sends data.
 This SHOULD be accomplished via a feedback-based congestion control mechanism
