@@ -78,7 +78,7 @@ One existing option available to Web developers are WebRTC data channels
 {{?I-D.ietf-rtcweb-data-channel}}, which provide a WebSocket-like API for a
 peer-to-peer SCTP channel protected by DTLS.  In theory, it is possible to use
 it for the use cases addressed by this specification. However, in practice, its
-user in non-browser-to-browser settings has been quite low due to its dependency
+use in non-browser-to-browser settings has been quite low due to its dependency
 on ICE (which fits poorly with the Web model) and userspace SCTP (which has very
 few implementations available).
 
