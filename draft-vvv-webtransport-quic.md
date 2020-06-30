@@ -57,7 +57,7 @@ normative:
     title: "The WebTransport Protocol Framework"
     date: {DATE}
     seriesinfo:
-      Internet-Draft: draft-vvv-webtransport-overview-latest
+      Internet-Draft: draft-ietf-webtrans-overview-latest
     author:
       -
         ins: V. Vasiliev
