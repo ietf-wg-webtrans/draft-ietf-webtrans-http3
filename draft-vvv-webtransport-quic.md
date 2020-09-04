@@ -139,10 +139,10 @@ be used in situations where these features are desired.
 
 When a client requests a QuicTransport session to be created, the user agent
 establishes a QUIC connection to the specified address.  It verifies that the
-the server is a QuicTransport endpoint using ALPN, and additionally sends a
-client indication containing the requested path and the origin of the initiating
-website to the server.  At that point, the connection is ready from the client's
-perspective.  The server MUST wait until the client indication is received
+the server is a QuicTransport endpoint using ALPN, and additionally sends a set
+of headers containing the requested path and the origin of the initiating
+website to the server.  At that point, the connection is ready from the
+client's perspective.  The server MUST wait until it processes client headers
 before processing any application data.
 
 WebTransport streams are provided by creating an individual unidirectional or
@@ -154,62 +154,70 @@ datagram extension [QUIC-DATAGRAM].
 In order to establish a QuicTransport session, a QUIC connection must be
 established.  From the client perspective, the session becomes established when
 the client both have received a TLS Finished message from the server and has
-sent a client indication.  From the server perspective, the session is
-established after the client indication has been successfully processed.
+sent its headers.  From the server perspective, the session is
+established after the client headers have been successfully processed.
 
 ## Identifying as QuicTransport
 
 In order to identify itself as a WebTransport application, QuicTransport relies
 on TLS Application-Layer Protocol Negotiation {{!RFC7301}}.  The user agent MUST
-request the ALPN value of "wq-vvv-01" and it MUST close the connection unless
+request the ALPN value of "wq-vvv-03" and it MUST close the connection unless
 the server confirms that ALPN value.
 
-## Client Indication
+## QuicTransport Handshake
 
 In order to verify that the client's origin is allowed to connect to the server
 in question, the user agent has to communicate the origin to the server.  This
-is accomplished by sending a special message, called client indication, on
-stream 2, which is the first client-initiated unidirectional stream.
+is accomplished by performing a handshake on the first client-initiated
+bidirectional stream, stream 0.  The handshake is performed as follows:
 
-The client indication is a sequence of key-value pairs that are formatted in the
-following way:
+1. The client sends its headers on stream 0.
+1. The client sends FIN on stream 0.  This indicates that all headers have been
+   sent, and the server can now process them.
+1. The server processes the headers and makes access control decision based on
+   the origin.  Before this happens, the server MUST NOT process the
+   application data receiver from the client, or send its own header block.
+1. The server sends its header block on stream 0, followed by a FIN indicating
+   that the handshake has been successfully completed.
+
+The QuicTransport header stream payload SHALL be a header block.  A header
+block is a sequence of key-value pairs that are formatted in the following way:
 
 ~~~
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|           Key (16)            |          Length (16)          |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                           Value (*)                         ...
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+QuicTransport Header {
+  Header Name Length (16),
+  Header Name (..),
+  Header Value Length (16),
+  Header Value (..),
+}
 ~~~
-{: #fig-frame title="Client indication format" :}
+{: #fig-frame title="QuicTransport Header Format" :}
 
 The pair includes the following fields:
 
-Key:
+Name:
 
-: Indicates the field that is being expressed.
-
-Length:
-
-: Indicates the length of the value (the length of the key and the length
-  itself are not included).
+: Indicates the name of the field that is being expressed.  The name of the
+  field is case-insensitive, and when encoded on the wire, it MUST consist of
+  ASCII characters in range from `a` to `z`, `0` to `9`, `-`, or `.`.  It MUST
+  begin with an alphanumeric character.
 
 Value:
 
-: The value of the field, the semantics of which are determined by the key.
+: The value of the header field, the semantics of which are determined by the
+  name.
 
-A FIN on the stream 2 SHALL indicate that the message is complete.  The client
-MUST send the entirety of the client indication and a FIN immediately after
-opening the connection.  The server MUST NOT process any application data before
-receiving the entirety of the client indication.  The total length of the client
-indication MUST NOT exceed 65,535 bytes.
+A FIN on the stream 0 SHALL indicate that the message is complete.  The client
+MUST send the entirety of the header block and a FIN immediately after opening
+the connection.  The server MUST NOT process any application data before
+receiving the entirety of the headers.  The total length of a header block MUST
+NOT exceed 1,048,576 bytes; implementations MAY impose additional limit on the
+header block size.
 
-In order to ensure that the user agent can send the client indication
-immediately, the server MUST set `initial_max_streams_uni` transport parameter
-to at least `1`.  The user agent MUST close the connection if the server sets
-`initial_max_streams_uni` to `0`.
+In order to ensure that the user agent can send the headers immediately, the
+server MUST set `initial_max_streams_bidi` transport parameter to at least `1`.
+The user agent MUST close the connection if the server sets
+`initial_max_streams_bidi` to `0`.
 
 The server MUST ignore any field it does not recognize.  All of the fields MUST
 be unique;  the server MAY close the connection if any of the keys is used more
@@ -218,16 +226,12 @@ than once.
 ### Origin Field
 
 In order to allow the server to enforce its origin policy, the user agent has to
-communicate the origin in the client indication.  This can be accomplished using
-the "Origin" field:
+communicate the origin in the handshake.  This can be accomplished using the
+"Origin" field:
 
 Name:
 
 : Origin
-
-Key:
-
-: 0x0000
 
 Description:
 
@@ -237,20 +241,19 @@ The user agent MUST send the "Origin" field.  The "Origin" field MUST be set to
 the origin of the client initiating the connection, serialized as described in
 the "serializing a request origin" section of [FETCH].
 
+The server indicates that it accepts the origin by sending its header block and
+a FIN on the stream 0.  If the server does not accept the origin, it MUST close
+the connection.
+
 ### Path Field  {#path-field}
 
 In order to allow multiplexing multiple application on the same host-port tuple,
 QuicTransport allows specifying extra routing information in the path component
-of the URI.  That component is communicated using the "Path" field in the client
-indication:
+of the URI.  That component is communicated using the "Path" header:
 
 Name:
 
 : Path
-
-Key:
-
-: 0x0001
 
 Description:
 
@@ -263,8 +266,8 @@ such is present.  In case when `path-abempty` is empty, the value sent SHALL be
 `/`.
 
 Unlike HTTP, the `authority` portion of the URL is not communicated in the
-client indication.  As QuicTransport has its own connection dedicated to it, the
-host name portion can be retrieved from the `server_name` TLS extension
+headers.  As QuicTransport has its own connection dedicated to it, the host
+name portion can be retrieved from the `server_name` TLS extension
 {{?RFC6066}}.
 
 The server MAY use the value of the "Path" field in any way defined by the
@@ -316,9 +319,8 @@ quic-transport-URI = "quic-transport:" "//"
 ~~~~~~~~~~~~~~~
 
 The `path-abempty` and the `query` portions of the URI are communicated to the
-server in the client indication as described in {{path-field}}.  The
-`quic-transport` URI scheme supports the `/.well-known/` path prefix defined in
-{{!RFC8615}}.
+server in the headers as described in {{path-field}}.  The `quic-transport` URI
+scheme supports the `/.well-known/` path prefix defined in {{!RFC8615}}.
 
 This document does not assign any semantics to the `fragment` portion of the
 URI.  Any QuicTransport implementation MUST ignore those until a subsequent
@@ -403,29 +405,25 @@ a given client.
 The following entry is added to the "Application Layer Protocol Negotiation
 (ALPN) Protocol IDs" registry established by {{!RFC7301}}:
 
-The "wq-vvv-01" label identifies QUIC used as a protocol for WebTransport:
+The "wq-vvv-03" label identifies QUIC used as a protocol for WebTransport:
 
   Protocol:
   : QuicTransport
 
   Identification Sequence:
-  : 0x77 0x71 0x2d 0x76 0x76 0x76 0x2d 0x30 0x31 ("wq-vvv-01")
+  : 0x77 0x71 0x2d 0x76 0x76 0x76 0x2d 0x30 0x33 ("wq-vvv-03")
 
   Specification:
   : This document
 
-## Client Indication Fields Registry
+## Header Fields Registry
 
-IANA SHALL add a registry for "QuicTransport Client Indication Fields" registry.
+IANA SHALL add a registry for "QuicTransport Header Fields" registry.
 Every entry in the registry SHALL include the following fields:
 
 Name:
 
 : The name of the field.
-
-Key:
-
-: The 16-bit unique identifier that is used on the wire.
 
 Description:
 
@@ -435,9 +433,7 @@ Reference:
 
 : The document that describes the parameter.
 
-The IANA policy, as described in {{!RFC8126}}, SHALL be Standards Action for
-values between 0x0000 and 0x03ff; Specification Required for values between
-0x0400 and 0xefff; and Private Use for values between 0xf000 and 0xffff.
+The IANA policy, as described in {{!RFC8126}}, SHALL be Expert Review.
 
 ## URI Scheme Registration
 
