@@ -184,11 +184,15 @@ The QuicTransport header stream payload SHALL be a header block.  A header
 block is a sequence of key-value pairs that are formatted in the following way:
 
 ~~~
-QuicTransport Header {
+Header {
   Header Name Length (16),
   Header Name (..),
   Header Value Length (16),
   Header Value (..),
+}
+
+QuicTransport Headers {
+  Header (..) ...,
 }
 ~~~
 {: #fig-frame title="QuicTransport Header Format" :}
