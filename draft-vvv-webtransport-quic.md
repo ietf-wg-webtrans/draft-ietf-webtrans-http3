@@ -143,7 +143,7 @@ the server is a QuicTransport endpoint using ALPN, and additionally sends a set
 of headers containing the requested path and the origin of the initiating
 website to the server.  At that point, the connection is ready from the
 client's perspective.  The server MUST wait until it processes client headers
-before processing any application data.
+before processing any other application data.
 
 WebTransport streams are provided by creating an individual unidirectional or
 bidirectional QUIC stream.  WebTransport datagrams are provided through the QUIC
@@ -175,7 +175,7 @@ bidirectional stream, stream 0.  The handshake is performed as follows:
 1. The client sends FIN on stream 0.  This indicates that all headers have been
    sent, and the server can now process them.
 1. The server processes the headers and makes access control decision based on
-   the origin.  Before this happens, the server MUST NOT process the
+   the origin.  Before this happens, the server MUST NOT process any non-header
    application data receiver from the client, or send its own header block.
 1. The server sends its header block on stream 0, followed by a FIN indicating
    that the handshake has been successfully completed.
@@ -213,10 +213,10 @@ Value:
 
 A FIN on the stream 0 SHALL indicate that the message is complete.  The client
 MUST send the entirety of the header block and a FIN immediately after opening
-the connection.  The server MUST NOT process any application data before
-receiving the entirety of the headers.  The total length of a header block MUST
-NOT exceed 1,048,576 bytes; implementations MAY impose additional limit on the
-header block size.
+the connection.  Before receiving the entirety of the headers, the server MUST
+NOT process any datagrams or any data on streams other than 0.  The total
+length of a header block MUST NOT exceed 1,048,576 bytes; implementations MAY
+impose additional limit on the header block size.
 
 In order to ensure that the user agent can send the headers immediately, the
 server MUST set `initial_max_streams_bidi` transport parameter to at least `1`.
