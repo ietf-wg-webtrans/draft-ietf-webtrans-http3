@@ -105,7 +105,7 @@ Discussion of this draft takes place on the WebTransport mailing list
 The repository tracking the issues for this draft can be found at
 \<https://github.com/vasilvv/webtransport/issues\>.  The web API draft
 corresponding to this document can be found at
-\<https://wicg.github.io/web-transport/\>.
+\<https://w3c.github.io/webtransport/\>.
 
 --- middle
 

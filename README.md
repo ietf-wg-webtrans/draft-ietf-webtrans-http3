@@ -1,18 +1,13 @@
 # WebTransport Drafts
 
-This is the working area for individual Internet-Drafts related to WebTransport.
+This is the working area for individual Internet-Drafts related to WebTransport
+that are not currently adopted by the IETF Working Group.
 
 Other documents related to WebTransport:
 
-* [Overview](https://discourse.wicg.io/t/webtransport-proposal/3508)
-* [Explainer](https://github.com/pthatcherg/web-transport/blob/master/explainer.md)
-* [Web API Spec](https://pthatcherg.github.io/web-transport/)
-
-## The WebTransport Protocol Framework
-
-* [Editor's Copy](https://vasilvv.github.io/webtransport/draft-vvv-webtransport-overview.html)
-* [Individual Draft](https://tools.ietf.org/html/draft-vvv-webtransport-overview)
-* [Compare Editor's Copy to Individual Draft](https://vasilvv.github.io/webtransport/#go.draft-vvv-webtransport-overview.diff)
+* [Explainer](https://github.com/w3c/webtransport/blob/master/explainer.md)
+* [Web API Spec](https://w3c.github.io/webtransport/)
+* [Overview draft](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-overview)
 
 ## Use of QUIC Protocol in WebTransport
 
