@@ -91,8 +91,8 @@ informative:
 
 WebTransport [OVERVIEW] is a protocol framework that enables clients
 constrained by the Web security model to communicate with a remote server using
-a secure multiplexed transport.  This document describes Http3Transport, a
-WebTransport protocol that is based on HTTP/3 [HTTP3] and provides support for
+a secure multiplexed transport.  This document describes a WebTransport
+protocol that is based on HTTP/3 [HTTP3] and provides support for
 unidirectional streams, bidirectional streams and datagrams, all multiplexed
 within the same HTTP/3 connection.
 
@@ -113,11 +113,11 @@ corresponding to this document can be found at
 
 HTTP/3 [HTTP3] is a protocol defined on top of QUIC [QUIC-TRANSPORT] that can
 multiplex HTTP requests over a QUIC connection.  This document defines
-Http3Transport, a mechanism for multiplexing non-HTTP data with HTTP/3 in a
-manner that conforms with the WebTransport protocol framework [OVERVIEW].
-Using the mechanism described here, multiple Http3Transport instances can be
-multiplexed simultaneously with regular HTTP traffic on the same HTTP/3
-connection.
+a mechanism for multiplexing non-HTTP data with HTTP/3 in a
+manner that conforms with the WebTransport protocol requirements and semantics
+[OVERVIEW].  Using the mechanism described here, multiple WebTransport
+instances can be multiplexed simultaneously with regular HTTP traffic on the
+same HTTP/3 connection.
 
 ## Terminology
 
@@ -134,17 +134,17 @@ can be accessed via an HTTP/3 server.
 
 # Protocol Overview
 
-Http3Transport servers are identified by a pair of authority value and path
-value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
+WebTransport servers in general are identified by a pair of authority value and
+path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
 When an HTTP/3 connection is established, the client and server have to
 negotiate a specific set of QUIC transport parameters that indicate support for
-various Http3Transport features.  Most notably, the `http3_transport_support`
-parameter signals Http3Transport support to the peer.
+various WebTransport features.  Most notably, the `http3_transport_support`
+parameter signals WebTransport support to the peer.
 
-Http3Transport sessions are initiated inside a given HTTP/3 connection by the
+WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC8441}}.  If the server
-accepts the request, an Http3Transport session is established.  As a part of
+accepts the request, an WebTransport session is established.  As a part of
 this process, the client proposes, and the server confirms, a session ID.
 A session ID (SID) is unique within a given HTTP/3 connection, and is used to
 associate all of the streams and datagrams with the specific session.
@@ -153,20 +153,20 @@ After the session is established, the peers can exchange data using the
 following mechanisms:
 
 * A client can create a bidirectional stream using a special indefinite-length
-  HTTP/3 frame that transfers ownership of the stream to Http3Transport.
+  HTTP/3 frame that transfers ownership of the stream to WebTransport.
 * A server can create a bidirectional stream, which is possible since HTTP/3
   does not define any semantics for server-initiated bidirectional streams.
 * Both client and server can create a unidirectional stream using a special
   stream type.
 * A datagram can be sent using a QUIC DATAGRAM frame [QUIC-DATAGRAM].
 
-An Http3Transport session is terminated when the CONNECT stream that created it
+An WebTransport session is terminated when the CONNECT stream that created it
 is closed.
 
 # Session IDs  {#session-ids}
 
-In order to allow multiple Http3Transport sessions to occur within the same
-HTTP/3 connection, Http3Transport assigns every session a unique ID, further
+In order to allow multiple WebTransport sessions to occur within the same
+HTTP/3 connection, WebTransport assigns every session a unique ID, further
 referred to as session ID.  A session ID is a 62-bit number that is unique
 within the scope of an HTTP/3 connection, and is never reused even after the
 session is closed.  The client unilaterally picks the session ID.  As the IDs
@@ -176,7 +176,7 @@ used, and thus ineligible for new transports, as soon as the client sends a
 request proposing it.  These reuse requirements guarantee that both HTTP/3
 endpoints have a consistent view of the session ID space.
 
-The Session ID is a hop-by-hop property: if Http3Transport is proxied, the same
+The Session ID is a hop-by-hop property: if WebTransport is proxied, the same
 session can have different IDs from the client's and server's perspective.
 Because of that, session IDs SHOULD NOT be exposed to the application.
 
@@ -184,13 +184,13 @@ Because of that, session IDs SHOULD NOT be exposed to the application.
 
 ## Establishing a Transport-Capable HTTP/3 Connection
 
-In order to indicate support for Http3Transport, both the client and server MUST
+In order to indicate support for WebTransport, both the client and server MUST
 send an empty `http3_transport_support` transport parameter.  Endpoints MUST NOT
-use any Http3Transport-related functionality unless the parameter has been
+use any WebTransport-related functionality unless the parameter has been
 negotiated.  The negotiation is done through a QUIC transport parameter instead
 of an HTTP/3-level setting as it allows the server to customize the transport
 parameters it intends to send based on whether the client has indicated support
-for Http3Transport.
+for WebTransport.
 
 If `http3_transport_support` is negotiated, support for the QUIC DATAGRAM
 extension MUST be negotiated.  The `initial_max_bidi_streams` MUST be greater
@@ -206,10 +206,10 @@ transport parameter implies that an endpoint supports extended CONNECT.
 
 ## Creating a New Session
 
-As Http3Transport sessions are established over HTTP/3, they are identified
+As WebTransport sessions are established over HTTP/3, they are identified
 using the `https` URI scheme {{!RFC7230}}.
 
-In order to create a new Http3Transport session, a client can send an HTTP
+In order to create a new WebTransport session, a client can send an HTTP
 CONNECT request.  The `:protocol` pseudo-header field MUST be set to
 `webtransport`.  The `:scheme` field MUST be `https`.  Both the `:authority` and
 the `:path` value MUST be set; those fields indicate the desired WebTransport
@@ -228,15 +228,15 @@ was not used ever before on this connection.  The WebTransport server MUST
 verify the `Origin` header to ensure that the specified origin is allowed to
 access the server in question.
 
-From the client's perspective, an Http3Transport session is established when the
+From the client's perspective, a WebTransport session is established when the
 client receives a 200 response.  From the server's perspective, a session is
 established once it sends a 200 response.  Both endpoints MUST NOT open any
 streams or send any datagrams on a given session before that session is
-established.  Http3Transport does not support 0-RTT.
+established.  WebTransport over HTTP/3 does not support 0-RTT.
 
 ## Limiting the Number of Simultaneous Sessions
 
-From the flow control perspective, Http3Transport sessions count against the
+From the flow control perspective, WebTransport sessions count against the
 stream flow control just like regular HTTP requests, since they are established
 via an HTTP CONNECT request.  This document does not make any effort to
 introduce a separate flow control mechanism for sessions, nor to separate HTTP
@@ -251,12 +251,12 @@ of incoming requests, it has alternative mechanisms at its disposal:
 
 # WebTransport Features
 
-Http3Transport provides the following features described in [OVERVIEW]:
+WebTransport over HTTP/3 provides the following features described in [OVERVIEW]:
 unidirectional streams, bidirectional streams and datagrams, initiated by
 either endpoint.
 
 Session IDs are used to demultiplex streams and datagrams belonging to different
-Http3Transport sessions.  On the wire, session IDs are encoded using the QUIC
+WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
 variable length integer scheme described in [QUIC-TRANSPORT].
 
 ## Unidirectional streams
@@ -277,11 +277,11 @@ by the user-specified stream data ({{fig-unidi}}).
   |                         Stream Body                         ...
   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~~~~~~~~
-{: #fig-unidi title="Unidirectional Http3Transport stream format"}
+{: #fig-unidi title="Unidirectional WebTransport stream format"}
 
 ## Client-Initiated Bidirectional Streams
 
-Http3Transport clients can initiate bidirectional streams by opening an HTTP/3
+WebTransport clients can initiate bidirectional streams by opening an HTTP/3
 bidirectional stream and sending an HTTP/3 frame with type
 `WEBTRANSPORT_STREAM` (type=0x41).  The format of the frame SHALL be the frame
 type, followed by the session ID, encoded as a variable-length integer,
@@ -303,7 +303,7 @@ SHALL last until the end of the stream.
 
 ## Server-Initiated Bidirectional Streams
 
-Http3Transport servers can initiate bidirectional streams by opening a
+WebTransport servers can initiate bidirectional streams by opening a
 bidirectional stream within the HTTP/3 connection.  Note that since HTTP/3 does
 not define any semantics for server-initiated bidirectional streams, this
 document is a normative reference for the semantics of such streams for all
@@ -351,15 +351,15 @@ HTTP proxies.
 
 # Session Termination
 
-An Http3Transport is terminated when either endpoint closes the stream
-associated with the CONNECT request that initiated the session.  Upon learning
-about the session being terminated, the endpoint MUST stop sending new datagrams
-and reset all of the streams associated with the session.
+An WebTransport session over HTTP/3 is terminated when either endpoint closes
+the stream associated with the CONNECT request that initiated the session.
+Upon learning about the session being terminated, the endpoint MUST stop
+sending new datagrams and reset all of the streams associated with the session.
 
 # Transport Properties
 
-Http3Transport supports most of the WebTransport features described in
-{{properties}}.
+WebTransport over HTTP/3 supports most of the WebTransport features described
+in {{properties}}.
 
 | Property            | Support
 |:--------------------|:-------------------------|
@@ -367,23 +367,23 @@ Http3Transport supports most of the WebTransport features described in
 | Partial reliability | Always supported         |
 | Pooling support     | Always supported         |
 | Connection mobility | Implementation-dependent |
-{: #properties title="Transport properties of Http3Transport"}
+{: #properties title="Transport properties of WebTransport over HTTP/3"}
 
 # Security Considerations
 
-Http3Transport satisfies all of the security requirements imposed by
-[QUIC-TRANSPORT] on WebTransport protocols, thus providing a secure framework
-for client-server communication in cases when the client is potentially
-untrusted.  Since HTTP/3 is QUIC-based, a lot of the analysis in
-[WEBTRANSPORT-QUIC] applies here.
+WebTransport over HTTP/3 satisfies all of the security requirements imposed by
+[OVERVIEW] on WebTransport protocols, thus providing a secure framework for
+client-server communication in cases when the client is potentially untrusted.
+Since HTTP/3 is QUIC-based, a lot of the analysis in [WEBTRANSPORT-QUIC]
+applies here.
 
-Http3Transport requires explicit opt-in through the use of a QUIC transport
-parameter; this avoids potential protocol confusion attacks by ensuring the
-HTTP/3 server explicitly supports it.  It also requires the use of the Origin
-header, providing the server with the ability to deny access to Web-based
-clients that do not originate from a trusted origin.
+WebTransport over HTTP/3 requires explicit opt-in through the use of a QUIC
+transport parameter; this avoids potential protocol confusion attacks by
+ensuring the HTTP/3 server explicitly supports it.  It also requires the use of
+the Origin header, providing the server with the ability to deny access to
+Web-based clients that do not originate from a trusted origin.
 
-Just like HTTP/3 itself, Http3Transport pools traffic to different origins
+Just like HTTP traffic going over HTTP/3, WebTransport pools traffic to different origins
 within a single connection.  Different origins imply different trust domains,
 meaning that the implementations have to treat each transport as potentially
 hostile towards others on the same connection.  One potential attack is a
@@ -421,7 +421,7 @@ The following entry is added to the "QUIC Transport Parameter Registry" registry
 established by [QUIC-TRANSPORT]:
 
 The `http3_transport_support` parameter indicates that the specified HTTP/3
-connection is Http3Transport-capable.
+connection is WebTransport-capable.
 
 Value:
 
