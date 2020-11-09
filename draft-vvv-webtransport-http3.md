@@ -172,8 +172,8 @@ MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
 frame.  Endpoints MUST NOT use any WebTransport-related functionality unless
 the parameter has been negotiated.
 
-If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAM
-extension MUST be negotiated as described in
+If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
+within HTTP/3 MUST be negotiated as described in
 {{!HTTP3-DATAGRAM=I-D.schinazi-quic-h3-datagram}}; negotiating WebTransport
 support without negotiating QUIC DATAGRAM extension SHALL result in a
 H3_SETTINGS_ERROR error.
