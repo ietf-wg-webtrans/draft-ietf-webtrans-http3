@@ -413,7 +413,7 @@ Setting Name:
 
 Value:
 
-: 0x???? (currently H2 draft uses 0xFB)
+: 0x63e941ac
 
 Default:
 
