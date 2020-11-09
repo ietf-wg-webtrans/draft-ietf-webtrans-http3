@@ -137,17 +137,17 @@ can be accessed via an HTTP/3 server.
 WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
-When an HTTP/3 connection is established, the client and server have to
-negotiate a specific set of QUIC transport parameters that indicate support for
-various WebTransport features.  Most notably, the `http3_transport_support`
-parameter signals WebTransport support to the peer.
+When an HTTP/3 connection is established, both the client and server have to
+negotiate a SETTINGS_ENABLE_WEBTRANSPORT setting in order to indicate that they
+both support WebTransport over HTTP/3.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC8441}}.  If the server
-accepts the request, an WebTransport session is established.  As a part of
-this process, the client proposes, and the server confirms, a session ID.
-A session ID (SID) is unique within a given HTTP/3 connection, and is used to
-associate all of the streams and datagrams with the specific session.
+accepts the request, an WebTransport session is established.  The resulting
+stream will be further referred to as a *CONNECT stream*, and its stream ID is
+used to uniquely identify a given WebTransport session within the connection.
+The ID of the CONNECT stream that established a given WebTransport session will
+be further referred to as a *Session ID*.
 
 After the session is established, the peers can exchange data using the
 following mechanisms:
@@ -163,46 +163,35 @@ following mechanisms:
 An WebTransport session is terminated when the CONNECT stream that created it
 is closed.
 
-# Session IDs  {#session-ids}
-
-In order to allow multiple WebTransport sessions to occur within the same
-HTTP/3 connection, WebTransport assigns every session a unique ID, further
-referred to as session ID.  A session ID is a 62-bit number that is unique
-within the scope of an HTTP/3 connection, and is never reused even after the
-session is closed.  The client unilaterally picks the session ID.  As the IDs
-are encoded using QUIC variable length integers, the client SHOULD start with
-zero and then sequentially increment the IDs.  A session ID is considered to be
-used, and thus ineligible for new transports, as soon as the client sends a
-request proposing it.  These reuse requirements guarantee that both HTTP/3
-endpoints have a consistent view of the session ID space.
-
-The Session ID is a hop-by-hop property: if WebTransport is proxied, the same
-session can have different IDs from the client's and server's perspective.
-Because of that, session IDs SHOULD NOT be exposed to the application.
-
 # Session Establishment
 
 ## Establishing a Transport-Capable HTTP/3 Connection
 
-In order to indicate support for WebTransport, both the client and server MUST
-send an empty `http3_transport_support` transport parameter.  Endpoints MUST NOT
-use any WebTransport-related functionality unless the parameter has been
-negotiated.  The negotiation is done through a QUIC transport parameter instead
-of an HTTP/3-level setting as it allows the server to customize the transport
-parameters it intends to send based on whether the client has indicated support
-for WebTransport.
+In order to indicate support for WebTransport, both the client and the server
+MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
+frame.  Endpoints MUST NOT use any WebTransport-related functionality unless
+the parameter has been negotiated.
 
-If `http3_transport_support` is negotiated, support for the QUIC DATAGRAM
-extension MUST be negotiated.  The `initial_max_bidi_streams` MUST be greater
-than zero, overriding the existing requirement in [HTTP3].
+If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAM
+extension MUST be negotiated as described in
+{{!HTTP3-DATAGRAM=I-D.schinazi-quic-h3-datagram}}; negotiating WebTransport
+support without negotiating QUIC DATAGRAM extension SHALL result in a
+H3_SETTINGS_ERROR error.
+
+[HTTP3] requires client's `initial_max_bidi_streams` transport parameter to be
+set to zero.  Existing implementation might enforce this requirement before
+negotiating settings; thus, the client MUST send a non-zero MAX_STREAMS for
+client-initiated bidirectional streams after receiving an appropriate SETTINGS
+frame from the server.
 
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
 SETTINGS_ENABLE_CONNECT_PROTOCOL parameter.  That parameter is only defined for
-HTTP/2.  This document does not create a new multi-purpose parameter to indicate
-support for extended CONNECT in HTTP/3; instead, the `http3_transport_support`
-transport parameter implies that an endpoint supports extended CONNECT.
+HTTP/2.  This document does not create a new multi-purpose parameter to
+indicate support for extended CONNECT in HTTP/3; instead, the
+SETTINGS_ENABLE_WEBTRANSPORT setting implies that an endpoint supports extended
+CONNECT.
 
 ## Creating a New Session
 
@@ -210,23 +199,19 @@ As WebTransport sessions are established over HTTP/3, they are identified
 using the `https` URI scheme {{!RFC7230}}.
 
 In order to create a new WebTransport session, a client can send an HTTP
-CONNECT request.  The `:protocol` pseudo-header field MUST be set to
-`webtransport`.  The `:scheme` field MUST be `https`.  Both the `:authority` and
-the `:path` value MUST be set; those fields indicate the desired WebTransport
-server.  The client MUST pick a new session ID as described in {{session-ids}}
-and send it encoded as a hexadecimal literal in `:sessionid` header.  An
-`Origin` header {{!RFC6454}} MUST be provided within the request.
+CONNECT request.  The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be
+set to `webtransport`.  The `:scheme` field MUST be `https`.  Both the
+`:authority` and the `:path` value MUST be set; those fields indicate the
+desired WebTransport server.  An `Origin` header {{!RFC6454}} MUST be provided
+within the request.
 
 Upon receiving an extended CONNECT request with a `:protocol` field set to
-`:webtransport`, the HTTP/3 server can check if it has a WebTransport
+`webtransport`, the HTTP/3 server can check if it has a WebTransport
 server associated with the specified `:authority` and `:path` values.  If it
 does not, it SHOULD reply with status code 404 (Section 6.5.4, {{!RFC7231}}).
 If it does, it MAY accept the session by replying with status code 200.
-Before accepting it, the HTTP/3 server MUST verify that the proposed session ID
-does not conflict with any currently open sessions, and it MAY verify that it
-was not used ever before on this connection.  The WebTransport server MUST
-verify the `Origin` header to ensure that the specified origin is allowed to
-access the server in question.
+The WebTransport server MUST verify the `Origin` header to ensure that the
+specified origin is allowed to access the server in question.
 
 From the client's perspective, a WebTransport session is established when the
 client receives a 200 response.  From the server's perspective, a session is
@@ -307,7 +292,7 @@ WebTransport servers can initiate bidirectional streams by opening a
 bidirectional stream within the HTTP/3 connection.  Note that since HTTP/3 does
 not define any semantics for server-initiated bidirectional streams, this
 document is a normative reference for the semantics of such streams for all
-HTTP/3 connections in which the `http3_transport_support` option is negotiated.
+HTTP/3 connections in which the SETTINGS_ENABLE_WEBTRANSPORT option is negotiated.
 The format of those streams SHALL be the session ID, encoded as a
 variable-length integer, followed by the user-specified stream data
 ({{fig-bidi-server}}).
@@ -325,12 +310,11 @@ variable-length integer, followed by the user-specified stream data
 
 ## Datagrams
 
-Datagrams can be sent using the DATAGRAM frame as defined in
-[QUIC-DATAGRAM] and {{!H3-DATAGRAM=I-D.schinazi-quic-h3-datagram}}.  For all
-HTTP/3 connections in which the `http3_transport_support` option is negotiated,
-the Flow Identifier is set to the session ID.  In other words, the format of
-datagrams SHALL be the session ID, followed by the user-specified payload
-({{fig-datagram}}).
+Datagrams can be sent using the DATAGRAM frame as defined in [QUIC-DATAGRAM]
+and [HTTP3-DATAGRAM].  For all HTTP/3 connections in which the
+SETTINGS_ENABLE_WEBTRANSPORT option is negotiated, the Flow Identifier is set
+to the session ID.  In other words, the format of datagrams SHALL be the
+session ID, followed by the user-specified payload ({{fig-datagram}}).
 
 ~~~~~~~~~~ drawing
   0                   1                   2                   3
@@ -413,23 +397,27 @@ Description:
 
 Reference:
 
-: This document
+: This document and {{?I-D.kinnear-webtransport-http2}}
 
-## QUIC Transport Parameter Registration
+## HTTP/3 SETTINGS Parameter Registration
 
-The following entry is added to the "QUIC Transport Parameter Registry" registry
-established by [QUIC-TRANSPORT]:
+The following entry is added to the "HTTP/3 Settings" registry established by
+[HTTP3]:
 
-The `http3_transport_support` parameter indicates that the specified HTTP/3
-connection is WebTransport-capable.
+The `SETTINGS_ENABLE_WEBTRANSPORT` parameter indicates that the specified
+HTTP/3 connection is WebTransport-capable.
+
+Setting Name:
+
+: ENABLE_WEBTRANSPORT
 
 Value:
 
-: 0x????
+: 0x???? (currently H2 draft uses 0xFB)
 
-Parameter Name:
+Default:
 
-: http3_transport_support
+: 0
 
 Specification:
 
