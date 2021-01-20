@@ -138,7 +138,7 @@ WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
 When an HTTP/3 connection is established, both the client and server have to
-negotiate a SETTINGS_ENABLE_WEBTRANSPORT setting in order to indicate that they
+send a SETTINGS_ENABLE_WEBTRANSPORT setting in order to indicate that they
 both support WebTransport over HTTP/3.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
