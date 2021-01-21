@@ -1,6 +1,6 @@
 ---
 title: WebTransport over HTTP/3
-abbrev: Http3Transport
+abbrev: WebTransport-H3
 docname: draft-vvv-webtransport-http3-latest
 date: {DATE}
 category: std
@@ -76,16 +76,6 @@ normative:
         organization: Google
 
 informative:
-  WEBTRANSPORT-QUIC:
-    title: "WebTransport over QUIC"
-    date: {DATE}
-    seriesinfo:
-      Internet-Draft: draft-vvv-webtransport-quic-latest
-    author:
-      -
-        ins: V. Vasiliev
-        name: Victor Vasiliev
-        organization: Google
 
 --- abstract
 
@@ -174,7 +164,7 @@ the parameter has been negotiated.
 
 If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
 within HTTP/3 MUST be negotiated as described in
-{{!HTTP3-DATAGRAM=I-D.schinazi-quic-h3-datagram}}; negotiating WebTransport
+{{!HTTP3-DATAGRAM=I-D.schinazi-masque-h3-datagram}}; negotiating WebTransport
 support without negotiating QUIC DATAGRAM extension SHALL result in a
 H3_SETTINGS_ERROR error.
 
@@ -358,8 +348,6 @@ in {{properties}}.
 WebTransport over HTTP/3 satisfies all of the security requirements imposed by
 [OVERVIEW] on WebTransport protocols, thus providing a secure framework for
 client-server communication in cases when the client is potentially untrusted.
-Since HTTP/3 is QUIC-based, a lot of the analysis in [WEBTRANSPORT-QUIC]
-applies here.
 
 WebTransport over HTTP/3 requires explicit opt-in through the use of a QUIC
 transport parameter; this avoids potential protocol confusion attacks by
