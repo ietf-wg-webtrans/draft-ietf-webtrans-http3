@@ -157,10 +157,61 @@ is closed.
 
 ## Establishing a Transport-Capable HTTP/3 Connection
 
+In WebTransport, an *exclusive mode* is a state of HTTP/3 connection where the
+connection is expected to have exactly one WebTransport session, and no other
+HTTP requests.
+
 In order to indicate support for WebTransport, both the client and the server
-MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
-frame.  Endpoints MUST NOT use any WebTransport-related functionality unless
-the parameter has been negotiated.
+MUST send a SETTINGS_ENABLE_WEBTRANSPORT setting.  The value of
+SETTINGS_ENABLE_WEBTRANSPORT is "0" (Unsupported), however it can also assume
+values of "1" (Supported) and "2" (Exclusive).  The exact meaning of the value
+depends on the party.
+
+SETTINGS_ENABLE_WEBTRANSPORT sent by the client has the following possible values:
+* Unsupported ("0") indicates that the client does not support WebTransport
+  over HTTP/3.
+* Supported ("1") indicates that the client supports WebTrasnport over HTTP/3
+  and may potentially initiate a WebTransport session in the future.
+* Exclusive ("2") indicates that the client both supports WebTransport over
+  HTTP/3 and has a WebTransport request that it intends to send over the
+  connection in question.
+
+SETTINGS_ENABLE_WEBTRANSPORT sent by the server has the following possible values:
+* Unsupported ("0") indicates that the server does not support WebTransport
+  over HTTP/3.
+* Supported ("1") indicates that the server supports WebTrasnport over HTTP/3.
+* Exclusive ("2") indicates that the server expects to handle exactly one
+  request over the connection in question, and that request has to be a
+  WebTransport session.
+
+Once an HTTP/3 implementation has the SETTINGS_ENABLE_WEBTRANSPORT from both
+sides, the following should happen:
+
+* If one of client's or server's value is "0", and another value is either "0"
+  or "1", the connection does not support WebTransport.
+* If both server's value is "1", and client's value is "1" or "2", the
+  connection supports WebTransport in normal mode.
+* If server's value is "2", and client's value is "0" or "1", the connection
+  MUST be closed with a connection error.
+* If both client's and server's value is "2", the HTTP/3 connection operates in
+  the exclusive mode.
+* If client's value is "2", and server's value is "0", the WebTransport session
+  that client intended to open will fail.  The client MAY close the connection
+  with error, or it MAY keep it closed for regular HTTP use.
+
+~~~~~~~~~~ drawing
+                     +-------+-------------+----------------+
+                     | C = 0 |    C = 1    |     C = 2      |
+             +-------+-------+-------------+----------------+
+             | S = 0 |  N/A  |     N/A     |      N/A       |
+             +-------+-------+-------------+----------------+
+             | S = 1 |  N/A  | Normal mode |  Normal mode   |
+             +-------+-------+-------------+----------------+
+             | S = 2 | Error |    Error    | Exclusive mode |
+             +-------+-------+-------------+----------------+
+
+~~~~~~~~~~
+{: #fig-modes title="Meanings of SETTINGS_ENABLE_WEBTRANSPORT values"}
 
 If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
 within HTTP/3 MUST be negotiated as described in
