@@ -162,7 +162,7 @@ connection is expected to have exactly one WebTransport session, and no other
 HTTP requests.
 
 In order to indicate support for WebTransport, both the client and the server
-MUST send a SETTINGS_ENABLE_WEBTRANSPORT setting.  The value of
+MUST send a SETTINGS_ENABLE_WEBTRANSPORT setting.  The default value of
 SETTINGS_ENABLE_WEBTRANSPORT is "0" (Unsupported), however it can also assume
 values of "1" (Supported) and "2" (Exclusive).  The exact meaning of the value
 depends on the party.
