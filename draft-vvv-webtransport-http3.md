@@ -179,7 +179,7 @@ SETTINGS_ENABLE_WEBTRANSPORT sent by the client has the following possible value
 SETTINGS_ENABLE_WEBTRANSPORT sent by the server has the following possible values:
 * Unsupported ("0") indicates that the server does not support WebTransport
   over HTTP/3.
-* Supported ("1") indicates that the server supports WebTrasnport over HTTP/3.
+* Supported ("1") indicates that the server supports WebTransport over HTTP/3.
 * Exclusive ("2") indicates that the server expects to handle exactly one
   request over the connection in question, and that request has to be a
   WebTransport session.
