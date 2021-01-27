@@ -330,19 +330,6 @@ the stream associated with the CONNECT request that initiated the session.
 Upon learning about the session being terminated, the endpoint MUST stop
 sending new datagrams and reset all of the streams associated with the session.
 
-# Transport Properties
-
-WebTransport over HTTP/3 supports most of the WebTransport features described
-in {{properties}}.
-
-| Property            | Support
-|:--------------------|:-------------------------|
-| Stream independence | Always supported         |
-| Partial reliability | Always supported         |
-| Pooling support     | Always supported         |
-| Connection mobility | Implementation-dependent |
-{: #properties title="Transport properties of WebTransport over HTTP/3"}
-
 # Security Considerations
 
 WebTransport over HTTP/3 satisfies all of the security requirements imposed by
