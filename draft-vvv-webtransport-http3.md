@@ -165,7 +165,7 @@ In order to indicate support for WebTransport, both the client and the server
 MUST send a SETTINGS_ENABLE_WEBTRANSPORT setting.  The default value of
 SETTINGS_ENABLE_WEBTRANSPORT is "0" (Unsupported), however it can also assume
 values of "1" (Supported) and "2" (Exclusive).  The exact meaning of the value
-depends on the party.
+depends on which endpoint is sending the setting.
 
 SETTINGS_ENABLE_WEBTRANSPORT sent by the client has the following possible values:
 * Unsupported ("0") indicates that the client does not support WebTransport
