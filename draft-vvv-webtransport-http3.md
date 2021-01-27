@@ -237,7 +237,7 @@ variable length integer scheme described in [QUIC-TRANSPORT].
 ## Unidirectional streams
 
 Once established, both endpoints can open unidirectional streams.  The HTTP/3
-control stream type SHALL be 0x54.  The body of the stream SHALL be the stream
+unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the stream
 type, followed by the session ID, encoded as a variable-length integer, followed
 by the user-specified stream data ({{fig-unidi}}).
 
