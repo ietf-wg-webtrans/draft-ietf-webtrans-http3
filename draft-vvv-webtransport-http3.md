@@ -172,7 +172,7 @@ SETTINGS_ENABLE_WEBTRANSPORT sent by the client has the following possible value
   over HTTP/3.
 * Supported ("1") indicates that the client supports WebTransport over HTTP/3
   and may potentially initiate a WebTransport session in the future.
-* Exclusive ("2") indicates that the client both supports WebTransport over
+* Intended ("2") indicates that the client both supports WebTransport over
   HTTP/3 and has a WebTransport request that it intends to send over the
   connection in question.
 
