@@ -1,7 +1,7 @@
 ---
 title: WebTransport over HTTP/3
 abbrev: WebTransport-H3
-docname: draft-vvv-webtransport-http3-latest
+docname: draft-ietf-webtrans-http3-latest
 date: {DATE}
 category: std
 
