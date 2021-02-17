@@ -1,24 +1,11 @@
-# WebTransport Drafts
+# WebTransport over HTTP/3
 
-This is the working area for individual Internet-Drafts related to WebTransport
-that are not currently adopted by the IETF Working Group.
+This is the working area for the IETF WEBTRANS Working Group Internet-Draft, "WebTransport over HTTP/3".
 
-Other documents related to WebTransport:
+* [Editor's Copy](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html)
+* [Individual Draft](https://tools.ietf.org/html/draft-ietf-webtrans-http3)
+* [Compare Editor's Copy to Individual Draft](https://tools.ietf.org/rfcdiff?url1=https://tools.ietf.org/id/draft-ietf-webtrans-http3.txt&url2=https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.txt)
 
-* [Explainer](https://github.com/w3c/webtransport/blob/master/explainer.md)
-* [Web API Spec](https://w3c.github.io/webtransport/)
-* [Overview draft](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-overview)
-
-## Use of HTTP/3 Protocol in WebTransport
-
-* [Editor's Copy](https://vasilvv.github.io/webtransport/draft-vvv-webtransport-http3.html)
-* [Individual Draft](https://tools.ietf.org/html/draft-vvv-webtransport-http3)
-* [Compare Editor's Copy to Individual Draft](https://vasilvv.github.io/webtransport/#go.draft-vvv-webtransport-http3.diff)
-
-## Use of HTTP/2 Protocol in WebTransport
-
-The HTTP/2 draft is hosted [in another
-repo](https://github.com/ekinnear/draft-webtransport-http2).
 
 ## Building the Draft
 
