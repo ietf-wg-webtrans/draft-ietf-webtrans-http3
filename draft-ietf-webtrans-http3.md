@@ -324,13 +324,13 @@ HTTP proxies.
 
 ## Buffering Incoming Streams and Datagrams
 
-In WebTransport over HTTP/3, the client MAY send its SETTINGS frame, a
-WebTransport CONNECT request, a WebTransport data stream and a WebTransport
-datagram all within a single flight.  As those can arrive out of order, a
-WebTransport server could be put into a situation where it has a stream or a
-datagram without a corrseponding session.  Similarly, a client may receive a
-server-initiated stream or a datagram before receiving the CONNECT response
-headers from the server.
+In WebTransport over HTTP/3, the client MAY send its SETTINGS frame, as well as
+multiple WebTransport CONNECT requests, WebTransport data streams and
+WebTransport datagrams, all within a single flight.  As those can arrive out of
+order, a WebTransport server could be put into a situation where it has a
+stream or a datagram without a corrseponding session.  Similarly, a client may
+receive a server-initiated stream or a datagram before receiving the CONNECT
+response headers from the server.
 
 To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
 until those can be associated with an established session.  To avoid resource
