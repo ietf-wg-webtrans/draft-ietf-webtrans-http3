@@ -327,7 +327,7 @@ HTTP proxies.
 In WebTransport over HTTP/3, the client MAY send its SETTINGS frame, as well as
 multiple WebTransport CONNECT requests, WebTransport data streams and
 WebTransport datagrams, all within a single flight.  As those can arrive out of
-order, a WebTransport server could be put into a situation where it has a
+order, a WebTransport server could be put into a situation where it receives a
 stream or a datagram without a corrseponding session.  Similarly, a client may
 receive a server-initiated stream or a datagram before receiving the CONNECT
 response headers from the server.
