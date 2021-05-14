@@ -205,9 +205,8 @@ specified origin is allowed to access the server in question.
 
 From the client's perspective, a WebTransport session is established when the
 client receives a 200 response.  From the server's perspective, a session is
-established once it sends a 200 response.  Both endpoints MUST NOT open any
-streams or send any datagrams on a given session before that session is
-established.  WebTransport over HTTP/3 does not support 0-RTT.
+established once it sends a 200 response.  WebTransport over HTTP/3 does not
+support 0-RTT.
 
 ## Limiting the Number of Simultaneous Sessions
 
@@ -322,6 +321,25 @@ applications have to know the maximum size of the datagram they can send.
 However, when proxying the datagrams, the hop-by-hop MTUs can vary.
 TODO: Describe how the path MTU can be computed, specifically propagation across
 HTTP proxies.
+
+## Buffering Incoming Streams and Datagrams
+
+In WebTransport over HTTP/3, the client MAY send its SETTINGS frame, as well as
+multiple WebTransport CONNECT requests, WebTransport data streams and
+WebTransport datagrams, all within a single flight.  As those can arrive out of
+order, a WebTransport server could be put into a situation where it receives a
+stream or a datagram without a corresponding session.  Similarly, a client may
+receive a server-initiated stream or a datagram before receiving the CONNECT
+response headers from the server.
+
+To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
+until those can be associated with an established session.  To avoid resource
+exhaustion, the endpoints MUST limit the number of buffered streams and
+datagrams.  When the number of buffered streams is exceeded, a stream SHALL be
+closed by sending a RESET_STREAM and/or STOP_SENDING with the
+`H3_WEBTRANSPORT_BUFFERED_STREAM_REJECTED` error code.  When the number of
+buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to
+an implementation to choose what stream or datagram to discard.
 
 # Session Termination
 
@@ -441,5 +459,26 @@ Specification:
 Sender:
 
 : Both
+
+## HTTP/3 Error Code Registration
+
+The following entry is added to the "HTTP/3 Error Code" registry established by
+[HTTP3]:
+
+Name:
+
+: H3_WEBTRANSPORT_BUFFERED_STREAM_REJECTED
+
+Value:
+
+: 0x3994bd84
+
+Description:
+
+: WebTransport data stream rejected due to lack of associated session.
+
+Specification:
+
+: This document.
 
 --- back
