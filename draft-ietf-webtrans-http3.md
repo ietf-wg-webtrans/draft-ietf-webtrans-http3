@@ -280,11 +280,11 @@ HTTP/3 does not by itself define any semantics for server-initiated
 bidirectional streams.  If WebTransport setting is negotiated by both
 endpoints, the syntax of the server-initiated bidirectional streams SHALL be
 the same as the syntax of client-initated bidirectional streams, that is, a
-sequence of HTTP/3 frames.  The only allowed frame is WEBTRANSPORT_STREAM;
-subsequent documents may add more frames, or define server-initiated semantics
-for existing frames.
+sequence of HTTP/3 frames.  The only frame defined by this document for use
+within server-initiated bidirectional streams is WEBTRANSPORT_STREAM.
 
-TODO: move the paragraph above into a separate draft.
+TODO: move the paragraph above into a separate draft; define what happens with
+already existing HTTP/3 frames on server-initiated bidirectional streams.
 
 ## Datagrams
 
