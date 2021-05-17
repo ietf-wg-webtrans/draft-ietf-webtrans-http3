@@ -253,9 +253,9 @@ by the user-specified stream data ({{fig-unidi}}).
 ~~~~~~~~~~
 {: #fig-unidi title="Unidirectional WebTransport stream format"}
 
-## Client-Initiated Bidirectional Streams
+## Bidirectional Streams
 
-WebTransport clients can initiate bidirectional streams by opening an HTTP/3
+WebTransport endpoints can initiate bidirectional streams by opening an HTTP/3
 bidirectional stream and sending an HTTP/3 frame with type
 `WEBTRANSPORT_STREAM` (type=0x41).  The format of the frame SHALL be the frame
 type, followed by the session ID, encoded as a variable-length integer,
@@ -275,27 +275,15 @@ SHALL last until the end of the stream.
 ~~~~~~~~~~
 {: #fig-bidi-client title="WEBTRANSPORT_STREAM frame format"}
 
-## Server-Initiated Bidirectional Streams
+HTTP/3 does not by itself define any semantics for server-initiated
+bidirectional streams.  If WebTransport setting is negotiated by both
+endpoints, the syntax of the server-initiated bidirectional streams SHALL be
+the same as the syntax of client-initated bidirectional streams, that is, a
+sequence of HTTP/3 frames.  The only frame defined by this document for use
+within server-initiated bidirectional streams is WEBTRANSPORT_STREAM.
 
-WebTransport servers can initiate bidirectional streams by opening a
-bidirectional stream within the HTTP/3 connection.  Note that since HTTP/3 does
-not define any semantics for server-initiated bidirectional streams, this
-document is a normative reference for the semantics of such streams for all
-HTTP/3 connections in which the SETTINGS_ENABLE_WEBTRANSPORT option is negotiated.
-The format of those streams SHALL be the session ID, encoded as a
-variable-length integer, followed by the user-specified stream data
-({{fig-bidi-server}}).
-
-~~~~~~~~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                        Session ID (i)                       ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                         Stream Body                         ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-~~~~~~~~~~
-{: #fig-bidi-server title="Server-initiated bidirectional stream format"}
+TODO: move the paragraph above into a separate draft; define what happens with
+already existing HTTP/3 frames on server-initiated bidirectional streams.
 
 ## Datagrams
 
