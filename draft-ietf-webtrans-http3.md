@@ -414,7 +414,7 @@ streams to be used by WebTransport:
 
 Code:
 
-: 0x54
+: 0x41
 
 Frame Type:
 
@@ -434,7 +434,7 @@ WebTransport:
 
 Code:
 
-: 0x41
+: 0x54
 
 Stream Type:
 
