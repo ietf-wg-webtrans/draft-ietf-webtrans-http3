@@ -13,9 +13,19 @@ pi: [toc, sortrefs, symrefs]
 
 author:
  -
+    ins: A. Frindell
+    name: Alan Frindell
+    org: Facebook
+    email: afrind@fb.com
+ -
+    ins: E. Kinnear
+    name: Eric Kinnear
+    org: Apple Inc.
+    email: ekinnear@apple.com
+ -
     ins: V. Vasiliev
     name: Victor Vasiliev
-    organization: Google
+    org: Google
     email: vasilvv@google.com
 
 normative:
