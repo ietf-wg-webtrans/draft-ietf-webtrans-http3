@@ -159,8 +159,11 @@ is closed.
 
 In order to indicate support for WebTransport, both the client and the server
 MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
-frame.  Endpoints MUST NOT use any WebTransport-related functionality unless
-the parameter has been negotiated.
+frame.  The SETTINGS_ENABLE_WEBTRANSPORT parameter value SHALL be either "0" or
+"1", with "0" being the default; an endpoint that receives a value different
+from "0" or "1" MUST close the connection with the H3_SETTINGS_ERROR error
+code.  Endpoints MUST NOT use any WebTransport-related functionality unless the
+parameter has been negotiated.
 
 If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
 within HTTP/3 MUST be negotiated as described in
