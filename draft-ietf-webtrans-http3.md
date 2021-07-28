@@ -29,40 +29,6 @@ author:
     email: vasilvv@google.com
 
 normative:
-  QUIC-TRANSPORT:
-    title: "QUIC: A UDP-Based Multiplexed and Secure Transport"
-    date: {DATE}
-    seriesinfo:
-      Internet-Draft: draft-ietf-quic-transport
-    author:
-      -
-        ins: J. Iyengar
-        name: Jana Iyengar
-        org: Fastly
-        role: editor
-      -
-        ins: M. Thomson
-        name: Martin Thomson
-        org: Mozilla
-        role: editor
-  QUIC-DATAGRAM:
-    title: "An Unreliable Datagram Extension to QUIC"
-    date: {DATE}
-    seriesinfo:
-      Internet-Draft: draft-pauly-quic-datagram
-    author:
-      -
-        ins: T. Pauly
-        name: Tommy Pauly
-        org: Apple
-      -
-        ins: E. Kinnear
-        name: Eric Kinnear
-        org: Apple
-      -
-        ins: D. Schinazi
-        name: David Schinazi
-        org: Google
   HTTP3:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
     date: {DATE}
@@ -111,7 +77,7 @@ web API draft corresponding to this document can be found at
 
 # Introduction
 
-HTTP/3 [HTTP3] is a protocol defined on top of QUIC [QUIC-TRANSPORT] that can
+HTTP/3 [HTTP3] is a protocol defined on top of QUIC {{!RFC9000}} that can
 multiplex HTTP requests over a QUIC connection.  This document defines
 a mechanism for multiplexing non-HTTP data with HTTP/3 in a
 manner that conforms with the WebTransport protocol requirements and semantics
@@ -158,7 +124,8 @@ following mechanisms:
   does not define any semantics for server-initiated bidirectional streams.
 * Both client and server can create a unidirectional stream using a special
   stream type.
-* A datagram can be sent using a QUIC DATAGRAM frame [QUIC-DATAGRAM].
+* A datagram can be sent using a QUIC DATAGRAM frame
+  {{!QUIC-DATAGRAM=I-D.ietf-quic-datagram}}.
 
 An WebTransport session is terminated when the CONNECT stream that created it
 is closed.
@@ -177,7 +144,7 @@ parameter has been negotiated.
 
 If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
 within HTTP/3 MUST be negotiated as described in
-{{!HTTP3-DATAGRAM=I-D.schinazi-masque-h3-datagram}}; negotiating WebTransport
+{{!HTTP3-DATAGRAM=I-D.ietf-masque-h3-datagram}}; negotiating WebTransport
 support without negotiating QUIC DATAGRAM extension SHALL result in a
 H3_SETTINGS_ERROR error.
 
@@ -244,7 +211,7 @@ either endpoint.
 
 Session IDs are used to demultiplex streams and datagrams belonging to different
 WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
-variable length integer scheme described in [QUIC-TRANSPORT].
+variable length integer scheme described in {{!RFC9000}}.
 
 ## Unidirectional streams
 
@@ -391,7 +358,7 @@ Description:
 
 Reference:
 
-: This document and {{?I-D.kinnear-webtransport-http2}}
+: This document and {{?I-D.ietf-webtrans-http2}}
 
 ## HTTP/3 SETTINGS Parameter Registration
 
