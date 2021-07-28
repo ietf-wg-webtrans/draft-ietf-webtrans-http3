@@ -246,6 +246,10 @@ Session IDs are used to demultiplex streams and datagrams belonging to different
 WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
 variable length integer scheme described in [QUIC-TRANSPORT].
 
+If at any point a session ID is received that cannot a valid ID for a
+client-initiated bidirectional stream, the recepient MUST close the connection
+with an H3_ID_ERROR error code.
+
 ## Unidirectional streams
 
 Once established, both endpoints can open unidirectional streams.  The HTTP/3
