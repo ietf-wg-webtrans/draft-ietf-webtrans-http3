@@ -139,13 +139,18 @@ MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
 frame.  The SETTINGS_ENABLE_WEBTRANSPORT parameter value SHALL be either "0" or
 "1", with "0" being the default; an endpoint that receives a value other
 than "0" or "1" MUST close the connection with the H3_SETTINGS_ERROR error
-code.  Endpoints MUST NOT use any WebTransport-related functionality unless the
-parameter has been negotiated.
+code.
+
+The client MUST NOT send a WebTransport request until it has received the
+setting indicating WebTransport support from the server.  Similarly, the server
+MUST NOT process any incoming WebTransport requests until the client settings
+have been received, as the client may be using a version of WebTransport
+extension that is different from the one used by the server.
 
 If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
 within HTTP/3 MUST be negotiated as described in
 {{!HTTP3-DATAGRAM=I-D.ietf-masque-h3-datagram}}; negotiating WebTransport
-support without negotiating QUIC DATAGRAM extension SHALL result in a
+support without negotiating HTTP/3 DATAGRAM support SHALL result in a
 H3_SETTINGS_ERROR error.
 
 [HTTP3] requires client's `initial_max_bidi_streams` transport parameter to be
