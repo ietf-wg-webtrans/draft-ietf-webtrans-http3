@@ -148,12 +148,6 @@ within HTTP/3 MUST be negotiated as described in
 support without negotiating QUIC DATAGRAM extension SHALL result in a
 H3_SETTINGS_ERROR error.
 
-[HTTP3] requires client's `initial_max_bidi_streams` transport parameter to be
-set to zero.  Existing implementation might enforce this requirement before
-negotiating settings; thus, the client MUST send a non-zero MAX_STREAMS for
-client-initiated bidirectional streams after receiving an appropriate SETTINGS
-frame from the server.
-
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
