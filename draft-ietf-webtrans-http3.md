@@ -311,10 +311,46 @@ an implementation to choose what stream or datagram to discard.
 
 # Session Termination
 
-An WebTransport session over HTTP/3 is terminated when either endpoint closes
-the stream associated with the CONNECT request that initiated the session.
-Upon learning about the session being terminated, the endpoint MUST stop
-sending new datagrams and reset all of the streams associated with the session.
+An WebTransport session over HTTP/3 is considered terminated when either
+endpoint closes the stream associated with the CONNECT request that initiated
+the session.  Upon learning about the session being terminated, the endpoint
+MUST stop sending new datagrams and reset all of the streams associated with
+the session.
+
+To terminate a session with a detailed error message, an application MAY send
+an HTTP capsule [HTTP3-DATAGRAM] of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
+The format of the capsule SHALL be as follows:
+
+~~~
+CLOSE_WEBTRANSPORT_SESSION Capsule {
+  Application Error Code (64),
+  Application Error Message Length (i),
+  Application Error Message (..1024),
+}
+~~~
+
+CLOSE_WEBTRANSPORT_SESSION has the following fields:
+
+Application Error Code:
+
+: A 64-bit error code provided by the application closing the connection.
+
+Application Error Message:
+
+: An error message string provided by the application closing the connection.
+  The length is specified as a QUIC variable-length integer before it, and MUST
+  NOT exceed 1024 byes.
+
+A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
+side.  If any data is received after CLOSE_WEBTRANSPORT_SESSION, the stream
+MUST be reset with code H3_MESSAGE_ERROR.  The recepient MUST close the stream
+upon receiving a FIN.  If the sender of CLOSE_WEBTRANSPORT_SESSION does not
+receive a FIN after some time, it SHOULD send STOP_SENDING on the CONNECT
+stream.
+
+If a FIN is received on a CONNECT stream without a corresponding
+CLOSE_WEBTRANSPORT_SESSION capsule, the associated session SHALL be considered
+close without an error code or an error string.
 
 # Security Considerations
 
