@@ -179,13 +179,14 @@ Upon receiving an extended CONNECT request with a `:protocol` field set to
 `webtransport`, the HTTP/3 server can check if it has a WebTransport
 server associated with the specified `:authority` and `:path` values.  If it
 does not, it SHOULD reply with status code 404 (Section 6.5.4, {{!RFC7231}}).
-If it does, it MAY accept the session by replying with status code 200.
+If it does, it MAY accept the session by replying with a 2xx series status
+code, as defined in Section 15.3 of {{!SEMANTICS=I-D.ietf-httpbis-semantics}}.
 The WebTransport server MUST verify the `Origin` header to ensure that the
 specified origin is allowed to access the server in question.
 
 From the client's perspective, a WebTransport session is established when the
-client receives a 200 response.  From the server's perspective, a session is
-established once it sends a 200 response.  WebTransport over HTTP/3 does not
+client receives a 2xx response.  From the server's perspective, a session is
+established once it sends a 2xx response.  WebTransport over HTTP/3 does not
 support 0-RTT.
 
 ## Limiting the Number of Simultaneous Sessions
