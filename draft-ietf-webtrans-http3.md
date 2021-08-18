@@ -286,7 +286,7 @@ codes.  An example pseudocode can be seen in {{fig-remap-errors}}.
     last = 0x52e4a40fa9e2
 
     def webtransport_code_to_http_code(n):
-        return first + n + n // 0x1e
+        return first + n + floor(n / 0x1e)
 
     def http_code_to_webtransport_code(h):
         assert(first <= h <= last)
