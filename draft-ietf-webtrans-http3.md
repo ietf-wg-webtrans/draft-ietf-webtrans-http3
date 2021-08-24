@@ -279,7 +279,10 @@ remap those error codes into an error range where 0x00 corresponds to
 0x52e4a40fa8db, and 0xff corresponds to 0x52e4a40fa9e2.  Note that there are
 code points inside that range of form "0x1f * N + 0x21" that are reserved by
 {{Section 8.1 of HTTP3}}; those have to be accounted for when mapping the error
-codes.  An example pseudocode can be seen in {{fig-remap-errors}}.
+codes by skipping them (i.e. the two HTTP/3 error codepoints adjacent to a
+GREASE codepoint would map to two adjacent WebTransport application error
+codepoints).  An example pseudocode can be seen in
+{{fig-remap-errors}}.
 
 ~~~~~~~~~~
     first = 0x52e4a40fa8db
