@@ -392,9 +392,9 @@ Application Error Code:
 
 Application Error Message:
 
-: An error message string provided by the application closing the connection.
-  The length is specified as a QUIC variable-length integer before it, and MUST
-  NOT exceed 1024 byes.
+: A UTF-8 encoded error message string provided by the application closing the
+  connection.  The length is specified as a QUIC variable-length integer before
+  it, and MUST NOT exceed 1024 byes.
 
 A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
 side.  If any additional stream data is received on the CONNECT stream after
