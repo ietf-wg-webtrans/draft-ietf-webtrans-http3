@@ -405,7 +405,7 @@ time, it SHOULD send STOP_SENDING on the CONNECT stream.
 
 If a FIN is received on a CONNECT stream without a corresponding
 CLOSE_WEBTRANSPORT_SESSION capsule, the associated session SHALL be considered
-close with an error code 0 and an empty error string.
+closed with an error code 0 and an empty error string.
 
 # Security Considerations
 
