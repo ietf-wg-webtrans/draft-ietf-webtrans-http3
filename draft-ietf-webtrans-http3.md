@@ -397,11 +397,11 @@ Application Error Message:
   NOT exceed 1024 byes.
 
 A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
-side.  If any data is received after CLOSE_WEBTRANSPORT_SESSION, the stream
-MUST be reset with code H3_MESSAGE_ERROR.  The recepient MUST close the stream
-upon receiving a FIN.  If the sender of CLOSE_WEBTRANSPORT_SESSION does not
-receive a FIN after some time, it SHOULD send STOP_SENDING on the CONNECT
-stream.
+side.  If any additional stream data is received on the CONNECT stream after
+CLOSE_WEBTRANSPORT_SESSION, the stream MUST be reset with code
+H3_MESSAGE_ERROR.  The recepient MUST close the stream upon receiving a FIN.
+If the sender of CLOSE_WEBTRANSPORT_SESSION does not receive a FIN after some
+time, it SHOULD send STOP_SENDING on the CONNECT stream.
 
 If a FIN is received on a CONNECT stream without a corresponding
 CLOSE_WEBTRANSPORT_SESSION capsule, the associated session SHALL be considered
