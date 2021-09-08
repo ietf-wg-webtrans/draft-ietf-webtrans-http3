@@ -139,20 +139,19 @@ MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
 frame.  The SETTINGS_ENABLE_WEBTRANSPORT parameter value SHALL be either "0" or
 "1", with "0" being the default; an endpoint that receives a value other
 than "0" or "1" MUST close the connection with the H3_SETTINGS_ERROR error
-code.  Endpoints MUST NOT use any WebTransport-related functionality unless the
-parameter has been negotiated.
+code.
+
+The client MUST NOT send a WebTransport request until it has received the
+setting indicating WebTransport support from the server.  Similarly, the server
+MUST NOT process any incoming WebTransport requests until the client settings
+have been received, as the client may be using a version of WebTransport
+extension that is different from the one used by the server.
 
 If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
 within HTTP/3 MUST be negotiated as described in
 {{!HTTP3-DATAGRAM=I-D.ietf-masque-h3-datagram}}; negotiating WebTransport
-support without negotiating QUIC DATAGRAM extension SHALL result in a
+support without negotiating HTTP/3 DATAGRAM support SHALL result in a
 H3_SETTINGS_ERROR error.
-
-[HTTP3] requires client's `initial_max_bidi_streams` transport parameter to be
-set to zero.  Existing implementation might enforce this requirement before
-negotiating settings; thus, the client MUST send a non-zero MAX_STREAMS for
-client-initiated bidirectional streams after receiving an appropriate SETTINGS
-frame from the server.
 
 ## Extended CONNECT in HTTP/3
 
@@ -179,13 +178,14 @@ Upon receiving an extended CONNECT request with a `:protocol` field set to
 `webtransport`, the HTTP/3 server can check if it has a WebTransport
 server associated with the specified `:authority` and `:path` values.  If it
 does not, it SHOULD reply with status code 404 (Section 6.5.4, {{!RFC7231}}).
-If it does, it MAY accept the session by replying with status code 200.
+If it does, it MAY accept the session by replying with a 2xx series status
+code, as defined in Section 15.3 of {{!SEMANTICS=I-D.ietf-httpbis-semantics}}.
 The WebTransport server MUST verify the `Origin` header to ensure that the
 specified origin is allowed to access the server in question.
 
 From the client's perspective, a WebTransport session is established when the
-client receives a 200 response.  From the server's perspective, a session is
-established once it sends a 200 response.  WebTransport over HTTP/3 does not
+client receives a 2xx response.  From the server's perspective, a session is
+established once it sends a 2xx response.  WebTransport over HTTP/3 does not
 support 0-RTT.
 
 ## Limiting the Number of Simultaneous Sessions
@@ -212,6 +212,10 @@ either endpoint.
 Session IDs are used to demultiplex streams and datagrams belonging to different
 WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
 variable length integer scheme described in {{!RFC9000}}.
+
+If at any point a session ID is received that cannot a valid ID for a
+client-initiated bidirectional stream, the recepient MUST close the connection
+with an H3_ID_ERROR error code.
 
 ## Unidirectional streams
 
@@ -264,6 +268,57 @@ within server-initiated bidirectional streams is WEBTRANSPORT_STREAM.
 
 TODO: move the paragraph above into a separate draft; define what happens with
 already existing HTTP/3 frames on server-initiated bidirectional streams.
+
+## Resetting Data Streams
+
+A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING frame for a
+WebTransport data stream.  Those signals are propagated by the WebTransport
+implementation to the application.
+
+A WebTransport application SHALL provide an error code for those operations.
+Since WebTransport shares the error code space with HTTP/3, WebTransport
+application errors for streams are limited to an unsigned 8-bit integer,
+assuming values between 0x00 and 0xff.  WebTransport implementations SHALL
+remap those error codes into an error range where 0x00 corresponds to
+0x52e4a40fa8db, and 0xff corresponds to 0x52e4a40fa9e2.  Note that there are
+code points inside that range of form "0x1f * N + 0x21" that are reserved by
+{{Section 8.1 of HTTP3}}; those have to be accounted for when mapping the error
+codes by skipping them (i.e. the two HTTP/3 error codepoints adjacent to a
+GREASE codepoint would map to two adjacent WebTransport application error
+codepoints).  An example pseudocode can be seen in
+{{fig-remap-errors}}.
+
+~~~~~~~~~~
+    first = 0x52e4a40fa8db
+    last = 0x52e4a40fa9e2
+
+    def webtransport_code_to_http_code(n):
+        return first + n + floor(n / 0x1e)
+
+    def http_code_to_webtransport_code(h):
+        assert(first <= h <= last)
+        assert((h - 0x21) % 0x1f != 0)
+        shifted = h - first
+        return shifted - shifted // 0x1f
+~~~~~~~~~~
+{: #fig-remap-errors title="Pseudocode for converting between WebTransport
+application errors and HTTP/3 error codes; here, `//` is integer division" }
+
+WebTransport data streams are associated with sessions through a header at the
+beginning of the stream; resetting a stream may result in that data being
+discarded.  Because of that, WebTransport application error codes are best
+effort, as the WebTransport stack is not always capable of associating the
+reset code with a session.  The only exception is the situation where there is
+only one session on a given HTTP/3 connection, and no intermediaries between
+the client and the server.
+
+WebTransport implementations SHALL forward the error code for a stream
+associated with a known session to the application that owns that session;
+similarly, the intermediaries SHALL reset the streams with corresponding error
+code when receiving a reset from the peer.  If a WebTransport implementation
+intentionally allows only one session over a given HTTP/3 connection, it SHALL
+forward the error codes within WebTransport application error code range to the
+application that owns the only session on that connection.
 
 ## Datagrams
 
@@ -480,6 +535,26 @@ Value:
 Description:
 
 : WebTransport data stream rejected due to lack of associated session.
+
+Specification:
+
+: This document.
+
+In addition, the following range of entries is registered:
+
+Name:
+
+: H3_WEBTRANSPORT_APPLICATION_00 ... H3_WEBTRANSPORT_APPLICATION_FF
+
+Value:
+
+: 0x52e4a40fa8db to 0x52e4a40fa9e2 inclusive, with the exception of
+  0x52e4a40fa8f9, 0x52e4a40fa918, 0x52e4a40fa937, 0x52e4a40fa956,
+  0x52e4a40fa975, 0x52e4a40fa994, 0x52e4a40fa9b3, and 0x52e4a40fa9d2.
+
+Description:
+
+: WebTransport application error codes.
 
 Specification:
 
