@@ -274,6 +274,57 @@ within server-initiated bidirectional streams is WEBTRANSPORT_STREAM.
 TODO: move the paragraph above into a separate draft; define what happens with
 already existing HTTP/3 frames on server-initiated bidirectional streams.
 
+## Resetting Data Streams
+
+A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING frame for a
+WebTransport data stream.  Those signals are propagated by the WebTransport
+implementation to the application.
+
+A WebTransport application SHALL provide an error code for those operations.
+Since WebTransport shares the error code space with HTTP/3, WebTransport
+application errors for streams are limited to an unsigned 8-bit integer,
+assuming values between 0x00 and 0xff.  WebTransport implementations SHALL
+remap those error codes into an error range where 0x00 corresponds to
+0x52e4a40fa8db, and 0xff corresponds to 0x52e4a40fa9e2.  Note that there are
+code points inside that range of form "0x1f * N + 0x21" that are reserved by
+{{Section 8.1 of HTTP3}}; those have to be accounted for when mapping the error
+codes by skipping them (i.e. the two HTTP/3 error codepoints adjacent to a
+GREASE codepoint would map to two adjacent WebTransport application error
+codepoints).  An example pseudocode can be seen in
+{{fig-remap-errors}}.
+
+~~~~~~~~~~
+    first = 0x52e4a40fa8db
+    last = 0x52e4a40fa9e2
+
+    def webtransport_code_to_http_code(n):
+        return first + n + floor(n / 0x1e)
+
+    def http_code_to_webtransport_code(h):
+        assert(first <= h <= last)
+        assert((h - 0x21) % 0x1f != 0)
+        shifted = h - first
+        return shifted - shifted // 0x1f
+~~~~~~~~~~
+{: #fig-remap-errors title="Pseudocode for converting between WebTransport
+application errors and HTTP/3 error codes; here, `//` is integer division" }
+
+WebTransport data streams are associated with sessions through a header at the
+beginning of the stream; resetting a stream may result in that data being
+discarded.  Because of that, WebTransport application error codes are best
+effort, as the WebTransport stack is not always capable of associating the
+reset code with a session.  The only exception is the situation where there is
+only one session on a given HTTP/3 connection, and no intermediaries between
+the client and the server.
+
+WebTransport implementations SHALL forward the error code for a stream
+associated with a known session to the application that owns that session;
+similarly, the intermediaries SHALL reset the streams with corresponding error
+code when receiving a reset from the peer.  If a WebTransport implementation
+intentionally allows only one session over a given HTTP/3 connection, it SHALL
+forward the error codes within WebTransport application error code range to the
+application that owns the only session on that connection.
+
 ## Datagrams
 
 Datagrams can be sent using the DATAGRAM frame as defined in [QUIC-DATAGRAM]
@@ -453,6 +504,26 @@ Value:
 Description:
 
 : WebTransport data stream rejected due to lack of associated session.
+
+Specification:
+
+: This document.
+
+In addition, the following range of entries is registered:
+
+Name:
+
+: H3_WEBTRANSPORT_APPLICATION_00 ... H3_WEBTRANSPORT_APPLICATION_FF
+
+Value:
+
+: 0x52e4a40fa8db to 0x52e4a40fa9e2 inclusive, with the exception of
+  0x52e4a40fa8f9, 0x52e4a40fa918, 0x52e4a40fa937, 0x52e4a40fa956,
+  0x52e4a40fa975, 0x52e4a40fa994, 0x52e4a40fa9b3, and 0x52e4a40fa9d2.
+
+Description:
+
+: WebTransport application error codes.
 
 Specification:
 
