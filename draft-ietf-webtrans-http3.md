@@ -378,7 +378,7 @@ The format of the capsule SHALL be as follows:
 
 ~~~
 CLOSE_WEBTRANSPORT_SESSION Capsule {
-  Application Error Code (64),
+  Application Error Code (32),
   Application Error Message Length (i),
   Application Error Message (..1024),
 }
@@ -388,7 +388,7 @@ CLOSE_WEBTRANSPORT_SESSION has the following fields:
 
 Application Error Code:
 
-: A 64-bit error code provided by the application closing the connection.
+: A 32-bit error code provided by the application closing the connection.
 
 Application Error Message:
 
