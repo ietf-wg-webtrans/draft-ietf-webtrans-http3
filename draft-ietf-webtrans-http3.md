@@ -366,7 +366,7 @@ an implementation to choose what stream or datagram to discard.
 
 # Session Termination
 
-An WebTransport session over HTTP/3 is considered terminated when either
+A WebTransport session over HTTP/3 is considered terminated when either
 endpoint closes the stream associated with the CONNECT request that initiated
 the session.  Upon learning about the session being terminated, the endpoint
 MUST stop sending new datagrams and reset all of the streams associated with
@@ -394,18 +394,18 @@ Application Error Message:
 
 : A UTF-8 encoded error message string provided by the application closing the
   connection.  The length is specified as a QUIC variable-length integer before
-  it, and MUST NOT exceed 1024 byes.
+  it, and MUST NOT exceed 1024 bytes.
 
 A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
 side.  If any additional stream data is received on the CONNECT stream after
 CLOSE_WEBTRANSPORT_SESSION, the stream MUST be reset with code
-H3_MESSAGE_ERROR.  The recepient MUST close the stream upon receiving a FIN.
+H3_MESSAGE_ERROR.  The recipient MUST close the stream upon receiving a FIN.
 If the sender of CLOSE_WEBTRANSPORT_SESSION does not receive a FIN after some
 time, it SHOULD send STOP_SENDING on the CONNECT stream.
 
 If a FIN is received on a CONNECT stream without a corresponding
 CLOSE_WEBTRANSPORT_SESSION capsule, the associated session SHALL be considered
-closed with an error code 0 and an empty error string.
+closed with an error code of 0 and an empty error string.
 
 # Security Considerations
 
