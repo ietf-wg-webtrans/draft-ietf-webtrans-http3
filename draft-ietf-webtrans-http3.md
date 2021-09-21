@@ -182,6 +182,9 @@ client receives a 2xx response.  From the server's perspective, a session is
 established once it sends a 2xx response.  WebTransport over HTTP/3 does not
 support 0-RTT.
 
+The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
+{{HTTP-DATAGRAM}}.
+
 ## Limiting the Number of Simultaneous Sessions
 
 From the flow control perspective, WebTransport sessions count against the
