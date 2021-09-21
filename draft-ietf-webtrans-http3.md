@@ -379,8 +379,7 @@ The format of the capsule SHALL be as follows:
 ~~~
 CLOSE_WEBTRANSPORT_SESSION Capsule {
   Application Error Code (32),
-  Application Error Message Length (i),
-  Application Error Message (..1024),
+  Application Error Message (..8192),
 }
 ~~~
 
@@ -393,8 +392,8 @@ Application Error Code:
 Application Error Message:
 
 : A UTF-8 encoded error message string provided by the application closing the
-  connection.  The length is specified as a QUIC variable-length integer before
-  it, and MUST NOT exceed 1024 bytes.
+  connection.  The message takes up the remainer of the capsule, and its
+  length MUST NOT exceed 1024 bytes.
 
 A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
 side.  If any additional stream data is received on the CONNECT stream after
