@@ -124,8 +124,8 @@ following mechanisms:
   does not define any semantics for server-initiated bidirectional streams.
 * Both client and server can create a unidirectional stream using a special
   stream type.
-* A datagram can be sent using a QUIC DATAGRAM frame
-  {{!QUIC-DATAGRAM=I-D.ietf-quic-datagram}}.
+* A datagram can be sent using HTTP Datagrams
+  {{!HTTP-DATAGRAM=I-D.ietf-masque-h3-datagram}}.
 
 An WebTransport session is terminated when the CONNECT stream that created it
 is closed.
@@ -146,12 +146,6 @@ setting indicating WebTransport support from the server.  Similarly, the server
 MUST NOT process any incoming WebTransport requests until the client settings
 have been received, as the client may be using a version of WebTransport
 extension that is different from the one used by the server.
-
-If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
-within HTTP/3 MUST be negotiated as described in
-{{!HTTP3-DATAGRAM=I-D.ietf-masque-h3-datagram}}; negotiating WebTransport
-support without negotiating HTTP/3 DATAGRAM support SHALL result in a
-H3_SETTINGS_ERROR error.
 
 ## Extended CONNECT in HTTP/3
 
@@ -322,22 +316,10 @@ application that owns the only session on that connection.
 
 ## Datagrams
 
-Datagrams can be sent using the DATAGRAM frame as defined in [QUIC-DATAGRAM]
-and [HTTP3-DATAGRAM].  For all HTTP/3 connections in which the
-SETTINGS_ENABLE_WEBTRANSPORT option is negotiated, the Flow Identifier is set
-to the session ID.  In other words, the format of datagrams SHALL be the
-session ID, followed by the user-specified payload ({{fig-datagram}}).
-
-~~~~~~~~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                        Session ID (i)                       ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                        Datagram Body                        ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-~~~~~~~~~~
-{: #fig-datagram title="Datagram format"}
+Datagrams can be sent using HTTP Datagrams, using the WEB_TRANSPORT HTTP
+Datagram Format Type (see value in {{iana-format-type}}). When using the
+WEB_TRANSPORT HTTP Datagram Format Type, the WebTransport datagram payload is
+sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram.
 
 In QUIC, a datagram frame can span at most one packet.  Because of that, the
 applications have to know the maximum size of the datagram they can send.
@@ -523,5 +505,15 @@ Description:
 Specification:
 
 : This document.
+
+## Datagram Format Type {#iana-format-type}
+
+This document will request IANA to register WEB_TRANSPORT in the "HTTP Datagram
+Format Types" registry established by {{HTTP-DATAGRAM}}.
+
+|      Type     |   Value   | Specification |
+|:--------------|:----------|:--------------|
+| WEB_TRANSPORT | 0xff7c00  | This Document |
+{: #iana-format-type-table title="Registered Datagram Format Type"}
 
 --- back
