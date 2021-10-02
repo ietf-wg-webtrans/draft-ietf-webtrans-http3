@@ -373,7 +373,7 @@ MUST stop sending new datagrams and reset all of the streams associated with
 the session.
 
 To terminate a session with a detailed error message, an application MAY send
-an HTTP capsule [HTTP3-DATAGRAM] of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
+an HTTP capsule {{HTTP-DATAGRAM}} of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
 The format of the capsule SHALL be as follows:
 
 ~~~
