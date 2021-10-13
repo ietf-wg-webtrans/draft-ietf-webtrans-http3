@@ -405,9 +405,10 @@ H3_MESSAGE_ERROR.  The recipient MUST close the stream upon receiving a FIN.
 If the sender of CLOSE_WEBTRANSPORT_SESSION does not receive a FIN after some
 time, it SHOULD send STOP_SENDING on the CONNECT stream.
 
-If a FIN is received on a CONNECT stream without a corresponding
-CLOSE_WEBTRANSPORT_SESSION capsule, the associated session SHALL be considered
-closed with an error code of 0 and an empty error string.
+Cleanly terminating a CONNECT stream without a CLOSE_WEBTRANSPORT_SESSION
+capsule SHALL be semantically equivalent to terminating it with a
+CLOSE_WEBTRANSPORT_SESSION capsule that has an error code of 0 and an empty
+error string.
 
 # Security Considerations
 
