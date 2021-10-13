@@ -149,7 +149,7 @@ extension that is different from the one used by the server.
 
 If SETTINGS_ENABLE_WEBTRANSPORT is negotiated, support for the QUIC DATAGRAMs
 within HTTP/3 MUST be negotiated as described in
-{{!HTTP3-DATAGRAM=I-D.ietf-masque-h3-datagram}}; negotiating WebTransport
+{{!HTTP-DATAGRAM=I-D.ietf-masque-h3-datagram}}; negotiating WebTransport
 support without negotiating HTTP/3 DATAGRAM support SHALL result in a
 H3_SETTINGS_ERROR error.
 
