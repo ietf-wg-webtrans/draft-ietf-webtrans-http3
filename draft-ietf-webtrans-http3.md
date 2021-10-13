@@ -366,11 +366,14 @@ an implementation to choose what stream or datagram to discard.
 
 # Session Termination
 
-A WebTransport session over HTTP/3 is considered terminated when either
-endpoint closes the stream associated with the CONNECT request that initiated
-the session.  Upon learning about the session being terminated, the endpoint
-MUST stop sending new datagrams and reset all of the streams associated with
-the session.
+A WebTransport session over HTTP/3 is considered terminated when either of the
+following conditions is met:
+
+* the CONNECT stream is closed, either cleanly or abruptly, on either side; or
+* a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.
+
+Upon learning about the session being terminated, the endpoint MUST stop
+sending new datagrams and reset all of the streams associated with the session.
 
 To terminate a session with a detailed error message, an application MAY send
 an HTTP capsule {{HTTP-DATAGRAM}} of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
