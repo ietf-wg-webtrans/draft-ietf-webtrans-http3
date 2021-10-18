@@ -381,6 +381,8 @@ The format of the capsule SHALL be as follows:
 
 ~~~
 CLOSE_WEBTRANSPORT_SESSION Capsule {
+  Type (i) = CLOSE_WEBTRANSPORT_SESSION,
+  Length (i),
   Application Error Code (32),
   Application Error Message (..8192),
 }
