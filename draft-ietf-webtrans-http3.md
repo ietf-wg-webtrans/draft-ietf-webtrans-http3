@@ -372,8 +372,9 @@ following conditions is met:
 * the CONNECT stream is closed, either cleanly or abruptly, on either side; or
 * a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.
 
-Upon learning about the session being terminated, the endpoint MUST stop
-sending new datagrams and reset all of the streams associated with the session.
+Upon learning that the session has been terminated, the endpoint MUST reset all
+of the streams associated with the session; it MUST NOT send any new datagrams
+or open any new streams.
 
 To terminate a session with a detailed error message, an application MAY send
 an HTTP capsule {{HTTP-DATAGRAM}} of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
