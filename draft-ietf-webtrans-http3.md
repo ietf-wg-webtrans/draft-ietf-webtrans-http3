@@ -353,10 +353,52 @@ an implementation to choose what stream or datagram to discard.
 
 # Session Termination
 
-An WebTransport session over HTTP/3 is terminated when either endpoint closes
-the stream associated with the CONNECT request that initiated the session.
-Upon learning about the session being terminated, the endpoint MUST stop
-sending new datagrams and reset all of the streams associated with the session.
+A WebTransport session over HTTP/3 is considered terminated when either of the
+following conditions is met:
+
+* the CONNECT stream is closed, either cleanly or abruptly, on either side; or
+* a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.
+
+Upon learning that the session has been terminated, the endpoint MUST reset all
+of the streams associated with the session; it MUST NOT send any new datagrams
+or open any new streams.
+
+To terminate a session with a detailed error message, an application MAY send
+an HTTP capsule {{HTTP-DATAGRAM}} of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
+The format of the capsule SHALL be as follows:
+
+~~~
+CLOSE_WEBTRANSPORT_SESSION Capsule {
+  Type (i) = CLOSE_WEBTRANSPORT_SESSION,
+  Length (i),
+  Application Error Code (32),
+  Application Error Message (..8192),
+}
+~~~
+
+CLOSE_WEBTRANSPORT_SESSION has the following fields:
+
+Application Error Code:
+
+: A 32-bit error code provided by the application closing the connection.
+
+Application Error Message:
+
+: A UTF-8 encoded error message string provided by the application closing the
+  connection.  The message takes up the remainer of the capsule, and its
+  length MUST NOT exceed 1024 bytes.
+
+A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
+side.  If any additional stream data is received on the CONNECT stream after
+CLOSE_WEBTRANSPORT_SESSION, the stream MUST be reset with code
+H3_MESSAGE_ERROR.  The recipient MUST close the stream upon receiving a FIN.
+If the sender of CLOSE_WEBTRANSPORT_SESSION does not receive a FIN after some
+time, it SHOULD send STOP_SENDING on the CONNECT stream.
+
+Cleanly terminating a CONNECT stream without a CLOSE_WEBTRANSPORT_SESSION
+capsule SHALL be semantically equivalent to terminating it with a
+CLOSE_WEBTRANSPORT_SESSION capsule that has an error code of 0 and an empty
+error string.
 
 # Security Considerations
 
