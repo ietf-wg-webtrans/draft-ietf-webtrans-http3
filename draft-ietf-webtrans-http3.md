@@ -411,8 +411,8 @@ The hop-by-hop wire format aspects of the protocol are negotiated by changing
 the codepoint used for the SETTINGS_ENABLE_WEBTRANSPORT parameter.  Because
 of that, any WebTransport endpoint MUST wait for the peer's SETTINGS frame
 before sending or processing any WebTransport traffic.  When multiple versions
-are supported by both of the peers, the highest version supported by both is
-selected.
+are supported by both of the peers, the most recent version supported by both
+is selected.
 
 The data exchanged over the CONNECT stream is transmitted across
 intermediaries, and thus cannot be versioned using a SETTINGS parameter.  To
