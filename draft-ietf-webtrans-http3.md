@@ -400,6 +400,29 @@ capsule SHALL be semantically equivalent to terminating it with a
 CLOSE_WEBTRANSPORT_SESSION capsule that has an error code of 0 and an empty
 error string.
 
+# Negotiating the Draft Version
+
+\[\[RFC editor: please remove this section before publication.]]
+
+WebTransport over HTTP/3 uses two different mechanisms to negotiate versions
+for the different parts of the draft.
+
+The hop-by-hop wire format aspects of the protocol are negotiated by changing
+the codepoint used for the SETTINGS_ENABLE_WEBTRANSPORT parameter.  Because
+of that, any WebTransport endpoint MUST wait for the peer's SETTINGS frame
+before sending or processing any WebTransport traffic.  When multiple versions
+are supported by both of the peers, the most recent version supported by both
+is selected.
+
+The data exchanged over the CONNECT stream is transmitted across
+intermediaries, and thus cannot be versioned using a SETTINGS parameter.  To
+indicate support for different versions of the protocol defined in this draft,
+the clients SHALL send a header for each version of the draft supported.  The
+header corresponding to the version described in this draft is
+`Sec-Webtransport-Http3-Draft02`; its value SHALL be `1`.  The server SHALL
+reply with a `Sec-Webtransport-Http3-Draft` header indicating the selected
+version; its value SHALL be `draft02` for the version described in this draft.
+
 # Security Considerations
 
 WebTransport over HTTP/3 satisfies all of the security requirements imposed by
