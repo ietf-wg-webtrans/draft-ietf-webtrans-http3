@@ -319,12 +319,8 @@ application that owns the only session on that connection.
 
 ## Datagrams
 
-Datagrams can be sent using HTTP Datagrams, using the WEB_TRANSPORT HTTP
-Datagram Format Type (see value in {{iana-format-type}}). When using the
-WEB_TRANSPORT HTTP Datagram Format Type, the WebTransport datagram payload is
-sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram. When
-sending a registration capsule using the "Datagram Format Type" set to
-WEB_TRANSPORT, the "Datagram Format Additional Data" field SHALL be empty.
+Datagrams can be sent using HTTP Datagrams. The WebTransport datagram payload is
+sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram.
 
 In QUIC, a datagram frame can span at most one packet.  Because of that, the
 applications have to know the maximum size of the datagram they can send.
@@ -575,15 +571,5 @@ Description:
 Specification:
 
 : This document.
-
-## Datagram Format Type {#iana-format-type}
-
-This document will request IANA to register WEB_TRANSPORT in the "HTTP Datagram
-Format Types" registry established by {{HTTP-DATAGRAM}}.
-
-|      Type     |   Value   | Specification |
-|:--------------|:----------|:--------------|
-| WEB_TRANSPORT | 0xff7c00  | This Document |
-{: #iana-format-type-table title="Registered Datagram Format Type"}
 
 --- back
