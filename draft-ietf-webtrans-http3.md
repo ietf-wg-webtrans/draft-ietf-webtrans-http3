@@ -322,12 +322,6 @@ application that owns the only session on that connection.
 Datagrams can be sent using HTTP Datagrams. The WebTransport datagram payload is
 sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram.
 
-In QUIC, a datagram frame can span at most one packet.  Because of that, the
-applications have to know the maximum size of the datagram they can send.
-However, when proxying the datagrams, the hop-by-hop MTUs can vary.
-TODO: Describe how the path MTU can be computed, specifically propagation across
-HTTP proxies.
-
 ## Buffering Incoming Streams and Datagrams
 
 In WebTransport over HTTP/3, the client MAY send its SETTINGS frame, as well as
