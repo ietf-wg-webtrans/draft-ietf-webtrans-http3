@@ -419,11 +419,11 @@ WebTransport over HTTP/3 satisfies all of the security requirements imposed by
 [OVERVIEW] on WebTransport protocols, thus providing a secure framework for
 client-server communication in cases when the client is potentially untrusted.
 
-WebTransport over HTTP/3 requires explicit opt-in through the use of a QUIC
-transport parameter; this avoids potential protocol confusion attacks by
-ensuring the HTTP/3 server explicitly supports it.  It also requires the use of
-the Origin header, providing the server with the ability to deny access to
-Web-based clients that do not originate from a trusted origin.
+WebTransport over HTTP/3 requires explicit opt-in through the use of an HTTP/3
+setting; this avoids potential protocol confusion attacks by ensuring the
+HTTP/3 server explicitly supports it.  It also requires the use of the Origin
+header, providing the server with the ability to deny access to Web-based
+clients that do not originate from a trusted origin.
 
 Just like HTTP traffic going over HTTP/3, WebTransport pools traffic to different origins
 within a single connection.  Different origins imply different trust domains,
