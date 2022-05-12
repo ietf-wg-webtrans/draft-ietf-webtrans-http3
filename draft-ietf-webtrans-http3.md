@@ -317,8 +317,8 @@ exhaustion, the endpoints MUST limit the number of buffered streams and
 datagrams.  When the number of buffered streams is exceeded, a stream SHALL be
 closed by sending a RESET_STREAM and/or STOP_SENDING with the
 `H3_WEBTRANSPORT_BUFFERED_STREAM_REJECTED` error code.  When the number of
-buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to
-an implementation to choose what stream or datagram to discard.
+buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to an
+implementation to choose what stream or datagram to discard.
 
 ## Interaction with HTTP/3 GOAWAY frame
 
@@ -572,5 +572,34 @@ Description:
 Specification:
 
 : This document.
+
+## Capsule Types
+
+The following entry is added to the "HTTP Capsule Types" registry established
+by {{HTTP-DATAGRAM}}:
+
+The `CLOSE_WEBTRANSPORT_SESSION` capsule.
+
+Value:
+: 0x2843
+
+Capsule Type:
+: CLOSE_WEBTRANSPORT_SESSION
+
+Status:
+: permanent
+
+Specification:
+: This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
+
+Notes:
+: None
+{: spacing="compact"}
 
 --- back
