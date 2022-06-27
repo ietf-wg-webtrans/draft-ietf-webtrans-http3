@@ -350,8 +350,9 @@ following conditions is met:
 * a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.
 
 Upon learning that the session has been terminated, the endpoint MUST reset all
-of the streams associated with the session; it MUST NOT send any new datagrams
-or open any new streams.
+of the streams associated with the session with the
+H3_WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
+open any new streams.
 
 To terminate a session with a detailed error message, an application MAY send
 an HTTP capsule {{HTTP-DATAGRAM}} of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
@@ -541,6 +542,23 @@ Value:
 Description:
 
 : WebTransport data stream rejected due to lack of associated session.
+
+Specification:
+
+: This document.
+
+Name:
+
+: H3_WEBTRANSPORT_SESSION_GONE
+
+Value:
+
+: 0x170d7b68
+
+Description:
+
+: WebTransport data stream reset because the associated WebTransport session
+  has been closed.
 
 Specification:
 
