@@ -147,6 +147,12 @@ MUST NOT process any incoming WebTransport requests until the client settings
 have been received, as the client may be using a version of WebTransport
 extension that is different from the one used by the server.
 
+In addition to the setting above, the server MUST send a
+SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter indicating the maximum number of
+concurrent sessions it is willing to receive.  The default value for the
+SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter is "0", meaning that the server is
+not willing to receive any WebTransport sessions.
+
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
@@ -187,18 +193,15 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 
 ## Limiting the Number of Simultaneous Sessions
 
-From the flow control perspective, WebTransport sessions count against the
-stream flow control just like regular HTTP requests, since they are established
-via an HTTP CONNECT request.  This document does not make any effort to
-introduce a separate flow control mechanism for sessions, nor to separate HTTP
-requests from WebTransport data streams.  If the server needs to limit the rate
-of incoming requests, it has alternative mechanisms at its disposal:
-
-* `HTTP_REQUEST_REJECTED` error code defined in [HTTP3] indicates to the
-  receiving HTTP/3 stack that the request was not processed in any way.
-* HTTP status code 429 indicates that the request was rejected due to rate
-  limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
-  propagated to the application.
+This document defines a SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter that
+allows the server to limit the maximum number of concurrent WebTransport
+sessions on a single HTTP/3 connection.  The client MUST NOT open more sessions
+than indicated in the server SETTINGS parameters.  The server MUST NOT close
+the connection if the client opens sessions exceeding this limit, as the client
+and the server do not have a consistent view of how many streams are open due
+to the asynchronous nature of the protocol; instead, it MUST reset all of the
+CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
+status defined in [HTTP3].
 
 # WebTransport Features
 
@@ -471,7 +474,7 @@ Setting Name:
 
 Value:
 
-: 0x2b603742
+: 0x8b422342
 
 Default:
 
