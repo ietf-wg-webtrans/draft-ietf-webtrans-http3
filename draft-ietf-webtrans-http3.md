@@ -341,6 +341,15 @@ closed by sending a RESET_STREAM and/or STOP_SENDING with the
 buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to
 an implementation to choose what stream or datagram to discard.
 
+## Interaction with HTTP/3 GOAWAY frame
+
+HTTP/3 defines a graceful shutdown mechanism (Section 5.2 of [HTTP3]) that
+allows a peer to send a GOAWAY frame indicating that it will no longer accept
+any new incoming requests or pushes.  This mechanism applies to the CONNECT
+requests for new WebTransport sessions.  A GOAWAY frame does not affect data
+streams for existing WebTransport sessions; those can continue to be opened
+even after the GOAWAY frame has been sent or received.
+
 # Session Termination
 
 A WebTransport session over HTTP/3 is considered terminated when either of the
