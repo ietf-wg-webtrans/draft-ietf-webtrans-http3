@@ -29,17 +29,6 @@ author:
     email: vasilvv@google.com
 
 normative:
-  HTTP3:
-    title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
-    date: {DATE}
-    seriesinfo:
-      Internet-Draft: draft-ietf-quic-http
-    author:
-      -
-        ins: M. Bishop
-        name: Mike Bishop
-        org: Akamai
-        role: editor
   OVERVIEW:
     title: "The WebTransport Protocol Framework"
     date: {DATE}
@@ -55,12 +44,12 @@ informative:
 
 --- abstract
 
-WebTransport [OVERVIEW] is a protocol framework that enables clients
-constrained by the Web security model to communicate with a remote server using
-a secure multiplexed transport.  This document describes a WebTransport
-protocol that is based on HTTP/3 [HTTP3] and provides support for
-unidirectional streams, bidirectional streams and datagrams, all multiplexed
-within the same HTTP/3 connection.
+WebTransport {{!OVERVIEW=I-D.ietf-webtrans-overview}} is a protocol framework
+that enables clients constrained by the Web security model to communicate with
+a remote server using a secure multiplexed transport.  This document describes
+a WebTransport protocol that is based on HTTP/3 {{!HTTP3=RFC9114}} and provides
+support for unidirectional streams, bidirectional streams and datagrams, all
+multiplexed within the same HTTP/3 connection.
 
 --- note_Note_to_Readers
 
@@ -159,7 +148,7 @@ CONNECT.
 ## Creating a New Session
 
 As WebTransport sessions are established over HTTP/3, they are identified
-using the `https` URI scheme {{!RFC7230}}.
+using the `https` URI scheme ([HTTP], Section 4.2.2).
 
 In order to create a new WebTransport session, a client can send an HTTP
 CONNECT request.  The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be
@@ -171,11 +160,11 @@ within the request.
 Upon receiving an extended CONNECT request with a `:protocol` field set to
 `webtransport`, the HTTP/3 server can check if it has a WebTransport
 server associated with the specified `:authority` and `:path` values.  If it
-does not, it SHOULD reply with status code 404 (Section 6.5.4, {{!RFC7231}}).
+does not, it SHOULD reply with status code 404 (Section 15.5.4, [HTTP]).
 If it does, it MAY accept the session by replying with a 2xx series status
-code, as defined in Section 15.3 of {{!SEMANTICS=I-D.ietf-httpbis-semantics}}.
-The WebTransport server MUST verify the `Origin` header to ensure that the
-specified origin is allowed to access the server in question.
+code, as defined in Section 15.3 of {{!HTTP=RFC9110}}.  The WebTransport
+server MUST verify the `Origin` header to ensure that the specified origin is
+allowed to access the server in question.
 
 From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
@@ -441,7 +430,7 @@ data and to opening new streams.
 ## Upgrade Token Registration
 
 The following entry is added to the "Hypertext Transfer Protocol (HTTP) Upgrade
-Token Registry" registry established by {{!RFC7230}}:
+Token Registry" registry established by Section 16.7 of [HTTP].
 
 The "webtransport" label identifies HTTP/3 used as a protocol for WebTransport:
 
