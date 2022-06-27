@@ -29,16 +29,6 @@ author:
     email: vasilvv@google.com
 
 normative:
-  OVERVIEW:
-    title: "The WebTransport Protocol Framework"
-    date: {DATE}
-    seriesinfo:
-      Internet-Draft: draft-ietf-webtrans-overview-latest
-    author:
-      -
-        ins: V. Vasiliev
-        name: Victor Vasiliev
-        organization: Google
 
 informative:
 
