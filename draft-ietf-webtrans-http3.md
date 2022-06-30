@@ -349,8 +349,9 @@ following conditions is met:
 * the CONNECT stream is closed, either cleanly or abruptly, on either side; or
 * a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.
 
-Upon learning that the session has been terminated, the endpoint MUST reset all
-of the streams associated with the session with the
+Upon learning that the session has been terminated, the endpoint MUST reset the
+send side and abort reading on the receive side of all of the streams
+associated with the session (see Section 2.4 of {{!RFC9000}}) using the
 H3_WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
 open any new streams.
 
