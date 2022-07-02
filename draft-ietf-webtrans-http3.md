@@ -452,7 +452,7 @@ Reference:
 
 ## HTTP/3 SETTINGS Parameter Registration
 
-The following entry is added to the "HTTP/3 Settings" registry established by
+The following entries are added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
 The `SETTINGS_ENABLE_WEBTRANSPORT` parameter indicates that the specified
@@ -465,6 +465,26 @@ Setting Name:
 Value:
 
 : 0x2b603742
+
+Default:
+
+: 0
+
+Specification:
+
+: This document
+
+The `SETTINGS_WEBTRANSPORT_MAX_SESSIONS` parameter indicates that the specified
+HTTP/3 server is WebTransport-capable and the number of concurrent sessions
+it is willing to receive.
+
+Setting Name:
+
+: WEBTRANSPORT_MAX_SESSIONS
+
+Value:
+
+: 0x2b603743
 
 Default:
 
