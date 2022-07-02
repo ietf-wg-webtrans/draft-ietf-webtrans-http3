@@ -472,11 +472,11 @@ before sending or processing any WebTransport traffic.  When multiple versions
 are supported by both of the peers, the most recent version supported by both
 is selected.
 
-The data exchanged over the CONNECT stream is transmitted across
-intermediaries, and thus cannot be versioned using a SETTINGS parameter.  To
-indicate support for different versions of the protocol defined in this draft,
-the clients SHALL send a header for each version of the draft supported.  The
-header corresponding to the version described in this draft is
+The data exchanged over the CONNECT stream is transmitted across intermediaries,
+and thus cannot be versioned using a SETTINGS parameter.  To indicate support
+for different versions of the protocol defined in this draft, the clients SHALL
+send a header for each version of the draft supported.  The header
+corresponding to the version described in this draft is
 `Sec-Webtransport-Http3-Draft02`; its value SHALL be `1`.  The server SHALL
 reply with a `Sec-Webtransport-Http3-Draft` header indicating the selected
 version; its value SHALL be `draft02` for the version described in this draft.
@@ -493,16 +493,16 @@ HTTP/3 server explicitly supports it.  It also requires the use of the Origin
 header, providing the server with the ability to deny access to Web-based
 clients that do not originate from a trusted origin.
 
-Just like HTTP traffic going over HTTP/3, WebTransport pools traffic to different origins
-within a single connection.  Different origins imply different trust domains,
-meaning that the implementations have to treat each transport as potentially
-hostile towards others on the same connection.  One potential attack is a
-resource exhaustion attack: since all of the transports share both congestion
-control and flow control context, a single client aggressively using up those
-resources can cause other transports to stall.  The user agent thus SHOULD
-implement a fairness scheme that ensures that each transport within connection
-gets a reasonable share of controlled resources; this applies both to sending
-data and to opening new streams.
+Just like HTTP traffic going over HTTP/3, WebTransport pools traffic to
+different origins within a single connection.  Different origins imply
+different trust domains, meaning that the implementations have to treat each
+transport as potentially hostile towards others on the same connection.  One
+potential attack is a resource exhaustion attack: since all of the transports
+share both congestion control and flow control context, a single client
+aggressively using up those resources can cause other transports to stall.  The
+user agent thus SHOULD implement a fairness scheme that ensures that each
+transport within connection gets a reasonable share of controlled resources;
+this applies both to sending data and to opening new streams.
 
 # IANA Considerations
 
