@@ -558,7 +558,7 @@ Value:
 
 Description:
 
-: WebTransport data stream reset because the associated WebTransport session
+: WebTransport data stream aborted because the associated WebTransport session
   has been closed.
 
 Specification:
