@@ -200,7 +200,7 @@ than indicated in the server SETTINGS parameters.  The server MUST NOT close
 the connection if the client opens sessions exceeding this limit, as the client
 and the server do not have a consistent view of how many sessions are open due
 to the asynchronous nature of the protocol; instead, it MUST reset all of the
-CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
+CONNECT streams it is not willing to process with the `H3_REQUEST_REJECTED`
 status defined in [HTTP3].
 
 # WebTransport Features
