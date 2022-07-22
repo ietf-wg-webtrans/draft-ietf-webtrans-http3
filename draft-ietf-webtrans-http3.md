@@ -329,6 +329,20 @@ requests for new WebTransport sessions.  A GOAWAY frame does not affect data
 streams for existing WebTransport sessions; those can continue to be opened
 even after the GOAWAY frame has been sent or received.
 
+To drain a WebTransport session, either endpoint can send a
+DRAIN_WEBTRANSPORT_SESSION capsule.  An endpoint SHOULD NOT initiate new
+WebTransport streams or datagram flows after sending or receiving a
+DRAIN_WEBTRANSPORT_SESSION capsule.  Both endpoints can continue sending data on
+existing streams and datagram flows, but SHOULD attempt to gracefully terminate
+the session as quickly as possible.
+
+~~~
+DRAIN_WEBTRANSPORT_SESSION Capsule {
+  Type (i) = DRAIN_WEBTRANSPORT_SESSION,
+  Length (i) = 0
+}
+~~~
+
 # Session Termination
 
 A WebTransport session over HTTP/3 is considered terminated when either of the
