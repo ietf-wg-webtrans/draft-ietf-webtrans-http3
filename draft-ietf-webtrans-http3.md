@@ -189,13 +189,19 @@ Session IDs are used to demultiplex streams and datagrams belonging to different
 WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
 variable length integer scheme described in {{!RFC9000}}.
 
+The client MAY optimistically open unidirectional and bidirectional streams, as
+well as send datagrams, for a session that it has sent the CONNECT request for,
+even if it has not yet received the server's response to the request. On the
+server side, opening streams and sending datagrams is possible as soon as the
+CONNECT request has been received.
+
 If at any point a session ID is received that cannot a valid ID for a
 client-initiated bidirectional stream, the recepient MUST close the connection
 with an H3_ID_ERROR error code.
 
 ## Unidirectional streams
 
-Once established, both endpoints can open unidirectional streams.  The HTTP/3
+WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
 unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the stream
 type, followed by the session ID, encoded as a variable-length integer, followed
 by the user-specified stream data ({{fig-unidi}}).
