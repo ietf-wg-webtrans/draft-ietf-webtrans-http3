@@ -97,8 +97,9 @@ be further referred to as a *Session ID*.
 After the session is established, the peers can exchange data using the
 following mechanisms:
 
-* A client can create a bidirectional stream using a special indefinite-length
-  HTTP/3 frame that transfers ownership of the stream to WebTransport.
+* A client can create a bidirectional stream sending a special byte sequence at
+  the start of the stream that transfers ownership of the stream to
+  WebTransport.
 * A server can create a bidirectional stream, which is possible since HTTP/3
   does not define any semantics for server-initiated bidirectional streams.
 * Both client and server can create a unidirectional stream using a special
@@ -111,7 +112,7 @@ is closed.
 
 # Session Establishment
 
-## Establishing a Transport-Capable HTTP/3 Connection
+## Establishing a Transport-Capable HTTP/3 Connection {#establishing}
 
 In order to indicate support for WebTransport, both the client and the server
 MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
@@ -195,55 +196,54 @@ with an H3_ID_ERROR error code.
 
 ## Unidirectional streams
 
-Once established, both endpoints can open unidirectional streams.  The HTTP/3
-unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the stream
-type, followed by the session ID, encoded as a variable-length integer, followed
-by the user-specified stream data ({{fig-unidi}}).
+Once a WebTransport session is established, either endpoint can open a
+unidirectional stream as described {{Section 6.3 of HTTP3}}.  This is indicated
+by a stream type of 0x54, followed by the session ID, encoded as a
+variable-length integer. The remainder of the stream carries unframed,
+user-specified, data.
 
 ~~~~~~~~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                           0x54 (i)                          ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                        Session ID (i)                       ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                         Stream Body                         ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+WebTransport Unidirectional Stream Header {
+  Stream Type (i) = 0x54,
+  Session ID (i),
+}
 ~~~~~~~~~~
-{: #fig-unidi title="Unidirectional WebTransport stream format"}
+{: #fig-unidi title="Unidirectional WebTransport Stream Header"}
 
 ## Bidirectional Streams
 
-WebTransport endpoints can initiate bidirectional streams by opening an HTTP/3
-bidirectional stream and sending an HTTP/3 frame with type
-`WEBTRANSPORT_STREAM` (type=0x41).  The format of the frame SHALL be the frame
-type, followed by the session ID, encoded as a variable-length integer,
-followed by the user-specified stream data ({{fig-bidi-client}}).  The frame
-SHALL last until the end of the stream.
+HTTP/3 reserves client-initiated bidirectional streams for request and
+responses, and does not use server-initiated bidirectional streams; see
+{{Section 6.1 of HTTP3}}.
+
+WebTransport extends HTTP/3 in order to permit endpoints to explicitly declare
+the purpose of bidirectional streams. This is done by sending a stream type,
+which is sent as a variable-length integer, at the start of a stream. The format
+and structure of data that follows this integer is determined by the stream
+type. Note that this is only possible when both endpoints have agreed to this
+extension via negotiation; see {{establishing}}. If a server receives an unknown
+stream type, it MUST assume that the stream is a request stream, consisting of
+a sequence of HTTP/3 frames. If a client receives an unknown stream type, it
+is a connection error as described in {{Section 6.1 of HTTP3}}.
+
+Once a WebTransport session is established, either endpoint can open a
+WebTransport bidirectional stream. This is indicated by a stream type of 0x41,
+followed by a session ID, encoded as a variable length integer. The remainder of
+the stream carries unframed, user-specified, data.
 
 ~~~~~~~~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                           0x41 (i)                          ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                        Session ID (i)                       ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  |                         Stream Body                         ...
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+WebTransport Unidirectional Stream Header {
+  Stream Type (i) = 0x41,
+  Session ID (i),
+}
 ~~~~~~~~~~
-{: #fig-bidi-client title="WEBTRANSPORT_STREAM frame format"}
+{: #fig-bidi-client title="Bidirectional WebTransport Stream Header"}
 
-HTTP/3 does not by itself define any semantics for server-initiated
-bidirectional streams.  If WebTransport setting is negotiated by both
-endpoints, the syntax of the server-initiated bidirectional streams SHALL be
-the same as the syntax of client-initated bidirectional streams, that is, a
-sequence of HTTP/3 frames.  The only frame defined by this document for use
-within server-initiated bidirectional streams is WEBTRANSPORT_STREAM.
+Note that in order to avoid confusion between bidirectional stream types and
+frames, the equivalent value in the HTTP/3 frame type registry is reserved from
+use.
 
-TODO: move the paragraph above into a separate draft; define what happens with
-already existing HTTP/3 frames on server-initiated bidirectional streams.
+ TODO: consider extracting bidirectional stream types to a separate draft
 
 ## Resetting Data Streams
 
@@ -476,16 +476,13 @@ Specification:
 The following entry is added to the "HTTP/3 Frame Type" registry established by
 [HTTP3]:
 
-The `WEBTRANSPORT_STREAM` frame allows HTTP/3 client-initiated bidirectional
-streams to be used by WebTransport:
-
 Code:
 
 : 0x41
 
 Frame Type:
 
-: WEBTRANSPORT_STREAM
+: Reserved
 
 Specification:
 
