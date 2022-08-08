@@ -190,7 +190,7 @@ WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
 variable length integer scheme described in {{!RFC9000}}.
 
 If at any point a session ID is received that cannot a valid ID for a
-client-initiated bidirectional stream, the recepient MUST close the connection
+client-initiated bidirectional stream, the recipient MUST close the connection
 with an H3_ID_ERROR error code.
 
 ## Unidirectional streams
@@ -238,7 +238,7 @@ SHALL last until the end of the stream.
 HTTP/3 does not by itself define any semantics for server-initiated
 bidirectional streams.  If WebTransport setting is negotiated by both
 endpoints, the syntax of the server-initiated bidirectional streams SHALL be
-the same as the syntax of client-initated bidirectional streams, that is, a
+the same as the syntax of client-initiated bidirectional streams, that is, a
 sequence of HTTP/3 frames.  The only frame defined by this document for use
 within server-initiated bidirectional streams is WEBTRANSPORT_STREAM.
 
@@ -365,7 +365,7 @@ Application Error Code:
 Application Error Message:
 
 : A UTF-8 encoded error message string provided by the application closing the
-  connection.  The message takes up the remainer of the capsule, and its
+  connection.  The message takes up the remainder of the capsule, and its
   length MUST NOT exceed 1024 bytes.
 
 A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
