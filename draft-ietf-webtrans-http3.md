@@ -88,7 +88,7 @@ both support WebTransport over HTTP/3.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC8441}}.  If the server
-accepts the request, an WebTransport session is established.  The resulting
+accepts the request, a WebTransport session is established.  The resulting
 stream will be further referred to as a *CONNECT stream*, and its stream ID is
 used to uniquely identify a given WebTransport session within the connection.
 The ID of the CONNECT stream that established a given WebTransport session will
@@ -106,7 +106,7 @@ following mechanisms:
 * A datagram can be sent using HTTP Datagrams
   {{!HTTP-DATAGRAM=I-D.ietf-masque-h3-datagram}}.
 
-An WebTransport session is terminated when the CONNECT stream that created it
+A WebTransport session is terminated when the CONNECT stream that created it
 is closed.
 
 # Session Establishment
