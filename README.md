@@ -3,8 +3,9 @@
 This is the working area for the IETF WEBTRANS Working Group Internet-Draft, "WebTransport over HTTP/3".
 
 * [Editor's Copy](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html)
-* [Individual Draft](https://tools.ietf.org/html/draft-ietf-webtrans-http3)
-* [Compare Editor's Copy to Individual Draft](https://tools.ietf.org/rfcdiff?url1=https://tools.ietf.org/id/draft-ietf-webtrans-http3.txt&url2=https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.txt)
+* [Working Group Draft](https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http3)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-webtrans-http3/)
+* [Compare Editor's Copy to Working Group Draft](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/#go.draft-ietf-webtrans-http3.diff)
 
 
 ## Building the Draft
