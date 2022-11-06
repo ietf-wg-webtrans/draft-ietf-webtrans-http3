@@ -432,7 +432,7 @@ implement a fairness scheme that ensures that each transport within connection
 gets a reasonable share of controlled resources; this applies both to sending
 data and to opening new streams.
 
-A client may attempt to exhaust resources by opening too many WebTransport
+A client could attempt to exhaust resources by opening too many WebTransport
 sessions at once.  In cases when the client is untrusted, the user agent SHOULD
 limit the number of outgoing sessions the client can open.
 
