@@ -162,7 +162,7 @@ established once it sends a 2xx response.
 
 WebTransport over HTTP/3 does not support 0-RTT.  WebTransport-related SETTINGS
 parameters may be retained from the previous session as described in Section
-7.2.4.2 of [HTTP3].  In that case, the server MUST NOT reduce the limit of
+7.2.4.2 of [HTTP3].  If the server accepts 0-RTT, the server MUST NOT reduce the limit of
 maximum open WebTransport sessions from the one negotiated during the previous
 session; such change would be deemed incompatible, and MUST result in a
 H3_SETTINGS_ERROR connection error.
