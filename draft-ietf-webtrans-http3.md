@@ -126,12 +126,6 @@ MUST NOT process any incoming WebTransport requests until the client settings
 have been received, as the client may be using a version of WebTransport
 extension that is different from the one used by the server.
 
-In addition to the setting above, the server MUST send a
-SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter indicating the maximum number of
-concurrent sessions it is willing to receive.  The default value for the
-SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter is "0", meaning that the server is
-not willing to receive any WebTransport sessions.
-
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
@@ -171,16 +165,6 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 {{HTTP-DATAGRAM}}.
 
 ## Limiting the Number of Simultaneous Sessions
-
-This document defines a SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter that allows
-the server to limit the maximum number of concurrent WebTransport sessions on a
-single HTTP/3 connection.  The client MUST NOT open more sessions than
-indicated in the server SETTINGS parameters.  The server MUST NOT close the
-connection if the client opens sessions exceeding this limit, as the client and
-the server do not have a consistent view of how many sessions are open due to
-the asynchronous nature of the protocol; instead, it MUST reset all of the
-CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
-status defined in [HTTP3].
 
 Just like other HTTP requests, WebTransport sessions, and data sent on those
 sessions, are counted against flow control limits.  This document does not
@@ -471,7 +455,7 @@ Reference:
 
 ## HTTP/3 SETTINGS Parameter Registration
 
-The following entries are added to the "HTTP/3 Settings" registry established by
+The following entry is added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
 The `SETTINGS_ENABLE_WEBTRANSPORT` parameter indicates that the specified
@@ -484,26 +468,6 @@ Setting Name:
 Value:
 
 : 0x2b603742
-
-Default:
-
-: 0
-
-Specification:
-
-: This document
-
-The `SETTINGS_WEBTRANSPORT_MAX_SESSIONS` parameter indicates that the specified
-HTTP/3 server is WebTransport-capable and the number of concurrent sessions
-it is willing to receive.
-
-Setting Name:
-
-: WEBTRANSPORT_MAX_SESSIONS
-
-Value:
-
-: 0x2b603743
 
 Default:
 
