@@ -126,6 +126,12 @@ MUST NOT process any incoming WebTransport requests until the client settings
 have been received, as the client may be using a version of WebTransport
 extension that is different from the one used by the server.
 
+In addition to the setting above, the server MUST send a
+SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter indicating the maximum number of
+concurrent sessions it is willing to receive.  The default value for the
+SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter is "0", meaning that the server is
+not willing to receive any WebTransport sessions.
+
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
@@ -166,14 +172,24 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 
 ## Limiting the Number of Simultaneous Sessions
 
-From the flow control perspective, WebTransport sessions count against the
-stream flow control just like regular HTTP requests, since they are established
-via an HTTP CONNECT request.  This document does not make any effort to
-introduce a separate flow control mechanism for sessions, nor to separate HTTP
-requests from WebTransport data streams.  If the server needs to limit the rate
-of incoming requests, it has alternative mechanisms at its disposal:
+This document defines a SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter that allows
+the server to limit the maximum number of concurrent WebTransport sessions on a
+single HTTP/3 connection.  The client MUST NOT open more sessions than
+indicated in the server SETTINGS parameters.  The server MUST NOT close the
+connection if the client opens sessions exceeding this limit, as the client and
+the server do not have a consistent view of how many sessions are open due to
+the asynchronous nature of the protocol; instead, it MUST reset all of the
+CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
+status defined in [HTTP3].
 
-* `HTTP_REQUEST_REJECTED` error code defined in [HTTP3] indicates to the
+Just like other HTTP requests, WebTransport sessions, and data sent on those
+sessions, are counted against flow control limits.  This document does not
+introduce additional mechanisms for endpoints to limit the relative amount of
+flow control credit consumed by different WebTransport sessions, however
+servers that wish to limit the rate of incoming requests on any particular
+session have alternative mechanisms:
+
+* The `HTTP_REQUEST_REJECTED` error code defined in [HTTP3] indicates to the
   receiving HTTP/3 stack that the request was not processed in any way.
 * HTTP status code 429 indicates that the request was rejected due to rate
   limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
@@ -323,8 +339,8 @@ exhaustion, the endpoints MUST limit the number of buffered streams and
 datagrams.  When the number of buffered streams is exceeded, a stream SHALL be
 closed by sending a RESET_STREAM and/or STOP_SENDING with the
 `H3_WEBTRANSPORT_BUFFERED_STREAM_REJECTED` error code.  When the number of
-buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to
-an implementation to choose what stream or datagram to discard.
+buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to an
+implementation to choose what stream or datagram to discard.
 
 ## Interaction with HTTP/3 GOAWAY frame
 
@@ -400,11 +416,11 @@ before sending or processing any WebTransport traffic.  When multiple versions
 are supported by both of the peers, the most recent version supported by both
 is selected.
 
-The data exchanged over the CONNECT stream is transmitted across
-intermediaries, and thus cannot be versioned using a SETTINGS parameter.  To
-indicate support for different versions of the protocol defined in this draft,
-the clients SHALL send a header for each version of the draft supported.  The
-header corresponding to the version described in this draft is
+The data exchanged over the CONNECT stream is transmitted across intermediaries,
+and thus cannot be versioned using a SETTINGS parameter.  To indicate support
+for different versions of the protocol defined in this draft, the clients SHALL
+send a header for each version of the draft supported.  The header
+corresponding to the version described in this draft is
 `Sec-Webtransport-Http3-Draft02`; its value SHALL be `1`.  The server SHALL
 reply with a `Sec-Webtransport-Http3-Draft` header indicating the selected
 version; its value SHALL be `draft02` for the version described in this draft.
@@ -421,16 +437,16 @@ HTTP/3 server explicitly supports it.  It also requires the use of the Origin
 header, providing the server with the ability to deny access to Web-based
 clients that do not originate from a trusted origin.
 
-Just like HTTP traffic going over HTTP/3, WebTransport pools traffic to different origins
-within a single connection.  Different origins imply different trust domains,
-meaning that the implementations have to treat each transport as potentially
-hostile towards others on the same connection.  One potential attack is a
-resource exhaustion attack: since all of the transports share both congestion
-control and flow control context, a single client aggressively using up those
-resources can cause other transports to stall.  The user agent thus SHOULD
-implement a fairness scheme that ensures that each transport within connection
-gets a reasonable share of controlled resources; this applies both to sending
-data and to opening new streams.
+Just like HTTP traffic going over HTTP/3, WebTransport pools traffic to
+different origins within a single connection.  Different origins imply
+different trust domains, meaning that the implementations have to treat each
+transport as potentially hostile towards others on the same connection.  One
+potential attack is a resource exhaustion attack: since all of the transports
+share both congestion control and flow control context, a single client
+aggressively using up those resources can cause other transports to stall.  The
+user agent thus SHOULD implement a fairness scheme that ensures that each
+transport within connection gets a reasonable share of controlled resources;
+this applies both to sending data and to opening new streams.
 
 # IANA Considerations
 
@@ -455,7 +471,7 @@ Reference:
 
 ## HTTP/3 SETTINGS Parameter Registration
 
-The following entry is added to the "HTTP/3 Settings" registry established by
+The following entries are added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
 The `SETTINGS_ENABLE_WEBTRANSPORT` parameter indicates that the specified
@@ -468,6 +484,26 @@ Setting Name:
 Value:
 
 : 0x2b603742
+
+Default:
+
+: 0
+
+Specification:
+
+: This document
+
+The `SETTINGS_WEBTRANSPORT_MAX_SESSIONS` parameter indicates that the specified
+HTTP/3 server is WebTransport-capable and the number of concurrent sessions
+it is willing to receive.
+
+Setting Name:
+
+: WEBTRANSPORT_MAX_SESSIONS
+
+Value:
+
+: 0x2b603743
 
 Default:
 
@@ -578,5 +614,34 @@ Description:
 Specification:
 
 : This document.
+
+## Capsule Types
+
+The following entries are added to the "HTTP Capsule Types" registry established
+by {{HTTP-DATAGRAM}}:
+
+The `CLOSE_WEBTRANSPORT_SESSION` capsule.
+
+Value:
+: 0x2843
+
+Capsule Type:
+: CLOSE_WEBTRANSPORT_SESSION
+
+Status:
+: permanent
+
+Specification:
+: This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
+
+Notes:
+: None
+{: spacing="compact"}
 
 --- back
