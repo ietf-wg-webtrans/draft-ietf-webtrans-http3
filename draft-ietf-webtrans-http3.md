@@ -160,7 +160,7 @@ From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
 established once it sends a 2xx response.
 
-WebTransport over HTTP/3 does not support 0-RTT.  WebTransport-related SETTINGS
+Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is not considered safe; see {{Section 10.9 of HTTP3}}. However, WebTransport-related SETTINGS
 parameters may be retained from the previous session as described in Section
 7.2.4.2 of [HTTP3].  If the server accepts 0-RTT, the server MUST NOT reduce the limit of
 maximum open WebTransport sessions from the one negotiated during the previous
