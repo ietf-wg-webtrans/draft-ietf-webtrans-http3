@@ -135,11 +135,10 @@ not willing to receive any WebTransport sessions.
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
-SETTINGS_ENABLE_CONNECT_PROTOCOL parameter.  That parameter is only defined for
-HTTP/2.  This document does not create a new multi-purpose parameter to
-indicate support for extended CONNECT in HTTP/3; instead, the
-SETTINGS_ENABLE_WEBTRANSPORT setting implies that an endpoint supports extended
-CONNECT.
+SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for
+HTTP/3 by {{!RFC9220}}.  An endpoint supporting WebTransport over HTTP/3 MUST
+send both the SETTINGS_ENABLE_WEBTRANSPORT setting and the
+SETTINGS_ENABLE_CONNECT_PROTOCOL setting with values set to "1".
 
 ## Creating a New Session
 
