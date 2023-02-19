@@ -243,11 +243,10 @@ by the user-specified stream data ({{fig-unidi}}).
 ## Bidirectional Streams
 
 WebTransport endpoints can initiate bidirectional streams by opening an HTTP/3
-bidirectional stream and sending an HTTP/3 frame with type
-`WEBTRANSPORT_STREAM` (type=0x41).  The format of the frame SHALL be the frame
-type, followed by the session ID, encoded as a variable-length integer,
-followed by the user-specified stream data ({{fig-bidi-client}}).  The frame
-SHALL last until the end of the stream.
+bidirectional stream and then immediately sending a special signal value 0x41,
+followed by the associated session ID, both encoded as a variable-length
+integer; the rest of the stream is the application payload of the WebTransport
+stream ({{fig-bidi-client}}).
 
 ~~~~~~~~~~ drawing
   0                   1                   2                   3
@@ -260,7 +259,15 @@ SHALL last until the end of the stream.
   |                         Stream Body                         ...
   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~~~~~~~~
-{: #fig-bidi-client title="WEBTRANSPORT_STREAM frame format"}
+{: #fig-bidi-client title="Bidirectional WebTransport stream header"}
+
+This document registers the special signal value 0x41 as a WEBTRANSPORT_STREAM
+frame type.  While it is registered as an HTTP/3 frame type to avoid
+collisions, WEBTRANSPORT_STREAM is not a proper HTTP/3 frame, as it lacks
+length; it is an extension of HTTP/3 frame syntax that MUST be supported by any
+peer negotiating `SETTINGS_ENABLE_WEBTRANSPORT`.  Any attempt to use
+WEBTRANSPORT_STREAM as a frame type outside of the very first byte of the
+stream MUST be treated as a connection error of type H3_FRAME_ERROR.
 
 HTTP/3 does not by itself define any semantics for server-initiated
 bidirectional streams.  If WebTransport setting is negotiated by both
