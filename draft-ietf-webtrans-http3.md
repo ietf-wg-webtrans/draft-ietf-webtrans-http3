@@ -420,7 +420,7 @@ CLOSE_WEBTRANSPORT_SESSION capsule that has an error code of 0 and an empty
 error string.
 
 In some scenarios, an endpoint might want to send a CLOSE_WEBTRANSPORT_SESSION
-with detailed close information, and then immediately close the underlying QUIC
+with detailed close information and then immediately close the underlying QUIC
 connection.  If the endpoint were to do both of those simultaneously, the peer
 could potentially receive the CONNECTION_CLOSE before receiving the
 CLOSE_WEBTRANSPORT_SESSION, thus never receiving the application error data
