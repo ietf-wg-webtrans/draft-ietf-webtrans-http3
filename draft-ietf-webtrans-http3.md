@@ -149,8 +149,9 @@ In order to create a new WebTransport session, a client can send an HTTP
 CONNECT request.  The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be
 set to `webtransport`.  The `:scheme` field MUST be `https`.  Both the
 `:authority` and the `:path` value MUST be set; those fields indicate the
-desired WebTransport server.  An `Origin` header {{!RFC6454}} MUST be provided
-within the request.
+desired WebTransport server.  If the WebTransport session is coming from a
+browser client, an `Origin` header {{!RFC6454}} MUST be provided within the
+request; otherwise, the header is OPTIONAL.
 
 Upon receiving an extended CONNECT request with a `:protocol` field set to
 `webtransport`, the HTTP/3 server can check if it has a WebTransport
