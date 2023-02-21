@@ -426,7 +426,7 @@ could potentially receive the CONNECTION_CLOSE before receiving the
 CLOSE_WEBTRANSPORT_SESSION, thus never receiving the application error data
 contained in the latter.  To avoid this, the endpoint SHOULD wait until either
 all of the data on the CONNECT stream is acknowledged, or three times the PTO
-interval ({{!RFC9002}}, Section 6.2) elapses, before sending the
+interval ({{!RFC9002, Section 6.2}}) elapses, before sending the
 CONNECTION_CLOSE.
 
 # Negotiating the Draft Version
