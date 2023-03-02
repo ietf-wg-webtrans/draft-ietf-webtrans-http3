@@ -547,8 +547,8 @@ Specification:
 The following entry is added to the "HTTP/3 Frame Type" registry established by
 [HTTP3]:
 
-The `WEBTRANSPORT_STREAM` frame allows HTTP/3 client-initiated bidirectional
-streams to be used by WebTransport:
+The `WEBTRANSPORT_STREAM` frame allows HTTP/3 client-initiated and
+server-initiated bidirectional streams to be used by WebTransport:
 
 Code:
 
