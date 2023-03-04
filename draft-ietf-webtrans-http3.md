@@ -157,7 +157,7 @@ Upon receiving an extended CONNECT request with a `:protocol` field set to
 `webtransport`, the HTTP/3 server can check if it has a WebTransport
 server associated with the specified `:authority` and `:path` values.  If it
 does not, it SHOULD reply with status code 404 ({{Section 15.5.5 of !HTTP=RFC9110}}).
-When the request provides `Origin` header, the WebTransport server MUST verify
+When the request contains the `Origin` header, the WebTransport server MUST verify
 the `Origin` header to ensure that the specified origin is allowed to access
 the server in question. If the verification fails, the WebTransport server
 SHOULD reply with status code 403 ({{Section 15.5.4 of HTTP}}).  If all checks pass, the
