@@ -417,12 +417,12 @@ Application Error Message:
   connection.  The message takes up the remainder of the capsule, and its
   length MUST NOT exceed 1024 bytes.
 
-A CLOSE_WEBTRANSPORT_SESSION capsule MUST be followed by a FIN on the sender
-side.  If any additional stream data is received on the CONNECT stream after
-CLOSE_WEBTRANSPORT_SESSION, the stream MUST be reset with code
-H3_MESSAGE_ERROR.  The recipient MUST close the stream upon receiving a FIN.
-If the sender of CLOSE_WEBTRANSPORT_SESSION does not receive a FIN after some
-time, it SHOULD send STOP_SENDING on the CONNECT stream.
+An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send
+a FIN.  The endpoint MAY send a STOP_SENDING to indicate it is no longer reading
+from the CONNECT stream.  The recipient MUST close the stream upon receiving a
+FIN.  If any additional stream data is received on the CONNECT stream after
+receiving a CLOSE_WEBTRANSPORT_SESSION capsule, the stream MUST be reset with
+code H3_MESSAGE_ERROR.
 
 Cleanly terminating a CONNECT stream without a CLOSE_WEBTRANSPORT_SESSION
 capsule SHALL be semantically equivalent to terminating it with a
