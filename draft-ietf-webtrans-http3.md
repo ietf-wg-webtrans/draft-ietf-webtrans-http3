@@ -368,7 +368,7 @@ Application Error Message:
   connection.  The message takes up the remainer of the capsule, and its
   length MUST NOT exceed 1024 bytes.
 
-An enpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send
+An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send
 a FIN.  The endpoint MAY send a STOP_SENDING to indicate it is no longer reading
 from the CONNECT stream.  The recipient MUST close the stream upon receiving a
 FIN.  If any additional stream data is received on the CONNECT stream after
