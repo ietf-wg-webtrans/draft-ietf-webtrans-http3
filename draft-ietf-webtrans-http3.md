@@ -104,7 +104,7 @@ following mechanisms:
 * Both client and server can create a unidirectional stream using a special
   stream type.
 * A datagram can be sent using HTTP Datagrams
-  {{!HTTP-DATAGRAM=I-D.ietf-masque-h3-datagram}}.
+  {{!HTTP-DATAGRAM=RFC9297}}.
 
 A WebTransport session is terminated when the CONNECT stream that created it
 is closed.
