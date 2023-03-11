@@ -57,12 +57,11 @@ web API draft corresponding to this document can be found at
 # Introduction
 
 HTTP/3 [HTTP3] is a protocol defined on top of QUIC {{!RFC9000}} that can
-multiplex HTTP requests over a QUIC connection.  This document defines
-a mechanism for multiplexing non-HTTP data with HTTP/3 in a
-manner that conforms with the WebTransport protocol requirements and semantics
-[OVERVIEW].  Using the mechanism described here, multiple WebTransport
-instances can be multiplexed simultaneously with regular HTTP traffic on the
-same HTTP/3 connection.
+multiplex HTTP requests over a QUIC connection.  This document defines a
+mechanism for multiplexing non-HTTP data with HTTP/3 in a manner that conforms
+with the WebTransport protocol requirements and semantics[OVERVIEW].  Using the
+mechanism described here, multiple WebTransport instances can be multiplexed
+simultaneously with regular HTTP traffic on the same HTTP/3 connection.
 
 ## Terminology
 
@@ -83,8 +82,8 @@ WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
 When an HTTP/3 connection is established, both the client and server have to
-send a SETTINGS_ENABLE_WEBTRANSPORT setting in order to indicate that they
-both support WebTransport over HTTP/3.
+send a SETTINGS_ENABLE_WEBTRANSPORT setting in order to indicate that they both
+support WebTransport over HTTP/3.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC8441}}.  If the server
@@ -103,11 +102,10 @@ following mechanisms:
   does not define any semantics for server-initiated bidirectional streams.
 * Both client and server can create a unidirectional stream using a special
   stream type.
-* A datagram can be sent using HTTP Datagrams
-  {{!HTTP-DATAGRAM=RFC9297}}.
+* A datagram can be sent using HTTP Datagrams {{!HTTP-DATAGRAM=RFC9297}}.
 
-A WebTransport session is terminated when the CONNECT stream that created it
-is closed.
+A WebTransport session is terminated when the CONNECT stream that created it is
+closed.
 
 # Session Establishment
 
@@ -116,9 +114,8 @@ is closed.
 In order to indicate support for WebTransport, both the client and the server
 MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
 frame.  The SETTINGS_ENABLE_WEBTRANSPORT parameter value SHALL be either "0" or
-"1", with "0" being the default; an endpoint that receives a value other
-than "0" or "1" MUST close the connection with the H3_SETTINGS_ERROR error
-code.
+"1", with "0" being the default; an endpoint that receives a value other than
+"0" or "1" MUST close the connection with the H3_SETTINGS_ERROR error code.
 
 The client MUST NOT send a WebTransport request until it has received the
 setting indicating WebTransport support from the server.  Similarly, the server
@@ -135,45 +132,47 @@ not willing to receive any WebTransport sessions.
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
-SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for
-HTTP/3 by {{!RFC9220}}.  An endpoint supporting WebTransport over HTTP/3 MUST
-send both the SETTINGS_ENABLE_WEBTRANSPORT setting and the
+SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for HTTP/3
+by {{!RFC9220}}.  An endpoint supporting WebTransport over HTTP/3 MUST send
+both the SETTINGS_ENABLE_WEBTRANSPORT setting and the
 SETTINGS_ENABLE_CONNECT_PROTOCOL setting with values set to "1".
 
 ## Creating a New Session
 
-As WebTransport sessions are established over HTTP/3, they are identified
-using the `https` URI scheme ([HTTP], Section 4.2.2).
+As WebTransport sessions are established over HTTP/3, they are identified using
+the `https` URI scheme ([HTTP], Section 4.2.2).
 
-In order to create a new WebTransport session, a client can send an HTTP
-CONNECT request.  The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be
-set to `webtransport`.  The `:scheme` field MUST be `https`.  Both the
-`:authority` and the `:path` value MUST be set; those fields indicate the
-desired WebTransport server.  If the WebTransport session is coming from a
-browser client, an `Origin` header {{!RFC6454}} MUST be provided within the
-request; otherwise, the header is OPTIONAL.
+In order to create a new WebTransport session, a client can send an HTTP CONNECT
+request.  The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be set to
+`webtransport`.  The `:scheme` field MUST be `https`.  Both the `:authority`
+and the `:path` value MUST be set; those fields indicate the desired
+WebTransport server.  If the WebTransport session is coming from a browser
+client, an `Origin` header {{!RFC6454}} MUST be provided within the request;
+otherwise, the header is OPTIONAL.
 
 Upon receiving an extended CONNECT request with a `:protocol` field set to
-`webtransport`, the HTTP/3 server can check if it has a WebTransport
-server associated with the specified `:authority` and `:path` values.  If it
-does not, it SHOULD reply with status code 404 ({{Section 15.5.5 of !HTTP=RFC9110}}).
-When the request contains the `Origin` header, the WebTransport server MUST verify
-the `Origin` header to ensure that the specified origin is allowed to access
-the server in question. If the verification fails, the WebTransport server
-SHOULD reply with status code 403 ({{Section 15.5.4 of HTTP}}).  If all checks pass, the
-WebTransport server MAY accept the session by replying with a 2xx series status
-code, as defined in {{Section 15.3 of HTTP}}.
+`webtransport`, the HTTP/3 server can check if it has a WebTransport server
+associated with the specified `:authority` and `:path` values.  If it does not,
+it SHOULD reply with status code 404 ({{Section 15.5.5 of !HTTP=RFC9110}}).
+When the request contains the `Origin` header, the WebTransport server MUST
+verify the `Origin` header to ensure that the specified origin is allowed to
+access the server in question. If the verification fails, the WebTransport
+server SHOULD reply with status code 403 ({{Section 15.5.4 of HTTP}}).  If all
+checks pass, the WebTransport server MAY accept the session by replying with a
+2xx series status code, as defined in {{Section 15.3 of HTTP}}.
 
 From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
 established once it sends a 2xx response.
 
-Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is not considered safe; see {{Section 10.9 of HTTP3}}. However, WebTransport-related SETTINGS
-parameters may be retained from the previous session as described in Section
-7.2.4.2 of [HTTP3].  If the server accepts 0-RTT, the server MUST NOT reduce the limit of
-maximum open WebTransport sessions from the one negotiated during the previous
-session; such change would be deemed incompatible, and MUST result in a
-H3_SETTINGS_ERROR connection error.
+Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
+not considered safe; see {{Section 10.9 of HTTP3}}. However,
+WebTransport-related SETTINGS parameters may be retained from the previous
+session as described in Section 7.2.4.2 of [HTTP3].  If the server accepts
+0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
+sessions from the one negotiated during the previous session; such change would
+be deemed incompatible, and MUST result in a H3_SETTINGS_ERROR connection
+error.
 
 The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 {{HTTP-DATAGRAM}}.
@@ -205,9 +204,9 @@ session have alternative mechanisms:
 
 # WebTransport Features
 
-WebTransport over HTTP/3 provides the following features described in [OVERVIEW]:
-unidirectional streams, bidirectional streams and datagrams, initiated by
-either endpoint.
+WebTransport over HTTP/3 provides the following features described in
+[OVERVIEW]: unidirectional streams, bidirectional streams and datagrams,
+initiated by either endpoint.
 
 Session IDs are used to demultiplex streams and datagrams belonging to different
 WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
@@ -417,12 +416,12 @@ Application Error Message:
   connection.  The message takes up the remainder of the capsule, and its
   length MUST NOT exceed 1024 bytes.
 
-An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send
-a FIN.  The endpoint MAY send a STOP_SENDING to indicate it is no longer reading
-from the CONNECT stream.  The recipient MUST close the stream upon receiving a
-FIN.  If any additional stream data is received on the CONNECT stream after
-receiving a CLOSE_WEBTRANSPORT_SESSION capsule, the stream MUST be reset with
-code H3_MESSAGE_ERROR.
+An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately
+send a FIN.  The endpoint MAY send a STOP_SENDING to indicate it is no longer
+reading from the CONNECT stream.  The recipient MUST close the stream upon
+receiving a FIN.  If any additional stream data is received on the CONNECT
+stream after receiving a CLOSE_WEBTRANSPORT_SESSION capsule, the stream MUST be
+reset with code H3_MESSAGE_ERROR.
 
 Cleanly terminating a CONNECT stream without a CLOSE_WEBTRANSPORT_SESSION
 capsule SHALL be semantically equivalent to terminating it with a
@@ -444,15 +443,15 @@ delivering application close metadata.
 
 \[\[RFC editor: please remove this section before publication.]]
 
-WebTransport over HTTP/3 uses two different mechanisms to negotiate versions
-for the different parts of the draft.
+WebTransport over HTTP/3 uses two different mechanisms to negotiate versions for
+the different parts of the draft.
 
 The hop-by-hop wire format aspects of the protocol are negotiated by changing
-the codepoint used for the SETTINGS_ENABLE_WEBTRANSPORT parameter.  Because
-of that, any WebTransport endpoint MUST wait for the peer's SETTINGS frame
-before sending or processing any WebTransport traffic.  When multiple versions
-are supported by both of the peers, the most recent version supported by both
-is selected.
+the codepoint used for the SETTINGS_ENABLE_WEBTRANSPORT parameter.  Because of
+that, any WebTransport endpoint MUST wait for the peer's SETTINGS frame before
+sending or processing any WebTransport traffic.  When multiple versions are
+supported by both of the peers, the most recent version supported by both is
+selected.
 
 The data exchanged over the CONNECT stream is transmitted across intermediaries,
 and thus cannot be versioned using a SETTINGS parameter.  To indicate support
@@ -516,8 +515,8 @@ Reference:
 The following entries are added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
-The `SETTINGS_ENABLE_WEBTRANSPORT` parameter indicates that the specified
-HTTP/3 connection is WebTransport-capable.
+The `SETTINGS_ENABLE_WEBTRANSPORT` parameter indicates that the specified HTTP/3
+connection is WebTransport-capable.
 
 Setting Name:
 
@@ -536,8 +535,8 @@ Specification:
 : This document
 
 The `SETTINGS_WEBTRANSPORT_MAX_SESSIONS` parameter indicates that the specified
-HTTP/3 server is WebTransport-capable and the number of concurrent sessions
-it is willing to receive.
+HTTP/3 server is WebTransport-capable and the number of concurrent sessions it
+is willing to receive.
 
 Setting Name:
 
