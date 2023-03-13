@@ -254,14 +254,14 @@ streams, which are a sequence of HTTP/3 frames with a variety of rules; see
 {{Sections 4.1 and 6.1 of HTTP3}}.
 
 WebTransport extends HTTP/3 to allow clients to declare and use alternative
-request stream rules.  Once WebTransport has been established
-({{establishing}}), a client can send a special signal value, encoded as a
-variable-length integer, as the first bytes of the stream in order to indicate
+request stream rules.  Once a client receives settings indicating WebTransport
+support ({{establishing}}), it can send a special signal value, encoded as
+a variable-length integer, as the first bytes of the stream in order to indicate
 how the remaining bytes on the stream are used.
 
 WebTransport extends HTTP/3 by defining rules for all server-initiated
-bidirectional streams.  Once WebTransport has been established
-({{establishing}}), a server can open a bidirectional stream and SHALL send a
+bidirectional streams.  Once a server receives settings indicating WebTransport
+support ({{establishing}}), it can open a bidirectional stream and SHALL send a
 special signal value, encoded as a variable-length integer, as the first bytes
 of the stream in order to indicate how the remaining bytes on the stream are
 used.
