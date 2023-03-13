@@ -129,6 +129,16 @@ concurrent sessions it is willing to receive.  The default value for the
 SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter is "0", meaning that the server is
 not willing to receive any WebTransport sessions.
 
+Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
+Capsule Protocol, both the client and the server MUST indicate support for
+HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM value set to 1 in their
+SETTINGS frame (see {{Section 2.1.1 of HTTP-DATAGRAM}}).
+
+WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
+support, both the client and the server MUST send a max_datagram_frame_size
+transport parameter with a value greater than 0 (see {{Section 3
+of !QUIC-DATAGRAM=RFC9221}}).
+
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
