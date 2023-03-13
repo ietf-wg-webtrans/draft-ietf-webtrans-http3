@@ -266,8 +266,6 @@ special signal value, encoded as a variable-length integer, as the first bytes
 of the stream in order to indicate how the remaining bytes on the stream are
 used.
 
-TODO: consider extracting special signal values into a separate draft;
-
 The signal value, 0x41, is used by clients and servers to open a bidirectional
 WebTransport stream.  Following this is the associated session ID, encoded as a
 variable-length integer; the rest of the stream is the application payload of
