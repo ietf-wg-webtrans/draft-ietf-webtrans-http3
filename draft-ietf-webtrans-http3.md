@@ -124,9 +124,9 @@ have been received, as the client may be using a version of WebTransport
 extension that is different from the one used by the server.
 
 In addition to the setting above, the server MUST send a
-SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter indicating the maximum number of
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter indicating the maximum number of
 concurrent sessions it is willing to receive.  The default value for the
-SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter is "0", meaning that the server is
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the server is
 not willing to receive any WebTransport sessions.
 
 Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
@@ -189,7 +189,7 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 
 ## Limiting the Number of Simultaneous Sessions
 
-This document defines a SETTINGS_MAX_WEBTRANSPORT_SESSIONS parameter that allows
+This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter that allows
 the server to limit the maximum number of concurrent WebTransport sessions on a
 single HTTP/3 connection.  The client MUST NOT open more sessions than
 indicated in the server SETTINGS parameters.  The server MUST NOT close the
