@@ -299,20 +299,20 @@ implementation to the application.
 
 A WebTransport application SHALL provide an error code for those operations.
 Since WebTransport shares the error code space with HTTP/3, WebTransport
-application errors for streams are limited to an unsigned 8-bit integer,
-assuming values between 0x00 and 0xff.  WebTransport implementations SHALL
-remap those error codes into an error range where 0x00 corresponds to
-0x52e4a40fa8db, and 0xff corresponds to 0x52e4a40fa9e2.  Note that there are
-code points inside that range of form "0x1f * N + 0x21" that are reserved by
-{{Section 8.1 of HTTP3}}; those have to be accounted for when mapping the error
-codes by skipping them (i.e. the two HTTP/3 error codepoints adjacent to a
-GREASE codepoint would map to two adjacent WebTransport application error
-codepoints).  An example pseudocode can be seen in
-{{fig-remap-errors}}.
+application errors for streams are limited to an unsigned 32-bit integer,
+assuming values between 0x00000000 and 0xffffffff.  WebTransport
+implementations SHALL remap those error codes into an error range where
+0x00000000 corresponds to 0x52e4a40fa8db, and 0xffffffff corresponds to
+0x52e5ac983162.  Note that there are code points inside that range of form
+"0x1f * N + 0x21" that are reserved by {{Section 8.1 of HTTP3}}; those have to
+be accounted for when mapping the error codes by skipping them (i.e. the two
+HTTP/3 error codepoints adjacent to a reserved codepoint would map to two
+adjacent WebTransport application error codepoints).  An example pseudocode can
+be seen in {{fig-remap-errors}}.
 
 ~~~~~~~~~~
     first = 0x52e4a40fa8db
-    last = 0x52e4a40fa9e2
+    last = 0x52e5ac983162
 
     def webtransport_code_to_http_code(n):
         return first + n + floor(n / 0x1e)
@@ -650,13 +650,12 @@ In addition, the following range of entries is registered:
 
 Name:
 
-: H3_WEBTRANSPORT_APPLICATION_00 ... H3_WEBTRANSPORT_APPLICATION_FF
+: H3_WEBTRANSPORT_APPLICATION_00000000 ... H3_WEBTRANSPORT_APPLICATION_FFFFFFFF
 
 Value:
 
-: 0x52e4a40fa8db to 0x52e4a40fa9e2 inclusive, with the exception of
-  0x52e4a40fa8f9, 0x52e4a40fa918, 0x52e4a40fa937, 0x52e4a40fa956,
-  0x52e4a40fa975, 0x52e4a40fa994, 0x52e4a40fa9b3, and 0x52e4a40fa9d2.
+: 0x52e4a40fa8db to 0x52e5ac983162 inclusive, with the exception of
+  the codepoints of form 0x1f * N + 0x21.
 
 Description:
 
