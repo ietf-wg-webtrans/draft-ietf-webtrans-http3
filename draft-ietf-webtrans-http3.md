@@ -324,10 +324,10 @@ codepoints).  An example pseudocode can be seen in
         assert(first <= h <= last)
         assert((h - 0x21) % 0x1f != 0)
         shifted = h - first
-        return shifted - shifted // 0x1f
+        return shifted - floor(shifted / 0x1f)
 ~~~~~~~~~~
 {: #fig-remap-errors title="Pseudocode for converting between WebTransport
-application errors and HTTP/3 error codes; here, `//` is integer division" }
+application errors and HTTP/3 error codes" }
 
 WebTransport data streams are associated with sessions through a header at the
 beginning of the stream; resetting a stream may result in that data being
