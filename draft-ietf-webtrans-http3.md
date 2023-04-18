@@ -241,14 +241,16 @@ with an H3_ID_ERROR error code.
 ## Unidirectional streams
 
 WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
-unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the stream
-type, followed by the session ID, encoded as a variable-length integer, followed
-by the user-specified stream data ({{fig-unidi}}).
+unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the
+stream type, followed by the session ID, encoded as a variable-length integer,
+followed by the user-specified stream data ({{fig-unidi}}).
 
 ~~~~~~~~~~ drawing
-Stream Type (i) = 0x54,
-Session ID (i),
-Stream Body (..),
+Unidirectional Stream {
+    Stream Type (i) = 0x54,
+    Session ID (i),
+    Stream Body (..)
+}
 ~~~~~~~~~~
 {: #fig-unidi title="Unidirectional WebTransport stream format"}
 
@@ -277,11 +279,13 @@ variable-length integer; the rest of the stream is the application payload of
 the WebTransport stream ({{fig-bidi-client}}).
 
 ~~~~~~~~~~ drawing
-Signal Value (i) = 0x41,
-Session ID (i),
-Stream Body (..),
+Bidirectional Stream {
+    Signal Value (i) = 0x41,
+    Session ID (i),
+    Stream Body (..)
+}
 ~~~~~~~~~~
-{: #fig-bidi-client title="Bidirectional WebTransport stream header"}
+{: #fig-bidi-client title="Bidirectional WebTransport stream format"}
 
 This document reserves the special signal value 0x41 as a WEBTRANSPORT_STREAM
 frame type.  While it is registered as an HTTP/3 frame type to avoid collisions,
@@ -572,8 +576,8 @@ Specification:
 The following entry is added to the "HTTP/3 Frame Type" registry established by
 [HTTP3]:
 
-The `WEBTRANSPORT_STREAM` frame is reserved for the purpose of avoiding collision
-with WebTransport HTTP/3 extensions:
+The `WEBTRANSPORT_STREAM` frame is reserved for the purpose of avoiding
+collision with WebTransport HTTP/3 extensions:
 
 Code:
 
