@@ -177,7 +177,7 @@ established once it sends a 2xx response.
 
 The server may reply with a 3xx response, indicating a redirection ({{Section
 15.4 of HTTP}}).  The user agent MUST NOT automatically follow such redirects,
-as the client could have potentially already sent data for the WebTransport
+as the client could potentially already have sent data for the WebTransport
 session in question; it MAY notify the client about the redirect.
 
 Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
