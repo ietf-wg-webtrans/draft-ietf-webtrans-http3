@@ -176,6 +176,11 @@ From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
 established once it sends a 2xx response.
 
+The server may reply with a 3xx response, indicating a redirection ({{Section
+15.4 of HTTP}}).  The user agent MUST NOT automatically follow such redirects,
+as the client could potentially already have sent data for the WebTransport
+session in question; it MAY notify the client about the redirect.
+
 Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
 not considered safe; see {{Section 10.9 of HTTP3}}. However,
 WebTransport-related SETTINGS parameters may be retained from the previous
