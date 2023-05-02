@@ -193,7 +193,7 @@ error.
 The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 {{HTTP-DATAGRAM}}.  The Capsule Protocol is negotiated when the server sends a
 2xx response.  The `capsule-protocol` header field {{Section 3.4 of
-HTTP-DATAGRAM}} is not used in WebTransport and MUST be ignored by WebTransport
+HTTP-DATAGRAM}} is not required by WebTransport and can safely be ignored by WebTransport
 endpoints.
 
 ## Limiting the Number of Simultaneous Sessions
