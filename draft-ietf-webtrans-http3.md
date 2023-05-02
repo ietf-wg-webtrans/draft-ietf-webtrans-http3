@@ -222,6 +222,27 @@ session have alternative mechanisms:
   limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
   propagated to the application.
 
+## Prioritization
+
+WebTransport does not provide any priority signalling mechanism for streams and
+datagrams within a WebTransport session; such mechanisms will be defined by
+application protocols using WebTransport.
+
+{{!RFC9218}} defines the Priority header which MAY be set in a WebTransport
+CONNECT request or response.  This header SHOULD govern the scheduling of all
+data within the WebTransport session, including WebTransport streams and
+datagrams.
+
+For example, when two WebTransport sessions are established on the same HTTP/3
+connection, each with `Priority: u=1, i`, the scheduler alternates sending data
+from each session.  If an HTTP request is also sent on this connection with
+`Priority: u=0`, the scheduler would send the response data ahead of any data
+from either WebTransport session.
+
+Non-incremental priorities for WebTransport sessions are allowed, but caution is
+advised as one session could starve other requests and sessions with equal
+priority.
+
 # WebTransport Features
 
 WebTransport over HTTP/3 provides the following features described in
