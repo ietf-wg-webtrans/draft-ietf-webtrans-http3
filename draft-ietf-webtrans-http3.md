@@ -355,7 +355,11 @@ application that owns the only session on that connection.
 ## Datagrams
 
 Datagrams can be sent using HTTP Datagrams. The WebTransport datagram payload is
-sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram.
+sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram
+(Section 2.1 of {{HTTP-DATAGRAM}}). Note that the payload field directly
+follows the Quarter Stream ID field, which is at the start of the QUIC DATAGRAM
+frame payload and refers to the CONNECT stream that established the
+WebTransport session.
 
 ## Buffering Incoming Streams and Datagrams
 
