@@ -311,14 +311,14 @@ A WebTransport application SHALL provide an error code for those operations.
 Since WebTransport shares the error code space with HTTP/3, WebTransport
 application errors for streams are limited to an unsigned 32-bit integer,
 assuming values between 0x00000000 and 0xffffffff.  WebTransport
-implementations SHALL remap those error codes into an error range where
-0x00000000 corresponds to 0x52e4a40fa8db, and 0xffffffff corresponds to
-0x52e5ac983162.  Note that there are code points inside that range of form
-"0x1f * N + 0x21" that are reserved by {{Section 8.1 of HTTP3}}; those have to
-be accounted for when mapping the error codes by skipping them (i.e. the two
-HTTP/3 error codepoints adjacent to a reserved codepoint would map to two
-adjacent WebTransport application error codepoints).  An example pseudocode can
-be seen in {{fig-remap-errors}}.
+implementations SHALL remap those error codes into the error range reserved for
+WEBTRANSPORT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db,
+and 0xffffffff corresponds to 0x52e5ac983162.  Note that there are code points
+inside that range of form "0x1f * N + 0x21" that are reserved by {{Section 8.1
+of HTTP3}}; those have to be skipped when mapping the error codes
+(i.e. the two HTTP/3 error codepoints adjacent to a reserved
+codepoint would map to two adjacent WebTransport application error codepoints).
+An example pseudocode can be seen in {{fig-remap-errors}}.
 
 ~~~~~~~~~~
     first = 0x52e4a40fa8db
@@ -376,7 +376,7 @@ until those can be associated with an established session.  To avoid resource
 exhaustion, the endpoints MUST limit the number of buffered streams and
 datagrams.  When the number of buffered streams is exceeded, a stream SHALL be
 closed by sending a RESET_STREAM and/or STOP_SENDING with the
-`H3_WEBTRANSPORT_BUFFERED_STREAM_REJECTED` error code.  When the number of
+`WEBTRANSPORT_BUFFERED_STREAM_REJECTED` error code.  When the number of
 buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to an
 implementation to choose what stream or datagram to discard.
 
@@ -412,7 +412,7 @@ following conditions is met:
 Upon learning that the session has been terminated, the endpoint MUST reset the
 send side and abort reading on the receive side of all of the streams
 associated with the session (see Section 2.4 of {{!RFC9000}}) using the
-H3_WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
+WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
 open any new streams.
 
 To terminate a session with a detailed error message, an application MAY send
@@ -629,7 +629,7 @@ The following entry is added to the "HTTP/3 Error Code" registry established by
 
 Name:
 
-: H3_WEBTRANSPORT_BUFFERED_STREAM_REJECTED
+: WEBTRANSPORT_BUFFERED_STREAM_REJECTED
 
 Value:
 
@@ -645,7 +645,7 @@ Specification:
 
 Name:
 
-: H3_WEBTRANSPORT_SESSION_GONE
+: WEBTRANSPORT_SESSION_GONE
 
 Value:
 
@@ -664,7 +664,7 @@ In addition, the following range of entries is registered:
 
 Name:
 
-: H3_WEBTRANSPORT_APPLICATION_00000000 ... H3_WEBTRANSPORT_APPLICATION_FFFFFFFF
+: WEBTRANSPORT_APPLICATION_ERROR
 
 Value:
 
