@@ -471,16 +471,11 @@ WebTransport over HTTP/3 uses two different mechanisms to negotiate versions for
 the different parts of the draft.
 
 The hop-by-hop wire format aspects of the protocol are negotiated by changing
-the codepoint used for the SETTINGS_ENABLE_WEBTRANSPORT or
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS  parameter.  Because of that, any
-WebTransport endpoint MUST wait for the peer's SETTINGS frame before sending or
-processing any WebTransport traffic.  When multiple versions are supported by
-both of the peers, the most recent version supported by both is selected.
-
-If SETTINGS_WEBTRANSPORT_MAX_SESSIONS is used, and the client supports any
-versions other than the final RFC one, the client MUST send
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS with a positive value (the exact value has
-no semantics).
+the codepoint used for the SETTINGS_ENABLE_WEBTRANSPORT parameter.  Because of
+that, any WebTransport endpoint MUST wait for the peer's SETTINGS frame before
+sending or processing any WebTransport traffic.  When multiple versions are
+supported by both of the peers, the most recent version supported by both is
+selected.
 
 The data exchanged over the CONNECT stream is transmitted across intermediaries,
 and thus cannot be versioned using a SETTINGS parameter.  To indicate support
@@ -573,7 +568,7 @@ Setting Name:
 
 Value:
 
-: 0x2b603743
+: 0x3c48d522
 
 Default:
 
@@ -722,12 +717,13 @@ Notes:
 The following changes make the draft-02 and draft-06 versions of this protocol
 incompatible:
 
-* draft-06 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS instead of
-  SETTINGS_ENABLE_WEBTRANSPORT (#86)
+* draft-06 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86)
 * draft-06 explicitly requires SETTINGS_ENABLE_CONNECT_PROTOCOL to be enabled
   (#93)
 * draft-06 explicitly requires SETTINGS_H3_DATAGRAM to be enabled (#106)
 * draft-06 only allows WEBTRANSPORT_STREAM at the beginning of the stream
+* SETTINGS_ENABLE_WEBTRANSPORT uses codepoint 0x2b603742 in draft-02 and
+  0x3c48d522 in draft-06
 
 The following changes that are present in draft-06 can be also implemented by a
 draft-02 implementation safely:
