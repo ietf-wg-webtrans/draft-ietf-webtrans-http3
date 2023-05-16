@@ -482,9 +482,9 @@ and thus cannot be versioned using a SETTINGS parameter.  To indicate support
 for different versions of the protocol defined in this draft, the clients SHALL
 send a header for each version of the draft supported.  The header
 corresponding to the version described in this draft is
-`Sec-Webtransport-Http3-Draft06`; its value SHALL be `1`.  The server SHALL
+`Sec-Webtransport-Http3-Draft02`; its value SHALL be `1`.  The server SHALL
 reply with a `Sec-Webtransport-Http3-Draft` header indicating the selected
-version; its value SHALL be `draft06` for the version described in this draft.
+version; its value SHALL be `draft02` for the version described in this draft.
 
 # Security Considerations
 
