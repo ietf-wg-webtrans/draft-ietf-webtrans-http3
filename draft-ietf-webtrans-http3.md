@@ -316,7 +316,7 @@ WEBTRANSPORT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db,
 and 0xffffffff corresponds to 0x52e5ac983162.  Note that there are code points
 inside that range of form "0x1f * N + 0x21" that are reserved by {{Section 8.1
 of HTTP3}}; those have to be skipped when mapping the error codes
-skipping them (i.e. the two HTTP/3 error codepoints adjacent to a reserved
+(i.e. the two HTTP/3 error codepoints adjacent to a reserved
 codepoint would map to two adjacent WebTransport application error codepoints).
 An example pseudocode can be seen in {{fig-remap-errors}}.
 
