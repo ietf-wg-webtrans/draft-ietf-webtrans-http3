@@ -225,23 +225,27 @@ session have alternative mechanisms:
 ## Prioritization
 
 WebTransport does not provide any priority signalling mechanism for streams and
-datagrams within a WebTransport session; such mechanisms will be defined by
+datagrams within a WebTransport session; such mechanisms can be defined by
 application protocols using WebTransport.
 
-{{!RFC9218}} defines the Priority header which MAY be set in a WebTransport
-CONNECT request or response.  This header SHOULD govern the scheduling of all
-data within the WebTransport session, including WebTransport streams and
-datagrams.
+The Priority header {{!RFC9218}} MAY be set in a WebTransport CONNECT request or
+response; clients MAY also reprioritize WebTransport sessions by sending
+PRIORITY_UPDATE frames ({{Section 7 of RFC9218}}).  These priority signals
+SHOULD be included by the recipient as input to the scheduling process for all
+data it sends in the enclosing WebTransport session, including Capsules,
+WebTransport streams and datagrams.
 
 For example, when two WebTransport sessions are established on the same HTTP/3
-connection, each with `Priority: u=1, i`, the scheduler alternates sending data
-from each session.  If an HTTP request is also sent on this connection with
+connection, each with `Priority: u=1, i`, the scheduler can alternate sending
+data from each session.  If an HTTP request is also sent on this connection with
 `Priority: u=0`, the scheduler would send the response data ahead of any data
 from either WebTransport session.
 
-Non-incremental priorities for WebTransport sessions are allowed, but caution is
-advised as one session could starve other requests and sessions with equal
-priority.
+Endpoints MAY set the incremental flag set to false for WebTransport sessions,
+but caution is advised as one session could starve other requests and sessions
+with equal priority.  See {{Section 10 of RFC9218}} for general guidance to
+avoid starvation.  {{Section 11 of RFC9218}} gives guidance the CONNECT method,
+which is also applicable to WebTransport.
 
 # WebTransport Features
 
