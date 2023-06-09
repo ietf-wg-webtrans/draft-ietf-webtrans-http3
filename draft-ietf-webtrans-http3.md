@@ -82,9 +82,9 @@ WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
 When an HTTP/3 connection is established, both the client and server have to
-send a SETTINGS_ENABLE_WEBTRANSPORT setting in order to indicate that they both
-support WebTransport over HTTP/3.  This process also negotiates the use of
-additional HTTP/3 extensions.
+send a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting in order to indicate that
+they both support WebTransport over HTTP/3.  This process also negotiates the
+use of additional HTTP/3 extensions.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC8441}}.  If the server
@@ -113,22 +113,16 @@ closed.
 ## Establishing a Transport-Capable HTTP/3 Connection {#establishing}
 
 In order to indicate support for WebTransport, both the client and the server
-MUST send a SETTINGS_ENABLE_WEBTRANSPORT value set to "1" in their SETTINGS
-frame.  The SETTINGS_ENABLE_WEBTRANSPORT parameter value SHALL be either "0" or
-"1", with "0" being the default; an endpoint that receives a value other than
-"0" or "1" MUST close the connection with the H3_SETTINGS_ERROR error code.
+MUST send a SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in their
+SETTINGS frame.  The default value for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+parameter is "0", meaning that the endpoint is not willing to receive any
+WebTransport sessions.
 
 The client MUST NOT send a WebTransport request until it has received the
 setting indicating WebTransport support from the server.  Similarly, the server
 MUST NOT process any incoming WebTransport requests until the client settings
-have been received, as the client may be using a version of WebTransport
+have been received, as the client may be using a version of the WebTransport
 extension that is different from the one used by the server.
-
-In addition to the setting above, the server MUST send a
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter indicating the maximum number of
-concurrent sessions it is willing to receive.  The default value for the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the server is
-not willing to receive any WebTransport sessions.
 
 Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
 Capsule Protocol, both the client and the server MUST indicate support for
@@ -145,8 +139,8 @@ of !QUIC-DATAGRAM=RFC9221}}).
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
 SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for HTTP/3
 by {{!RFC9220}}.  An endpoint supporting WebTransport over HTTP/3 MUST send
-both the SETTINGS_ENABLE_WEBTRANSPORT setting and the
-SETTINGS_ENABLE_CONNECT_PROTOCOL setting with values set to "1".
+both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater
+than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
 
 ## Creating a New Session
 
@@ -291,14 +285,14 @@ Bidirectional Stream {
 {: #fig-bidi-client title="Bidirectional WebTransport stream format"}
 
 This document reserves the special signal value 0x41 as a WEBTRANSPORT_STREAM
-frame type.  While it is registered as an HTTP/3 frame type to avoid collisions,
-WEBTRANSPORT_STREAM is not a proper HTTP/3 frame, as it lacks length; it is an
-extension of HTTP/3 frame syntax that MUST be supported by any peer negotiating
-`SETTINGS_ENABLE_WEBTRANSPORT`.  Endpoints that implement this extension are
+frame type.  While it is registered as an HTTP/3 frame type to avoid
+collisions, WEBTRANSPORT_STREAM is not a proper HTTP/3 frame, as it lacks
+length; it is an extension of HTTP/3 frame syntax that MUST be supported by any
+peer negotiating WebTransport.  Endpoints that implement this extension are
 also subject to additional frame handling requirements. Endpoints MUST NOT send
 WEBTRANSPORT_STREAM as a frame type on HTTP/3 streams other than the very first
-bytes of a request stream.  Receiving this frame type in any other circumstances
-MUST be treated as a connection error of type H3_FRAME_ERROR.
+bytes of a request stream.  Receiving this frame type in any other
+circumstances MUST be treated as a connection error of type H3_FRAME_ERROR.
 
 
 ## Resetting Data Streams
@@ -467,9 +461,9 @@ delivering application close metadata.
 
 \[\[RFC editor: please remove this section before publication.]]
 
-The wire format aspects of the protocol are negotiated by changing the
-codepoint used for the SETTINGS_ENABLE_WEBTRANSPORT parameter.  Because of
-that, any WebTransport endpoint MUST wait for the peer's SETTINGS frame before
+The wire format aspects of the protocol are negotiated by changing the codepoint
+used for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter.  Because of that,
+any WebTransport endpoint MUST wait for the peer's SETTINGS frame before
 sending or processing any WebTransport traffic.  When multiple versions are
 supported by both of the peers, the most recent version supported by both is
 selected.
@@ -524,31 +518,14 @@ Reference:
 
 ## HTTP/3 SETTINGS Parameter Registration
 
-The following entries are added to the "HTTP/3 Settings" registry established by
+The following entry is added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
-The `SETTINGS_ENABLE_WEBTRANSPORT` parameter indicates that the specified HTTP/3
-connection is WebTransport-capable.
-
-Setting Name:
-
-: ENABLE_WEBTRANSPORT
-
-Value:
-
-: 0x2b603742
-
-Default:
-
-: 0
-
-Specification:
-
-: This document
-
 The `SETTINGS_WEBTRANSPORT_MAX_SESSIONS` parameter indicates that the specified
-HTTP/3 server is WebTransport-capable and the number of concurrent sessions it
-is willing to receive.
+HTTP/3 endpoint is WebTransport-capable and, for servers, the number of
+concurrent sessions it is willing to receive. The default value for the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the endpoint
+is not willing to receive any WebTransport sessions.
 
 Setting Name:
 
