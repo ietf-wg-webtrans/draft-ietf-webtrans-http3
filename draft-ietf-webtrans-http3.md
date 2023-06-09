@@ -536,7 +536,7 @@ Setting Name:
 
 Value:
 
-: 0x2b603742
+: 0x9412f086
 
 Default:
 
@@ -700,20 +700,20 @@ Notes:
 
 # Changelog
 
-## Changes between draft versions 02 and 06
+## Changes between draft versions 02 and 07
 
-The following changes make the draft-02 and draft-06 versions of this protocol
+The following changes make the draft-07 and draft-07 versions of this protocol
 incompatible:
 
-* draft-06 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86)
-* draft-06 explicitly requires SETTINGS_ENABLE_CONNECT_PROTOCOL to be enabled
+* draft-07 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86)
+* draft-07 explicitly requires SETTINGS_ENABLE_CONNECT_PROTOCOL to be enabled
   (#93)
-* draft-06 explicitly requires SETTINGS_H3_DATAGRAM to be enabled (#106)
-* draft-06 only allows WEBTRANSPORT_STREAM at the beginning of the stream
+* draft-07 explicitly requires SETTINGS_H3_DATAGRAM to be enabled (#106)
+* draft-07 only allows WEBTRANSPORT_STREAM at the beginning of the stream
 * SETTINGS_ENABLE_WEBTRANSPORT uses codepoint 0x2b603742 in draft-02 and
-  0x3c48d522 in draft-06
+  0x9412f086 in draft-07
 
-The following changes that are present in draft-06 can be also implemented by a
+The following changes that are present in draft-07 can be also implemented by a
 draft-02 implementation safely:
 
 * Expanding stream reset error code space from 8 to 32 bits (#115)
