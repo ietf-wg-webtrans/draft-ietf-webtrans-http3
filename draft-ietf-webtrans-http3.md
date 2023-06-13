@@ -705,7 +705,7 @@ Capsule Type:
 : DRAIN_WEBTRANSPORT_SESSION
 
 Status:
-: permanent
+: provisional (when this document is approved this will become permanent)
 
 Specification:
 : This document
