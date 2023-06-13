@@ -713,13 +713,12 @@ Notes:
 The following changes make the draft-07 and draft-07 versions of this protocol
 incompatible:
 
-* draft-07 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86)
+* draft-07 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86) and uses it for
+  version negotiation (#129)
 * draft-07 explicitly requires SETTINGS_ENABLE_CONNECT_PROTOCOL to be enabled
   (#93)
 * draft-07 explicitly requires SETTINGS_H3_DATAGRAM to be enabled (#106)
 * draft-07 only allows WEBTRANSPORT_STREAM at the beginning of the stream
-* SETTINGS_ENABLE_WEBTRANSPORT uses codepoint 0x2b603742 in draft-02 and
-  0x9412f086 in draft-07
 
 The following changes that are present in draft-07 can be also implemented by a
 draft-02 implementation safely:
