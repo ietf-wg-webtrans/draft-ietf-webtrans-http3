@@ -392,7 +392,7 @@ even after the GOAWAY frame has been sent or received.
 
 To drain a WebTransport session, either endpoint can send a
 DRAIN_WEBTRANSPORT_SESSION capsule.  After sending or receiving a
-DRAIN_WEBTRANSPORT_SESSION capsule, an endpoint MAY continue using the session
+DRAIN_WEBTRANSPORT_SESSION (0x78ae) capsule, an endpoint MAY continue using the session
 but SHOULD attempt to gracefully terminate the session as soon as possible.
 
 ~~~
@@ -666,6 +666,30 @@ Capsule Type:
 
 Status:
 : permanent
+
+Specification:
+: This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
+
+Notes:
+: None
+{: spacing="compact"}
+
+The `DRAIN_WEBTRANSPORT_SESSION` capsule.
+
+Value:
+: 0x78ae
+
+Capsule Type:
+: DRAIN_WEBTRANSPORT_SESSION
+
+Status:
+: provisional (when this document is approved this will become permanent)
 
 Specification:
 : This document
