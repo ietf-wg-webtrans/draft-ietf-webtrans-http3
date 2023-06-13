@@ -121,10 +121,13 @@ than "0", since clients initiate WebTransport sessions, and the actual value is
 not significant.
 
 The client MUST NOT send a WebTransport request until it has received the
-setting indicating WebTransport support from the server.  Similarly, the server
-MUST NOT process any incoming WebTransport requests until the client settings
-have been received, as the client may be using a version of the WebTransport
-extension that is different from the one used by the server.
+setting indicating WebTransport support from the server.  
+
+\[\[RFC editor: please remove the following paragraph before publication.]]
+
+Similarly, the server MUST NOT process any incoming WebTransport requests until
+the client settings have been received, as the client may be using a version of
+the WebTransport extension that is different from the one used by the server.
 
 Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
 Capsule Protocol, both the client and the server MUST indicate support for
