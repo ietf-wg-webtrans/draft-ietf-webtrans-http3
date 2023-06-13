@@ -116,7 +116,9 @@ In order to indicate support for WebTransport, both the client and the server
 MUST send a SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in their
 SETTINGS frame.  The default value for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
 parameter is "0", meaning that the endpoint is not willing to receive any
-WebTransport sessions.
+WebTransport sessions.  Note that the client only needs to send a value greater
+than "0", since clients initiate WebTransport sessions, and the actual value is
+not significant.
 
 The client MUST NOT send a WebTransport request until it has received the
 setting indicating WebTransport support from the server.  Similarly, the server
@@ -138,9 +140,11 @@ of !QUIC-DATAGRAM=RFC9221}}).
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
 SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for HTTP/3
-by {{!RFC9220}}.  An endpoint supporting WebTransport over HTTP/3 MUST send
-both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater
-than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
+by {{!RFC9220}}.  A client supporting WebTransport over HTTP/3 MUST send the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0". A
+server supporting WebTransport over HTTP/3 MUST send both the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0" and
+the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
 
 ## Creating a New Session
 
