@@ -710,7 +710,7 @@ Notes:
 
 ## Changes between draft versions 02 and 07
 
-The following changes make the draft-07 and draft-07 versions of this protocol
+The following changes make the draft-02 and draft-07 versions of this protocol
 incompatible:
 
 * draft-07 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86) and uses it for
