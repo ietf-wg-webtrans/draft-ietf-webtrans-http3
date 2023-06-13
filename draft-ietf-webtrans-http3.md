@@ -117,11 +117,11 @@ MUST send a SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in their
 SETTINGS frame.  The default value for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
 parameter is "0", meaning that the endpoint is not willing to receive any
 WebTransport sessions.  Note that the client only needs to send a value greater
-than "0", since clients initiate WebTransport sessions, and the actual value is
+than "0"; since clients initiate WebTransport sessions, the actual value is
 not significant.
 
 The client MUST NOT send a WebTransport request until it has received the
-setting indicating WebTransport support from the server.  
+setting indicating WebTransport support from the server.
 
 \[\[RFC editor: please remove the following paragraph before publication.]]
 
@@ -540,7 +540,7 @@ Setting Name:
 
 Value:
 
-: 0x3c48d522
+: 0xc671706a
 
 Default:
 
