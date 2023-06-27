@@ -383,17 +383,17 @@ implementation to choose what stream or datagram to discard.
 
 ## Interaction with HTTP/3 GOAWAY frame
 
-HTTP/3 defines a graceful shutdown mechanism (Section 5.2 of [HTTP3]) that
+HTTP/3 defines a graceful shutdown mechanism ({{Section 5.2 of HTTP3}}) that
 allows a peer to send a GOAWAY frame indicating that it will no longer accept
-any new incoming requests or pushes.  This mechanism applies to the CONNECT
-requests for new WebTransport sessions.  A GOAWAY frame does not affect data
-streams for existing WebTransport sessions; those can continue to be opened
-even after the GOAWAY frame has been sent or received.
+any new incoming requests or pushes.
 
-To drain a WebTransport session, either endpoint can send a
-DRAIN_WEBTRANSPORT_SESSION capsule.  After sending or receiving a
-DRAIN_WEBTRANSPORT_SESSION (0x78ae) capsule, an endpoint MAY continue using the session
-but SHOULD attempt to gracefully terminate the session as soon as possible.
+A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
+sessions if the stream identifier is equal to or greater than the indicated
+stream ID.
+
+An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
+all WebTransport sessions.  To shut down a single WebTransport session, either
+endpoint can send a DRAIN_WEBTRANSPORT_SESSION (0x78ae) capsule.
 
 ~~~
 DRAIN_WEBTRANSPORT_SESSION Capsule {
@@ -401,6 +401,12 @@ DRAIN_WEBTRANSPORT_SESSION Capsule {
   Length (i) = 0
 }
 ~~~
+
+After sending or receiving either a DRAIN_WEBTRANSPORT_SESSION capsule or a
+HTTP/3 GOAWAY frame, an endpoint MAY continue using the session and MAY open new
+streams.  The signal is intended for the application using WebTransport, which
+is expected to attempt to gracefully terminate the session as soon as possible.
+
 
 # Session Termination
 
