@@ -402,6 +402,9 @@ DRAIN_WEBTRANSPORT_SESSION Capsule {
 }
 ~~~
 
+Receiving an HTTP/3 GOAWAY frame is semantically equivalent to receiving
+DRAIN_WEBTRANSPORT_SESSION for every WebTransport session on the connection.
+
 # Session Termination
 
 A WebTransport session over HTTP/3 is considered terminated when either of the
