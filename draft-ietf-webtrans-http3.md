@@ -224,28 +224,30 @@ session have alternative mechanisms:
 
 ## Prioritization
 
-WebTransport does not provide any priority signalling mechanism for streams and
-datagrams within a WebTransport session; such mechanisms can be defined by
-application protocols using WebTransport.
+WebTransport sessions are initiated using extended CONNECT. While {{Section 11
+of !RFC9218}} describes how extensible priorities can be applied to data sent on
+a CONNECT stream, WebTransport extends the types of data that are exchanged in
+relation to the request and response, which requires additional considerations.
 
-The Priority header {{!RFC9218}} MAY be set in a WebTransport CONNECT request or
-response; clients MAY also reprioritize WebTransport sessions by sending
-PRIORITY_UPDATE frames ({{Section 7 of RFC9218}}).  These priority signals
-SHOULD be included by the recipient as input to the scheduling process for all
-data it sends in the enclosing WebTransport session, including Capsules,
-WebTransport streams and datagrams.
+WebTransport CONNECT requests and responses MAY contain the Priority header
+field ({{Section 5 of RFC9218}}); clients MAY reprioritize by sending
+PRIORITY_UPDATE frames ({{Section 7 of RFC9218}}). In extension to {{RFC9218}},
+it is RECOMMENDED that clients and servers apply the scheduling guidance in both
+{{Section 9 of RFC9218}} and {{Section 10 of RFC9218}} for all data that they
+send in the enclosing WebTransport session, including Capsules, WebTransport
+streams and datagrams. WebTransport does not provide any priority signaling
+mechanism for streams and datagrams within a WebTransport session; such
+mechanisms can be defined by application protocols using WebTransport.  It is
+RECOMMENDED that such mechanisms only affect scheduling within a session and not
+scheduling of other data on the same HTTP/3 connection.
 
-For example, when two WebTransport sessions are established on the same HTTP/3
-connection, each with `Priority: u=1, i`, the scheduler can alternate sending
-data from each session.  If an HTTP request is also sent on this connection with
-`Priority: u=0`, the scheduler would send the response data ahead of any data
-from either WebTransport session.
+The client/server priority merging guidance given in {{Section 8 of RFC9218}}
+also applies to WebTransport session. For example, a client that receives a
+response Priority header field could alter its view of a WebTransport session
+priority and alter the scheduling of outgoing data as a result.
 
-Endpoints MAY set the incremental flag set to false for WebTransport sessions,
-but caution is advised as one session could starve other requests and sessions
-with equal priority.  See {{Section 10 of RFC9218}} for general guidance to
-avoid starvation.  {{Section 11 of RFC9218}} gives guidance the CONNECT method,
-which is also applicable to WebTransport.
+Endpoints that prioritize WebTransport sessions need to consider how they
+interact with other sessions or requests on the same HTTP/3 connection.
 
 # WebTransport Features
 
