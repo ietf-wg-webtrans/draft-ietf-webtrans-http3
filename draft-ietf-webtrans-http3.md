@@ -226,7 +226,10 @@ session have alternative mechanisms:
 
 WebTransport over HTTP/3 provides the following features described in
 [OVERVIEW]: unidirectional streams, bidirectional streams and datagrams,
-initiated by either endpoint.
+initiated by either endpoint. Protocols designed for use with WebTransport over
+HTTP/3 are constrained to these features.  The Capsule Protocol is an
+implementation detail of WebTransport over HTTP/3 and is not a WebTransport
+feature.
 
 Session IDs are used to demultiplex streams and datagrams belonging to different
 WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
