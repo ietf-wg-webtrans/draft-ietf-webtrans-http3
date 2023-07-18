@@ -222,6 +222,33 @@ session have alternative mechanisms:
   limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
   propagated to the application.
 
+## Prioritization
+
+WebTransport sessions are initiated using extended CONNECT. While {{Section 11
+of !RFC9218}} describes how extensible priorities can be applied to data sent on
+a CONNECT stream, WebTransport extends the types of data that are exchanged in
+relation to the request and response, which requires additional considerations.
+
+WebTransport CONNECT requests and responses MAY contain the Priority header
+field ({{Section 5 of RFC9218}}); clients MAY reprioritize by sending
+PRIORITY_UPDATE frames ({{Section 7 of RFC9218}}). In extension to {{RFC9218}},
+it is RECOMMENDED that clients and servers apply the scheduling guidance in both
+{{Section 9 of RFC9218}} and {{Section 10 of RFC9218}} for all data that they
+send in the enclosing WebTransport session, including Capsules, WebTransport
+streams and datagrams. WebTransport does not provide any priority signaling
+mechanism for streams and datagrams within a WebTransport session; such
+mechanisms can be defined by application protocols using WebTransport.  It is
+RECOMMENDED that such mechanisms only affect scheduling within a session and not
+scheduling of other data on the same HTTP/3 connection.
+
+The client/server priority merging guidance given in {{Section 8 of RFC9218}}
+also applies to WebTransport session. For example, a client that receives a
+response Priority header field could alter its view of a WebTransport session
+priority and alter the scheduling of outgoing data as a result.
+
+Endpoints that prioritize WebTransport sessions need to consider how they
+interact with other sessions or requests on the same HTTP/3 connection.
+
 # WebTransport Features
 
 WebTransport over HTTP/3 provides the following features described in
