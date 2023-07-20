@@ -757,7 +757,7 @@ The following changes that are present in draft-07 can be also implemented by a
 draft-02 implementation safely:
 
 * Expanding stream reset error code space from 8 to 32 bits (#115)
-* H3_WEBTRANSPORT_SESSION_GONE error code (#75)
+* WEBTRANSPORT_SESSION_GONE error code (#75)
 * Handling for HTTP GOAWAY (#76)
 * DRAIN_WEBTRANSPORT_SESSION capsule (#79)
 * Disallowing following redirects automatically (#113)
