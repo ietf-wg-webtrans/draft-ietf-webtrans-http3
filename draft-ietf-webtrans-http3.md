@@ -206,8 +206,8 @@ this functionality.
 
 The user agent MAY include a `WebTransport-Subprotocols-Available` header field
 in the CONNECT request, enumerating the possible subprotocols; if received, the
-server MUST include a `WebTransport-Subprotocol` field in the 2xx response, or
-respond with an error code instead.
+server MUST include a `WebTransport-Subprotocol` field with the subprotocol
+chosen in the 2xx response, or respond with an error code instead.
 
 Both `WebTransport-Subprotocols-Available` and `WebTransport-Subprotocol` are
 Structured Fields {{!RFC8941}}. `WebTransport-Subprotocols-Available` is a List
