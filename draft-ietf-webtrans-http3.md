@@ -214,7 +214,7 @@ Structured Fields {{!RFC8941}}. `WebTransport-Subprotocols-Available` is a List
 of Tokens, and `WebTransport-Subprotocol` is a Token. The token in the
 `WebTransport-Subprotocol` response header field MUST be one of the tokens
 listed in `WebTransport-Subprotocols-Available` of the request.  The semantics
-of individual token values is entirely up to the WebTransport resource in
+of individual token values is determined by the WebTransport resource in
 question.
 
 ## Limiting the Number of Simultaneous Sessions
