@@ -80,12 +80,13 @@ can be accessed via an HTTP/3 server.
 
 ## WebTransport, QUIC and HTTP/3
 
-QUIC v1 transport [RFC9000] provides security, stream multiplexing,
-reliable and ordered streams, stream HoL blocking avoidance, flow
-control, and congestion control. The transport layer provides these
-services to applications but does not constrain how streams are used.
+"QUIC: A UDP-Based Multiplexed and Secure Transport" {{!RFC9000}}
+defines QUIC security, stream multiplexing, reliable and ordered streams,
+stream HoL blocking avoidance, flow control, and congestion control.
+The transport layer provides these services to applications but does
+not constrain how streams are used.
 
-HTTP is an application-layer protocol, defined by "HTTP Semantics" [RFC9110].
+HTTP is an application-layer protocol, defined by "HTTP Semantics" {{!RFC9110}}.
 HTTP/3 has specific features that are not part of the HTTP semantics: QPACK
 header compression (static and dynamic) and Server Push. Of these, only
 static decompression is mandatory to support.
@@ -113,12 +114,15 @@ for accounting purposes, but after that an application can use QUIC
 streams however it would like. This is similar to WebSockets over
 HTTP/1.1, where access is enabled to the underlying bytestream after
 both sides have agreed the handshake. As a result, WebTransport
-layering appears as follows: 
+layering appears as follows:
 
-|       WebTranport        |
+~~~~~~~~~~ drawing
+|       WebTrasnport       |
 |  Punch  | HTTP Semantics |
 | Through |   HTTP/3       |
 |          QUIC            |
+~~~~~~~~~~
+{: #fig-webtransport-layers title="WebTransport Layering"}
 
 ## Protocol Overview
 
