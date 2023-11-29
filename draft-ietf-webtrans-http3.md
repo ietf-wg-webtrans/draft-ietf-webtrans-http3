@@ -78,43 +78,30 @@ can be accessed via an HTTP/3 server.
 
 # Overview
 
-## WebTransport, QUIC and HTTP/3
+## QUIC, WebTransport, and HTTP/3
 
-"QUIC: A UDP-Based Multiplexed and Secure Transport" {{!RFC9000}}
-defines QUIC security, stream multiplexing, reliable and ordered streams,
-stream HoL blocking avoidance, flow control, and congestion control.
-The transport layer provides these services to applications but does
-not constrain how streams are used.
+QUIC version 1 {{!RFC9000}} is a secure transport protocol with flow control and
+congestion control. QUIC supports application data exchange via streams;
+reliable and ordered byte streams that can be multiplexed. Stream independence
+can mitigate head-of-line blocking. While QUIC provides streams as a transport
+service, it is unopinionated about their usageage. Applicability of streams is
+described by section 4 of {{?RFC9308}}.
 
 HTTP is an application-layer protocol, defined by "HTTP Semantics" {{!RFC9110}}.
-HTTP/3 has specific features that are not part of the HTTP semantics: QPACK
-header compression (static and dynamic) and Server Push. Of these, only
-static decompression is mandatory to support.
+HTTP/3 is the application mapping for QUIC, defined in {{!RFC9113}}. It
+describes how streams are used to carry control data or HTTP request and
+response message sequences in the form of frames, as well as describing details
+of stream and connection lifecycle management.
 
 WebTransport over HTTP/3 makes it possible for an application to directly access
-QUIC transport via an HTTP/3 connection. HTTP/3 is the application mapping for
-QUIC, defined in {{!RFC9113}}, which describes how streams are used to carry control
-data or HTTP request and response message sequences in the form of frames, as
-well as describing details of stream and connection lifecycle management.
-
-However, although WebTransport requires HTTP for its handshake, it doesn't require
-HTTP for any other part. This makes it possible to create a minimal WebTransport client
-or server that supports only the semantics required to complete the handshake.
-This involves generating/parsing the request method, host,
-path, protocol, optional Origin header, and perhaps some extra headers;
-generating/parsing the response status code, and possibly some extra headers.
-The receiver can likely perform checks using bytestring comparisons.
-
-Rather than having to interact with QUIC streams via HTTP semantics and
-HTTP/3 frames, a WebTransport session allows direct access. This relies on
-the WebTransport handshake (extended CONNECT method) to provide some prior checks.
-This is important or the Web security model where same-origin and cross-origin resource
-access is very important. Post-handshake, QUIC streams use header bytes
-for accounting purposes, but after that an application can use QUIC
-streams however it would like. This is similar to WebSockets over
-HTTP/1.1, where access is enabled to the underlying bytestream after
-both sides have agreed the handshake. As a result, WebTransport
-layering appears as follows:
+QUIC transport via an HTTP/3 connection. This relies on the WebTransport
+handshake (extended CONNECT method) to provide some prior checks. This is
+important or the Web security model where same-origin and cross-origin resource
+access is very important. Post-handshake, QUIC streams use header bytes for
+accounting purposes, but after that an application can use QUIC streams however
+it would like. This is similar to WebSockets over HTTP/1.1, where access is
+enabled to the underlying bytestream after both sides have agreed the handshake.
+As a result, WebTransport layering appears as follows:
 
 ~~~~~~~~~~ drawing
 |       WebTransport       |
@@ -123,6 +110,26 @@ layering appears as follows:
 |          QUIC            |
 ~~~~~~~~~~
 {: #fig-webtransport-layers title="WebTransport Layering"}
+
+While WebTransport requires HTTP for its handshake, it doesn't require HTTP for
+any other part. HTTP/3 offers two features in addition to HTTP Semantics: QPACK
+header compression and Server Push. Neither of these can be used to the benefit
+of WebTransport after the handshake succeeds.
+
+It is possible to create a minimal WebTransport client or server that supports
+only the semantics and wire format requirements that permit a handshake to
+succeed:
+
+: QPACK static decompression
+
+: Generating/parsing the request method, host, path, protocol, optional Origin
+header, and perhaps some extra headers
+
+: Generating/parsing the response status code, and possibly some extra headers.
+
+The receiver can likely perform several of its requirements using bytestring
+comparisons.
+
 
 ## Protocol Overview
 
