@@ -26,13 +26,13 @@ multiplexed within the same HTTP/3 connection.
     intervaltree 3.1.0
     Jinja2 3.1.2
     lxml 4.9.3
-    platformdirs 3.11.0
+    platformdirs 4.0.0
     pycountry 22.3.5
     PyYAML 6.0
     requests 2.31.0
     setuptools 67.7.2
     six 1.16.0
-    wcwidth 0.2.8
+    wcwidth 0.2.10
 -->
 <link href="draft-ietf-webtrans-http3.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1031,11 +1031,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">WebTransport-H3</td>
-<td class="right">October 2023</td>
+<td class="right">November 2023</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 25 April 2024</td>
+<td class="center">Expires 1 June 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1048,12 +1048,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-10-23" class="published">23 October 2023</time>
+<time datetime="2023-11-29" class="published">29 November 2023</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-04-25">25 April 2024</time></dd>
+<dd class="expires"><time datetime="2024-06-01">1 June 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1112,7 +1112,7 @@ web API draft corresponding to this document can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 25 April 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 1 June 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1150,7 +1150,15 @@ web API draft corresponding to this document can be found at
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-protocol-overview" class="internal xref">Protocol Overview</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-overview" class="internal xref">Overview</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-webtransport-quic-and-http-" class="internal xref">WebTransport, QUIC and HTTP/3</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-protocol-overview" class="internal xref">Protocol Overview</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-session-establishment" class="internal xref">Session Establishment</a></p>
@@ -1282,45 +1290,104 @@ can be accessed via an HTTP/3 server.<a href="#section-1.1-2" class="pilcrow">¶
 </div>
 </section>
 </div>
-<div id="protocol-overview">
+<div id="overview">
 <section id="section-2">
-      <h2 id="name-protocol-overview">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
+      <h2 id="name-overview">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-overview" class="section-name selfRef">Overview</a>
       </h2>
-<p id="section-2-1">WebTransport servers in general are identified by a pair of authority value and
-path value (defined in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Sections 3.2 and 3.3 correspondingly).<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">When an HTTP/3 connection is established, both the client and server have to
+<div id="webtransport-quic-and-http3">
+<section id="section-2.1">
+        <h3 id="name-webtransport-quic-and-http-">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-webtransport-quic-and-http-" class="section-name selfRef">WebTransport, QUIC and HTTP/3</a>
+        </h3>
+<p id="section-2.1-1">"QUIC: A UDP-Based Multiplexed and Secure Transport" <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>
+defines QUIC security, stream multiplexing, reliable and ordered streams,
+stream HoL blocking avoidance, flow control, and congestion control.
+The transport layer provides these services to applications but does
+not constrain how streams are used.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">HTTP is an application-layer protocol, defined by "HTTP Semantics" <span>[<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>.
+HTTP/3 has specific features that are not part of the HTTP semantics: QPACK
+header compression (static and dynamic) and Server Push. Of these, only
+static decompression is mandatory to support.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+<p id="section-2.1-3">WebTransport over HTTP/3 makes it possible for an application to directly access
+QUIC transport via an HTTP/3 connection. HTTP/3 is the application mapping for
+QUIC, defined in RFC 9113, which describes how streams are used to carry control
+data or HTTP request and response message sequences in the form of frames, as
+well as describing details of stream and connection lifecycle management.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">However, although WebTransport requires HTTP for its handshake, it doesn't require
+HTTP for any other part. This makes it possible to create a minimal WebTransport client
+or server that supports only the semantics required to complete the handshake.
+This involves generating/parsing the request method, host,
+path, protocol, optional Origin header, and perhaps some extra headers;
+generating/parsing the response status code, and possibly some extra headers.
+The receiver can likely perform checks using bytestring comparisons.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<p id="section-2.1-5">Rather than having to interact with QUIC streams via HTTP semantics and
+HTTP/3 frames, a WebTransport session allows direct access. This relies on
+the WebTransport handshake (extended CONNECT method) to provide some prior checks.
+This is important or the Web security model where same-origin and cross-origin resource
+access is very important. Post-handshake, QUIC streams use header bytes
+for accounting purposes, but after that an application can use QUIC
+streams however it would like. This is similar to WebSockets over
+HTTP/1.1, where access is enabled to the underlying bytestream after
+both sides have agreed the handshake. As a result, WebTransport
+layering appears as follows:<a href="#section-2.1-5" class="pilcrow">¶</a></p>
+<span id="name-webtransport-layering"></span><div id="fig-webtransport-layers">
+<figure id="figure-1">
+          <div class="lang-drawing sourcecode" id="section-2.1-6.1">
+<pre>
+|       WebTrasnport       |
+|  Punch  | HTTP Semantics |
+| Through |   HTTP/3       |
+|          QUIC            |
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-webtransport-layering" class="selfRef">WebTransport Layering</a>
+          </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="protocol-overview">
+<section id="section-2.2">
+        <h3 id="name-protocol-overview">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
+        </h3>
+<p id="section-2.2-1">WebTransport servers in general are identified by a pair of authority value and
+path value (defined in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Sections 3.2 and 3.3 correspondingly).<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-2">When an HTTP/3 connection is established, both the client and server have to
 send a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting in order to indicate that
 they both support WebTransport over HTTP/3.  This process also negotiates the
-use of additional HTTP/3 extensions.<a href="#section-2-2" class="pilcrow">¶</a></p>
-<p id="section-2-3">WebTransport sessions are initiated inside a given HTTP/3 connection by the
+use of additional HTTP/3 extensions.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
+<p id="section-2.2-3">WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request <span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span>.  If the server
 accepts the request, a WebTransport session is established.  The resulting
 stream will be further referred to as a <em>CONNECT stream</em>, and its stream ID is
 used to uniquely identify a given WebTransport session within the connection.
 The ID of the CONNECT stream that established a given WebTransport session will
-be further referred to as a <em>Session ID</em>.<a href="#section-2-3" class="pilcrow">¶</a></p>
-<p id="section-2-4">After the session is established, the peers can exchange data using the
-following mechanisms:<a href="#section-2-4" class="pilcrow">¶</a></p>
+be further referred to as a <em>Session ID</em>.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.2-4">After the session is established, the peers can exchange data using the
+following mechanisms:<a href="#section-2.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-2-5.1">
-          <p id="section-2-5.1.1">A client can create a bidirectional stream and transfer its ownership to
-WebTransport by providing a special signal in the first bytes.<a href="#section-2-5.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-2.2-5.1">
+            <p id="section-2.2-5.1.1">A client can create a bidirectional stream and transfer its ownership to
+WebTransport by providing a special signal in the first bytes.<a href="#section-2.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-2-5.2">
-          <p id="section-2-5.2.1">A server can create a bidirectional stream and transfer its ownership to
-WebTransport by providing a special signal in the first bytes..<a href="#section-2-5.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-2.2-5.2">
+            <p id="section-2.2-5.2.1">A server can create a bidirectional stream and transfer its ownership to
+WebTransport by providing a special signal in the first bytes..<a href="#section-2.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-2-5.3">
-          <p id="section-2-5.3.1">Both client and server can create a unidirectional stream using a special
-stream type.<a href="#section-2-5.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-2.2-5.3">
+            <p id="section-2.2-5.3.1">Both client and server can create a unidirectional stream using a special
+stream type.<a href="#section-2.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-2-5.4">
-          <p id="section-2-5.4.1">A datagram can be sent using HTTP Datagrams <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.<a href="#section-2-5.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-2.2-5.4">
+            <p id="section-2.2-5.4.1">A datagram can be sent using HTTP Datagrams <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.<a href="#section-2.2-5.4.1" class="pilcrow">¶</a></p>
 </li>
-      </ul>
-<p id="section-2-6">A WebTransport session is terminated when the CONNECT stream that created it is
-closed.<a href="#section-2-6" class="pilcrow">¶</a></p>
+        </ul>
+<p id="section-2.2-6">A WebTransport session is terminated when the CONNECT stream that created it is
+closed.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="session-establishment">
@@ -1505,9 +1572,9 @@ with an H3_ID_ERROR error code.<a href="#section-4-4" class="pilcrow">¶</a></p>
 <p id="section-4.1-1">WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
 unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the
 stream type, followed by the session ID, encoded as a variable-length integer,
-followed by the user-specified stream data (<a href="#fig-unidi" class="auto internal xref">Figure 1</a>).<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+followed by the user-specified stream data (<a href="#fig-unidi" class="auto internal xref">Figure 2</a>).<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <span id="name-unidirectional-webtransport"></span><div id="fig-unidi">
-<figure id="figure-1">
+<figure id="figure-2">
           <div class="lang-drawing sourcecode" id="section-4.1-2.1">
 <pre>
 Unidirectional Stream {
@@ -1517,7 +1584,7 @@ Unidirectional Stream {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
 <a href="#name-unidirectional-webtransport" class="selfRef">Unidirectional WebTransport stream format</a>
           </figcaption></figure>
 </div>
@@ -1545,9 +1612,9 @@ used.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
 <p id="section-4.2-4">The signal value, 0x41, is used by clients and servers to open a bidirectional
 WebTransport stream.  Following this is the associated session ID, encoded as a
 variable-length integer; the rest of the stream is the application payload of
-the WebTransport stream (<a href="#fig-bidi-client" class="auto internal xref">Figure 2</a>).<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+the WebTransport stream (<a href="#fig-bidi-client" class="auto internal xref">Figure 3</a>).<a href="#section-4.2-4" class="pilcrow">¶</a></p>
 <span id="name-bidirectional-webtransport-"></span><div id="fig-bidi-client">
-<figure id="figure-2">
+<figure id="figure-3">
           <div class="lang-drawing sourcecode" id="section-4.2-5.1">
 <pre>
 Bidirectional Stream {
@@ -1557,7 +1624,7 @@ Bidirectional Stream {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
 <a href="#name-bidirectional-webtransport-" class="selfRef">Bidirectional WebTransport stream format</a>
           </figcaption></figure>
 </div>
@@ -1590,9 +1657,9 @@ and 0xffffffff corresponds to 0x52e5ac983162.  Note that there are code points
 inside that range of form "0x1f * N + 0x21" that are reserved by <span><a href="https://rfc-editor.org/rfc/rfc9114#section-8.1" class="relref">Section 8.1</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>; those have to be skipped when mapping the error codes
 (i.e. the two HTTP/3 error codepoints adjacent to a reserved
 codepoint would map to two adjacent WebTransport application error codepoints).
-An example pseudocode can be seen in <a href="#fig-remap-errors" class="auto internal xref">Figure 3</a>.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
+An example pseudocode can be seen in <a href="#fig-remap-errors" class="auto internal xref">Figure 4</a>.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
 <span id="name-pseudocode-for-converting-b"></span><div id="fig-remap-errors">
-<figure id="figure-3">
+<figure id="figure-4">
           <div class="alignLeft art-text artwork" id="section-4.3-3.1">
 <pre>
     first = 0x52e4a40fa8db
@@ -1608,7 +1675,7 @@ An example pseudocode can be seen in <a href="#fig-remap-errors" class="auto int
         return shifted - floor(shifted / 0x1f)
 </pre>
 </div>
-<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
 <a href="#name-pseudocode-for-converting-b" class="selfRef">Pseudocode for converting between WebTransport application errors and HTTP/3 error codes</a>
           </figcaption></figure>
 </div>
@@ -2155,6 +2222,10 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
         <dd>
 <span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9000">https://www.rfc-editor.org/rfc/rfc9000</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC9110">[RFC9110]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC9218">[RFC9218]</dt>
         <dd>
 <span class="refAuthor">Oku, K.</span> and <span class="refAuthor">L. Pardue</span>, <span class="refTitle">"Extensible Prioritization Scheme for HTTP"</span>, <span class="seriesInfo">RFC 9218</span>, <span class="seriesInfo">DOI 10.17487/RFC9218</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9218">https://www.rfc-editor.org/rfc/rfc9218</a>&gt;</span>. </dd>
@@ -2174,7 +2245,7 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
 <dl class="references">
 <dt id="I-D.ietf-webtrans-http2">[I-D.ietf-webtrans-http2]</dt>
       <dd>
-<span class="refAuthor">Frindell, A.</span>, <span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Vasiliev, V.</span>, and <span class="refAuthor">G. Xie</span>, <span class="refTitle">"WebTransport over HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-http2-06</span>, <time datetime="2023-07-10" class="refDate">10 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-06">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-06</a>&gt;</span>. </dd>
+<span class="refAuthor">Frindell, A.</span>, <span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Vasiliev, V.</span>, and <span class="refAuthor">G. Xie</span>, <span class="refTitle">"WebTransport over HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-http2-07</span>, <time datetime="2023-10-23" class="refDate">23 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-07">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-07</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>

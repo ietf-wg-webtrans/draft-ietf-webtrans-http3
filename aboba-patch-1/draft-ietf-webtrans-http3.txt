@@ -5,10 +5,10 @@
 Network Working Group                                        A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 25 April 2024                                        Apple Inc.
+Expires: 1 June 2024                                          Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                         23 October 2023
+                                                        29 November 2023
 
 
                         WebTransport over HTTP/3
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 April 2024.
+   This Internet-Draft will expire on 1 June 2024.
 
 Copyright Notice
 
@@ -69,7 +69,9 @@ Table of Contents
 
    1.  Introduction
      1.1.  Terminology
-   2.  Protocol Overview
+   2.  Overview
+     2.1.  WebTransport, QUIC and HTTP/3
+     2.2.  Protocol Overview
    3.  Session Establishment
      3.1.  Establishing a Transport-Capable HTTP/3 Connection
      3.2.  Extended CONNECT in HTTP/3
@@ -125,7 +127,58 @@ Table of Contents
    an application that accepts WebTransport sessions, which can be
    accessed via an HTTP/3 server.
 
-2.  Protocol Overview
+2.  Overview
+
+2.1.  WebTransport, QUIC and HTTP/3
+
+   "QUIC: A UDP-Based Multiplexed and Secure Transport" [RFC9000]
+   defines QUIC security, stream multiplexing, reliable and ordered
+   streams, stream HoL blocking avoidance, flow control, and congestion
+   control.  The transport layer provides these services to applications
+   but does not constrain how streams are used.
+
+   HTTP is an application-layer protocol, defined by "HTTP Semantics"
+   [RFC9110].  HTTP/3 has specific features that are not part of the
+   HTTP semantics: QPACK header compression (static and dynamic) and
+   Server Push.  Of these, only static decompression is mandatory to
+   support.
+
+   WebTransport over HTTP/3 makes it possible for an application to
+   directly access QUIC transport via an HTTP/3 connection.  HTTP/3 is
+   the application mapping for QUIC, defined in RFC 9113, which
+   describes how streams are used to carry control data or HTTP request
+   and response message sequences in the form of frames, as well as
+   describing details of stream and connection lifecycle management.
+
+   However, although WebTransport requires HTTP for its handshake, it
+   doesn't require HTTP for any other part.  This makes it possible to
+   create a minimal WebTransport client or server that supports only the
+   semantics required to complete the handshake.  This involves
+   generating/parsing the request method, host, path, protocol, optional
+   Origin header, and perhaps some extra headers; generating/parsing the
+   response status code, and possibly some extra headers.  The receiver
+   can likely perform checks using bytestring comparisons.
+
+   Rather than having to interact with QUIC streams via HTTP semantics
+   and HTTP/3 frames, a WebTransport session allows direct access.  This
+   relies on the WebTransport handshake (extended CONNECT method) to
+   provide some prior checks.  This is important or the Web security
+   model where same-origin and cross-origin resource access is very
+   important.  Post-handshake, QUIC streams use header bytes for
+   accounting purposes, but after that an application can use QUIC
+   streams however it would like.  This is similar to WebSockets over
+   HTTP/1.1, where access is enabled to the underlying bytestream after
+   both sides have agreed the handshake.  As a result, WebTransport
+   layering appears as follows:
+
+   |       WebTrasnport       |
+   |  Punch  | HTTP Semantics |
+   | Through |   HTTP/3       |
+   |          QUIC            |
+
+                      Figure 1: WebTransport Layering
+
+2.2.  Protocol Overview
 
    WebTransport servers in general are identified by a pair of authority
    value and path value (defined in [RFC3986] Sections 3.2 and 3.3
@@ -352,7 +405,7 @@ Table of Contents
    HTTP/3 unidirectional stream type SHALL be 0x54.  The body of the
    stream SHALL be the stream type, followed by the session ID, encoded
    as a variable-length integer, followed by the user-specified stream
-   data (Figure 1).
+   data (Figure 2).
 
    Unidirectional Stream {
        Stream Type (i) = 0x54,
@@ -360,7 +413,7 @@ Table of Contents
        Stream Body (..)
    }
 
-            Figure 1: Unidirectional WebTransport stream format
+            Figure 2: Unidirectional WebTransport stream format
 
 4.2.  Bidirectional Streams
 
@@ -386,7 +439,7 @@ Table of Contents
    bidirectional WebTransport stream.  Following this is the associated
    session ID, encoded as a variable-length integer; the rest of the
    stream is the application payload of the WebTransport stream
-   (Figure 2).
+   (Figure 3).
 
    Bidirectional Stream {
        Signal Value (i) = 0x41,
@@ -394,7 +447,7 @@ Table of Contents
        Stream Body (..)
    }
 
-             Figure 2: Bidirectional WebTransport stream format
+             Figure 3: Bidirectional WebTransport stream format
 
    This document reserves the special signal value 0x41 as a
    WEBTRANSPORT_STREAM frame type.  While it is registered as an HTTP/3
@@ -427,7 +480,7 @@ Table of Contents
    skipped when mapping the error codes (i.e. the two HTTP/3 error
    codepoints adjacent to a reserved codepoint would map to two adjacent
    WebTransport application error codepoints).  An example pseudocode
-   can be seen in Figure 3.
+   can be seen in Figure 4.
 
        first = 0x52e4a40fa8db
        last = 0x52e5ac983162
@@ -441,7 +494,7 @@ Table of Contents
            shifted = h - first
            return shifted - floor(shifted / 0x1f)
 
-          Figure 3: Pseudocode for converting between WebTransport
+          Figure 4: Pseudocode for converting between WebTransport
                  application errors and HTTP/3 error codes
 
    WebTransport data streams are associated with sessions through a
@@ -813,6 +866,11 @@ Table of Contents
               DOI 10.17487/RFC9000, May 2021,
               <https://www.rfc-editor.org/rfc/rfc9000>.
 
+   [RFC9110]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP Semantics", STD 97, RFC 9110,
+              DOI 10.17487/RFC9110, June 2022,
+              <https://www.rfc-editor.org/rfc/rfc9110>.
+
    [RFC9218]  Oku, K. and L. Pardue, "Extensible Prioritization Scheme
               for HTTP", RFC 9218, DOI 10.17487/RFC9218, June 2022,
               <https://www.rfc-editor.org/rfc/rfc9218>.
@@ -826,9 +884,9 @@ Table of Contents
    [I-D.ietf-webtrans-http2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
               Vasiliev, V., and G. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-06,
-              10 July 2023, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-06>.
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-07,
+              23 October 2023, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-webtrans-http2-07>.
 
 Appendix A.  Changelog
 
