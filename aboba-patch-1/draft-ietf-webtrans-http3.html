@@ -1311,7 +1311,7 @@ header compression (static and dynamic) and Server Push. Of these, only
 static decompression is mandatory to support.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
 <p id="section-2.1-3">WebTransport over HTTP/3 makes it possible for an application to directly access
 QUIC transport via an HTTP/3 connection. HTTP/3 is the application mapping for
-QUIC, defined in RFC 9113, which describes how streams are used to carry control
+QUIC, defined in <span>[<a href="#RFC9113" class="cite xref">RFC9113</a>]</span>, which describes how streams are used to carry control
 data or HTTP request and response message sequences in the form of frames, as
 well as describing details of stream and connection lifecycle management.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
 <p id="section-2.1-4">However, although WebTransport requires HTTP for its handshake, it doesn't require
@@ -1335,7 +1335,7 @@ layering appears as follows:<a href="#section-2.1-5" class="pilcrow">¶</a></p>
 <figure id="figure-1">
           <div class="lang-drawing sourcecode" id="section-2.1-6.1">
 <pre>
-|       WebTrasnport       |
+|       WebTransport       |
 |  Punch  | HTTP Semantics |
 | Through |   HTTP/3       |
 |          QUIC            |
@@ -2225,6 +2225,10 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
 <dt id="RFC9110">[RFC9110]</dt>
         <dd>
 <span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9113">[RFC9113]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M., Ed.</span> and <span class="refAuthor">C. Benfield, Ed.</span>, <span class="refTitle">"HTTP/2"</span>, <span class="seriesInfo">RFC 9113</span>, <span class="seriesInfo">DOI 10.17487/RFC9113</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9113">https://www.rfc-editor.org/rfc/rfc9113</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9218">[RFC9218]</dt>
         <dd>

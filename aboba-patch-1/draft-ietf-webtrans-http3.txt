@@ -145,7 +145,7 @@ Table of Contents
 
    WebTransport over HTTP/3 makes it possible for an application to
    directly access QUIC transport via an HTTP/3 connection.  HTTP/3 is
-   the application mapping for QUIC, defined in RFC 9113, which
+   the application mapping for QUIC, defined in [RFC9113], which
    describes how streams are used to carry control data or HTTP request
    and response message sequences in the form of frames, as well as
    describing details of stream and connection lifecycle management.
@@ -171,7 +171,7 @@ Table of Contents
    both sides have agreed the handshake.  As a result, WebTransport
    layering appears as follows:
 
-   |       WebTrasnport       |
+   |       WebTransport       |
    |  Punch  | HTTP Semantics |
    | Through |   HTTP/3       |
    |          QUIC            |
@@ -870,6 +870,10 @@ Table of Contents
               Ed., "HTTP Semantics", STD 97, RFC 9110,
               DOI 10.17487/RFC9110, June 2022,
               <https://www.rfc-editor.org/rfc/rfc9110>.
+
+   [RFC9113]  Thomson, M., Ed. and C. Benfield, Ed., "HTTP/2", RFC 9113,
+              DOI 10.17487/RFC9113, June 2022,
+              <https://www.rfc-editor.org/rfc/rfc9113>.
 
    [RFC9218]  Oku, K. and L. Pardue, "Extensible Prioritization Scheme
               for HTTP", RFC 9218, DOI 10.17487/RFC9218, June 2022,
