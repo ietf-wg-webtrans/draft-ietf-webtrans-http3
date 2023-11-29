@@ -76,7 +76,51 @@ server.  An HTTP/3 server is the server that terminates HTTP/3 connections; a
 WebTransport server is an application that accepts WebTransport sessions, which
 can be accessed via an HTTP/3 server.
 
-# Protocol Overview
+# Overview
+
+## WebTransport, QUIC and HTTP/3
+
+QUIC v1 transport [RFC9000] provides security, stream multiplexing,
+reliable and ordered streams, stream HoL blocking avoidance, flow
+control, and congestion control. The transport layer provides these
+services to applications but does not constrain how streams are used.
+
+HTTP is an application-layer protocol, defined by "HTTP Semantics" [RFC9110].
+HTTP/3 has specific features that are not part of the HTTP semantics: QPACK
+header compression (static and dynamic) and Server Push. Of these, only
+static decompression is mandatory to support.
+
+WebTransport over HTTP/3 makes it possible for an application to directly access
+QUIC transport via an HTTP/3 connection. HTTP/3 is the application mapping for
+QUIC, defined in RFC 9113, which describes how streams are used to carry control
+data or HTTP request and response message sequences in the form of frames, as
+well as describing details of stream and connection lifecycle management.
+
+However, although WebTransport requires HTTP for its handshake, it doesn't require
+HTTP for any other part. This makes it possible to create a minimal WebTransport client
+or server that supports only the semantics required to complete the handshake.
+This involves generating/parsing the request method, host,
+path, protocol, optional Origin header, and perhaps some extra headers;
+generating/parsing the response status code, and possibly some extra headers.
+The receiver can likely perform checks using bytestring comparisons.
+
+Rather than having to interact with QUIC streams via HTTP semantics and
+HTTP/3 frames, a WebTransport session allows direct access. This relies on
+the WebTransport handshake (extended CONNECT method) to provide some prior checks.
+This is important or the Web security model where same-origin and cross-origin resource
+access is very important. Post-handshake, QUIC streams use header bytes
+for accounting purposes, but after that an application can use QUIC
+streams however it would like. This is similar to WebSockets over
+HTTP/1.1, where access is enabled to the underlying bytestream after
+both sides have agreed the handshake. As a result, WebTransport
+layering appears as follows: 
+
+|       WebTranport        |
+|  Punch  | HTTP Semantics |
+| Through |   HTTP/3       |
+|          QUIC            |
+
+## Protocol Overview
 
 WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
