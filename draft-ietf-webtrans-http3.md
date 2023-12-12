@@ -205,9 +205,11 @@ intent is to simplify porting pre-existing protocols that use QUIC and rely on
 this functionality.
 
 The user agent MAY include a `WebTransport-Subprotocols-Available` header field
-in the CONNECT request, enumerating the possible subprotocols; if received, the
-server MUST include a `WebTransport-Subprotocol` field with the subprotocol
-chosen in the 2xx response, or respond with an error code instead.
+in the CONNECT request, enumerating the possible subprotocols. If the server
+receives such a header, it MAY include a `WebTransport-Subprotocol` field in
+a successful (2xx) response. If it does, the server SHALL include a single
+subprotocol from the client's list in that field. Servers MAY reject the request
+if the client did not include a suitable subprotocol.
 
 Both `WebTransport-Subprotocols-Available` and `WebTransport-Subprotocol` are
 Structured Fields {{!RFC8941}}. `WebTransport-Subprotocols-Available` is a List
