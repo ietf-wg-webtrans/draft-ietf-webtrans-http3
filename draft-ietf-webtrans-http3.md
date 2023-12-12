@@ -215,7 +215,7 @@ of Tokens, and `WebTransport-Subprotocol` is a Token. The token in the
 `WebTransport-Subprotocol` response header field MUST be one of the tokens
 listed in `WebTransport-Subprotocols-Available` of the request.  The semantics
 of individual token values is determined by the WebTransport resource in
-question.
+question, and are not registered in IANA's "ALPN Protocol IDs" registry.
 
 ## Limiting the Number of Simultaneous Sessions
 
