@@ -5,10 +5,10 @@
 Network Working Group                                        A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 9 February 2024                                      Apple Inc.
+Expires: 14 June 2024                                         Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                           8 August 2023
+                                                        12 December 2023
 
 
                         WebTransport over HTTP/3
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 February 2024.
+   This Internet-Draft will expire on 14 June 2024.
 
 Copyright Notice
 
@@ -74,8 +74,9 @@ Table of Contents
      3.1.  Establishing a Transport-Capable HTTP/3 Connection
      3.2.  Extended CONNECT in HTTP/3
      3.3.  Creating a New Session
-     3.4.  Limiting the Number of Simultaneous Sessions
-     3.5.  Prioritization
+     3.4.  Subprotocol Negotiation
+     3.5.  Limiting the Number of Simultaneous Sessions
+     3.6.  Prioritization
    4.  WebTransport Features
      4.1.  Unidirectional streams
      4.2.  Bidirectional Streams
@@ -260,7 +261,31 @@ Table of Contents
    Section 3.4 of [HTTP-DATAGRAM] is not required by WebTransport and
    can safely be ignored by WebTransport endpoints.
 
-3.4.  Limiting the Number of Simultaneous Sessions
+3.4.  Subprotocol Negotiation
+
+   WebTransport over HTTP/3 offers a subprotocol negotiation mechanism,
+   similar to TLS Application-Layer Protocol Negotiation Extension
+   (ALPN) [RFC7301]; the intent is to simplify porting pre-existing
+   protocols that use QUIC and rely on this functionality.
+
+   The user agent MAY include a WebTransport-Subprotocols-Available
+   header field in the CONNECT request, enumerating the possible
+   subprotocols.  If the server receives such a header, it MAY include a
+   WebTransport-Subprotocol field in a successful (2xx) response.  If it
+   does, the server SHALL include a single subprotocol from the client's
+   list in that field.  Servers MAY reject the request if the client did
+   not include a suitable subprotocol.
+
+   Both WebTransport-Subprotocols-Available and WebTransport-Subprotocol
+   are Structured Fields [RFC8941].  WebTransport-Subprotocols-Available
+   is a List of Tokens, and WebTransport-Subprotocol is a Token.  The
+   token in the WebTransport-Subprotocol response header field MUST be
+   one of the tokens listed in WebTransport-Subprotocols-Available of
+   the request.  The semantics of individual token values is determined
+   by the WebTransport resource in question, and are not registered in
+   IANA's "ALPN Protocol IDs" registry.
+
+3.5.  Limiting the Number of Simultaneous Sessions
 
    This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter
    that allows the server to limit the maximum number of concurrent
@@ -289,7 +314,7 @@ Table of Contents
       to rate limiting [RFC6585].  Unlike the previous method, this
       signal is directly propagated to the application.
 
-3.5.  Prioritization
+3.6.  Prioritization
 
    WebTransport sessions are initiated using extended CONNECT.  While
    Section 11 of [RFC9218] describes how extensible priorities can be
@@ -772,9 +797,9 @@ Table of Contents
 
    [OVERVIEW] Vasiliev, V., "The WebTransport Protocol Framework", Work
               in Progress, Internet-Draft, draft-ietf-webtrans-overview-
-              05, 24 January 2023,
+              06, 6 September 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-
-              webtrans-overview-05>.
+              webtrans-overview-06>.
 
    [QUIC-DATAGRAM]
               Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
@@ -808,6 +833,10 @@ Table of Contents
               RFC 8441, DOI 10.17487/RFC8441, September 2018,
               <https://www.rfc-editor.org/rfc/rfc8441>.
 
+   [RFC8941]  Nottingham, M. and P. Kamp, "Structured Field Values for
+              HTTP", RFC 8941, DOI 10.17487/RFC8941, February 2021,
+              <https://www.rfc-editor.org/rfc/rfc8941>.
+
    [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
               Multiplexed and Secure Transport", RFC 9000,
               DOI 10.17487/RFC9000, May 2021,
@@ -826,9 +855,14 @@ Table of Contents
    [I-D.ietf-webtrans-http2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
               Vasiliev, V., and G. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-06,
-              10 July 2023, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-06>.
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-07,
+              23 October 2023, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-webtrans-http2-07>.
+
+   [RFC7301]  Friedl, S., Popov, A., Langley, A., and E. Stephan,
+              "Transport Layer Security (TLS) Application-Layer Protocol
+              Negotiation Extension", RFC 7301, DOI 10.17487/RFC7301,
+              July 2014, <https://www.rfc-editor.org/rfc/rfc7301>.
 
 Appendix A.  Changelog
 
