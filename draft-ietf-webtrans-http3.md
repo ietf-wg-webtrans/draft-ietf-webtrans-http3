@@ -197,6 +197,28 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 HTTP-DATAGRAM}} is not required by WebTransport and can safely be ignored by WebTransport
 endpoints.
 
+## Subprotocol Negotiation
+
+WebTransport over HTTP/3 offers a subprotocol negotiation mechanism, similar to
+TLS Application-Layer Protocol Negotiation Extension (ALPN) {{?RFC7301}}; the
+intent is to simplify porting pre-existing protocols that use QUIC and rely on
+this functionality.
+
+The user agent MAY include a `WebTransport-Subprotocols-Available` header field
+in the CONNECT request, enumerating the possible subprotocols. If the server
+receives such a header, it MAY include a `WebTransport-Subprotocol` field in
+a successful (2xx) response. If it does, the server SHALL include a single
+subprotocol from the client's list in that field. Servers MAY reject the request
+if the client did not include a suitable subprotocol.
+
+Both `WebTransport-Subprotocols-Available` and `WebTransport-Subprotocol` are
+Structured Fields {{!RFC8941}}. `WebTransport-Subprotocols-Available` is a List
+of Tokens, and `WebTransport-Subprotocol` is a Token. The token in the
+`WebTransport-Subprotocol` response header field MUST be one of the tokens
+listed in `WebTransport-Subprotocols-Available` of the request.  The semantics
+of individual token values is determined by the WebTransport resource in
+question, and are not registered in IANA's "ALPN Protocol IDs" registry.
+
 ## Limiting the Number of Simultaneous Sessions
 
 This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter that allows
