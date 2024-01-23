@@ -97,7 +97,7 @@ WebTransport over HTTP/3 makes it possible for an application to directly access
 QUIC transport via an HTTP/3 connection. This relies on the WebTransport
 handshake, which uses the extended CONNECT method, to perform important checks. This is
 necessary for the Web security model where same-origin and cross-origin resource
-access is very important. Post-handshake, QUIC streams use header bytes for
+access may not be the same. Post-handshake, QUIC streams use header bytes for
 accounting purposes, but after that an application can use QUIC streams however
 it would like. This is similar to WebSockets over HTTP/1.1, where access is
 enabled to the underlying bytestream after both sides have completed the handshake.
