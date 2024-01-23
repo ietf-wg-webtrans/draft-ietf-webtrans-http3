@@ -111,7 +111,7 @@ As a result, WebTransport layering appears as follows:
 ~~~~~~~~~~
 {: #fig-webtransport-layers title="WebTransport Layering"}
 
-While WebTransport requires HTTP for its handshake, it doesn't require HTTP for
+While WebTransport requires HTTP for the handshake, it doesn't require HTTP for
 anything else. HTTP/3 offers two features in addition to HTTP Semantics: QPACK
 header compression and Server Push. Neither of these can be used to the benefit
 of WebTransport after the handshake succeeds.
