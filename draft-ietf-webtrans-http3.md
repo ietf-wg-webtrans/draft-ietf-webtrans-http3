@@ -84,7 +84,7 @@ QUIC version 1 {{!RFC9000}} is a secure transport protocol with flow control and
 congestion control. QUIC supports application data exchange via streams;
 reliable and ordered byte streams that can be multiplexed. Stream independence
 can mitigate head-of-line blocking. While QUIC provides streams as a transport
-service, it is unopinionated about their usageage. Applicability of streams is
+service, it is unopinionated about their usage. The applicability of streams is
 described by section 4 of {{?RFC9308}}.
 
 HTTP is an application-layer protocol, defined by "HTTP Semantics" {{!RFC9110}}.
