@@ -88,48 +88,61 @@ service, it is unopinionated about their usage. The applicability of streams is
 described by section 4 of {{?RFC9308}}.
 
 HTTP is an application-layer protocol, defined by "HTTP Semantics" {{!RFC9110}}.
-HTTP/3 is the application mapping for QUIC, defined in {{!RFC9113}}. It
-describes how streams are used to carry control data or HTTP request and
+HTTP/3 is the application mapping for QUIC, defined in {{!RFC9114}}. It
+describes how QUIC streams are used to carry control data or HTTP request and
 response message sequences in the form of frames, as well as describing details
-of stream and connection lifecycle management.
+of stream and connection lifecycle management. HTTP/3 offers two features in
+addition to HTTP Semantics: QPACK header compression {{?RFC9208}} and Server
+Push {{Section 4.6 of RFC9114}}.
 
-WebTransport over HTTP/3 makes it possible for an application to directly access
-QUIC transport via an HTTP/3 connection. This relies on the WebTransport
-handshake, which uses the extended CONNECT method, to perform important checks. This is
-necessary for the Web security model where same-origin and cross-origin resource
-access may not be the same. Post-handshake, QUIC streams use header bytes for
-accounting purposes, but after that an application can use QUIC streams however
-it would like. This is similar to WebSockets over HTTP/1.1, where access is
-enabled to the underlying bytestream after both sides have completed the handshake.
-As a result, WebTransport layering appears as follows:
+WebTransport session establishment involves interacting at the HTTP layer with a
+resource. For Web user agents, this interaction is important for security
+reasons, especially to ensure that the resource is willing to use WebTransport.
 
-~~~~~~~~~~ drawing
-|       WebTransport       |
-|  Punch  | HTTP Semantics |
-| Through |   HTTP/3       |
-|          QUIC            |
+Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
+HTTP is not used for anything else related to an established session. Instead,
+QUIC streams begin a header sequence of bytes that links them to the established
+session. The remainder of the stream is the body, which carries the payload of
+the application using WebTransport. This process is similar to WebSockets over
+HTTP/1.1 {{?RFC6455}}, where access  to the underlying bytestream is enabled
+after both sides have completed the handshake.
+
+The layering of QUIC, HTTP/3 and WebTransport is shown in
+{{fig-webtransport-layers}}. Once a WebTransport session is established,
+applications have nearly direct access to QUIC.
+
+~~~~~~~~~~ aasvg
+,--------------------------------,
+|            WebTransport        |
+,----------------,---------------,
+| HTTP Semantics |               |
+,----------------, Nearly direct |
+|     HTTP/3     |               |
+,----------------`---------------,
+|               QUIC             |
+`--------------------------------'
 ~~~~~~~~~~
 {: #fig-webtransport-layers title="WebTransport Layering"}
 
-While WebTransport requires HTTP for the handshake, it doesn't require HTTP for
-anything else. HTTP/3 offers two features in addition to HTTP Semantics: QPACK
-header compression and Server Push. Neither of these can be used to the benefit
-of WebTransport after the handshake succeeds.
+### Minimizing Implementation Complexity
 
-It is possible to create a minimal WebTransport client or server that supports
-only the semantics and wire format requirements that permit a handshake to
-succeed:
+WebTransport has minimal interaction with HTTP and HTTP/3. Clients or servers
+can constrain their use of features to only those required to complete a
+WebTransport handshake:
 
-: QPACK static decompression
-
-: Generating/parsing the request method, host, path, protocol, optional Origin
+* Generating/parsing the request method, host, path, protocol, optional Origin
 header, and perhaps some extra headers
 
-: Generating/parsing the response status code, and possibly some extra headers.
+* Generating/parsing the response status code, and possibly some extra headers.
 
-The receiver can likely perform several of its requirements using bytestring
-comparisons.
+The receiver can likely perform several of its HTTP-level requirements using
+bytestring comparisons.
 
+While HTTP/3 encodes HTTP messages using QPACK, the complexity can be minimized.
+Receivers can disable dynamic decompression entirely but must always support
+static decompression and Huffman decoding. Senders can opt to never use dyanamic
+compression, static compression, or Huffman encoding. support and to minimize
+their use of  this can be constrained by disabling dynamic compression
 
 ## Protocol Overview
 
