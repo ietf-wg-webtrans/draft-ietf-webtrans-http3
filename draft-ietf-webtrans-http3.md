@@ -459,6 +459,31 @@ HTTP/3 GOAWAY frame, an endpoint MAY continue using the session and MAY open new
 streams.  The signal is intended for the application using WebTransport, which
 is expected to attempt to gracefully terminate the session as soon as possible.
 
+## Use of Keying Material Exporters
+
+WebTransport over HTTP/3 supports the use of TLS keying material exporters
+{{!RFC5705}}.  Since the underlying QUIC connection may be shared by multiple
+WebTransport sessions, WebTransport defines its own mechanism for deriving a
+TLS exporter that separates keying material for different sessions.  If the
+user requests an exporter for a given WebTransport session with a specified
+label and context, the resulting exporter SHALL be a TLS exporter as defiend in
+{{RFC5705, Section 4}} with the label set to "EXPORTER-WebTransport" and the
+context set to the serialization of the "WebTransport Exporter Context" struct
+as defined below.
+
+~~~
+WebTransport Exporter Context {
+  WebTransport Session ID (64),
+  WebTransport Application-Supplied Exporter Label Length (32),
+  WebTransport Application-Supplied Exporter Label (..),
+  WebTransport Application-Supplied Exporter Context Length (32),
+  WebTransport Application-Supplied Exporter Context (..)
+}
+~~~
+
+If the user does not supply any context, it is treated as the context
+with zero length.
+
 
 # Session Termination
 
