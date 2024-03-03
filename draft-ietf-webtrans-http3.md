@@ -481,8 +481,9 @@ WebTransport Exporter Context {
 }
 ~~~
 
-If the user does not supply any context, it is treated as the context
-with zero length.
+A TLS exporter API might permit the context field to be omitted. In this case,
+as with TLS 1.3, the WebTransport Application-Supplied Exporter Context
+becomes zero-length if omitted.
 
 
 # Session Termination
