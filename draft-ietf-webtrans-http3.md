@@ -466,7 +466,7 @@ WebTransport over HTTP/3 supports the use of TLS keying material exporters
 WebTransport sessions, WebTransport defines its own mechanism for deriving a
 TLS exporter that separates keying material for different sessions.  If the
 user requests an exporter for a given WebTransport session with a specified
-label and context, the resulting exporter SHALL be a TLS exporter as defiend in
+label and context, the resulting exporter SHALL be a TLS exporter as defined in
 {{RFC5705, Section 4}} with the label set to "EXPORTER-WebTransport" and the
 context set to the serialization of the "WebTransport Exporter Context" struct
 as defined below.
