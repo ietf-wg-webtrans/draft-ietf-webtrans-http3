@@ -81,10 +81,10 @@ can be accessed via an HTTP/3 server.
 WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
-When an HTTP/3 connection is established, both the client and server have to
-send a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting in order to indicate that
-they both support WebTransport over HTTP/3.  This process also negotiates the
-use of additional HTTP/3 extensions.
+When an HTTP/3 connection is established, the server sends a
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting in order to indicate support for
+WebTransport over HTTP/3.  This process also negotiates the use of additional
+HTTP/3 extensions.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC8441}}.  If the server
@@ -112,27 +112,32 @@ closed.
 
 ## Establishing a Transport-Capable HTTP/3 Connection {#establishing}
 
-In order to indicate support for WebTransport, both the client and the server
-MUST send a SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in their
-SETTINGS frame.  The default value for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
-parameter is "0", meaning that the endpoint is not willing to receive any
-WebTransport sessions.  Note that the client only needs to send a value greater
-than "0"; since clients initiate WebTransport sessions, the actual value is
-not significant.
+In order to indicate support for WebTransport, the server MUST send a
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in its SETTINGS
+frame.  The default value for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter
+is "0", meaning that the endpoint is not willing to receive any WebTransport
+sessions.  Note that the client does not need to send any value to indicate
+support for WebTransport; clients indicate support for WebTransport by using
+the "webtransport" upgrade token in CONNECT requests establishing WebTransport
+sessions (see {{upgrade-token}}).
 
 The client MUST NOT send a WebTransport request until it has received the
 setting indicating WebTransport support from the server.
 
 \[\[RFC editor: please remove the following paragraph before publication.]]
 
-Similarly, the server MUST NOT process any incoming WebTransport requests until
-the client settings have been received, as the client may be using a version of
-the WebTransport extension that is different from the one used by the server.
+For draft verisons of WebTransport only, the server MUST NOT process any
+incoming WebTransport requests until the client settings have been received, as
+the client may be using a version of the WebTransport extension that is
+different from the one used by the server.
 
 Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
 Capsule Protocol, both the client and the server MUST indicate support for
 HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM value set to 1 in their
-SETTINGS frame (see {{Section 2.1.1 of HTTP-DATAGRAM}}).
+SETTINGS frame (see {{Section 2.1.1 of HTTP-DATAGRAM}}). Servers should also
+note that CONNECT requests to establish new WebTransport sessions, in addition
+to other messages, may arrive before this SETTING is received (see
+{{buffering-incoming}}).
 
 WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
 support, both the client and the server MUST send a max_datagram_frame_size
@@ -143,11 +148,11 @@ of !QUIC-DATAGRAM=RFC9221}}).
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
 SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for HTTP/3
-by {{!RFC9220}}.  A client supporting WebTransport over HTTP/3 MUST send the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0". A
-server supporting WebTransport over HTTP/3 MUST send both the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0" and
-the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
+by {{!RFC9220}}.  A server supporting WebTransport over HTTP/3 MUST send both
+the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0"
+and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".  To use
+WebTransport over HTTP/3, clients MUST send the
+SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1". 
 
 ## Creating a New Session
 
@@ -183,7 +188,7 @@ as the client could potentially already have sent data for the WebTransport
 session in question; it MAY notify the client about the redirect.
 
 Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
-not considered safe; see {{Section 10.9 of HTTP3}}. However,
+not considered safe (see {{Section 10.9 of HTTP3}}). However,
 WebTransport-related SETTINGS parameters may be retained from the previous
 session as described in Section 7.2.4.2 of [HTTP3].  If the server accepts
 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
@@ -294,7 +299,7 @@ If at any point a session ID is received that cannot a valid ID for a
 client-initiated bidirectional stream, the recipient MUST close the connection
 with an H3_ID_ERROR error code.
 
-## Unidirectional streams
+## Unidirectional streams {#unidirectional-streams}
 
 WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
 unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the
@@ -310,11 +315,11 @@ Unidirectional Stream {
 ~~~~~~~~~~
 {: #fig-unidi title="Unidirectional WebTransport stream format"}
 
-## Bidirectional Streams
+## Bidirectional Streams {#bidirectional-streams}
 
 All client-initiated bidirectional streams are reserved by HTTP/3 as request
-streams, which are a sequence of HTTP/3 frames with a variety of rules; see
-{{Sections 4.1 and 6.1 of HTTP3}}.
+streams, which are a sequence of HTTP/3 frames with a variety of rules (see
+{{Sections 4.1 and 6.1 of HTTP3}}).
 
 WebTransport extends HTTP/3 to allow clients to declare and use alternative
 request stream rules.  Once a client receives settings indicating WebTransport
@@ -323,11 +328,11 @@ a variable-length integer, as the first bytes of the stream in order to indicate
 how the remaining bytes on the stream are used.
 
 WebTransport extends HTTP/3 by defining rules for all server-initiated
-bidirectional streams.  Once a server receives settings indicating WebTransport
-support ({{establishing}}), it can open a bidirectional stream and SHALL send a
-special signal value, encoded as a variable-length integer, as the first bytes
-of the stream in order to indicate how the remaining bytes on the stream are
-used.
+bidirectional streams.  Once a server receives an incoming CONNECT request
+establishing a WebTransport session ({{establishing}}), it can open a
+bidirectional stream for use with that session and SHALL send a special signal
+value, encoded as a variable-length integer, as the first bytes of the stream
+in order to indicate how the remaining bytes on the stream are used.
 
 The signal value, 0x41, is used by clients and servers to open a bidirectional
 WebTransport stream.  Following this is the associated session ID, encoded as a
@@ -414,15 +419,21 @@ follows the Quarter Stream ID field, which is at the start of the QUIC DATAGRAM
 frame payload and refers to the CONNECT stream that established the
 WebTransport session.
 
-## Buffering Incoming Streams and Datagrams
+## Buffering Incoming Streams and Datagrams {#buffering-incoming}
 
-In WebTransport over HTTP/3, the client MAY send its SETTINGS frame, as well as
-multiple WebTransport CONNECT requests, WebTransport data streams and
-WebTransport datagrams, all within a single flight.  As those can arrive out of
-order, a WebTransport server could be put into a situation where it receives a
-stream or a datagram without a corresponding session.  Similarly, a client may
-receive a server-initiated stream or a datagram before receiving the CONNECT
-response headers from the server.
+In WebTransport over HTTP/3, the client MUST wait for receipt of the server's
+SETTINGS frame before establishing any WebTransport sessions by sending CONNECT
+requests using the WebTransport upgrade token (see {{establishing}}). This
+ensures that the client will always know what versions of WebTransport can be
+used on a given HTTP/3 connection.
+
+Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT
+requests, WebTransport data streams, and WebTransport datagrams all within a
+single flight.  As those can arrive out of order, a WebTransport server could
+be put into a situation where it receives a stream or a datagram without a
+corresponding session.  Similarly, a client may receive a server-initiated
+stream or a datagram before receiving the CONNECT response headers from the
+server.
 
 To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
 until those can be associated with an established session.  To avoid resource
@@ -522,7 +533,27 @@ CONNECTION_CLOSE; this gives CLOSE_WEBTRANSPORT_SESSION properties similar to
 that of the QUIC CONNECTION_CLOSE mechanism as a best-effort mechanism of
 delivering application close metadata.
 
-# Negotiating the Draft Version
+# Considerations for Future Versions
+
+Future versions of WebTransport that change the syntax of the CONNECT requests
+used to establish WebTransport sessions will need to modify the upgrade token
+used to identify WebTransport, allowing servers to offer multiple
+versions simultaneously (see {{upgrade-token}}).
+
+Servers that support future incompatible versions of WebTransport signal that
+support by changing the codepoint used for the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter (see {{http3-settings}}).  Clients
+can select the associated upgrade token, if applicable, to use when
+establishing a new session, ensuring that servers will always know the syntax
+in use for every incoming request.
+
+Changes to future stream formats require changes to the Unidirectional Stream
+type (see {{unidirectional-streams}}) and Bidirectional Stream signal value
+(see {{bidirectional-streams}}) to allow recipients of incoming frames to
+determine the WebTransport version, and corresponding wire format, used for the
+session associated with that stream.
+
+## Negotiating the Draft Version
 
 \[\[RFC editor: please remove this section before publication.]]
 
@@ -562,7 +593,7 @@ limit the number of outgoing sessions the client can open.
 
 # IANA Considerations
 
-## Upgrade Token Registration
+## Upgrade Token Registration {#upgrade-token}
 
 The following entry is added to the "Hypertext Transfer Protocol (HTTP) Upgrade
 Token Registry" registry established by Section 16.7 of [HTTP].
@@ -581,14 +612,14 @@ Reference:
 
 : This document and {{?I-D.ietf-webtrans-http2}}
 
-## HTTP/3 SETTINGS Parameter Registration
+## HTTP/3 SETTINGS Parameter Registration {#http3-settings}
 
 The following entry is added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
 The `SETTINGS_WEBTRANSPORT_MAX_SESSIONS` parameter indicates that the specified
-HTTP/3 endpoint is WebTransport-capable and, for servers, the number of
-concurrent sessions it is willing to receive. The default value for the
+HTTP/3 endpoint is WebTransport-capable and the number of concurrent sessions
+it is willing to receive. The default value for the
 SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the endpoint
 is not willing to receive any WebTransport sessions.
 
