@@ -475,7 +475,7 @@ as defined below.
 WebTransport Exporter Context {
   WebTransport Session ID (64),
   WebTransport Application-Supplied Exporter Label Length (8),
-  WebTransport Application-Supplied Exporter Label (..),
+  WebTransport Application-Supplied Exporter Label (8..),
   WebTransport Application-Supplied Exporter Context Length (8),
   WebTransport Application-Supplied Exporter Context (..)
 }
