@@ -144,6 +144,11 @@ support, both the client and the server MUST send a max_datagram_frame_size
 transport parameter with a value greater than 0 (see {{Section 3
 of !QUIC-DATAGRAM=RFC9221}}).
 
+WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
+{{!RESET-STREAM-AT=I-D.ietf-quic-reliable-stream-reset}}.  To indicate support,
+both the client and the server MUST send a reliable_stream_reset transport
+parameter as defined in {{Section 3 of RESET-STREAM-AT}}.
+
 ## Extended CONNECT in HTTP/3
 
 {{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
@@ -396,11 +401,10 @@ application errors and HTTP/3 error codes" }
 
 WebTransport data streams are associated with sessions through a header at the
 beginning of the stream; resetting a stream may result in that data being
-discarded.  Because of that, WebTransport application error codes are best
-effort, as the WebTransport stack is not always capable of associating the
-reset code with a session.  The only exception is the situation where there is
-only one session on a given HTTP/3 connection, and no intermediaries between
-the client and the server.
+discarded.  Because of that, WebTransport implementations MUST use the
+RESET_STREAM_AT frame {{RESET-STREAM-AT}} when resetting WebTransport data
+streams to ensure that the stream header containing the associated WebTransport
+session ID is always delivered.
 
 WebTransport implementations SHALL forward the error code for a stream
 associated with a known session to the application that owns that session;
