@@ -510,8 +510,8 @@ Application Error Message:
 
 An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately
 send a FIN.  The endpoint MAY send a STOP_SENDING to indicate it is no longer
-reading from the CONNECT stream.  The recipient MUST close the stream upon
-receiving a FIN.  If any additional stream data is received on the CONNECT
+reading from the CONNECT stream.  The recipient MUST either close or reset the
+stream in response.  If any additional stream data is received on the CONNECT
 stream after receiving a CLOSE_WEBTRANSPORT_SESSION capsule, the stream MUST be
 reset with code H3_MESSAGE_ERROR.
 
