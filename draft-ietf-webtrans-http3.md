@@ -150,9 +150,7 @@ of !QUIC-DATAGRAM=RFC9221}}).
 SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for HTTP/3
 by {{!RFC9220}}.  A server supporting WebTransport over HTTP/3 MUST send both
 the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0"
-and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".  To use
-WebTransport over HTTP/3, clients MUST send the
-SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
+and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
 
 ## Creating a New Session
 
