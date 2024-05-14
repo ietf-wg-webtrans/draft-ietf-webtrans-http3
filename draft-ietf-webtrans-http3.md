@@ -131,7 +131,7 @@ can constrain their use of features to only those required to complete a
 WebTransport handshake:
 
 * Generating/parsing the request method, host, path, protocol, optional Origin
-header, and perhaps some extra headers
+header, and perhaps some extra headers.
 
 * Generating/parsing the response status code, and possibly some extra headers.
 
