@@ -116,7 +116,9 @@ applications have nearly direct access to QUIC.
 |            WebTransport        |
 ,----------------,---------------,
 | HTTP Semantics |               |
-,----------------, Nearly direct |
+|      and       |               |
+| Session Setup  | Nearly direct |
+,----------------,               |
 |     HTTP/3     |               |
 ,----------------`---------------,
 |               QUIC             |
