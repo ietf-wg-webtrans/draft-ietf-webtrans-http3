@@ -107,7 +107,7 @@ the application using WebTransport. This process is similar to WebSockets over
 HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the underlying byte stream is enabled
 after both sides have completed the handshake.
 
-The layering of QUIC, HTTP/3 and WebTransport is shown in
+The layering of QUIC, HTTP/3, and WebTransport is shown in
 {{fig-webtransport-layers}}. Once a WebTransport session is established,
 applications have nearly direct access to QUIC.
 
