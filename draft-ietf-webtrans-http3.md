@@ -101,8 +101,8 @@ reasons, especially to ensure that the resource is willing to use WebTransport.
 
 Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
 HTTP is not used for anything else related to an established session. Instead,
-QUIC streams begin a header sequence of bytes that links them to the established
-session. The remainder of the stream is the body, which carries the payload of
+QUIC streams begin with a header sequence of bytes that links them to the established
+session. The remainder of the stream is the body, which carries the payload supplied by
 the application using WebTransport. This process is similar to WebSockets over
 HTTP/1.1 {{?RFC6455}}, where access to the underlying bytestream is enabled
 after both sides have completed the handshake.
