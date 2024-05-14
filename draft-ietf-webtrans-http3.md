@@ -143,8 +143,7 @@ bytestring comparisons.
 While HTTP/3 encodes HTTP messages using QPACK, the complexity can be minimized.
 Receivers can disable dynamic decompression entirely but must always support
 static decompression and Huffman decoding. Senders can opt to never use dynamic
-compression, static compression, or Huffman encoding. support and to minimize
-their use of  this can be constrained by disabling dynamic compression
+compression, static compression, or Huffman encoding.
 
 ## Protocol Overview
 
