@@ -76,7 +76,76 @@ server.  An HTTP/3 server is the server that terminates HTTP/3 connections; a
 WebTransport server is an application that accepts WebTransport sessions, which
 can be accessed via an HTTP/3 server.
 
-# Protocol Overview
+# Overview
+
+## QUIC, WebTransport, and HTTP/3
+
+QUIC version 1 {{!RFC9000}} is a secure transport protocol with flow control and
+congestion control. QUIC supports application data exchange via streams;
+reliable and ordered byte streams that can be multiplexed. Stream independence
+can mitigate head-of-line blocking. While QUIC provides streams as a transport
+service, it is unopinionated about their usage. The applicability of streams is
+described by section 4 of {{?RFC9308}}.
+
+HTTP is an application-layer protocol, defined by "HTTP Semantics" {{!RFC9110}}.
+HTTP/3 is the application mapping for QUIC, defined in {{!RFC9114}}. It
+describes how QUIC streams are used to carry control data or HTTP request and
+response message sequences in the form of frames and describes details
+of stream and connection lifecycle management. HTTP/3 offers two features in
+addition to HTTP Semantics: QPACK header compression {{?RFC9208}} and Server
+Push {{Section 4.6 of RFC9114}}.
+
+WebTransport session establishment involves interacting at the HTTP layer with a
+resource. For Web user agents, this interaction is important for security
+reasons, especially to ensure that the resource is willing to use WebTransport.
+
+Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
+HTTP is not used for anything else related to an established session. Instead,
+QUIC streams begin with a header sequence of bytes that links them to the established
+session. The remainder of the stream is the body, which carries the payload supplied by
+the application using WebTransport. This process is similar to WebSockets over
+HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the underlying byte stream is enabled
+after both sides have completed the handshake.
+
+The layering of QUIC, HTTP/3, and WebTransport is shown in
+{{fig-webtransport-layers}}. Once a WebTransport session is established,
+applications have nearly direct access to QUIC.
+
+~~~~~~~~~~ aasvg
+,--------------------------------,
+|            WebTransport        |
+,----------------,---------------,
+| HTTP Semantics |               |
+|      and       |               |
+| Session Setup  | Nearly direct |
+,----------------,               |
+|     HTTP/3     |               |
+,----------------`---------------,
+|               QUIC             |
+`--------------------------------'
+~~~~~~~~~~
+{: #fig-webtransport-layers title="WebTransport Layering"}
+
+### Minimizing Implementation Complexity
+
+WebTransport has minimal interaction with HTTP and HTTP/3. Clients or servers
+can constrain their use of features to only those required to complete a
+WebTransport handshake:
+
+* Generating/parsing the request method, host, path, protocol, optional Origin
+header, and perhaps some extra headers.
+
+* Generating/parsing the response status code, and possibly some extra headers.
+
+The receiver can likely perform several of its HTTP-level requirements using
+bytestring comparisons.
+
+While HTTP/3 encodes HTTP messages using QPACK, the complexity can be minimized.
+Receivers can disable dynamic decompression entirely but must always support
+static decompression and Huffman decoding. Senders can opt to never use dynamic
+compression, static compression, or Huffman encoding.
+
+## Protocol Overview
 
 WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
