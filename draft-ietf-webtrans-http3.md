@@ -90,7 +90,7 @@ described by section 4 of {{?RFC9308}}.
 HTTP is an application-layer protocol, defined by "HTTP Semantics" {{!RFC9110}}.
 HTTP/3 is the application mapping for QUIC, defined in {{!RFC9114}}. It
 describes how QUIC streams are used to carry control data or HTTP request and
-response message sequences in the form of frames, as well as describing details
+response message sequences in the form of frames and describes details
 of stream and connection lifecycle management. HTTP/3 offers two features in
 addition to HTTP Semantics: QPACK header compression {{?RFC9208}} and Server
 Push {{Section 4.6 of RFC9114}}.
