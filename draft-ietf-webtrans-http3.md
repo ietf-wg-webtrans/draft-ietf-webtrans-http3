@@ -104,7 +104,7 @@ HTTP is not used for anything else related to an established session. Instead,
 QUIC streams begin with a header sequence of bytes that links them to the established
 session. The remainder of the stream is the body, which carries the payload supplied by
 the application using WebTransport. This process is similar to WebSockets over
-HTTP/1.1 {{?RFC6455}}, where access to the underlying bytestream is enabled
+HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the underlying byte stream is enabled
 after both sides have completed the handshake.
 
 The layering of QUIC, HTTP/3 and WebTransport is shown in
