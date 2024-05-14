@@ -462,7 +462,7 @@ is expected to attempt to gracefully terminate the session as soon as possible.
 ## Use of Keying Material Exporters
 
 WebTransport over HTTP/3 supports the use of TLS keying material exporters
-{{!RFC5705}}.  Since the underlying QUIC connection may be shared by multiple
+{{!RFC8446, Section 7.5}}.  Since the underlying QUIC connection may be shared by multiple
 WebTransport sessions, WebTransport defines its own mechanism for deriving a
 TLS exporter that separates keying material for different sessions.  If the
 user requests an exporter for a given WebTransport session with a specified
