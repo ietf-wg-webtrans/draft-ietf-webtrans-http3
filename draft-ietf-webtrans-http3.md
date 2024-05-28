@@ -620,10 +620,10 @@ with detailed close information and then immediately close the underlying QUIC
 connection.  If the endpoint were to do both of those simultaneously, the peer
 could potentially receive the CONNECTION_CLOSE before receiving the
 CLOSE_WEBTRANSPORT_SESSION, thus never receiving the application error data
-contained in the latter.  To avoid this, the endpoint SHOULD wait until all 
-CONNECT streams have been closed by the peer before sending the 
-CONNECTION_CLOSE; this gives CLOSE_WEBTRANSPORT_SESSION properties similar to 
-that of the QUIC CONNECTION_CLOSE mechanism as a best-effort mechanism of 
+contained in the latter.  To avoid this, the endpoint SHOULD wait until all
+CONNECT streams have been closed by the peer before sending the
+CONNECTION_CLOSE; this gives CLOSE_WEBTRANSPORT_SESSION properties similar to
+that of the QUIC CONNECTION_CLOSE mechanism as a best-effort mechanism of
 delivering application close metadata.
 
 # Considerations for Future Versions
