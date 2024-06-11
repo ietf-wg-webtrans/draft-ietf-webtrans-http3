@@ -276,17 +276,17 @@ TLS Application-Layer Protocol Negotiation Extension (ALPN) {{?RFC7301}}; the
 intent is to simplify porting pre-existing protocols that use QUIC and rely on
 this functionality.
 
-The user agent MAY include a `WT-Protocol-Options` header field in the CONNECT
-request. The `WT-Protocol-Options` enumerates the possible subprotocols in
+The user agent MAY include a `WT-Available-Protocols` header field in the CONNECT
+request. The `WT-Available-Protocols` enumerates the possible subprotocols in
 preference order. If the server receives such a header, it MAY include a
 `WT-Protocol` field in a successful (2xx) response. If it does, the server SHALL
 include a single choice from the client's list in that field. Servers MAY reject
 the request if the client did not include a suitable subprotocol.
 
-Both `WT-Protocol-Options` and `WT-Protocol` are Structured Fields
-{{!RFC8941}}. `WT-Protocol-Options` is a List of Tokens, and `WT-Protocol` is a
+Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
+{{!RFC8941}}. `WT-Available-Protocols` is a List of Tokens, and `WT-Protocol` is a
 Token. The token in the `WT-Protocol` response header field MUST be one of the
-tokens listed in `WT-Protocol-Options` of the request.  The semantics of
+tokens listed in `WT-Available-Protocols` of the request.  The semantics of
 individual token values is determined by the WebTransport resource in question
 and are not registered in IANA's "ALPN Protocol IDs" registry.
 
