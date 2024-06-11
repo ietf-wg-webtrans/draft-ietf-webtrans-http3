@@ -399,11 +399,12 @@ An example pseudocode can be seen in {{fig-remap-errors}}.
 application errors and HTTP/3 error codes" }
 
 WebTransport data streams are associated with sessions through a header at the
-beginning of the stream; resetting a stream may result in that data being
-discarded.  Because of that, WebTransport implementations MUST use the
-RESET_STREAM_AT frame {{RESET-STREAM-AT}} when resetting WebTransport data
-streams to ensure that the stream header containing the associated WebTransport
-session ID is always delivered.
+beginning of the stream; resetting a stream might result in that data being
+discarded when using a RESET_STREAM frame.  To prevent this, WebTransport
+implementations MUST use the RESET_STREAM_AT frame {{RESET-STREAM-AT}} with a
+Reliable Size set to at least the size of the WebTransport header when
+resetting a WebTransport data stream.  This ensures that the ID field
+associating the data stream with a WebTransport session is always delivered.
 
 WebTransport implementations SHALL forward the error code for a stream
 associated with a known session to the application that owns that session;
