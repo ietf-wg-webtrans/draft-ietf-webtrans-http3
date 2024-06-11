@@ -276,20 +276,19 @@ TLS Application-Layer Protocol Negotiation Extension (ALPN) {{?RFC7301}}; the
 intent is to simplify porting pre-existing protocols that use QUIC and rely on
 this functionality.
 
-The user agent MAY include a `WebTransport-Subprotocols-Available` header field
-in the CONNECT request, enumerating the possible subprotocols. If the server
-receives such a header, it MAY include a `WebTransport-Subprotocol` field in
-a successful (2xx) response. If it does, the server SHALL include a single
-subprotocol from the client's list in that field. Servers MAY reject the request
-if the client did not include a suitable subprotocol.
+The user agent MAY include a `WT-Protocol-Options` header field in the CONNECT
+request. The `WT-Protocol-Options` enumerates the possible subprotocols in
+preference order. If the server receives such a header, it MAY include a
+`WT-Protocol` field in a successful (2xx) response. If it does, the server SHALL
+include a single choice from the client's list in that field. Servers MAY reject
+the request if the client did not include a suitable subprotocol.
 
-Both `WebTransport-Subprotocols-Available` and `WebTransport-Subprotocol` are
-Structured Fields {{!RFC8941}}. `WebTransport-Subprotocols-Available` is a List
-of Tokens, and `WebTransport-Subprotocol` is a Token. The token in the
-`WebTransport-Subprotocol` response header field MUST be one of the tokens
-listed in `WebTransport-Subprotocols-Available` of the request.  The semantics
-of individual token values is determined by the WebTransport resource in
-question, and are not registered in IANA's "ALPN Protocol IDs" registry.
+Both `WT-Protocol-Options` and `WT-Protocol` are Structured Fields
+{{!RFC8941}}. `WT-Protocol-Options` is a List of Tokens, and `WT-Protocol` is a
+Token. The token in the `WT-Protocol` response header field MUST be one of the
+tokens listed in `WT-Protocol-Options` of the request.  The semantics of
+individual token values is determined by the WebTransport resource in question
+and are not registered in IANA's "ALPN Protocol IDs" registry.
 
 ## Limiting the Number of Simultaneous Sessions
 
