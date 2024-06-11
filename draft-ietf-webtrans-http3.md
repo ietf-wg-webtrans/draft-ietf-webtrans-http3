@@ -146,7 +146,8 @@ of !QUIC-DATAGRAM=RFC9221}}).
 
 WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 {{!RESET-STREAM-AT=I-D.ietf-quic-reliable-stream-reset}}.  To indicate support,
-both the client and the server MUST enable the extension as described in {{Section 3 of RESET-STREAM-AT}}.
+both the client and the server MUST enable the extension as described 
+in {{Section 3 of RESET-STREAM-AT}}.
 
 ## Extended CONNECT in HTTP/3
 
