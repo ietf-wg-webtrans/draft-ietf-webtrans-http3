@@ -215,7 +215,7 @@ of !QUIC-DATAGRAM=RFC9221}}).
 
 WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 {{!RESET-STREAM-AT=I-D.ietf-quic-reliable-stream-reset}}.  To indicate support,
-both the client and the server MUST enable the extension as described 
+both the client and the server MUST enable the extension as described
 in {{Section 3 of RESET-STREAM-AT}}.
 
 ## Extended CONNECT in HTTP/3
@@ -295,31 +295,6 @@ of Tokens, and `WebTransport-Subprotocol` is a Token. The token in the
 listed in `WebTransport-Subprotocols-Available` of the request.  The semantics
 of individual token values is determined by the WebTransport resource in
 question, and are not registered in IANA's "ALPN Protocol IDs" registry.
-
-## Limiting the Number of Simultaneous Sessions
-
-This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter that allows
-the server to limit the maximum number of concurrent WebTransport sessions on a
-single HTTP/3 connection.  The client MUST NOT open more sessions than
-indicated in the server SETTINGS parameters.  The server MUST NOT close the
-connection if the client opens sessions exceeding this limit, as the client and
-the server do not have a consistent view of how many sessions are open due to
-the asynchronous nature of the protocol; instead, it MUST reset all of the
-CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
-status defined in [HTTP3].
-
-Just like other HTTP requests, WebTransport sessions, and data sent on those
-sessions, are counted against flow control limits.  This document does not
-introduce additional mechanisms for endpoints to limit the relative amount of
-flow control credit consumed by different WebTransport sessions, however
-servers that wish to limit the rate of incoming requests on any particular
-session have alternative mechanisms:
-
-* The `HTTP_REQUEST_REJECTED` error code defined in [HTTP3] indicates to the
-  receiving HTTP/3 stack that the request was not processed in any way.
-* HTTP status code 429 indicates that the request was rejected due to rate
-  limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
-  propagated to the application.
 
 ## Prioritization
 
@@ -568,6 +543,298 @@ A TLS exporter API might permit the context field to be omitted. In this case,
 as with TLS 1.3, the WebTransport Application-Supplied Exporter Context
 becomes zero-length if omitted.
 
+# Flow Control
+
+Flow control governs the amount of resources that can be consumed or data that
+can be sent. When using WebTransport over HTTP/3, endpoints can limit the
+number of sessions that a peer can create on a single HTTP/3 connection and the
+number of streams that a peer can create within a session. Endpoints can also
+limit the amount of data that can be consumed by each session and by each
+stream within a session.
+
+WebTransport over HTTP/3 provides connection-level limit that governs the number
+of sessions that can be created on an HTTP/3 connection; see
+{{flow-control-limit-sessions}}. It also provides the session-level limits that
+govern the number of streams that can be created in a session and limit the
+amount of data that can be exchanged across all streams in each session; see
+{{flow-control-limit-streams}}.
+
+The underlying QUIC connection provides connection and stream level flow
+control. The connection data limit defines the total amount of data that can be
+sent across all WebTransport sessions and other non-WebTransport streams. A
+stream's data limit controls the amount of data that can be sent on that
+stream, WebTransport or otherwise; see {{Section 4 of !RFC9000}}.
+
+## Limiting the Number of Simultaneous Sessions {#flow-control-limit-sessions}
+
+This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter that allows
+the server to limit the maximum number of concurrent WebTransport sessions on a
+single HTTP/3 connection.  The client MUST NOT open more sessions than
+indicated in the server SETTINGS parameters.  The server MUST NOT close the
+connection if the client opens sessions exceeding this limit, as the client and
+the server do not have a consistent view of how many sessions are open due to
+the asynchronous nature of the protocol; instead, it MUST reset all of the
+CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
+status defined in [HTTP3].
+
+Just like other HTTP requests, WebTransport sessions, and data sent on those
+sessions, are counted against flow control limits.  This document does not
+introduce additional mechanisms for endpoints to limit the relative amount of
+flow control credit consumed by different WebTransport sessions, however
+servers that wish to limit the rate of incoming requests on any particular
+session have alternative mechanisms:
+
+* The `HTTP_REQUEST_REJECTED` error code defined in [HTTP3] indicates to the
+  receiving HTTP/3 stack that the request was not processed in any way.
+* HTTP status code 429 indicates that the request was rejected due to rate
+  limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
+  propagated to the application.
+
+## Limiting the Number of Streams Within a Session {#flow-control-limit-streams}
+
+The WT_MAX_STREAMS capsule ({{WT_MAX_STREAMS}}) establishes a limit on the
+number of streams within a WebTransport session. Like the QUIC MAX_STREAMS
+frame ({{Section 19.11 of !RFC9000}}), this capsule has two types that provide
+separate limits for unidirectional and bidirectional streams that are initiated
+by a peer.
+
+The session-level stream limit applies in addition to the QUIC MAX_STREAMS
+frame, which provides a connection-level stream limit. New streams can only be
+created within the session if both the stream- and the connection-level limit
+permit; see {{Section 4.6 of !RFC9000}} for details on how QUIC stream limits
+are applied.
+
+Unlike the WT_MAX_STREAMS capsule or the QUIC MAX_STREAMS frame, there is no
+simple relationship between the value in this frame and stream IDs in QUIC
+STREAM frames. This especially applies if there are other users of streams on
+the connection.
+
+The WT_STREAMS_BLOCKED capsule ({{WT_STREAMS_BLOCKED}}) is sent to indicate that
+an endpoint was unable to create a stream due to the session-level stream
+limit.
+
+## Data Limits {#flow-control-limit-data}
+
+The WT_MAX_DATA capsule ({{WT_MAX_DATA}}) establishes a limit on the amount of
+data that can be sent within a WebTransport session. This limit counts all data
+that is sent on streams of the corresponding type, excluding the stream header
+(see {{unidirectional-streams}} and {{bidirectional-streams}}).  The stream
+header is excluded from this limit so that this limit does not prevent the
+sending of information that is essential in linking new streams to a specific
+WebTransport session.
+
+Implementing WT_MAX_DATA requires that the QUIC stack provide the WebTransport
+implementation with information about the final size of streams; see {{Section
+4.5 of !RFC9000}}.
+
+The WT_DATA_BLOCKED capsule ({{WT_DATA_BLOCKED}}) is sent to indicate that an
+endpoint was unable to send data due to a limit set by the WT_MAX_DATA
+capsule.
+
+Because WebTransport over HTTP/3 uses a native QUIC stream for each WebTransport
+stream, per-stream data limits are provided by QUIC natively; see {{Section 4.1
+of !RFC9000}}.  The WT_MAX_STREAM_DATA and WT_STREAM_DATA_BLOCKED capsules
+({{Section XX of ?I-D.ietf-webtrans-http2}}) are not used and so are prohibited.
+Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
+WT_STREAM_DATA_BLOCKED capsule as a session error.
+
+## Flow Control and Intermediaries {#flow-control-intermediaries}
+
+WebTransport over HTTP/3 uses several capsules for flow control, and all of
+these capsules define special intermediary handling as described in
+{{Section 3.2 of HTTP-DATAGRAM}}.  These capsules, referred to as the "flow
+control capsules" are WT_MAX_DATA, WT_MAX_STREAMS, WT_DATA_BLOCKED, and
+WT_STREAMS_BLOCKED.
+
+Because flow control in WebTransport is hop-by-hop and does not provide an
+end-to-end signal, intermediaries MUST consume flow control signals and express
+their own flow control limits to the next hop.  The intermediary can send these
+signals via HTTP/3 flow control messages, HTTP/2 flow control messages, or as
+WebTransport flow control capsules, where appropriate.  Intermediaries are
+responsible for storing any data for which they advertise flow control credit
+if that data cannot be immediately forwarded to the next hop.
+
+In practice, an intermediary that translates flow control signals between
+similar WebTransport protocols, such as between two HTTP/3 connections, can
+often simply reexpress the same limits received on one connection directly on
+the other connection.
+
+An intermediary that does not want to be responsible for storing data that
+cannot be immediately sent on its translated connection would ensure that it
+does not advertise a higher flow control limit on one connection than the
+corresponding limit on the translated connection.
+
+## Flow Control SETTINGS
+
+*[SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI]: #
+*[SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI]: #
+*[SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA]: #
+
+Initial flow control limits can be exchanged via HTTP/3 SETTINGS
+({{http3-settings}}) by providing non-zero values for
+
+* WT_MAX_STREAMS via SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI and
+  SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI
+* WT_MAX_DATA via SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA
+
+
+## Flow Control Capsules
+
+### WT_MAX_STREAMS Capsule {#WT_MAX_STREAMS}
+
+*[WT_MAX_STREAMS]: #
+
+An HTTP capsule {{HTTP-DATAGRAM}} called WT_MAX_STREAMS is introduced to inform
+the peer of the cumulative number of streams of a given type it is permitted to
+open.  A WT_MAX_STREAMS capsule with a type of 0x190B4D3F applies to
+bidirectional streams, and a WT_MAX_STREAMS capsule with a type of 0x190B4D40
+applies to unidirectional streams.
+
+Note that, because Maximum Streams is a cumulative value representing the total
+allowed number of streams, including previously closed streams, endpoints
+repeatedly send new WT_MAX_STREAMS capsules with increasing Maximum Streams
+values as streams are opened.
+
+~~~
+WT_MAX_STREAMS Capsule {
+  Type (i) = 0x190B4D3F..0x190B4D40,
+  Length (i),
+  Maximum Streams (i),
+}
+~~~
+{: #fig-wt_max_streams title="WT_MAX_STREAMS Capsule Format"}
+
+WT_MAX_STREAMS capsules contain the following field:
+
+   Maximum Streams:
+   : A count of the cumulative number of streams of the corresponding type that
+     can be opened over the lifetime of the connection. This value cannot
+     exceed 2<sup>60</sup>, as it is not possible to encode stream IDs larger
+     than 2<sup>62</sup>-1.
+
+An endpoint MUST NOT open more streams than permitted by the current stream
+limit set by its peer.  For instance, a server that receives a unidirectional
+stream limit of 3 is permitted to open streams 3, 7, and 11, but not stream
+15.
+
+Note that this limit includes streams that have been closed as well as those
+that are open.
+
+The WT_MAX_STREAMS capsule defines special intermediary handling, as
+described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume
+WT_MAX_STREAMS capsules for flow control purposes and MUST generate and
+send appropriate flow control signals for their limits.
+
+Initial values for these limits MAY be communicated by sending non-zero values
+for SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI and
+SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI.
+
+## WT_STREAMS_BLOCKED Capsule {#WT_STREAMS_BLOCKED}
+
+*[WT_STREAMS_BLOCKED]: #
+
+A sender SHOULD send a WT_STREAMS_BLOCKED capsule (type=0x190B4D43 or
+0x190B4D44) when it wishes to open a stream but is unable to do so due to the
+maximum stream limit set by its peer.  A WT_STREAMS_BLOCKED capsule of type
+0x190B4D43 is used to indicate reaching the bidirectional stream limit, and a
+STREAMS_BLOCKED capsule of type 0x190B4D44 is used to indicate reaching the
+unidirectional stream limit.
+
+A WT_STREAMS_BLOCKED capsule does not open the stream, but informs the peer that
+a new stream was needed and the stream limit prevented the creation of the
+stream.
+
+~~~
+WT_STREAMS_BLOCKED Capsule {
+  Type (i) = 0x190B4D43..0x190B4D44,
+  Length (i),
+  Maximum Streams (i),
+}
+~~~
+{: #fig-wt_streams_blocked title="WT_STREAMS_BLOCKED Capsule Format"}
+
+WT_STREAMS_BLOCKED capsules contain the following field:
+
+   Maximum Streams:
+   : A variable-length integer indicating the maximum number of streams allowed
+     at the time the capsule was sent. This value cannot exceed 2<sup>60</sup>,
+     as it is not possible to encode stream IDs larger than 2<sup>62</sup>-1.
+
+The WT_STREAMS_BLOCKED capsule defines special intermediary handling, as
+described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume
+WT_STREAMS_BLOCKED capsules for flow control purposes and MUST generate and
+send appropriate flow control signals for their limits.
+
+## WT_MAX_DATA Capsule {#WT_MAX_DATA}
+
+*[WT_MAX_DATA]: #
+
+An HTTP capsule {{HTTP-DATAGRAM}} called WT_MAX_DATA (type=0x190B4D3D) is
+introduced to inform the peer of the maximum amount of data that can be sent on
+the WebTransport session as a whole.
+
+This limit counts all data that is sent on streams of the corresponding type,
+excluding the stream header (see {{unidirectional-streams}} and
+{{bidirectional-streams}}). Implementing WT_MAX_DATA requires that the QUIC
+stack provide the WebTransport implementation with information about the final
+size of streams; see {{Section 4.5 of !RFC9000}}.
+
+~~~
+WT_MAX_DATA Capsule {
+  Type (i) = 0x190B4D3D,
+  Length (i),
+  Maximum Data (i),
+}
+~~~
+{: #fig-wt_max_data title="WT_MAX_DATA Capsule Format"}
+
+WT_MAX_DATA capsules contain the following field:
+
+   Maximum Data:
+   : A variable-length integer indicating the maximum amount of data that can be
+     sent on the entire connection, in units of bytes.
+
+All data sent in WT_STREAM capsules counts toward this limit. The sum of the
+lengths of Stream Data fields in WT_STREAM capsules MUST NOT exceed the value
+advertised by a receiver.
+
+The WT_MAX_DATA capsule defines special intermediary handling, as described in
+{{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume WT_MAX_DATA
+capsules for flow control purposes and MUST generate and send appropriate flow
+control signals for their limits; see {{flow-control-intermediaries}}.
+
+The initial value for this limit MAY be communicated by sending a non-zero value
+for SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA.
+
+## WT_DATA_BLOCKED Capsule {#WT_DATA_BLOCKED}
+
+*[WT_DATA_BLOCKED]: #
+
+A sender SHOULD send a WT_DATA_BLOCKED capsule (type=0x190B4D41) when it wishes
+to send data but is unable to do so due to WebTransport session-level flow
+control. WT_DATA_BLOCKED capsules can be used as input to tuning of flow
+control algorithms.
+
+~~~
+WT_DATA_BLOCKED Capsule {
+  Type (i) = 0x190B4D41,
+  Length (i),
+  Maximum Data (i),
+}
+~~~
+{: #fig-wt_data_blocked title="WT_DATA_BLOCKED Capsule Format"}
+
+WT_DATA_BLOCKED capsules contain the following field:
+
+   Maximum Data:
+   : A variable-length integer indicating the session-level limit at which
+     blocking occurred.
+
+The WT_DATA_BLOCKED capsule defines special intermediary handling, as
+described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume
+WT_DATA_BLOCKED capsules for flow control purposes and MUST generate and
+send appropriate flow control signals for their limits; see
+{{flow-control-intermediaries}}.
 
 # Session Termination
 
@@ -737,6 +1004,92 @@ Specification:
 
 : This document
 
+{: anchor="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI"}
+
+The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI parameter indicates the
+initial value for the unidirectional max stream limit, otherwise communicated
+by the WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}). The default value for
+the SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI parameter is "0", indicating
+that the endpoint needs to send WT_MAX_STREAMS capsules on each individual
+WebTransport session before its peer is allowed to create any unidirectional
+streams within that session.
+
+Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.
+
+Setting Name:
+
+: SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI
+
+Value:
+
+: 0x2b64
+
+Default:
+
+: 0
+
+Specification:
+
+: This document
+
+{: anchor="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI"}
+
+The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI parameter indicates the
+initial value for the bidirectional max stream limit, otherwise communicated by
+the WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}). The default value for the
+SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI parameter is "0", indicating
+that the endpoint needs to send WT_MAX_STREAMS capsules on each individual
+WebTransport session before its peer is allowed to create any bidirectional
+streams within that session.
+
+Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.
+
+Setting Name:
+
+: SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI
+
+Value:
+
+: 0x2b65
+
+Default:
+
+: 0
+
+Specification:
+
+: This document
+
+{: anchor="SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA"}
+
+The SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA parameter indicates the initial value
+for the session data limit, otherwise communicated by the WT_MAX_DATA capsule
+(see {{WT_MAX_DATA}}). The default value for the
+SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA parameter is "0", indicating that the
+endpoint needs to send a WT_MAX_DATA capsule within each session before its
+peer is allowed to send any stream data within that session.
+
+Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.
+
+Setting Name:
+
+: SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA
+
+Value:
+
+: 0x2b61
+
+Default:
+
+: 0
+
+Specification:
+
+: This document
+
 ## Frame Type Registration
 
 The following entry is added to the "HTTP/3 Frame Type" registry established by
@@ -877,6 +1230,102 @@ Capsule Type:
 
 Status:
 : provisional (when this document is approved this will become permanent)
+
+Specification:
+: This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
+
+Notes:
+: None
+{: spacing="compact"}
+
+The `WT_MAX_STREAMS` capsule.
+
+Value:
+: 0x190B4D3F..0x190B4D40
+
+Capsule Type:
+: WT_MAX_STREAMS
+
+Status:
+: permanent
+
+Specification:
+: This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
+
+Notes:
+: None
+{: spacing="compact"}
+
+The `WT_STREAMS_BLOCKED` capsule.
+
+Value:
+: 0x190B4D43..0x190B4D44
+
+Capsule Type:
+: WT_STREAMS_BLOCKED
+
+Status:
+: permanent
+
+Specification:
+: This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
+
+Notes:
+: None
+{: spacing="compact"}
+
+The `WT_MAX_DATA` capsule.
+
+Value:
+: 0x190B4D3D
+
+Capsule Type:
+: WT_MAX_DATA
+
+Status:
+: permanent
+
+Specification:
+: This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
+
+Notes:
+: None
+{: spacing="compact"}
+
+The `WT_DATA_BLOCKED` capsule.
+
+Value:
+: 0x190B4D41
+
+Capsule Type:
+: WT_DATA_BLOCKED
+
+Status:
+: permanent
 
 Specification:
 : This document
