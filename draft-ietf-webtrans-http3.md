@@ -546,22 +546,22 @@ becomes zero-length if omitted.
 # Flow Control
 
 Flow control governs the amount of resources that can be consumed or data that
-can be sent. When using WebTransport over HTTP/3, endpoints can limit the
+can be sent.  When using WebTransport over HTTP/3, endpoints can limit the
 number of sessions that a peer can create on a single HTTP/3 connection and the
-number of streams that a peer can create within a session. Endpoints can also
+number of streams that a peer can create within a session.  Endpoints can also
 limit the amount of data that can be consumed by each session and by each
 stream within a session.
 
 WebTransport over HTTP/3 provides connection-level limit that governs the number
 of sessions that can be created on an HTTP/3 connection; see
-{{flow-control-limit-sessions}}. It also provides the session-level limits that
+{{flow-control-limit-sessions}}.  It also provides the session-level limits that
 govern the number of streams that can be created in a session and limit the
 amount of data that can be exchanged across all streams in each session; see
 {{flow-control-limit-streams}}.
 
 The underlying QUIC connection provides connection and stream level flow
-control. The connection data limit defines the total amount of data that can be
-sent across all WebTransport sessions and other non-WebTransport streams. A
+control.  The connection data limit defines the total amount of data that can be
+sent across all WebTransport sessions and other non-WebTransport streams.  A
 stream's data limit controls the amount of data that can be sent on that
 stream, WebTransport or otherwise; see {{Section 4 of !RFC9000}}.
 
@@ -593,20 +593,20 @@ session have alternative mechanisms:
 ## Limiting the Number of Streams Within a Session {#flow-control-limit-streams}
 
 The WT_MAX_STREAMS capsule ({{WT_MAX_STREAMS}}) establishes a limit on the
-number of streams within a WebTransport session. Like the QUIC MAX_STREAMS
+number of streams within a WebTransport session.  Like the QUIC MAX_STREAMS
 frame ({{Section 19.11 of !RFC9000}}), this capsule has two types that provide
 separate limits for unidirectional and bidirectional streams that are initiated
 by a peer.
 
 The session-level stream limit applies in addition to the QUIC MAX_STREAMS
-frame, which provides a connection-level stream limit. New streams can only be
+frame, which provides a connection-level stream limit.  New streams can only be
 created within the session if both the stream- and the connection-level limit
 permit; see {{Section 4.6 of !RFC9000}} for details on how QUIC stream limits
 are applied.
 
 Unlike the WT_MAX_STREAMS capsule or the QUIC MAX_STREAMS frame, there is no
 simple relationship between the value in this frame and stream IDs in QUIC
-STREAM frames. This especially applies if there are other users of streams on
+STREAM frames.  This especially applies if there are other users of streams on
 the connection.
 
 The WT_STREAMS_BLOCKED capsule ({{WT_STREAMS_BLOCKED}}) is sent to indicate that
@@ -616,7 +616,7 @@ limit.
 ## Data Limits {#flow-control-limit-data}
 
 The WT_MAX_DATA capsule ({{WT_MAX_DATA}}) establishes a limit on the amount of
-data that can be sent within a WebTransport session. This limit counts all data
+data that can be sent within a WebTransport session.  This limit counts all data
 that is sent on streams of the corresponding type, excluding the stream header
 (see {{unidirectional-streams}} and {{bidirectional-streams}}).  The stream
 header is excluded from this limit so that this limit does not prevent the
@@ -775,7 +775,7 @@ the WebTransport session as a whole.
 
 This limit counts all data that is sent on streams of the corresponding type,
 excluding the stream header (see {{unidirectional-streams}} and
-{{bidirectional-streams}}). Implementing WT_MAX_DATA requires that the QUIC
+{{bidirectional-streams}}).  Implementing WT_MAX_DATA requires that the QUIC
 stack provide the WebTransport implementation with information about the final
 size of streams; see {{Section 4.5 of !RFC9000}}.
 
@@ -812,7 +812,7 @@ for SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA.
 
 A sender SHOULD send a WT_DATA_BLOCKED capsule (type=0x190B4D41) when it wishes
 to send data but is unable to do so due to WebTransport session-level flow
-control. WT_DATA_BLOCKED capsules can be used as input to tuning of flow
+control.  WT_DATA_BLOCKED capsules can be used as input to tuning of flow
 control algorithms.
 
 ~~~
