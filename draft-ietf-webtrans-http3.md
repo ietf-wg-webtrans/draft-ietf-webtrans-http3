@@ -592,7 +592,7 @@ CLOSE_WEBTRANSPORT_SESSION Capsule {
   Type (i) = CLOSE_WEBTRANSPORT_SESSION,
   Length (i),
   Application Error Code (32),
-  Application Error Message (..1024),
+  Application Error Message (..8192),
 }
 ~~~
 
