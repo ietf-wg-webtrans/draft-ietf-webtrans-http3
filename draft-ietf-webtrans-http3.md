@@ -169,7 +169,7 @@ following mechanisms:
 * A client can create a bidirectional stream and transfer its ownership to
   WebTransport by providing a special signal in the first bytes.
 * A server can create a bidirectional stream and transfer its ownership to
-  WebTransport by providing a special signal in the first bytes..
+  WebTransport by providing a special signal in the first bytes.
 * Both client and server can create a unidirectional stream using a special
   stream type.
 * A datagram can be sent using HTTP Datagrams {{!HTTP-DATAGRAM=RFC9297}}.
@@ -367,7 +367,7 @@ even if it has not yet received the server's response to the request. On the
 server side, opening streams and sending datagrams is possible as soon as the
 CONNECT request has been received.
 
-If at any point a session ID is received that cannot a valid ID for a
+If at any point a session ID is received that cannot be a valid ID for a
 client-initiated bidirectional stream, the recipient MUST close the connection
 with an H3_ID_ERROR error code.
 
