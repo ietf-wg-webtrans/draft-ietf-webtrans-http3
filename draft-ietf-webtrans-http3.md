@@ -575,7 +575,7 @@ connection if the client opens sessions exceeding this limit, as the client and
 the server do not have a consistent view of how many sessions are open due to
 the asynchronous nature of the protocol; instead, it MUST reset all of the
 CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
-status defined in [HTTP3].
+status defined in {{HTTP3}}.
 
 Just like other HTTP requests, WebTransport sessions, and data sent on those
 sessions, are counted against flow control limits.  This document does not
@@ -609,7 +609,7 @@ simple relationship between the value in this frame and stream IDs in QUIC
 STREAM frames.  This especially applies if there are other users of streams on
 the connection.
 
-The WT_STREAMS_BLOCKED capsule ({{WT_STREAMS_BLOCKED}}) is sent to indicate that
+The WT_STREAMS_BLOCKED capsule ({{WT_STREAMS_BLOCKED}}) can be sent to indicate that
 an endpoint was unable to create a stream due to the session-level stream
 limit.
 
@@ -627,7 +627,7 @@ Implementing WT_MAX_DATA requires that the QUIC stack provide the WebTransport
 implementation with information about the final size of streams; see {{Section
 4.5 of !RFC9000}}.
 
-The WT_DATA_BLOCKED capsule ({{WT_DATA_BLOCKED}}) is sent to indicate that an
+The WT_DATA_BLOCKED capsule ({{WT_DATA_BLOCKED}}) can be sent to indicate that an
 endpoint was unable to send data due to a limit set by the WT_MAX_DATA
 capsule.
 
@@ -660,7 +660,7 @@ often simply reexpress the same limits received on one connection directly on
 the other connection.
 
 An intermediary that does not want to be responsible for storing data that
-cannot be immediately sent on its translated connection would ensure that it
+cannot be immediately sent on its translated connection can ensure that it
 does not advertise a higher flow control limit on one connection than the
 corresponding limit on the translated connection.
 
