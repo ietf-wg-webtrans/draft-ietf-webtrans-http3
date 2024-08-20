@@ -1478,10 +1478,13 @@ to other messages, may arrive before this SETTING is received (see
 <p id="section-3.1-6">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
 support, both the client and the server MUST send a max_datagram_frame_size
 transport parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-6" class="pilcrow">¶</a></p>
-<p id="section-3.1-7">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
+<p id="section-3.1-7">Any WebTransport requests sent by the client without enabling QUIC and HTTP
+datagrams MUST be treated as malformed by the server,
+as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<p id="section-3.1-8">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.  To indicate support,
 both the client and the server MUST enable the extension as described
-in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-06#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-06#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="extended-connect-in-http3">
