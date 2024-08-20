@@ -5,10 +5,10 @@
 Network Working Group                                        A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 10 January 2025                                      Apple Inc.
+Expires: 21 February 2025                                     Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                             9 July 2024
+                                                          20 August 2024
 
 
                         WebTransport over HTTP/3
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 January 2025.
+   This Internet-Draft will expire on 21 February 2025.
 
 Copyright Notice
 
@@ -234,7 +234,7 @@ Table of Contents
 
    *  A server can create a bidirectional stream and transfer its
       ownership to WebTransport by providing a special signal in the
-      first bytes..
+      first bytes.
 
    *  Both client and server can create a unidirectional stream using a
       special stream type.
@@ -454,9 +454,9 @@ Table of Contents
    sending datagrams is possible as soon as the CONNECT request has been
    received.
 
-   If at any point a session ID is received that cannot a valid ID for a
-   client-initiated bidirectional stream, the recipient MUST close the
-   connection with an H3_ID_ERROR error code.
+   If at any point a session ID is received that cannot be a valid ID
+   for a client-initiated bidirectional stream, the recipient MUST close
+   the connection with an H3_ID_ERROR error code.
 
 4.1.  Unidirectional streams
 
