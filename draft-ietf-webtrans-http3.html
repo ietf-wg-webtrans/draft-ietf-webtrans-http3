@@ -1549,19 +1549,18 @@ endpoints.<a href="#section-3.3-7" class="pilcrow">¶</a></p>
 TLS Application-Layer Protocol Negotiation Extension (ALPN) <span>[<a href="#RFC7301" class="cite xref">RFC7301</a>]</span>; the
 intent is to simplify porting pre-existing protocols that use QUIC and rely on
 this functionality.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<p id="section-3.4-2">The user agent MAY include a <code>WebTransport-Subprotocols-Available</code> header field
-in the CONNECT request, enumerating the possible subprotocols. If the server
-receives such a header, it MAY include a <code>WebTransport-Subprotocol</code> field in
-a successful (2xx) response. If it does, the server SHALL include a single
-subprotocol from the client's list in that field. Servers MAY reject the request
-if the client did not include a suitable subprotocol.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
-<p id="section-3.4-3">Both <code>WebTransport-Subprotocols-Available</code> and <code>WebTransport-Subprotocol</code> are
-Structured Fields <span>[<a href="#RFC8941" class="cite xref">RFC8941</a>]</span>. <code>WebTransport-Subprotocols-Available</code> is a List
-of Tokens, and <code>WebTransport-Subprotocol</code> is a Token. The token in the
-<code>WebTransport-Subprotocol</code> response header field MUST be one of the tokens
-listed in <code>WebTransport-Subprotocols-Available</code> of the request.  The semantics
-of individual token values is determined by the WebTransport resource in
-question, and are not registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">The user agent MAY include a <code>WT-Available-Protocols</code> header field in the CONNECT
+request. The <code>WT-Available-Protocols</code> enumerates the possible subprotocols in
+preference order. If the server receives such a header, it MAY include a
+<code>WT-Protocol</code> field in a successful (2xx) response. If it does, the server SHALL
+include a single choice from the client's list in that field. Servers MAY reject
+the request if the client did not include a suitable subprotocol.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.4-3">Both <code>WT-Available-Protocols</code> and <code>WT-Protocol</code> are Structured Fields
+<span>[<a href="#RFC8941" class="cite xref">RFC8941</a>]</span>. <code>WT-Available-Protocols</code> is a List of Tokens, and <code>WT-Protocol</code> is a
+Token. The token in the <code>WT-Protocol</code> response header field MUST be one of the
+tokens listed in <code>WT-Available-Protocols</code> of the request.  The semantics of
+individual token values is determined by the WebTransport resource in question
+and are not registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="limiting-the-number-of-simultaneous-sessions">
