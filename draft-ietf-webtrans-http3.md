@@ -278,24 +278,24 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 HTTP-DATAGRAM}} is not required by WebTransport and can safely be ignored by WebTransport
 endpoints.
 
-## Subprotocol Negotiation
+## Application Protocol Negotiation
 
-WebTransport over HTTP/3 offers a subprotocol negotiation mechanism, similar to
+WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to
 TLS Application-Layer Protocol Negotiation Extension (ALPN) {{?RFC7301}}; the
 intent is to simplify porting pre-existing protocols that use QUIC and rely on
 this functionality.
 
-The user agent MAY include a `WT-Available-Protocols` header field in the CONNECT
-request. The `WT-Available-Protocols` enumerates the possible subprotocols in
-preference order. If the server receives such a header, it MAY include a
-`WT-Protocol` field in a successful (2xx) response. If it does, the server SHALL
-include a single choice from the client's list in that field. Servers MAY reject
-the request if the client did not include a suitable subprotocol.
+The user agent MAY include a `WT-Available-Protocols` header field in the
+CONNECT request. The `WT-Available-Protocols` enumerates the possible protocols
+in preference order. If the server receives such a header, it MAY include a
+`WT-Protocol` field in a successful (2xx) response. If it does, the server
+SHALL include a single choice from the client's list in that field. Servers MAY
+reject the request if the client did not include a suitable protocol.
 
 Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
-{{!RFC8941}}. `WT-Available-Protocols` is a List of Tokens, and `WT-Protocol` is a
-Token. The token in the `WT-Protocol` response header field MUST be one of the
-tokens listed in `WT-Available-Protocols` of the request.  The semantics of
+{{!RFC8941}}. `WT-Available-Protocols` is a List of Tokens, and `WT-Protocol` is
+a Token. The token in the `WT-Protocol` response header field MUST be one of
+the tokens listed in `WT-Available-Protocols` of the request.  The semantics of
 individual token values is determined by the WebTransport resource in question
 and are not registered in IANA's "ALPN Protocol IDs" registry.
 
