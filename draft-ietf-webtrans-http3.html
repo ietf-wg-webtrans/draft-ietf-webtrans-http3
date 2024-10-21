@@ -1177,7 +1177,7 @@ web API draft corresponding to this document can be found at
                 <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-creating-a-new-session" class="internal xref">Creating a New Session</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-subprotocol-negotiation" class="internal xref">Subprotocol Negotiation</a></p>
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-application-protocol-negoti" class="internal xref">Application Protocol Negotiation</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
                 <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-limiting-the-number-of-simu" class="internal xref">Limiting the Number of Simultaneous Sessions</a></p>
@@ -1543,25 +1543,25 @@ error.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
 endpoints.<a href="#section-3.3-7" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="subprotocol-negotiation">
+<div id="application-protocol-negotiation">
 <section id="section-3.4">
-        <h3 id="name-subprotocol-negotiation">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-subprotocol-negotiation" class="section-name selfRef">Subprotocol Negotiation</a>
+        <h3 id="name-application-protocol-negoti">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-application-protocol-negoti" class="section-name selfRef">Application Protocol Negotiation</a>
         </h3>
-<p id="section-3.4-1">WebTransport over HTTP/3 offers a subprotocol negotiation mechanism, similar to
+<p id="section-3.4-1">WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to
 TLS Application-Layer Protocol Negotiation Extension (ALPN) <span>[<a href="#RFC7301" class="cite xref">RFC7301</a>]</span>; the
 intent is to simplify porting pre-existing protocols that use QUIC and rely on
 this functionality.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<p id="section-3.4-2">The user agent MAY include a <code>WT-Available-Protocols</code> header field in the CONNECT
-request. The <code>WT-Available-Protocols</code> enumerates the possible subprotocols in
-preference order. If the server receives such a header, it MAY include a
-<code>WT-Protocol</code> field in a successful (2xx) response. If it does, the server SHALL
-include a single choice from the client's list in that field. Servers MAY reject
-the request if the client did not include a suitable subprotocol.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">The user agent MAY include a <code>WT-Available-Protocols</code> header field in the
+CONNECT request. The <code>WT-Available-Protocols</code> enumerates the possible protocols
+in preference order. If the server receives such a header, it MAY include a
+<code>WT-Protocol</code> field in a successful (2xx) response. If it does, the server
+SHALL include a single choice from the client's list in that field. Servers MAY
+reject the request if the client did not include a suitable protocol.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
 <p id="section-3.4-3">Both <code>WT-Available-Protocols</code> and <code>WT-Protocol</code> are Structured Fields
-<span>[<a href="#RFC8941" class="cite xref">RFC8941</a>]</span>. <code>WT-Available-Protocols</code> is a List of Tokens, and <code>WT-Protocol</code> is a
-Token. The token in the <code>WT-Protocol</code> response header field MUST be one of the
-tokens listed in <code>WT-Available-Protocols</code> of the request.  The semantics of
+<span>[<a href="#RFC8941" class="cite xref">RFC8941</a>]</span>. <code>WT-Available-Protocols</code> is a List of Tokens, and <code>WT-Protocol</code> is
+a Token. The token in the <code>WT-Protocol</code> response header field MUST be one of
+the tokens listed in <code>WT-Available-Protocols</code> of the request.  The semantics of
 individual token values is determined by the WebTransport resource in question
 and are not registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
 </section>
