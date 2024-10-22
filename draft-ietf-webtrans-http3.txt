@@ -5,10 +5,10 @@
 Network Working Group                                        A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 24 April 2025                                        Apple Inc.
+Expires: 25 April 2025                                        Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                         21 October 2024
+                                                         22 October 2024
 
 
                         WebTransport over HTTP/3
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 April 2025.
+   This Internet-Draft will expire on 25 April 2025.
 
 Copyright Notice
 
@@ -1015,9 +1015,9 @@ Table of Contents
    [I-D.ietf-webtrans-http2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
               Vasiliev, V., and G. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-09,
-              25 August 2024, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-09>.
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-10,
+              21 October 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-webtrans-http2-10>.
 
    [ORIGIN]   Fette, I. and A. Melnikov, "The WebSocket Protocol",
               RFC 6455, DOI 10.17487/RFC6455, December 2011,
