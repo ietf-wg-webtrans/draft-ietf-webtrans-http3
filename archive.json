@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-12-31T00:45:22.522938+00:00",
+  "timestamp": "2025-01-02T00:45:09.401898+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -14441,7 +14441,7 @@
       "labels": [],
       "body": "Add initial flow control text and capsules from HTTP/2 and draft-thomson-webtrans-session-limit-01. Happy to re-re-arrange sections as necessary.\r\n\r\nNegotiation of flow control is coming under the separate issue to make things a little easier to keep track of and review.\r\n\r\nCloses #85.",
       "createdAt": "2024-06-21T02:14:05Z",
-      "updatedAt": "2024-07-25T07:16:28Z",
+      "updatedAt": "2025-01-01T04:07:11Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "0b2c7644e736a4e02f764bb5442b8eb6d06e07db",
@@ -14515,6 +14515,44 @@
               "body": "When you say highlighting this as a difference, what're you thinking? Like adding additional text to describe how this works here as opposed to H2? (I'd imagine we'd add that to H2 where we refer to this capsule?)",
               "createdAt": "2024-07-25T07:16:03Z",
               "updatedAt": "2024-07-25T07:16:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6Wm1pg",
+          "commit": {
+            "abbreviatedOid": "90d8563"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Overall this seems reasonable, but I am still concerned about WT_MAX_DATA.",
+          "createdAt": "2025-01-01T03:58:10Z",
+          "updatedAt": "2025-01-01T04:07:11Z",
+          "comments": [
+            {
+              "originalPosition": 71,
+              "body": "nit: we should clarify that \"open more sessions\" only applies to the number of open session at any particular instant, not connection lifetime in total.",
+              "createdAt": "2025-01-01T03:58:10Z",
+              "updatedAt": "2025-01-01T04:07:11Z"
+            },
+            {
+              "originalPosition": 82,
+              "body": "> This document does not introduce additional mechanisms for endpoints to limit the relative amount of flow control credit consumed by different WebTransport sessions\r\n\r\nThis appears to be no longer accurate.",
+              "createdAt": "2025-01-01T03:58:54Z",
+              "updatedAt": "2025-01-01T04:07:11Z"
+            },
+            {
+              "originalPosition": 92,
+              "body": "We should probably point out somewhere inside this section that this mechanism only works when you have reliable resets for stream headers.",
+              "createdAt": "2025-01-01T04:00:20Z",
+              "updatedAt": "2025-01-01T04:07:11Z"
+            },
+            {
+              "originalPosition": 127,
+              "body": "I didn't realize this.  Actually, the more I think about WT_MAX_DATA, the more concerning I find it from the implementation perspective.\r\n\r\nSo, to implement this mechanism, the WebTransport stack has to\r\n1. Do its own accounting of how many bytes were written for the session in total.\r\n2. Block whenever the application tries to write in excess.\r\n3. Record all blocked streams.\r\n4. Wake those streams up when the credit has been received, in the priority order.\r\n\r\nWhile none of those steps seems to be individually challenging, that's a lot of machinery, leaving implementers quite a bit in terms of room to screw things up.  It is also really tempting for implementers to merge QUIC-level flow control blocks with the WebTransport-level ones, probably leading to large cross-layer mess.",
+              "createdAt": "2025-01-01T04:06:42Z",
+              "updatedAt": "2025-01-01T04:07:11Z"
             }
           ]
         }
