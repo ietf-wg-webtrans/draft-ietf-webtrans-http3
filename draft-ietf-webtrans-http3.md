@@ -169,7 +169,7 @@ following mechanisms:
 * A client can create a bidirectional stream and transfer its ownership to
   WebTransport by providing a special signal in the first bytes.
 * A server can create a bidirectional stream and transfer its ownership to
-  WebTransport by providing a special signal in the first bytes..
+  WebTransport by providing a special signal in the first bytes.
 * Both client and server can create a unidirectional stream using a special
   stream type.
 * A datagram can be sent using HTTP Datagrams {{!HTTP-DATAGRAM=RFC9297}}.
@@ -212,6 +212,10 @@ WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
 support, both the client and the server MUST send a max_datagram_frame_size
 transport parameter with a value greater than 0 (see {{Section 3
 of !QUIC-DATAGRAM=RFC9221}}).
+
+Any WebTransport requests sent by the client without enabling QUIC and HTTP
+datagrams MUST be treated as malformed by the server,
+as described in {{Section 4.1.2 of HTTP3}}.
 
 WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 {{!RESET-STREAM-AT=I-D.ietf-quic-reliable-stream-reset}}.  To indicate support,
@@ -274,27 +278,26 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 HTTP-DATAGRAM}} is not required by WebTransport and can safely be ignored by WebTransport
 endpoints.
 
-## Subprotocol Negotiation
+## Application Protocol Negotiation
 
-WebTransport over HTTP/3 offers a subprotocol negotiation mechanism, similar to
+WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to
 TLS Application-Layer Protocol Negotiation Extension (ALPN) {{?RFC7301}}; the
 intent is to simplify porting pre-existing protocols that use QUIC and rely on
 this functionality.
 
-The user agent MAY include a `WebTransport-Subprotocols-Available` header field
-in the CONNECT request, enumerating the possible subprotocols. If the server
-receives such a header, it MAY include a `WebTransport-Subprotocol` field in
-a successful (2xx) response. If it does, the server SHALL include a single
-subprotocol from the client's list in that field. Servers MAY reject the request
-if the client did not include a suitable subprotocol.
+The user agent MAY include a `WT-Available-Protocols` header field in the
+CONNECT request. The `WT-Available-Protocols` enumerates the possible protocols
+in preference order. If the server receives such a header, it MAY include a
+`WT-Protocol` field in a successful (2xx) response. If it does, the server
+SHALL include a single choice from the client's list in that field. Servers MAY
+reject the request if the client did not include a suitable protocol.
 
-Both `WebTransport-Subprotocols-Available` and `WebTransport-Subprotocol` are
-Structured Fields {{!RFC8941}}. `WebTransport-Subprotocols-Available` is a List
-of Tokens, and `WebTransport-Subprotocol` is a Token. The token in the
-`WebTransport-Subprotocol` response header field MUST be one of the tokens
-listed in `WebTransport-Subprotocols-Available` of the request.  The semantics
-of individual token values is determined by the WebTransport resource in
-question, and are not registered in IANA's "ALPN Protocol IDs" registry.
+Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
+{{!RFC8941}}. `WT-Available-Protocols` is a List of Tokens, and `WT-Protocol` is
+a Token. The token in the `WT-Protocol` response header field MUST be one of
+the tokens listed in `WT-Available-Protocols` of the request.  The semantics of
+individual token values is determined by the WebTransport resource in question
+and are not registered in IANA's "ALPN Protocol IDs" registry.
 
 ## Prioritization
 
@@ -342,7 +345,7 @@ even if it has not yet received the server's response to the request. On the
 server side, opening streams and sending datagrams is possible as soon as the
 CONNECT request has been received.
 
-If at any point a session ID is received that cannot a valid ID for a
+If at any point a session ID is received that cannot be a valid ID for a
 client-initiated bidirectional stream, the recipient MUST close the connection
 with an H3_ID_ERROR error code.
 
