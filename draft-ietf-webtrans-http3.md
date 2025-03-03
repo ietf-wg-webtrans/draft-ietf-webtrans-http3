@@ -501,8 +501,8 @@ allows a peer to send a GOAWAY frame indicating that it will no longer accept
 any new incoming requests or pushes.
 
 A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
-sessions if the stream identifier is equal to or greater than the indicated
-stream ID.
+sessions on that HTTP/3 connection; it must open a new HTTP/3 connection to
+initiate new WebTransport sessions with the same peer.
 
 An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
 all WebTransport sessions.  To shut down a single WebTransport session, either
