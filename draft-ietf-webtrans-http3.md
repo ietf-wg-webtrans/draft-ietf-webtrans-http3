@@ -586,7 +586,7 @@ The WT_MAX_STREAMS capsule ({{WT_MAX_STREAMS}}) establishes a limit on the
 number of streams within a WebTransport session.  Like the QUIC MAX_STREAMS
 frame ({{Section 19.11 of !RFC9000}}), this capsule has two types that provide
 separate limits for unidirectional and bidirectional streams that are initiated
-by a peer. 
+by a peer.
 
 Note that the CONNECT stream for the session is not included in either the
 bidirectional or the unidirectional stream limits; the number of CONNECT
