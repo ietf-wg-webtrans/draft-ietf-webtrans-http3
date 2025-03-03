@@ -1953,19 +1953,23 @@ number of streams within a WebTransport session.  Like the QUIC MAX_STREAMS
 frame (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-19.11" class="relref">Section 19.11</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>), this capsule has two types that provide
 separate limits for unidirectional and bidirectional streams that are initiated
 by a peer.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-<p id="section-5.2-2">The session-level stream limit applies in addition to the QUIC MAX_STREAMS
+<p id="section-5.2-2">Note that the CONNECT stream for the session is not included in either the
+bidirectional or the unidirectional stream limits; the number of CONNECT
+streams a client can open is limited by the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+setting and QUIC flow control's stream limits.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
+<p id="section-5.2-3">The session-level stream limit applies in addition to the QUIC MAX_STREAMS
 frame, which provides a connection-level stream limit.  New streams can only be
 created within the session if both the stream- and the connection-level limit
 permit; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.6" class="relref">Section 4.6</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> for details on how QUIC stream limits
-are applied.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
-<p id="section-5.2-3">Unlike the the QUIC MAX_STREAMS frame, there is no simple relationship between
+are applied.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.2-4">Unlike the the QUIC MAX_STREAMS frame, there is no simple relationship between
 the value in this frame and stream IDs in QUIC STREAM frames.  This especially
-applies if there are other users of streams on the connection.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
-<p id="section-5.2-4">The <span id="iref-wt_streams_blocked-2" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (<a href="#WT_STREAMS_BLOCKED" class="auto internal xref">Section 5.7</a>) can be sent to indicate
+applies if there are other users of streams on the connection.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
+<p id="section-5.2-5">The <span id="iref-wt_streams_blocked-2" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (<a href="#WT_STREAMS_BLOCKED" class="auto internal xref">Section 5.7</a>) can be sent to indicate
 that an endpoint was unable to create a stream due to the session-level stream
-limit.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
-<p id="section-5.2-5">Note that enforcing this limit requires reliable resets for stream headers so
-that both endpoints can agree on the number of streams that are open.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
+limit.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
+<p id="section-5.2-6">Note that enforcing this limit requires reliable resets for stream headers so
+that both endpoints can agree on the number of streams that are open.<a href="#section-5.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="flow-control-limit-data">
@@ -3183,7 +3187,7 @@ draft-02 implementation safely:<a href="#appendix-A.1-3" class="pilcrow">¶</a><
 <dt id="appendix-B-2.2.2.1.1.7">WT_STREAMS_BLOCKED</dt>
                 <dd style="margin-left: 1.5em" id="appendix-B-2.2.2.1.1.8">
                   <p id="appendix-B-2.2.2.1.1.8.1">
-                    <a href="#section-5.2-4" class="auto internal xref">Section 5.2, Paragraph 4</a>; 
+                    <a href="#section-5.2-5" class="auto internal xref">Section 5.2, Paragraph 5</a>; 
 <a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
 <a href="#section-5.7-1" class="auto internal xref">Section 5.7, Paragraph 1</a>; 
 <a href="#section-5.7-2" class="auto internal xref">Section 5.7, Paragraph 2</a>; 

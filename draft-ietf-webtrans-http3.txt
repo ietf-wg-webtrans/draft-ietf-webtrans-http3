@@ -692,6 +692,12 @@ Table of Contents
    types that provide separate limits for unidirectional and
    bidirectional streams that are initiated by a peer.
 
+   Note that the CONNECT stream for the session is not included in
+   either the bidirectional or the unidirectional stream limits; the
+   number of CONNECT streams a client can open is limited by the
+   SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting and QUIC flow control's
+   stream limits.
+
    The session-level stream limit applies in addition to the QUIC
    MAX_STREAMS frame, which provides a connection-level stream limit.
    New streams can only be created within the session if both the
@@ -1459,7 +1465,7 @@ Index
             Paragraph 4; Section 5.6.1, Paragraph 8; Section 9.2,
             Paragraph 4; Section 9.2, Paragraph 7; Section 9.6,
             Paragraph 7.4.1
-         WT_STREAMS_BLOCKED  Section 5.2, Paragraph 4; Section 5.4,
+         WT_STREAMS_BLOCKED  Section 5.2, Paragraph 5; Section 5.4,
             Paragraph 1; Section 5.7, Paragraph 1; Section 5.7,
             Paragraph 2; Section 5.7, Paragraph 4; Section 5.7,
             Paragraph 6; Section 9.6, Paragraph 9.4.1
