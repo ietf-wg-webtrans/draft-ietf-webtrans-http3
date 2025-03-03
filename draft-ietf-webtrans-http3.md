@@ -523,14 +523,14 @@ is expected to attempt to gracefully terminate the session as soon as possible.
 ## Use of Keying Material Exporters
 
 WebTransport over HTTP/3 supports the use of TLS keying material exporters
-{{!RFC8446, Section 7.5}}.  Since the underlying QUIC connection may be shared by multiple
-WebTransport sessions, WebTransport defines its own mechanism for deriving a
-TLS exporter that separates keying material for different sessions.  If the
-user requests an exporter for a given WebTransport session with a specified
-label and context, the resulting exporter SHALL be a TLS exporter as defined in
-{{!RFC8446, Section 7.5}} with the label set to "EXPORTER-WebTransport" and the
-context set to the serialization of the "WebTransport Exporter Context" struct
-as defined below.
+{{!RFC8446, Section 7.5}}.  Since the underlying QUIC connection may be shared
+by multiple WebTransport sessions, WebTransport defines its own mechanism for
+deriving a TLS exporter that separates keying material for different sessions.
+If the user requests an exporter for a given WebTransport session with a
+specified label and context, the resulting exporter SHALL be a TLS exporter as
+defined in{{!RFC8446, Section 7.5}} with the label set
+to "EXPORTER-WebTransport" and the context set to the serialization of
+the "WebTransport Exporter Context" struct as defined below.
 
 ~~~
 WebTransport Exporter Context {
@@ -703,7 +703,7 @@ WT_MAX_STREAMS capsules contain the following field:
 
    Maximum Streams:
    : A count of the cumulative number of streams of the corresponding type that
-     can be opened over the lifetime of the connection. This value cannot
+     can be opened over the lifetime of the session. This value cannot
      exceed 2<sup>60</sup>, as it is not possible to encode stream IDs larger
      than 2<sup>62</sup>-1.
 
@@ -787,7 +787,7 @@ WT_MAX_DATA capsules contain the following field:
 
    Maximum Data:
    : A variable-length integer indicating the maximum amount of data that can be
-     sent on the entire connection, in units of bytes.
+     sent on the entire session, in units of bytes.
 
 All data sent in WT_STREAM capsules counts toward this limit. The sum of the
 lengths of Stream Data fields in WT_STREAM capsules MUST NOT exceed the value
@@ -862,12 +862,12 @@ CLOSE_WEBTRANSPORT_SESSION has the following fields:
 
 Application Error Code:
 
-: A 32-bit error code provided by the application closing the connection.
+: A 32-bit error code provided by the application closing the session.
 
 Application Error Message:
 
 : A UTF-8 encoded error message string provided by the application closing the
-  connection.  The message takes up the remainder of the capsule, and its
+  session.  The message takes up the remainder of the capsule, and its
   length MUST NOT exceed 1024 bytes.
 
 An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately
