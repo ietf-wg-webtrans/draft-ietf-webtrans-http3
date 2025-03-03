@@ -179,7 +179,7 @@ closed.
 
 # Session Establishment
 
-## Establishing a Transport-Capable HTTP/3 Connection {#establishing}
+## Establishing a WebTransport-Capable HTTP/3 Connection {#establishing}
 
 In order to indicate support for WebTransport, the server MUST send a
 SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in its SETTINGS
@@ -594,10 +594,9 @@ created within the session if both the stream- and the connection-level limit
 permit; see {{Section 4.6 of !RFC9000}} for details on how QUIC stream limits
 are applied.
 
-Unlike the WT_MAX_STREAMS capsule or the QUIC MAX_STREAMS frame, there is no
-simple relationship between the value in this frame and stream IDs in QUIC
-STREAM frames.  This especially applies if there are other users of streams on
-the connection.
+Unlike the the QUIC MAX_STREAMS frame, there is no simple relationship between
+the value in this frame and stream IDs in QUIC STREAM frames.  This especially
+applies if there are other users of streams on the connection.
 
 The WT_STREAMS_BLOCKED capsule ({{WT_STREAMS_BLOCKED}}) can be sent to indicate
 that an endpoint was unable to create a stream due to the session-level stream
