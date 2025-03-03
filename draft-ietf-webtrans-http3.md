@@ -617,8 +617,10 @@ sending of information that is essential in linking new streams to a specific
 WebTransport session.
 
 Implementing WT_MAX_DATA requires that the QUIC stack provide the WebTransport
-implementation with information about the final size of streams; see {{Section
-4.5 of !RFC9000}}.
+implementation with information about the final size of streams; see {
+{Section 4.5 of !RFC9000}}.  This allows both endpoints to agree on how much
+data was consumed by that stream, although the stream header exclusion above
+applies.
 
 The WT_DATA_BLOCKED capsule ({{WT_DATA_BLOCKED}}) can be sent to indicate that an
 endpoint was unable to send data due to a limit set by the WT_MAX_DATA
