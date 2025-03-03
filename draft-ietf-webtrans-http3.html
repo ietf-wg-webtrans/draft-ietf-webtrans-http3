@@ -1854,8 +1854,8 @@ implementation to choose what stream or datagram to discard.<a href="#section-4.
 allows a peer to send a GOAWAY frame indicating that it will no longer accept
 any new incoming requests or pushes.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
 <p id="section-4.6-2">A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
-sessions if the stream identifier is equal to or greater than the indicated
-stream ID.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
+sessions on that HTTP/3 connection; it must open a new HTTP/3 connection to
+initiate new WebTransport sessions with the same peer.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
 <p id="section-4.6-3">An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
 all WebTransport sessions.  To shut down a single WebTransport session, either
 endpoint can send a DRAIN_WEBTRANSPORT_SESSION (0x78ae) capsule.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
