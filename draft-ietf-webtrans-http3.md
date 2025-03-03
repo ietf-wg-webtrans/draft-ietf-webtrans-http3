@@ -572,26 +572,13 @@ stream, WebTransport or otherwise; see {{Section 4 of !RFC9000}}.
 
 This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter that allows
 the server to limit the maximum number of concurrent WebTransport sessions on a
-single HTTP/3 connection.  The client MUST NOT open more sessions than
-indicated in the server SETTINGS parameters.  The server MUST NOT close the
-connection if the client opens sessions exceeding this limit, as the client and
-the server do not have a consistent view of how many sessions are open due to
-the asynchronous nature of the protocol; instead, it MUST reset all of the
+single HTTP/3 connection.  The client MUST NOT open more simultaneous sessions
+than indicated in the server SETTINGS parameter.  The server MUST NOT close
+the connection if the client opens sessions exceeding this limit, as the client
+and the server do not have a consistent view of how many sessions are open due
+to the asynchronous nature of the protocol; instead, it MUST reset all of the
 CONNECT streams it is not willing to process with the `HTTP_REQUEST_REJECTED`
 status defined in {{HTTP3}}.
-
-Just like other HTTP requests, WebTransport sessions, and data sent on those
-sessions, are counted against flow control limits.  This document does not
-introduce additional mechanisms for endpoints to limit the relative amount of
-flow control credit consumed by different WebTransport sessions, however
-servers that wish to limit the rate of incoming requests on any particular
-session have alternative mechanisms:
-
-* The `HTTP_REQUEST_REJECTED` error code defined in [HTTP3] indicates to the
-  receiving HTTP/3 stack that the request was not processed in any way.
-* HTTP status code 429 indicates that the request was rejected due to rate
-  limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
-  propagated to the application.
 
 ## Limiting the Number of Streams Within a Session {#flow-control-limit-streams}
 
@@ -612,9 +599,12 @@ simple relationship between the value in this frame and stream IDs in QUIC
 STREAM frames.  This especially applies if there are other users of streams on
 the connection.
 
-The WT_STREAMS_BLOCKED capsule ({{WT_STREAMS_BLOCKED}}) can be sent to indicate that
-an endpoint was unable to create a stream due to the session-level stream
+The WT_STREAMS_BLOCKED capsule ({{WT_STREAMS_BLOCKED}}) can be sent to indicate
+that an endpoint was unable to create a stream due to the session-level stream
 limit.
+
+Note that enforcing this limit requires reliable resets for stream headers so
+that both endpoints can agree on the number of streams that are open.
 
 ## Data Limits {#flow-control-limit-data}
 
