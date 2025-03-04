@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-02T00:51:29.406631+00:00",
+  "timestamp": "2025-03-04T00:48:37.459901+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -2931,7 +2931,7 @@
       "id": "I_kwDOCvK98s5VH8Bt",
       "title": "MAX_STREAMS and flow control",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/85",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -2946,8 +2946,8 @@
       ],
       "body": "From https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/22#issuecomment-1077698720:\r\n> figure out MAX_STREAMS, a way to limit the number of streams within a session\r\n\r\nWe've addressed the rest of the plan except for this part via the capsule DT, but there are still open questions about reordering of closed streams and their interaction with stream flow control limits via MAX_STREAMS.",
       "createdAt": "2022-10-29T08:01:02Z",
-      "updatedAt": "2024-08-20T22:22:34Z",
-      "closedAt": null,
+      "updatedAt": "2025-03-03T23:44:45Z",
+      "closedAt": "2025-03-03T23:44:45Z",
       "comments": [
         {
           "author": "ekinnear",
@@ -4370,7 +4370,7 @@
       ],
       "body": "As mentioned by @marten-seemann [on the list](https://mailarchive.ietf.org/arch/msg/webtransport/JP3KS1rRTMQwQoGfht2GlCxtAZk/), making flow control optional requires the ability to negotiate it. We should add that to the protocol, using HTTP headers or SETTINGS.",
       "createdAt": "2024-03-05T23:38:05Z",
-      "updatedAt": "2024-06-12T15:46:56Z",
+      "updatedAt": "2025-03-03T23:48:10Z",
       "closedAt": null,
       "comments": [
         {
@@ -4400,6 +4400,13 @@
           "body": "How does adding the ability to negotiate flow control-off in some cases help?  ",
           "createdAt": "2024-06-12T15:46:54Z",
           "updatedAt": "2024-06-12T15:46:54Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Holding on adding \"Flip back the other way and have the client send MAX_SESSIONS\" both to reduce churn on the SETTINGS and while we resolve if we really need to add that additional axis of configuration.",
+          "createdAt": "2025-03-03T23:48:09Z",
+          "updatedAt": "2025-03-03T23:48:09Z"
         }
       ]
     },
@@ -4698,15 +4705,17 @@
       "id": "I_kwDOCvK98s6XYywf",
       "title": "Incorrect statement about H3 GOAWAY",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/171",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [],
       "body": "https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http3-10#section-4.6 states\r\n\r\n> A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport sessions if the stream identifier is equal to or greater than the indicated stream ID.\r\n\r\nHowever this is slightly incorrect, RFC 9114 states \r\n\r\n> Endpoints MUST NOT initiate new requests or promise new pushes on the connection after receipt of a [GOAWAY](https://www.rfc-editor.org/rfc/rfc9114#frame-goaway) frame from the peer.\r\n\r\nIn other words, it doesn't matter what ID you receive in the GOAWAY, the client cannot send new CONNECT requests after a GOAWAY has been received.\r\n",
       "createdAt": "2024-09-21T01:02:19Z",
-      "updatedAt": "2024-09-21T01:02:19Z",
-      "closedAt": null,
+      "updatedAt": "2025-03-03T23:58:04Z",
+      "closedAt": "2025-03-03T23:58:04Z",
       "comments": []
     },
     {
@@ -4750,6 +4759,77 @@
       "updatedAt": "2024-10-21T21:53:17Z",
       "closedAt": "2024-10-21T21:53:17Z",
       "comments": []
+    },
+    {
+      "number": 176,
+      "id": "I_kwDOCvK98s6saQqt",
+      "title": "Ambiguity of WT_MAX_STREAMS (http/2 versus http/3)",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/176",
+      "state": "CLOSED",
+      "author": "martenrichter",
+      "authorAssociation": "NONE",
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "ready for PR",
+        "flow-control"
+      ],
+      "body": "I am just in the course of writing unit tests and implementing WT_MAX_STREAMS,\r\nI came up with a slight difference.\r\n\r\nFor http/3, the session stream would also be counted in the maximum allowed streams\r\nso that a limit of 100 bidirectional streams translates (at least for quiche) to 99 possible bidirectional streams.\r\nFor http/2, the session is not handled in the same way as the streams, so the limit means something different for http/2.\r\nCan this lead to problems if intermediaries translate http/2 to http/3 WT_MAX_STREAMS and vice versa?",
+      "createdAt": "2024-01-04T15:34:36Z",
+      "updatedAt": "2025-03-03T23:57:54Z",
+      "closedAt": "2025-03-03T23:57:54Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "HTTP/3 also has control streams as well that are included in the HTTP/3 level limit.\r\n\r\nThat said, because of the way that WT over HTTP/3 explodes streams out to native H3 streams, the flow control at the HTTP/3 layer cannot directly be translated to MAX_STREAMS in HTTP/2 (or the WT_MAX_STREAMS happening in either H3 or H2).\r\n\r\nThe current proposal to bring WT_MAX_STREAMS to H3 would have identical semantics, unless I'm missing something. :) \r\n\r\nOtherwise, there is no way to have an equivalent amount of per-session control over streams across HTTP/3 and HTTP/2.",
+          "createdAt": "2024-01-09T23:39:40Z",
+          "updatedAt": "2024-01-09T23:39:40Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Let's discuss this in the context of the flow control for HTTP/3 discussion, as well.",
+          "createdAt": "2024-01-09T23:40:04Z",
+          "updatedAt": "2024-01-09T23:40:04Z"
+        },
+        {
+          "author": "martenrichter",
+          "authorAssociation": "NONE",
+          "body": "The point arose because I am giving the server and client-side user the ability to adjust the maximum stream limit.\r\nFor http/3 I can in fact open 99 streams for a limit of 100, and for http/2 I can open 100 streams for the same limit. \r\nNow, the question is if I should set the internal offset to 101 for http/3 to be consistent or something else. Of course, the question remains whether this is accessible via the js API in the browser.",
+          "createdAt": "2024-01-21T11:15:03Z",
+          "updatedAt": "2024-01-21T11:15:03Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed in editor's meeting: \r\n\r\nIf we bring flow control to H3 as well, the limit is separate and it's easy to ensure that they're not off-by-one and instead match. \r\n\r\nIf we don't bring flow control to H3, then we're somewhat stuck, since there's no good way to have them be the same because they refer to fundamentally different things.",
+          "createdAt": "2024-01-23T23:22:32Z",
+          "updatedAt": "2024-01-23T23:22:48Z"
+        },
+        {
+          "author": "martenrichter",
+          "authorAssociation": "NONE",
+          "body": "Interesting, but I am a bit confused as Quiche from Google has the limits from the underlying quic stream count available. So these would then be put into relation? (And, of course, pooled connections are another issue...)",
+          "createdAt": "2024-01-24T05:54:20Z",
+          "updatedAt": "2024-01-24T05:54:20Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> the limits from the underlying quic stream count available. So these would then be put into relation? (And, of course, pooled connections are another issue...)\r\n\r\nI think that's the issue -- for non-pooled (with other WT sessions, or HTTP requests) connections, we can kinda-sorta use the H3 limits, but even in those cases you've got the control streams and other H3 machinery that isn't really part of the WT stream \"count\" but would count for H3 flow control purposes. For anything with pooling, then we really need the flow control that we discussed during the interim. \r\n\r\nEither way, making things as consistent as possible still seems more than worthwhile.",
+          "createdAt": "2024-03-17T12:19:49Z",
+          "updatedAt": "2024-03-17T12:19:49Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Updating to clarify that we don't count the CONNECT stream in H3 against the limits -- that's covered by QUIC flow control and the limits on the number of WT sessions you can make, which also resolves the off-by-one question.",
+          "createdAt": "2025-03-03T23:41:29Z",
+          "updatedAt": "2025-03-03T23:41:29Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -14434,25 +14514,35 @@
       "id": "PR_kwDOCvK98s5zIi6m",
       "title": "Add initial flow control text and capsules from HTTP/2",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/166",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Add initial flow control text and capsules from HTTP/2 and draft-thomson-webtrans-session-limit-01. Happy to re-re-arrange sections as necessary.\r\n\r\nNegotiation of flow control is coming under the separate issue to make things a little easier to keep track of and review.\r\n\r\nCloses #85.",
       "createdAt": "2024-06-21T02:14:05Z",
-      "updatedAt": "2025-01-01T04:07:11Z",
+      "updatedAt": "2025-03-03T23:44:50Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "0b2c7644e736a4e02f764bb5442b8eb6d06e07db",
+      "baseRefOid": "39fdc9cf0a1c71dd57357ca3021146d011d65d7b",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/flow_control",
-      "headRefOid": "90d85633e14ce23bb1bbee31671cc08800bd5917",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "headRefOid": "d03a7129e77d4dc61f9f44d04a30a6e4c7856941",
+      "closedAt": "2025-03-03T23:44:44Z",
+      "mergedAt": "2025-03-03T23:44:44Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "51a8cc3c5db86b0daedf97d72f53c83389120232"
+      },
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@vasilvv updated, please take a look!",
+          "createdAt": "2025-03-03T21:09:13Z",
+          "updatedAt": "2025-03-03T21:09:13Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOCvK98s6BNekn",
@@ -14555,6 +14645,197 @@
               "updatedAt": "2025-01-01T04:07:11Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eRHNV",
+          "commit": {
+            "abbreviatedOid": "90d8563"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T21:05:31Z",
+          "updatedAt": "2025-03-03T21:05:31Z",
+          "comments": [
+            {
+              "originalPosition": 71,
+              "body": "Updated in 78d2456",
+              "createdAt": "2025-03-03T21:05:31Z",
+              "updatedAt": "2025-03-03T21:05:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eRHRW",
+          "commit": {
+            "abbreviatedOid": "90d8563"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T21:05:40Z",
+          "updatedAt": "2025-03-03T21:05:40Z",
+          "comments": [
+            {
+              "originalPosition": 82,
+              "body": "Removed in 78d2456",
+              "createdAt": "2025-03-03T21:05:40Z",
+              "updatedAt": "2025-03-03T21:05:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eRHV9",
+          "commit": {
+            "abbreviatedOid": "90d8563"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T21:05:51Z",
+          "updatedAt": "2025-03-03T21:05:51Z",
+          "comments": [
+            {
+              "originalPosition": 92,
+              "body": "Added some initial text for this in 78d2456",
+              "createdAt": "2025-03-03T21:05:51Z",
+              "updatedAt": "2025-03-03T21:05:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eRIld",
+          "commit": {
+            "abbreviatedOid": "90d8563"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T21:08:52Z",
+          "updatedAt": "2025-03-03T21:08:52Z",
+          "comments": [
+            {
+              "originalPosition": 127,
+              "body": "Hmm, I'm not sure how different this is from what an application needs to do in order to correctly provide back pressure for any connection that is multiplexing multiple independent streams. \r\n\r\nIn that case, an application needs to: \r\n- Respond to back pressure signals from the underlying transport (TLS/TCP or QUIC), which then requires\r\n- Blocking when the application tries to write in excess\r\n- Keep track of which streams were blocked\r\n- Tell those streams when they can write again / backpressure has been lifted. Ideally, in priority order.\r\n\r\nHandling the fact that you may be restricted in how much you can send is something that everyone doing this muxing/demuxing needs to do, especially given priority -- priority only matters when there's a restriction on what we can send and we need to choose. If an implementation didn't already need to deal with this, we wouldn't need priorities at all.\r\n\r\nBased on that, it seems like the main delta here is really just doing your own accounting of what that limit is vs. having someone below you tell you that you've run out. ",
+              "createdAt": "2025-03-03T21:08:52Z",
+              "updatedAt": "2025-03-03T21:08:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eRmmn",
+          "commit": {
+            "abbreviatedOid": "78d2456"
+          },
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T21:41:27Z",
+          "updatedAt": "2025-03-03T21:56:54Z",
+          "comments": [
+            {
+              "originalPosition": 197,
+              "body": "Just talking out loud to remind myself - \r\n\r\nWT doesn't need logic about \"implicitly\" opening streams that have not arrived with lower stream numbers, like QUIC does, because there's no guarantee those quic streams are bound for this session.  A receiver just maintains a counter of how many streams have been opened and if that counter ever exceeds the last WT_MAX_STREAMS value then it's an error.",
+              "createdAt": "2025-03-03T21:41:27Z",
+              "updatedAt": "2025-03-03T21:56:54Z"
+            },
+            {
+              "originalPosition": 275,
+              "body": "Do we mean session and not connection?",
+              "createdAt": "2025-03-03T21:42:46Z",
+              "updatedAt": "2025-03-03T21:56:54Z"
+            },
+            {
+              "originalPosition": 191,
+              "body": "s/connection/session/ ?",
+              "createdAt": "2025-03-03T21:51:32Z",
+              "updatedAt": "2025-03-03T21:56:54Z"
+            },
+            {
+              "originalPosition": 127,
+              "body": "It might help the average reader to explain why they need final size and how the webtransport implementation should use it.",
+              "createdAt": "2025-03-03T21:56:49Z",
+              "updatedAt": "2025-03-03T21:56:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eR-ww",
+          "commit": {
+            "abbreviatedOid": "6bdf7d6"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T22:40:43Z",
+          "updatedAt": "2025-03-03T22:40:43Z",
+          "comments": [
+            {
+              "originalPosition": 127,
+              "body": "Added a small note about the stream header exclusion and we'll go through in more detail about final size differences across layers in our upcoming meeting.",
+              "createdAt": "2025-03-03T22:40:43Z",
+              "updatedAt": "2025-03-03T22:40:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eR_vb",
+          "commit": {
+            "abbreviatedOid": "78d2456"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T22:43:49Z",
+          "updatedAt": "2025-03-03T22:43:49Z",
+          "comments": [
+            {
+              "originalPosition": 191,
+              "body": "Good catch, updated, thanks!",
+              "createdAt": "2025-03-03T22:43:49Z",
+              "updatedAt": "2025-03-03T22:43:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eR_xN",
+          "commit": {
+            "abbreviatedOid": "78d2456"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T22:43:54Z",
+          "updatedAt": "2025-03-03T22:43:55Z",
+          "comments": [
+            {
+              "originalPosition": 275,
+              "body": "Updated!",
+              "createdAt": "2025-03-03T22:43:55Z",
+              "updatedAt": "2025-03-03T22:43:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6eSBTT",
+          "commit": {
+            "abbreviatedOid": "181ca37"
+          },
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-03T22:48:48Z",
+          "updatedAt": "2025-03-03T22:48:48Z",
+          "comments": []
         }
       ]
     },
@@ -14728,6 +15009,62 @@
       "mergedBy": "ekinnear",
       "mergeCommit": {
         "oid": "0fa9349ad937ea32daa1532ee322d8a326c07abf"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 177,
+      "id": "PR_kwDOCvK98s6NOSfU",
+      "title": "Clarify that the CONNECT stream isn't included in the per-session stream flow control limits",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/177",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Clarify that the CONNECT stream isn't included in the per-session stream flow control limits.\r\n\r\nFixes #176",
+      "createdAt": "2025-03-03T23:45:15Z",
+      "updatedAt": "2025-03-03T23:57:53Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "51a8cc3c5db86b0daedf97d72f53c83389120232",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/clarify_max_streams",
+      "headRefOid": "f17a7298a7349f7f7ab7d0cd94562d02d7979eb9",
+      "closedAt": "2025-03-03T23:57:53Z",
+      "mergedAt": "2025-03-03T23:57:53Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "1e3a6e4e71799d9e4040416d27b2433de465191c"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 178,
+      "id": "PR_kwDOCvK98s6NOU_A",
+      "title": "Clarify GOAWAY",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/178",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Clarify GOAWAY\r\n\r\nFixes #171",
+      "createdAt": "2025-03-03T23:55:21Z",
+      "updatedAt": "2025-03-03T23:58:03Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "51a8cc3c5db86b0daedf97d72f53c83389120232",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/goaway",
+      "headRefOid": "346250369c89e661483d7bfa966d9d6a42936754",
+      "closedAt": "2025-03-03T23:58:03Z",
+      "mergedAt": "2025-03-03T23:58:03Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "347543612d50d66a08b7ce4f9ec074690f9a5836"
       },
       "comments": [],
       "reviews": []
