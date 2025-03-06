@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-04T00:48:37.459901+00:00",
+  "timestamp": "2025-03-06T00:48:26.757829+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -122,6 +122,11 @@
       "name": "flow-control",
       "description": "Issues blocked on flow control discussions",
       "color": "B60205"
+    },
+    {
+      "name": "ietf-122",
+      "description": "Issues discussed at IETF 122",
+      "color": "C3F686"
     }
   ],
   "issues": [
@@ -4366,11 +4371,12 @@
         "vasilvv"
       ],
       "labels": [
-        "ready for PR"
+        "ready for PR",
+        "ietf-122"
       ],
       "body": "As mentioned by @marten-seemann [on the list](https://mailarchive.ietf.org/arch/msg/webtransport/JP3KS1rRTMQwQoGfht2GlCxtAZk/), making flow control optional requires the ability to negotiate it. We should add that to the protocol, using HTTP headers or SETTINGS.",
       "createdAt": "2024-03-05T23:38:05Z",
-      "updatedAt": "2025-03-03T23:48:10Z",
+      "updatedAt": "2025-03-05T02:49:11Z",
       "closedAt": null,
       "comments": [
         {
@@ -4638,12 +4644,15 @@
       "author": "aboba",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
-        "ekinnear"
+        "afrind"
       ],
-      "labels": [],
+      "labels": [
+        "ready for PR",
+        "editorial"
+      ],
       "body": "Reference: https://github.com/w3c/webtransport/issues/436\r\n\r\nIn WebTransport API Issue 436, Erik and Martin have made an argument for why client-initiated drain (via `DRAIN_WEBTRANSPORT_SESSION`) is not compelling. \r\n\r\nDo we buy this argument, and if so, does it apply to server-initiated drain as well?  ",
       "createdAt": "2024-06-21T04:05:07Z",
-      "updatedAt": "2024-07-29T16:30:50Z",
+      "updatedAt": "2025-03-05T00:19:26Z",
       "closedAt": null,
       "comments": [
         {
@@ -4673,6 +4682,13 @@
           "body": "I thought `endpoint` would be defined in either webtrans over h3 or the overview, but alas it is not.  Keep in mind that from the perspective of this draft, we do not distinguish a user-agent and JS application.\r\n\r\nThe MAY is there to indicate what the endpoint is allowed to do.  It can make more streams.  Therefore the other endpoint really ought not to treat new streams in a drained session as an error. Do we need a normative MUST NOT/SHOULD NOT?\r\n\r\n",
           "createdAt": "2024-07-29T16:30:49Z",
           "updatedAt": "2024-07-29T16:30:49Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Victor: If a middlebox goes away, it can send GOAWAY. If a backend server goes away, then the middlebox needs to be able to send a GOAWAY just for that specific session, that is DRAIN_WEBTRANSPORT_SESSION.\n\nWe should add some editorial text in the document to outline how this is expected to be used.",
+          "createdAt": "2025-03-05T00:18:57Z",
+          "updatedAt": "2025-03-05T00:18:57Z"
         }
       ]
     },
@@ -4727,10 +4743,12 @@
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "ietf-122"
+      ],
       "body": "In QUIC we made ALPN mandatory to avoid protocol confusion attacks. Should the new mechanism we're introducing for WebTransport be mandatory as well?",
       "createdAt": "2024-09-23T06:14:41Z",
-      "updatedAt": "2024-09-24T01:53:00Z",
+      "updatedAt": "2025-03-05T02:48:51Z",
       "closedAt": null,
       "comments": [
         {
@@ -4830,6 +4848,22 @@
           "updatedAt": "2025-03-03T23:41:29Z"
         }
       ]
+    },
+    {
+      "number": 179,
+      "id": "I_kwDOCvK98s6sn7aF",
+      "title": "Flow control requirement on final size",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/179",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> Implementing [WT_MAX_DATA](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#WT_MAX_DATA) requires that the QUIC stack provide the WebTransport implementation with information about the final size of streams; see { {Section 4.5 of !RFC9000}}. This allows both endpoints to agree on how much data was consumed by that stream, although the stream header exclusion above applies.\n\nFirst, this could use some more explanatory text to tell implementations more specifically what they need final size for.\n\nAre all implementations comfortable with the requirement?  Does it have W3C implications?  The mvfst API for delivering resets doesn't have a great place to stuff this value, but we can make something work.\n\nThe only alternative I can think of is a WT_RESET_STREAM capsule, which I don't think anybody loves, though if such a thing existed it could remove the dependency on reliable reset.",
+      "createdAt": "2025-03-05T04:53:23Z",
+      "updatedAt": "2025-03-05T04:54:08Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
