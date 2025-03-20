@@ -24,7 +24,7 @@ multiplexed within the same HTTP/3 connection.
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
-    Jinja2 3.1.5
+    Jinja2 3.1.6
     lxml 5.3.0
     platformdirs 4.3.6
     pycountry 24.6.1
@@ -1054,7 +1054,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 4 September 2025</td>
+<td class="center">Expires 21 September 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1067,12 +1067,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-03-03" class="published">3 March 2025</time>
+<time datetime="2025-03-20" class="published">20 March 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-09-04">4 September 2025</time></dd>
+<dd class="expires"><time datetime="2025-09-21">21 September 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1131,7 +1131,7 @@ web API draft corresponding to this document can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 21 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1939,8 +1939,8 @@ than indicated in the server SETTINGS parameter.  The server MUST NOT close
 the connection if the client opens sessions exceeding this limit, as the client
 and the server do not have a consistent view of how many sessions are open due
 to the asynchronous nature of the protocol; instead, it MUST reset all of the
-CONNECT streams it is not willing to process with the <code>HTTP_REQUEST_REJECTED</code>
-status defined in <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+CONNECT streams it is not willing to process with the <code>H3_REQUEST_REJECTED</code>
+status defined in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-8.1" class="relref">Section 8.1</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="flow-control-limit-streams">
@@ -1994,7 +1994,7 @@ endpoint was unable to send data due to a limit set by the <span id="iref-wt_max
 capsule.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
 <p id="section-5.3-4">Because WebTransport over HTTP/3 uses a native QUIC stream for each WebTransport
 stream, per-stream data limits are provided by QUIC natively; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.  The WT_MAX_STREAM_DATA and WT_STREAM_DATA_BLOCKED capsules
-(<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-10#appendix-Xx" class="relref">Part XX</a> of [<a href="#I-D.ietf-webtrans-http2" class="cite xref">I-D.ietf-webtrans-http2</a>]</span>) are not used and so are prohibited.
+(<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-11#appendix-Xx" class="relref">Part XX</a> of [<a href="#I-D.ietf-webtrans-http2" class="cite xref">I-D.ietf-webtrans-http2</a>]</span>) are not used and so are prohibited.
 Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
 WT_STREAM_DATA_BLOCKED capsule as a session error.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
 </section>
@@ -3011,7 +3011,7 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
 <dl class="references">
 <dt id="I-D.ietf-webtrans-http2">[I-D.ietf-webtrans-http2]</dt>
         <dd>
-<span class="refAuthor">Frindell, A.</span>, <span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Vasiliev, V.</span>, and <span class="refAuthor">G. Xie</span>, <span class="refTitle">"WebTransport over HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-http2-10</span>, <time datetime="2024-10-21" class="refDate">21 October 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-10">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-10</a>&gt;</span>. </dd>
+<span class="refAuthor">Frindell, A.</span>, <span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Vasiliev, V.</span>, and <span class="refAuthor">G. Xie</span>, <span class="refTitle">"WebTransport over HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-http2-11</span>, <time datetime="2025-03-16" class="refDate">16 March 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-11">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-11</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ORIGIN">[ORIGIN]</dt>
         <dd>
