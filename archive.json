@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-20T00:48:37.328678+00:00",
+  "timestamp": "2025-03-23T00:53:55.677449+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -4368,7 +4368,7 @@
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
-        "vasilvv"
+        "ekinnear"
       ],
       "labels": [
         "ready for PR",
@@ -4376,7 +4376,7 @@
       ],
       "body": "As mentioned by @marten-seemann [on the list](https://mailarchive.ietf.org/arch/msg/webtransport/JP3KS1rRTMQwQoGfht2GlCxtAZk/), making flow control optional requires the ability to negotiate it. We should add that to the protocol, using HTTP headers or SETTINGS.",
       "createdAt": "2024-03-05T23:38:05Z",
-      "updatedAt": "2025-03-05T02:49:11Z",
+      "updatedAt": "2025-03-20T09:03:23Z",
       "closedAt": null,
       "comments": [
         {
@@ -4413,6 +4413,34 @@
           "body": "Holding on adding \"Flip back the other way and have the client send MAX_SESSIONS\" both to reduce churn on the SETTINGS and while we resolve if we really need to add that additional axis of configuration.",
           "createdAt": "2025-03-03T23:48:09Z",
           "updatedAt": "2025-03-03T23:48:09Z"
+        },
+        {
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "IETF 122 meeting:\n- Some people don't want to implement this, but \"it's not that hard\"\n- If flow control is mandatory, some people may not use WebTransport.\n- It's hard to implement in Chrome, but can live with negotiation so other people can implement, if wanted.\n- Maybe we need more implementation experience & interop, can revisit before WGLC.\n- @ekinnear to write a PR to negotiate flow control\n",
+          "createdAt": "2025-03-20T08:51:47Z",
+          "updatedAt": "2025-03-20T08:51:47Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "NONE",
+          "body": "Dumb question: how is disabling flow control different from sending WT_MAX_STREAMS=2<sup>62</sup>-1 and WT_MAX_DATA=2<sup>62</sup>-1 at the beginning of the session?\r\n\r\nIf they are indifferent, would it make sense to require use of flow control with a note to lazy people that they can send the above two frames and call it a day?",
+          "createdAt": "2025-03-20T08:58:54Z",
+          "updatedAt": "2025-03-20T08:59:35Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> Dumb question: how is disabling flow control different from sending WT_MAX_STREAMS=2**62-1 and WT_MAX_DATA=2**62-1 at the beginning of the session?\n\nIt is my understanding that this only disables flow control on the receiver side, but not on the sender side.",
+          "createdAt": "2025-03-20T09:00:12Z",
+          "updatedAt": "2025-03-20T09:00:12Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "NONE",
+          "body": "@marten-seemann Thank you, of course you are correct.",
+          "createdAt": "2025-03-20T09:03:22Z",
+          "updatedAt": "2025-03-20T09:03:22Z"
         }
       ]
     },
@@ -4742,13 +4770,16 @@
       "state": "OPEN",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [
+        "ready for PR",
         "ietf-122"
       ],
       "body": "In QUIC we made ALPN mandatory to avoid protocol confusion attacks. Should the new mechanism we're introducing for WebTransport be mandatory as well?",
       "createdAt": "2024-09-23T06:14:41Z",
-      "updatedAt": "2025-03-05T02:48:51Z",
+      "updatedAt": "2025-03-20T08:56:02Z",
       "closedAt": null,
       "comments": [
         {
@@ -4757,6 +4788,13 @@
           "body": "We've considered that, but there is already shipped code out there that predates us having those.\r\n\r\nAlso, HTTP resources are identified by URIs, which are different from QUIC endpoints (that only have host and port), so the risk level for those is different.",
           "createdAt": "2024-09-24T01:52:59Z",
           "updatedAt": "2024-09-24T01:52:59Z"
+        },
+        {
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "IETF 122 meeting:\n- there's consensus in the room to make subprotocol negotiation not mandatory\n- @ekinnear to check if it's already optional or not",
+          "createdAt": "2025-03-20T08:30:27Z",
+          "updatedAt": "2025-03-20T08:56:01Z"
         }
       ]
     },
@@ -4857,13 +4895,25 @@
       "state": "OPEN",
       "author": "afrind",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "ietf-122"
+      ],
       "body": "> Implementing [WT_MAX_DATA](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#WT_MAX_DATA) requires that the QUIC stack provide the WebTransport implementation with information about the final size of streams; see { {Section 4.5 of !RFC9000}}. This allows both endpoints to agree on how much data was consumed by that stream, although the stream header exclusion above applies.\n\nFirst, this could use some more explanatory text to tell implementations more specifically what they need final size for.\n\nAre all implementations comfortable with the requirement?  Does it have W3C implications?  The mvfst API for delivering resets doesn't have a great place to stuff this value, but we can make something work.\n\nThe only alternative I can think of is a WT_RESET_STREAM capsule, which I don't think anybody loves, though if such a thing existed it could remove the dependency on reliable reset.",
       "createdAt": "2025-03-05T04:53:23Z",
-      "updatedAt": "2025-03-05T04:54:08Z",
+      "updatedAt": "2025-03-20T08:55:15Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "IETF 122 Meeting:\n- No W3C implications\n- Make this an editorial issue to add more text about this before Madrid",
+          "createdAt": "2025-03-20T08:54:22Z",
+          "updatedAt": "2025-03-20T08:54:22Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -15102,6 +15152,48 @@
       },
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 180,
+      "id": "PR_kwDOCvK98s6PY7gz",
+      "title": "Replace HTTP_REQUEST_REJECTED with H3_REQUEST_REJECTED",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/180",
+      "state": "MERGED",
+      "author": "AnkshitJain",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Updates `HTTP_REQUEST_REJECTED` to `H3_REQUEST_REJECTED` and adds the correct reference for the HTTP/3 error codes.",
+      "createdAt": "2025-03-20T04:02:14Z",
+      "updatedAt": "2025-03-20T04:18:57Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "347543612d50d66a08b7ce4f9ec074690f9a5836",
+      "headRepository": "AnkshitJain/draft-ietf-webtrans-http3",
+      "headRefName": "aj/h3_request_rejected",
+      "headRefOid": "2b2e90a6df3fb97c14e33085a45fd15be2c87ec3",
+      "closedAt": "2025-03-20T04:06:59Z",
+      "mergedAt": "2025-03-20T04:06:59Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "3fd751f5d5deaa7091daf2282eef0a800422bc68"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6g_-Ds",
+          "commit": {
+            "abbreviatedOid": "2b2e90a"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thank you!",
+          "createdAt": "2025-03-20T04:05:46Z",
+          "updatedAt": "2025-03-20T04:05:46Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
