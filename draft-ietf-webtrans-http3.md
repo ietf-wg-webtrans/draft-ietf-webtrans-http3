@@ -293,11 +293,17 @@ SHALL include a single choice from the client's list in that field. Servers MAY
 reject the request if the client did not include a suitable protocol.
 
 Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
-{{!RFC8941}}. `WT-Available-Protocols` is a List of Tokens, and `WT-Protocol` is
-a Token. The token in the `WT-Protocol` response header field MUST be one of
-the tokens listed in `WT-Available-Protocols` of the request.
+{{!RFC8941}}. `WT-Available-Protocols` is a List, with the only valid value type
+being either String or Token.  `WT-Protocol` is defined as an item with the only
+valid type for values being String or Token. Any value type other than String or
+Token MUST be ignored.  String or Token values can be used interchangeably;
+decoded values are used to identify protocols. No semantics are defined for
+parameters on either field; parameters MUST be ignored.
 
-The semantics of individual token values used in `WT-Available-Protocols` and
+The value in the `WT-Protocol` response header field MUST be one of
+the values listed in `WT-Available-Protocols` of the request.
+
+The semantics of individual values used in `WT-Available-Protocols` and
 `WT-Protocol` are determined by the WebTransport resource in question and are
 not registered in IANA's "ALPN Protocol IDs" registry.
 
@@ -1357,7 +1363,7 @@ Status:
 : permanent
 
 Structured Type:
-: List of Token
+: List
 
 Reference:
 : {{protocol-negotiation}}
@@ -1375,7 +1381,7 @@ Status:
 : permanent
 
 Structured Type:
-: Token
+: Item
 
 Reference:
 : {{protocol-negotiation}}
