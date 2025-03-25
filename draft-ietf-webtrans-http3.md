@@ -278,7 +278,7 @@ The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
 HTTP-DATAGRAM}} is not required by WebTransport and can safely be ignored by WebTransport
 endpoints.
 
-## Application Protocol Negotiation
+## Application Protocol Negotiation {#protocol-negotiation}
 
 WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to
 TLS Application-Layer Protocol Negotiation Extension (ALPN) {{?RFC7301}}; the
@@ -295,9 +295,11 @@ reject the request if the client did not include a suitable protocol.
 Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
 {{!RFC8941}}. `WT-Available-Protocols` is a List of Tokens, and `WT-Protocol` is
 a Token. The token in the `WT-Protocol` response header field MUST be one of
-the tokens listed in `WT-Available-Protocols` of the request.  The semantics of
-individual token values is determined by the WebTransport resource in question
-and are not registered in IANA's "ALPN Protocol IDs" registry.
+the tokens listed in `WT-Available-Protocols` of the request.
+
+The semantics of individual token values used in `WT-Available-Protocols` and
+`WT-Protocol` are determined by the WebTransport resource in question and are
+not registered in IANA's "ALPN Protocol IDs" registry.
 
 ## Prioritization
 
@@ -1195,7 +1197,7 @@ Specification:
 The following entries are added to the "HTTP Capsule Types" registry established
 by {{HTTP-DATAGRAM}}:
 
-The `CLOSE_WEBTRANSPORT_SESSION` capsule.
+The `CLOSE_WEBTRANSPORT_SESSION` capsule:
 
 Value:
 : 0x2843
@@ -1219,7 +1221,7 @@ Notes:
 : None
 {: spacing="compact"}
 
-The `DRAIN_WEBTRANSPORT_SESSION` capsule.
+The `DRAIN_WEBTRANSPORT_SESSION` capsule:
 
 Value:
 : 0x78ae
@@ -1243,7 +1245,7 @@ Notes:
 : None
 {: spacing="compact"}
 
-The `WT_MAX_STREAMS` capsule.
+The `WT_MAX_STREAMS` capsule:
 
 Value:
 : 0x190B4D3F..0x190B4D40
@@ -1267,7 +1269,7 @@ Notes:
 : None
 {: spacing="compact"}
 
-The `WT_STREAMS_BLOCKED` capsule.
+The `WT_STREAMS_BLOCKED` capsule:
 
 Value:
 : 0x190B4D43..0x190B4D44
@@ -1291,7 +1293,7 @@ Notes:
 : None
 {: spacing="compact"}
 
-The `WT_MAX_DATA` capsule.
+The `WT_MAX_DATA` capsule:
 
 Value:
 : 0x190B4D3D
@@ -1315,7 +1317,7 @@ Notes:
 : None
 {: spacing="compact"}
 
-The `WT_DATA_BLOCKED` capsule.
+The `WT_DATA_BLOCKED` capsule:
 
 Value:
 : 0x190B4D41
@@ -1338,6 +1340,50 @@ Contact:
 Notes:
 : None
 {: spacing="compact"}
+
+
+## Protocol Negotiation HTTP Header Fields {#iana-http}
+
+The following HTTP header fields are used for negotiating a protocol
+({{protocol-negotiation}}.  These are added to the "HTTP Field Name" registry
+established in {{Section 18.4 of HTTP}}:
+
+The `WT-Available-Protocols` field:
+
+Field Name:
+: WT-Available-Protocols
+
+Status:
+: permanent
+
+Structured Type:
+: List of Token
+
+Reference:
+: {{protocol-negotiation}}
+
+Comments:
+: None
+{: spacing="compact"}
+
+The `WT-Protocol` field:
+
+Field Name:
+: WT-Protocol
+
+Status:
+: permanent
+
+Structured Type:
+: Token
+
+Reference:
+: {{protocol-negotiation}}
+
+Comments:
+: None
+{: spacing="compact"}
+
 
 --- back
 
