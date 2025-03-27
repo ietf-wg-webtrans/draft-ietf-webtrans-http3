@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-25T00:50:37.883279+00:00",
+  "timestamp": "2025-03-27T00:50:03.220953+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -4914,6 +4914,203 @@
           "updatedAt": "2025-03-20T08:54:22Z"
         }
       ]
+    },
+    {
+      "number": 182,
+      "id": "I_kwDOCvK98s6vit7p",
+      "title": "Order, order",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/182",
+      "state": "CLOSED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> The WT-Available-Protocols enumerates the possible protocols in preference order.\n\nWhat is the order? Ascending or Descending?\n\n![Image](https://github.com/user-attachments/assets/5fb11e83-6edd-4e8e-b2eb-3288d36ebcfe)",
+      "createdAt": "2025-03-25T03:30:26Z",
+      "updatedAt": "2025-03-25T16:58:46Z",
+      "closedAt": "2025-03-25T16:58:45Z",
+      "comments": []
+    },
+    {
+      "number": 183,
+      "id": "I_kwDOCvK98s6viwE2",
+      "title": "Does WT-Available-Protocols or WT-Protocol carry parameters?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/183",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I'm guessing today the answer is no but in future maybe you want to allow it (for example, to parameterize the protocol). Maybe worth adding some text about this ",
+      "createdAt": "2025-03-25T03:35:20Z",
+      "updatedAt": "2025-03-25T04:14:22Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "We generally don't say anything about parameters, leaving that to the generic implementation.",
+          "createdAt": "2025-03-25T03:53:19Z",
+          "updatedAt": "2025-03-25T03:53:19Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I've updated #181 to include this.",
+          "createdAt": "2025-03-25T04:08:19Z",
+          "updatedAt": "2025-03-25T04:08:19Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Cool",
+          "createdAt": "2025-03-25T04:14:21Z",
+          "updatedAt": "2025-03-25T04:14:21Z"
+        }
+      ]
+    },
+    {
+      "number": 184,
+      "id": "I_kwDOCvK98s6vix3E",
+      "title": "Only mention the spec that's relevant",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/184",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The spec says\n\n> [[RFC8441](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC8441)] defines an extended CONNECT method in Section 4, enabled by the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. That setting is defined for HTTP/3 by [[RFC9220](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9220)].\n\nThe mention of RFC 8441 is superfluous here, better to just point to 9220 that explains all of this.",
+      "createdAt": "2025-03-25T03:39:11Z",
+      "updatedAt": "2025-03-25T03:39:11Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 185,
+      "id": "I_kwDOCvK98s6vi1jz",
+      "title": "Condense sections 3.1 and 3.2",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/185",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "These sections have evolved organically. It feels like we could condense them down and make it \n\nA) a lot clearer what TPs and settings are needed to negotiate a WebTransport session\nB) clearer what to do when one of the conditions is not satisfied and an error thus occurs",
+      "createdAt": "2025-03-25T03:47:28Z",
+      "updatedAt": "2025-03-25T03:47:28Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 187,
+      "id": "I_kwDOCvK98s6vi5Be",
+      "title": "Field definitions need to be List or Item",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/187",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "...not Token.\n\nThis is an error.",
+      "createdAt": "2025-03-25T03:56:31Z",
+      "updatedAt": "2025-03-25T03:56:31Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 188,
+      "id": "I_kwDOCvK98s6vi8CZ",
+      "title": "Mildly conflicting advice for session termination",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/188",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The doc says\n\n> A WebTransport session over HTTP/3 is considered terminated when either of the following conditions is met:\n\n> the CONNECT stream is closed, either cleanly or abruptly, on either side; or\n\n> a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.\n\n> Upon learning that the session has been terminated, the endpoint MUST reset the send side and abort reading on the receive side of all of the streams associated with the session (see Section 2.4 of [[RFC9000](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9000)]) using the WEBTRANSPORT_SESSION_GONE error code;\n\nAnd later \n\n> An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send a FIN.\n\nIf you read the statements as \"the session is terminated when a CLOSE_WEBTRANSPORT_SESSION capsule is sent\" then there seems to be a conflict about whether the sender should FIN the stream or reset it. Since there is no language about using the RESET_STREAM_AT frame for the connect stream, it seems silly to reset your own stream when sending the capsule.",
+      "createdAt": "2025-03-25T04:02:28Z",
+      "updatedAt": "2025-03-25T04:02:28Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 189,
+      "id": "I_kwDOCvK98s6vi-az",
+      "title": "Unidirectional stream contents",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/189",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "All unidirectional streams have a type header, then the rest of the stream is type dependent. The definition of the webtransport uni stream is a little recursive when considering the figures mention of \"stream body\"\n\n> The HTTP/3 unidirectional stream type SHALL be 0x54. The body of the stream SHALL be the stream type, followed by the session ID, encoded as a variable-length integer, followed by the user-specified stream data (Figure 2).\n\n> Unidirectional Stream {\n    Stream Type (i) = 0x54,\n    Session ID (i),\n    Stream Body (..)\n}\n\nMaybe just rename the field in the figure?\n\n\n\n\n\n\n",
+      "createdAt": "2025-03-25T04:08:05Z",
+      "updatedAt": "2025-03-25T04:08:05Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 190,
+      "id": "I_kwDOCvK98s6vjDNN",
+      "title": "Interaction with GOAWAY seems half-baked",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/190",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> After sending or receiving either a DRAIN_WEBTRANSPORT_SESSION capsule or a HTTP/3 GOAWAY frame, an endpoint MAY continue using the session and MAY open new streams.\n\nThis seems at odds with RFC 9114's normative statements about what clients and servers are expected to do when GOAWAY is exchanged.\n\nIn particular, if you're changing the rules for allowing a client to continue to open bidirectional streams then you need more text about what that means when a connection is pooling WebTransport. Does the sever reject new HTTP requests but not new WebTransport streams?",
+      "createdAt": "2025-03-25T04:21:48Z",
+      "updatedAt": "2025-03-25T04:44:25Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This vaugery is intentional and I believe was based on feedback on the PR that added it.  In HTTP, each bidirectional stream carries a request/response transaction, so it's very clear that GOAWAY means: no more bidirectional streams.  Protocols that operate over WebTransport may have a different mechanism for leveraging streams in order to perform \"transactions\".   MoQ is  a good example, a single subscription can generate many streams in response.  Clean termination may require opening more streams in order to complete the current GOP, for example.\n\nIt wasn't intentional to change the rules for HTTP streams with this text however.  Maybe we need to constrain the language to \n\n> MAY open new WebTransport streams",
+          "createdAt": "2025-03-25T04:39:41Z",
+          "updatedAt": "2025-03-25T04:39:41Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Yeah, such a restriction is probably fine.\n\nYou might want to mention that negotiating WebTransport extends HTTP/3's GOAWAY behaviour earlie in the document (with a forward ref to the detailed section)",
+          "createdAt": "2025-03-25T04:44:24Z",
+          "updatedAt": "2025-03-25T04:44:24Z"
+        }
+      ]
+    },
+    {
+      "number": 191,
+      "id": "I_kwDOCvK98s6vjG5b",
+      "title": "Tighten up terminology around user-agent and clients",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/191",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I'm not sure how to articulate this issue too well. It's just that there seems to be a few cases where a \"client\" is something distinct from a user agent, and this isn't explained that well explicitly. So a drive by reviewer like me starts to thing about an HTTP/3 client rather than a WebTransport client.\n\nHere's an example, which reads like a potential editorial mistake without understanding the full context of terms \n\n> A client could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the client is untrusted, the user agent SHOULD limit the number of outgoing sessions the client can open.",
+      "createdAt": "2025-03-25T04:30:58Z",
+      "updatedAt": "2025-03-25T04:30:58Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 192,
+      "id": "I_kwDOCvK98s6vjQzd",
+      "title": "Interaction with WRAP_UP capsule?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/192",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The HTTP WG has adopted the WRAP_UP capsule - https://httpwg.org/http-extensions/draft-ietf-httpbis-wrap-up.html\n\nWebTransport defines its own capsules for managing session lifecycles. I don't think it _needs_ to say anything about WRAP_UP but maybe others think it does? \n",
+      "createdAt": "2025-03-25T04:52:00Z",
+      "updatedAt": "2025-03-25T04:52:00Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -15191,6 +15388,101 @@
           "body": "Thank you!",
           "createdAt": "2025-03-20T04:05:46Z",
           "updatedAt": "2025-03-20T04:05:46Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 181,
+      "id": "PR_kwDOCvK98s6P94LB",
+      "title": "Register HTTP fields",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/181",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #164.",
+      "createdAt": "2025-03-25T03:14:53Z",
+      "updatedAt": "2025-03-25T04:07:08Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
+      "headRepository": "martinthomson/draft-ietf-webtrans-http3",
+      "headRefName": "iana-fields",
+      "headRefOid": "0265fa6a70f89451c068677076c0c86d5ac34cc9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6hqQQJ",
+          "commit": {
+            "abbreviatedOid": "c1dee8e"
+          },
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-25T03:16:49Z",
+          "updatedAt": "2025-03-25T03:16:49Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 186,
+      "id": "PR_kwDOCvK98s6P-Jfr",
+      "title": "The obvious preference order",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/186",
+      "state": "MERGED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #182.",
+      "createdAt": "2025-03-25T03:52:52Z",
+      "updatedAt": "2025-03-25T16:58:45Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
+      "headRepository": "martinthomson/draft-ietf-webtrans-http3",
+      "headRefName": "preference-order",
+      "headRefOid": "aec24f2a26779d528ff8c386e9b211d7d3ff7c00",
+      "closedAt": "2025-03-25T16:58:44Z",
+      "mergedAt": "2025-03-25T16:58:44Z",
+      "mergedBy": "vasilvv",
+      "mergeCommit": {
+        "oid": "b25d52aad2e8b4ff876d466c91d4048ed7276ba2"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6hqf6P",
+          "commit": {
+            "abbreviatedOid": "aec24f2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-25T03:55:12Z",
+          "updatedAt": "2025-03-25T03:55:12Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6hzD0F",
+          "commit": {
+            "abbreviatedOid": "aec24f2"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-25T16:58:32Z",
+          "updatedAt": "2025-03-25T16:58:32Z",
           "comments": []
         }
       ]
