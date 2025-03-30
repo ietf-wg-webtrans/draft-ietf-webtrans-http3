@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-27T00:50:03.220953+00:00",
+  "timestamp": "2025-03-30T00:54:45.296278+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -15404,7 +15404,7 @@
       "labels": [],
       "body": "Closes #164.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-03-25T04:07:08Z",
+      "updatedAt": "2025-03-28T04:50:40Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
@@ -15429,6 +15429,59 @@
           "createdAt": "2025-03-25T03:16:49Z",
           "updatedAt": "2025-03-25T03:16:49Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6iXGxk",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-27T23:53:38Z",
+          "updatedAt": "2025-03-27T23:53:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6iXH-U",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-27T23:59:22Z",
+          "updatedAt": "2025-03-28T00:00:11Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Is this required for some reasons that I am not structured-headers enough to understand?",
+              "createdAt": "2025-03-27T23:59:23Z",
+              "updatedAt": "2025-03-28T00:00:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6iYOR5",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-28T04:50:40Z",
+          "updatedAt": "2025-03-28T04:50:40Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Structured fields is a bit loose.  There are assumed norms, but you can't just say \"this is an item\" without defining anything.  [Section 2 of RFC 9651](https://datatracker.ietf.org/doc/html/rfc9651#section-2) has a lot of stuff in it.  I've boiled all that down as much as I think we can get away with here.",
+              "createdAt": "2025-03-28T04:50:40Z",
+              "updatedAt": "2025-03-28T04:50:40Z"
+            }
+          ]
         }
       ]
     },
