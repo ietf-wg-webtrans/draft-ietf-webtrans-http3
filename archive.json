@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-30T00:54:45.296278+00:00",
+  "timestamp": "2025-04-01T00:57:19.294427+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5092,9 +5092,24 @@
       "labels": [],
       "body": "I'm not sure how to articulate this issue too well. It's just that there seems to be a few cases where a \"client\" is something distinct from a user agent, and this isn't explained that well explicitly. So a drive by reviewer like me starts to thing about an HTTP/3 client rather than a WebTransport client.\n\nHere's an example, which reads like a potential editorial mistake without understanding the full context of terms \n\n> A client could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the client is untrusted, the user agent SHOULD limit the number of outgoing sessions the client can open.",
       "createdAt": "2025-03-25T04:30:58Z",
-      "updatedAt": "2025-03-25T04:30:58Z",
+      "updatedAt": "2025-03-30T10:11:06Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Those are, in fact, different terms; the document does point to the definitions of those:\n\n> This document follows terminology defined in Section 1.2 of [[OVERVIEW](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#OVERVIEW)].\n\n",
+          "createdAt": "2025-03-30T02:17:46Z",
+          "updatedAt": "2025-03-30T02:17:46Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "OK that makes sense. I might suggest an editorial pass to ensure these terms are used clearly and consistently. There seems to me at least several occasions where the term \"client\" is used in the sense of \"HTTP/3 client\" rather than \"WebTransport client\". For example, is this fragment consistent with the naming conventions?\n\n> WebTransport CONNECT requests and responses MAY contain the Priority header field ([Section 5](https://rfc-editor.org/rfc/rfc9218#section-5) of [[RFC9218](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9218)]); clients MAY reprioritize by sending PRIORITY_UPDATE frames ([Section 7](https://rfc-editor.org/rfc/rfc9218#section-7) of [[RFC9218](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9218)])",
+          "createdAt": "2025-03-30T10:11:05Z",
+          "updatedAt": "2025-03-30T10:11:05Z"
+        }
+      ]
     },
     {
       "number": 192,
@@ -15404,7 +15419,7 @@
       "labels": [],
       "body": "Closes #164.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-03-28T04:50:40Z",
+      "updatedAt": "2025-03-31T00:30:50Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
@@ -15480,6 +15495,26 @@
               "body": "Structured fields is a bit loose.  There are assumed norms, but you can't just say \"this is an item\" without defining anything.  [Section 2 of RFC 9651](https://datatracker.ietf.org/doc/html/rfc9651#section-2) has a lot of stuff in it.  I've boiled all that down as much as I think we can get away with here.",
               "createdAt": "2025-03-28T04:50:40Z",
               "updatedAt": "2025-03-28T04:50:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6imw1r",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-31T00:30:50Z",
+          "updatedAt": "2025-03-31T00:30:50Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "I am trying to understand how this went from tokens to tokens and strings; our implementation currently only accepts tokens, for what it's worth.",
+              "createdAt": "2025-03-31T00:30:50Z",
+              "updatedAt": "2025-03-31T00:30:50Z"
             }
           ]
         }
