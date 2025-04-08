@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-01T00:57:19.294427+00:00",
+  "timestamp": "2025-04-08T00:50:32.795698+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5123,9 +5123,24 @@
       "labels": [],
       "body": "The HTTP WG has adopted the WRAP_UP capsule - https://httpwg.org/http-extensions/draft-ietf-httpbis-wrap-up.html\n\nWebTransport defines its own capsules for managing session lifecycles. I don't think it _needs_ to say anything about WRAP_UP but maybe others think it does? \n",
       "createdAt": "2025-03-25T04:52:00Z",
-      "updatedAt": "2025-03-25T04:52:00Z",
+      "updatedAt": "2025-04-07T04:32:53Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is WebTransport GOAWAY actually different from a WRAP_UP, or can we just get rid of our own one and use WRAP_UP instead?",
+          "createdAt": "2025-04-07T04:31:57Z",
+          "updatedAt": "2025-04-07T04:31:57Z"
+        },
+        {
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "body": "(by WebTransport GOAWAY I mean DRAIN)",
+          "createdAt": "2025-04-07T04:32:52Z",
+          "updatedAt": "2025-04-07T04:32:52Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -15419,7 +15434,7 @@
       "labels": [],
       "body": "Closes #164.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-03-31T00:30:50Z",
+      "updatedAt": "2025-04-06T12:29:33Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
@@ -15515,6 +15530,46 @@
               "body": "I am trying to understand how this went from tokens to tokens and strings; our implementation currently only accepts tokens, for what it's worth.",
               "createdAt": "2025-03-31T00:30:50Z",
               "updatedAt": "2025-03-31T00:30:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6jntCR",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "martenrichter",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-06T09:55:12Z",
+          "updatedAt": "2025-04-06T09:55:12Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Maybe a stupid question, but how are values separated? By commas as for WebSocket?",
+              "createdAt": "2025-04-06T09:55:12Z",
+              "updatedAt": "2025-04-06T09:55:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6jn15Z",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "martenrichter",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-06T12:29:33Z",
+          "updatedAt": "2025-04-06T12:29:33Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "And another question, I have set \"WT-Available-Protocols\" but google/quiche complains:\r\n```\r\nE0406 12:18:14.509503   84630 quic_spdy_stream.cc:1870] Invalid character in header name WT-Available-Protocols\r\n```\r\nreason is that quiche only allows lower case, so should it be written in lower case?",
+              "createdAt": "2025-04-06T12:29:33Z",
+              "updatedAt": "2025-04-06T12:29:33Z"
             }
           ]
         }
