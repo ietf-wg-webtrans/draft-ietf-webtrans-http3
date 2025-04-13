@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-08T00:50:32.795698+00:00",
+  "timestamp": "2025-04-13T02:21:06.705950+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -15434,7 +15434,7 @@
       "labels": [],
       "body": "Closes #164.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-04-06T12:29:33Z",
+      "updatedAt": "2025-04-10T19:36:08Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
@@ -15570,6 +15570,86 @@
               "body": "And another question, I have set \"WT-Available-Protocols\" but google/quiche complains:\r\n```\r\nE0406 12:18:14.509503   84630 quic_spdy_stream.cc:1870] Invalid character in header name WT-Available-Protocols\r\n```\r\nreason is that quiche only allows lower case, so should it be written in lower case?",
               "createdAt": "2025-04-06T12:29:33Z",
               "updatedAt": "2025-04-06T12:29:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6kQyLx",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-10T08:43:21Z",
+          "updatedAt": "2025-04-10T08:43:21Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Values are comma-separated, as defined in RFC 9651.\r\n\r\nThe upper/lower thing might be a bug in Google's implementation.  @DavidSchinazi @vasilvv are better positioned to answer that than I.",
+              "createdAt": "2025-04-10T08:43:21Z",
+              "updatedAt": "2025-04-10T08:43:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6kXCwh",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-10T16:32:34Z",
+          "updatedAt": "2025-04-10T16:32:34Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "A few points:\r\n* HTTP header names[^1] are case-insensitive\r\n* HTTP/2 and HTTP/3 require header names to be transmitted in lower-case\r\n* The HTTP style guide recommends using mixed case for them in specifications\r\n\r\nBecause of all this, the spec should still say \"WT-Available-Protocols\" but if you're inside QUICHE you should pass in \"wt-available-protocols\". General-purpose embedders of quiche (like Chrome and Envoy) and have a conversion layer where they lowercase the header names before passing them in the quiche\r\n\r\n[^1]: on the wind, I hear Mark whispering _fields! they're fields!_",
+              "createdAt": "2025-04-10T16:32:34Z",
+              "updatedAt": "2025-04-10T16:32:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6kXKJc",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "martenrichter",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-10T16:39:10Z",
+          "updatedAt": "2025-04-10T16:39:10Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Thanks! That clarifies it, and I hope to finish implementing this feature in the library next weekend.",
+              "createdAt": "2025-04-10T16:39:10Z",
+              "updatedAt": "2025-04-10T16:39:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6kZfas",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-10T19:36:07Z",
+          "updatedAt": "2025-04-10T19:36:08Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "We've already implemented parsing, but it only accepts tokens (not strings), which is why I am trying to understand why we're changing this.",
+              "createdAt": "2025-04-10T19:36:07Z",
+              "updatedAt": "2025-04-10T19:36:08Z"
             }
           ]
         }
