@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-13T02:21:06.705950+00:00",
+  "timestamp": "2025-04-24T00:52:30.308383+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5141,6 +5141,24 @@
           "updatedAt": "2025-04-07T04:32:52Z"
         }
       ]
+    },
+    {
+      "number": 193,
+      "id": "I_kwDOCvK98s6zaKjs",
+      "title": "Rename capsules from WEBTRANSPORT* to be consistently WT*",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/193",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [],
+      "body": "> We've also got DRAIN_WT_SESSION and CLOSE_WT_SESSION (which might want to be renamed as such) in common now, do we need to add those to the list of concepts that should be in the overview? (Even if not referred to by the W3C API) \n\n _Originally posted by @ekinnear in [#12](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-overview/issues/12#issuecomment-1977689488)_",
+      "createdAt": "2025-04-22T06:09:01Z",
+      "updatedAt": "2025-04-22T06:09:04Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -15706,6 +15724,59 @@
           "body": "",
           "createdAt": "2025-03-25T16:58:32Z",
           "updatedAt": "2025-03-25T16:58:32Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 194,
+      "id": "PR_kwDOCvK98s6TYoGR",
+      "title": "Rename DRAIN_WEBTRANSPORT_SESSION to WT_DRAIN_SESSION and CLOSE_WEBTRANSPORT_SESSION to WT_CLOSE_SESSION",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/194",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Rename DRAIN_WEBTRANSPORT_SESSION to WT_DRAIN_SESSION and CLOSE_WEBTRANSPORT_SESSION to WT_CLOSE_SESSION\r\n\r\nFixes #193",
+      "createdAt": "2025-04-22T06:47:17Z",
+      "updatedAt": "2025-04-23T02:34:11Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "b25d52aad2e8b4ff876d466c91d4048ed7276ba2",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/capsule_rename",
+      "headRefOid": "630b492ddc7a0663d867e50aec9d3c2674ca6cc7",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6l_aI1",
+          "commit": {
+            "abbreviatedOid": "630b492"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-22T17:42:10Z",
+          "updatedAt": "2025-04-22T17:42:10Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6mC9Z7",
+          "commit": {
+            "abbreviatedOid": "630b492"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-23T02:34:11Z",
+          "updatedAt": "2025-04-23T02:34:11Z",
           "comments": []
         }
       ]
