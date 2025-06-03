@@ -507,19 +507,19 @@ initiate new WebTransport sessions with the same peer.
 
 An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
 all WebTransport sessions.  To shut down a single WebTransport session, either
-endpoint can send a DRAIN_WEBTRANSPORT_SESSION (0x78ae) capsule.
+endpoint can send a WT_DRAIN_SESSION (0x78ae) capsule.
 
 ~~~
-DRAIN_WEBTRANSPORT_SESSION Capsule {
-  Type (i) = DRAIN_WEBTRANSPORT_SESSION,
+WT_DRAIN_SESSION Capsule {
+  Type (i) = WT_DRAIN_SESSION,
   Length (i) = 0
 }
 ~~~
 
-After sending or receiving either a DRAIN_WEBTRANSPORT_SESSION capsule or a
-HTTP/3 GOAWAY frame, an endpoint MAY continue using the session and MAY open new
-streams.  The signal is intended for the application using WebTransport, which
-is expected to attempt to gracefully terminate the session as soon as possible.
+After sending or receiving either a WT_DRAIN_SESSION capsule or a HTTP/3 GOAWAY
+frame, an endpoint MAY continue using the session and MAY open new streams. The
+signal is intended for the application using WebTransport, which is expected to
+attempt to gracefully terminate the session as soon as possible.
 
 ## Use of Keying Material Exporters
 
@@ -842,7 +842,7 @@ A WebTransport session over HTTP/3 is considered terminated when either of the
 following conditions is met:
 
 * the CONNECT stream is closed, either cleanly or abruptly, on either side; or
-* a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.
+* a WT_CLOSE_SESSION capsule is either sent or received.
 
 Upon learning that the session has been terminated, the endpoint MUST reset the
 send side and abort reading on the receive side of all of the streams
@@ -850,20 +850,20 @@ associated with the session (see Section 2.4 of {{!RFC9000}}) using the
 WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
 open any new streams.
 
-To terminate a session with a detailed error message, an application MAY send
-an HTTP capsule {{HTTP-DATAGRAM}} of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
-The format of the capsule SHALL be as follows:
+To terminate a session with a detailed error message, an application MAY send an
+HTTP capsule {{HTTP-DATAGRAM}} of type WT_CLOSE_SESSION (0x2843). The format of
+the capsule SHALL be as follows:
 
 ~~~
-CLOSE_WEBTRANSPORT_SESSION Capsule {
-  Type (i) = CLOSE_WEBTRANSPORT_SESSION,
+WT_CLOSE_SESSION Capsule {
+  Type (i) = WT_CLOSE_SESSION,
   Length (i),
   Application Error Code (32),
   Application Error Message (..8192),
 }
 ~~~
 
-CLOSE_WEBTRANSPORT_SESSION has the following fields:
+WT_CLOSE_SESSION has the following fields:
 
 Application Error Code:
 
@@ -875,28 +875,26 @@ Application Error Message:
   session.  The message takes up the remainder of the capsule, and its
   length MUST NOT exceed 1024 bytes.
 
-An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately
-send a FIN.  The endpoint MAY send a STOP_SENDING to indicate it is no longer
-reading from the CONNECT stream.  The recipient MUST either close or reset the
-stream in response.  If any additional stream data is received on the CONNECT
-stream after receiving a CLOSE_WEBTRANSPORT_SESSION capsule, the stream MUST be
-reset with code H3_MESSAGE_ERROR.
+An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN.
+The endpoint MAY send a STOP_SENDING to indicate it is no longer reading from
+the CONNECT stream.  The recipient MUST either close or reset the stream in
+response.  If any additional stream data is received on the CONNECT stream
+after receiving a WT_CLOSE_SESSION capsule, the stream MUST be reset with code
+H3_MESSAGE_ERROR.
 
-Cleanly terminating a CONNECT stream without a CLOSE_WEBTRANSPORT_SESSION
-capsule SHALL be semantically equivalent to terminating it with a
-CLOSE_WEBTRANSPORT_SESSION capsule that has an error code of 0 and an empty
-error string.
+Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
+semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
+has an error code of 0 and an empty error string.
 
-In some scenarios, an endpoint might want to send a CLOSE_WEBTRANSPORT_SESSION
-with detailed close information and then immediately close the underlying QUIC
+In some scenarios, an endpoint might want to send a WT_CLOSE_SESSION with
+detailed close information and then immediately close the underlying QUIC
 connection.  If the endpoint were to do both of those simultaneously, the peer
 could potentially receive the CONNECTION_CLOSE before receiving the
-CLOSE_WEBTRANSPORT_SESSION, thus never receiving the application error data
-contained in the latter.  To avoid this, the endpoint SHOULD wait until all
-CONNECT streams have been closed by the peer before sending the
-CONNECTION_CLOSE; this gives CLOSE_WEBTRANSPORT_SESSION properties similar to
-that of the QUIC CONNECTION_CLOSE mechanism as a best-effort mechanism of
-delivering application close metadata.
+WT_CLOSE_SESSION, thus never receiving the application error data contained in
+the latter.  To avoid this, the endpoint SHOULD wait until all CONNECT streams
+have been closed by the peer before sending the CONNECTION_CLOSE; this gives
+WT_CLOSE_SESSION properties similar to that of the QUIC CONNECTION_CLOSE
+mechanism as a best-effort mechanism of delivering application close metadata.
 
 # Considerations for Future Versions
 
@@ -1196,13 +1194,13 @@ Specification:
 The following entries are added to the "HTTP Capsule Types" registry established
 by {{HTTP-DATAGRAM}}:
 
-The `CLOSE_WEBTRANSPORT_SESSION` capsule.
+The `WT_CLOSE_SESSION` capsule.
 
 Value:
 : 0x2843
 
 Capsule Type:
-: CLOSE_WEBTRANSPORT_SESSION
+: WT_CLOSE_SESSION
 
 Status:
 : permanent
@@ -1220,13 +1218,13 @@ Notes:
 : None
 {: spacing="compact"}
 
-The `DRAIN_WEBTRANSPORT_SESSION` capsule.
+The `WT_DRAIN_SESSION` capsule.
 
 Value:
 : 0x78ae
 
 Capsule Type:
-: DRAIN_WEBTRANSPORT_SESSION
+: WT_DRAIN_SESSION
 
 Status:
 : provisional (when this document is approved this will become permanent)
