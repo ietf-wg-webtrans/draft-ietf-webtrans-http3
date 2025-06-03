@@ -16,21 +16,21 @@ a WebTransport protocol that is based on HTTP/3   and provides
 support for unidirectional streams, bidirectional streams and datagrams, all
 multiplexed within the same HTTP/3 connection. 
     " name="description">
-<meta content="xml2rfc 3.28.0" name="generator">
+<meta content="xml2rfc 3.28.1" name="generator">
 <meta content="draft-ietf-webtrans-http3-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.0
-    Python 3.12.9
+  xml2rfc 3.28.1
+    Python 3.12.10
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.6
-    lxml 5.3.0
-    platformdirs 4.3.6
+    lxml 5.3.1
+    platformdirs 4.3.8
     pycountry 24.6.1
     PyYAML 6.0.2
     requests 2.32.3
-    setuptools 70.3.0
+    setuptools 80.9.0
     wcwidth 0.2.13
 -->
 <link href="draft-ietf-webtrans-http3.xml" rel="alternate" type="application/rfc+xml">
@@ -1050,11 +1050,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">WebTransport-H3</td>
-<td class="right">March 2025</td>
+<td class="right">June 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 26 September 2025</td>
+<td class="center">Expires 5 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1067,12 +1067,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-03-25" class="published">25 March 2025</time>
+<time datetime="2025-06-03" class="published">3 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-09-26">26 September 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-05">5 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1131,7 +1131,7 @@ web API draft corresponding to this document can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 26 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1859,19 +1859,19 @@ sessions on that HTTP/3 connection; it must open a new HTTP/3 connection to
 initiate new WebTransport sessions with the same peer.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
 <p id="section-4.6-3">An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
 all WebTransport sessions.  To shut down a single WebTransport session, either
-endpoint can send a DRAIN_WEBTRANSPORT_SESSION (0x78ae) capsule.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
+endpoint can send a WT_DRAIN_SESSION (0x78ae) capsule.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.6-4">
 <pre>
-DRAIN_WEBTRANSPORT_SESSION Capsule {
-  Type (i) = DRAIN_WEBTRANSPORT_SESSION,
+WT_DRAIN_SESSION Capsule {
+  Type (i) = WT_DRAIN_SESSION,
   Length (i) = 0
 }
 </pre><a href="#section-4.6-4" class="pilcrow">¶</a>
 </div>
-<p id="section-4.6-5">After sending or receiving either a DRAIN_WEBTRANSPORT_SESSION capsule or a
-HTTP/3 GOAWAY frame, an endpoint MAY continue using the session and MAY open new
-streams.  The signal is intended for the application using WebTransport, which
-is expected to attempt to gracefully terminate the session as soon as possible.<a href="#section-4.6-5" class="pilcrow">¶</a></p>
+<p id="section-4.6-5">After sending or receiving either a WT_DRAIN_SESSION capsule or a HTTP/3 GOAWAY
+frame, an endpoint MAY continue using the session and MAY open new streams. The
+signal is intended for the application using WebTransport, which is expected to
+attempt to gracefully terminate the session as soon as possible.<a href="#section-4.6-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="use-of-keying-material-exporters">
@@ -2254,7 +2254,7 @@ following conditions is met:<a href="#section-6-1" class="pilcrow">¶</a></p>
           <p id="section-6-2.1.1">the CONNECT stream is closed, either cleanly or abruptly, on either side; or<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-6-2.2">
-          <p id="section-6-2.2.1">a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
+          <p id="section-6-2.2.1">a WT_CLOSE_SESSION capsule is either sent or received.<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-6-3">Upon learning that the session has been terminated, the endpoint MUST reset the
@@ -2262,20 +2262,20 @@ send side and abort reading on the receive side of all of the streams
 associated with the session (see Section 2.4 of <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>) using the
 WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
 open any new streams.<a href="#section-6-3" class="pilcrow">¶</a></p>
-<p id="section-6-4">To terminate a session with a detailed error message, an application MAY send
-an HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> of type CLOSE_WEBTRANSPORT_SESSION (0x2843).
-The format of the capsule SHALL be as follows:<a href="#section-6-4" class="pilcrow">¶</a></p>
+<p id="section-6-4">To terminate a session with a detailed error message, an application MAY send an
+HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> of type WT_CLOSE_SESSION (0x2843). The format of
+the capsule SHALL be as follows:<a href="#section-6-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6-5">
 <pre>
-CLOSE_WEBTRANSPORT_SESSION Capsule {
-  Type (i) = CLOSE_WEBTRANSPORT_SESSION,
+WT_CLOSE_SESSION Capsule {
+  Type (i) = WT_CLOSE_SESSION,
   Length (i),
   Application Error Code (32),
   Application Error Message (..8192),
 }
 </pre><a href="#section-6-5" class="pilcrow">¶</a>
 </div>
-<p id="section-6-6">CLOSE_WEBTRANSPORT_SESSION has the following fields:<a href="#section-6-6" class="pilcrow">¶</a></p>
+<p id="section-6-6">WT_CLOSE_SESSION has the following fields:<a href="#section-6-6" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-6-7">
         <dt id="section-6-7.1">Application Error Code:</dt>
         <dd style="margin-left: 1.5em" id="section-6-7.2">
@@ -2290,26 +2290,24 @@ length MUST NOT exceed 1024 bytes.<a href="#section-6-7.4.1" class="pilcrow">¶<
 </dd>
       <dd class="break"></dd>
 </dl>
-<p id="section-6-8">An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately
-send a FIN.  The endpoint MAY send a STOP_SENDING to indicate it is no longer
-reading from the CONNECT stream.  The recipient MUST either close or reset the
-stream in response.  If any additional stream data is received on the CONNECT
-stream after receiving a CLOSE_WEBTRANSPORT_SESSION capsule, the stream MUST be
-reset with code H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
-<p id="section-6-9">Cleanly terminating a CONNECT stream without a CLOSE_WEBTRANSPORT_SESSION
-capsule SHALL be semantically equivalent to terminating it with a
-CLOSE_WEBTRANSPORT_SESSION capsule that has an error code of 0 and an empty
-error string.<a href="#section-6-9" class="pilcrow">¶</a></p>
-<p id="section-6-10">In some scenarios, an endpoint might want to send a CLOSE_WEBTRANSPORT_SESSION
-with detailed close information and then immediately close the underlying QUIC
+<p id="section-6-8">An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN.
+The endpoint MAY send a STOP_SENDING to indicate it is no longer reading from
+the CONNECT stream.  The recipient MUST either close or reset the stream in
+response.  If any additional stream data is received on the CONNECT stream
+after receiving a WT_CLOSE_SESSION capsule, the stream MUST be reset with code
+H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
+<p id="section-6-9">Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
+semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
+has an error code of 0 and an empty error string.<a href="#section-6-9" class="pilcrow">¶</a></p>
+<p id="section-6-10">In some scenarios, an endpoint might want to send a WT_CLOSE_SESSION with
+detailed close information and then immediately close the underlying QUIC
 connection.  If the endpoint were to do both of those simultaneously, the peer
 could potentially receive the CONNECTION_CLOSE before receiving the
-CLOSE_WEBTRANSPORT_SESSION, thus never receiving the application error data
-contained in the latter.  To avoid this, the endpoint SHOULD wait until all
-CONNECT streams have been closed by the peer before sending the
-CONNECTION_CLOSE; this gives CLOSE_WEBTRANSPORT_SESSION properties similar to
-that of the QUIC CONNECTION_CLOSE mechanism as a best-effort mechanism of
-delivering application close metadata.<a href="#section-6-10" class="pilcrow">¶</a></p>
+WT_CLOSE_SESSION, thus never receiving the application error data contained in
+the latter.  To avoid this, the endpoint SHOULD wait until all CONNECT streams
+have been closed by the peer before sending the CONNECTION_CLOSE; this gives
+WT_CLOSE_SESSION properties similar to that of the QUIC CONNECTION_CLOSE
+mechanism as a best-effort mechanism of delivering application close metadata.<a href="#section-6-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="considerations-for-future-versions">
@@ -2686,7 +2684,7 @@ the codepoints of form 0x1f * N + 0x21.<a href="#section-9.5-4.4.1" class="pilcr
         </h3>
 <p id="section-9.6-1">The following entries are added to the "HTTP Capsule Types" registry established
 by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<a href="#section-9.6-1" class="pilcrow">¶</a></p>
-<p id="section-9.6-2">The <code>CLOSE_WEBTRANSPORT_SESSION</code> capsule.<a href="#section-9.6-2" class="pilcrow">¶</a></p>
+<p id="section-9.6-2">The <code>WT_CLOSE_SESSION</code> capsule.<a href="#section-9.6-2" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-3">
           <dt id="section-9.6-3.1">Value:</dt>
           <dd style="margin-left: 1.5em" id="section-9.6-3.2">
@@ -2695,7 +2693,7 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
           <dd class="break"></dd>
 <dt id="section-9.6-3.3">Capsule Type:</dt>
           <dd style="margin-left: 1.5em" id="section-9.6-3.4">
-            <p id="section-9.6-3.4.1">CLOSE_WEBTRANSPORT_SESSION<a href="#section-9.6-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-9.6-3.4.1">WT_CLOSE_SESSION<a href="#section-9.6-3.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.6-3.5">Status:</dt>
@@ -2724,7 +2722,7 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
 </dd>
         <dd class="break"></dd>
 </dl>
-<p id="section-9.6-4">The <code>DRAIN_WEBTRANSPORT_SESSION</code> capsule.<a href="#section-9.6-4" class="pilcrow">¶</a></p>
+<p id="section-9.6-4">The <code>WT_DRAIN_SESSION</code> capsule.<a href="#section-9.6-4" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-5">
           <dt id="section-9.6-5.1">Value:</dt>
           <dd style="margin-left: 1.5em" id="section-9.6-5.2">
@@ -2733,7 +2731,7 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
           <dd class="break"></dd>
 <dt id="section-9.6-5.3">Capsule Type:</dt>
           <dd style="margin-left: 1.5em" id="section-9.6-5.4">
-            <p id="section-9.6-5.4.1">DRAIN_WEBTRANSPORT_SESSION<a href="#section-9.6-5.4.1" class="pilcrow">¶</a></p>
+            <p id="section-9.6-5.4.1">WT_DRAIN_SESSION<a href="#section-9.6-5.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.6-5.5">Status:</dt>
