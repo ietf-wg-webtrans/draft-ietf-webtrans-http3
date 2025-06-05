@@ -293,12 +293,13 @@ SHALL include a single choice from the client's list in that field. Servers MAY
 reject the request if the client did not include a suitable protocol.
 
 Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
-{{!RFC8941}}. `WT-Available-Protocols` is a List, with the only valid value type
-being either String or Token.  `WT-Protocol` is defined as an item with the only
-valid type for values being String or Token. Any value type other than String or
-Token MUST be ignored.  String or Token values can be used interchangeably;
-decoded values are used to identify protocols. No semantics are defined for
-parameters on either field; parameters MUST be ignored.
+{{!FIELDS=RFC9651}}. `WT-Available-Protocols` is a List, with the only valid
+value types being String or Token.  `WT-Protocol` is defined as an Item with the
+only valid value types being String or Token. Any value type other than String
+or Token MUST be ignored.  String or Token values can be used interchangeably,
+but endpoints SHOULD use String; see {{Section 3.3.4 of !FIELDS}}.  Decoded
+values are used to identify protocols. No semantics are defined for parameters
+on either field; parameters MUST be ignored.
 
 The value in the `WT-Protocol` response header field MUST be one of
 the values listed in `WT-Available-Protocols` of the request.
