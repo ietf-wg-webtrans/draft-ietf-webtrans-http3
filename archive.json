@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-24T00:52:30.308383+00:00",
+  "timestamp": "2025-06-05T00:54:56.362877+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -4895,15 +4895,14 @@
       "state": "OPEN",
       "author": "afrind",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [
-        "ekinnear"
-      ],
+      "assignees": [],
       "labels": [
+        "editorial",
         "ietf-122"
       ],
       "body": "> Implementing [WT_MAX_DATA](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#WT_MAX_DATA) requires that the QUIC stack provide the WebTransport implementation with information about the final size of streams; see { {Section 4.5 of !RFC9000}}. This allows both endpoints to agree on how much data was consumed by that stream, although the stream header exclusion above applies.\n\nFirst, this could use some more explanatory text to tell implementations more specifically what they need final size for.\n\nAre all implementations comfortable with the requirement?  Does it have W3C implications?  The mvfst API for delivering resets doesn't have a great place to stuff this value, but we can make something work.\n\nThe only alternative I can think of is a WT_RESET_STREAM capsule, which I don't think anybody loves, though if such a thing existed it could remove the dependency on reliable reset.",
       "createdAt": "2025-03-05T04:53:23Z",
-      "updatedAt": "2025-03-20T08:55:15Z",
+      "updatedAt": "2025-06-03T23:55:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -4912,6 +4911,13 @@
           "body": "IETF 122 Meeting:\n- No W3C implications\n- Make this an editorial issue to add more text about this before Madrid",
           "createdAt": "2025-03-20T08:54:22Z",
           "updatedAt": "2025-03-20T08:54:22Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Editors' meeting: \n\n- The flow controller needs the number from QUIC to be able to account for how much data was consumed on the stream before it was closed.\n- Issue filed so that we could have everyone talk about having a requirement to have a QUIC API that offers this number.",
+          "createdAt": "2025-06-03T23:55:44Z",
+          "updatedAt": "2025-06-03T23:55:44Z"
         }
       ]
     },
@@ -4939,11 +4945,13 @@
       "state": "OPEN",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "martinthomson"
+      ],
       "labels": [],
       "body": "I'm guessing today the answer is no but in future maybe you want to allow it (for example, to parameterize the protocol). Maybe worth adding some text about this ",
       "createdAt": "2025-03-25T03:35:20Z",
-      "updatedAt": "2025-03-25T04:14:22Z",
+      "updatedAt": "2025-06-03T23:56:18Z",
       "closedAt": null,
       "comments": [
         {
@@ -4977,11 +4985,15 @@
       "state": "OPEN",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "LPardue"
+      ],
+      "labels": [
+        "editorial"
+      ],
       "body": "The spec says\n\n> [[RFC8441](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC8441)] defines an extended CONNECT method in Section 4, enabled by the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. That setting is defined for HTTP/3 by [[RFC9220](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9220)].\n\nThe mention of RFC 8441 is superfluous here, better to just point to 9220 that explains all of this.",
       "createdAt": "2025-03-25T03:39:11Z",
-      "updatedAt": "2025-03-25T03:39:11Z",
+      "updatedAt": "2025-06-03T23:56:53Z",
       "closedAt": null,
       "comments": []
     },
@@ -4993,11 +5005,15 @@
       "state": "OPEN",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "LPardue"
+      ],
+      "labels": [
+        "editorial"
+      ],
       "body": "These sections have evolved organically. It feels like we could condense them down and make it \n\nA) a lot clearer what TPs and settings are needed to negotiate a WebTransport session\nB) clearer what to do when one of the conditions is not satisfied and an error thus occurs",
       "createdAt": "2025-03-25T03:47:28Z",
-      "updatedAt": "2025-03-25T03:47:28Z",
+      "updatedAt": "2025-06-03T23:57:57Z",
       "closedAt": null,
       "comments": []
     },
@@ -5009,11 +5025,13 @@
       "state": "OPEN",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "martinthomson"
+      ],
       "labels": [],
       "body": "...not Token.\n\nThis is an error.",
       "createdAt": "2025-03-25T03:56:31Z",
-      "updatedAt": "2025-03-25T03:56:31Z",
+      "updatedAt": "2025-06-03T23:58:08Z",
       "closedAt": null,
       "comments": []
     },
@@ -5025,11 +5043,13 @@
       "state": "OPEN",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "afrind"
+      ],
       "labels": [],
       "body": "The doc says\n\n> A WebTransport session over HTTP/3 is considered terminated when either of the following conditions is met:\n\n> the CONNECT stream is closed, either cleanly or abruptly, on either side; or\n\n> a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.\n\n> Upon learning that the session has been terminated, the endpoint MUST reset the send side and abort reading on the receive side of all of the streams associated with the session (see Section 2.4 of [[RFC9000](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9000)]) using the WEBTRANSPORT_SESSION_GONE error code;\n\nAnd later \n\n> An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send a FIN.\n\nIf you read the statements as \"the session is terminated when a CLOSE_WEBTRANSPORT_SESSION capsule is sent\" then there seems to be a conflict about whether the sender should FIN the stream or reset it. Since there is no language about using the RESET_STREAM_AT frame for the connect stream, it seems silly to reset your own stream when sending the capsule.",
       "createdAt": "2025-03-25T04:02:28Z",
-      "updatedAt": "2025-03-25T04:02:28Z",
+      "updatedAt": "2025-06-03T23:59:52Z",
       "closedAt": null,
       "comments": []
     },
@@ -5041,11 +5061,15 @@
       "state": "OPEN",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "LPardue"
+      ],
+      "labels": [
+        "editorial"
+      ],
       "body": "All unidirectional streams have a type header, then the rest of the stream is type dependent. The definition of the webtransport uni stream is a little recursive when considering the figures mention of \"stream body\"\n\n> The HTTP/3 unidirectional stream type SHALL be 0x54. The body of the stream SHALL be the stream type, followed by the session ID, encoded as a variable-length integer, followed by the user-specified stream data (Figure 2).\n\n> Unidirectional Stream {\n    Stream Type (i) = 0x54,\n    Session ID (i),\n    Stream Body (..)\n}\n\nMaybe just rename the field in the figure?\n\n\n\n\n\n\n",
       "createdAt": "2025-03-25T04:08:05Z",
-      "updatedAt": "2025-03-25T04:08:05Z",
+      "updatedAt": "2025-06-04T00:02:01Z",
       "closedAt": null,
       "comments": []
     },
@@ -5089,10 +5113,12 @@
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "editorial"
+      ],
       "body": "I'm not sure how to articulate this issue too well. It's just that there seems to be a few cases where a \"client\" is something distinct from a user agent, and this isn't explained that well explicitly. So a drive by reviewer like me starts to thing about an HTTP/3 client rather than a WebTransport client.\n\nHere's an example, which reads like a potential editorial mistake without understanding the full context of terms \n\n> A client could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the client is untrusted, the user agent SHOULD limit the number of outgoing sessions the client can open.",
       "createdAt": "2025-03-25T04:30:58Z",
-      "updatedAt": "2025-03-30T10:11:06Z",
+      "updatedAt": "2025-06-04T00:03:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -5147,7 +5173,7 @@
       "id": "I_kwDOCvK98s6zaKjs",
       "title": "Rename capsules from WEBTRANSPORT* to be consistently WT*",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/193",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -5156,8 +5182,8 @@
       "labels": [],
       "body": "> We've also got DRAIN_WT_SESSION and CLOSE_WT_SESSION (which might want to be renamed as such) in common now, do we need to add those to the list of concepts that should be in the overview? (Even if not referred to by the W3C API) \n\n _Originally posted by @ekinnear in [#12](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-overview/issues/12#issuecomment-1977689488)_",
       "createdAt": "2025-04-22T06:09:01Z",
-      "updatedAt": "2025-04-22T06:09:04Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-03T23:19:47Z",
+      "closedAt": "2025-06-03T23:19:47Z",
       "comments": []
     }
   ],
@@ -15452,7 +15478,7 @@
       "labels": [],
       "body": "Closes #164.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-04-10T19:36:08Z",
+      "updatedAt": "2025-06-04T00:42:51Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
@@ -15670,6 +15696,46 @@
               "updatedAt": "2025-04-10T19:36:08Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6shHU7",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-03T23:18:28Z",
+          "updatedAt": "2025-06-03T23:18:28Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "@martinthomson so can we change this text to say Tokens and be done with it?",
+              "createdAt": "2025-06-03T23:18:28Z",
+              "updatedAt": "2025-06-03T23:18:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6shpSb",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T00:42:51Z",
+          "updatedAt": "2025-06-04T00:42:51Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "I should have said, RFC 9651 says:\r\n\r\n> Note that Tokens are defined largely for compatibility with the data model of existing HTTP fields and may require additional steps to use in some implementations. As a result, new fields are encouraged to use Strings.\r\n\r\nAside from protecting Victor's implementation (which can change, last I checked), is there a reason not to accept strings?  I say that because there are a range of valid protocol identifiers that can't be carried in tokens.  Those include anything with uppercase letters (strangely, the registry has none of those; even HTTP/1.1 is identified in lowercase).\r\n\r\nI understand why we wouldn't be able to *remove* tokens, but it seems like there's no reason to prohibit strings, where strings are what it should have been originally.",
+              "createdAt": "2025-06-04T00:42:51Z",
+              "updatedAt": "2025-06-04T00:42:51Z"
+            }
+          ]
         }
       ]
     },
@@ -15733,24 +15799,26 @@
       "id": "PR_kwDOCvK98s6TYoGR",
       "title": "Rename DRAIN_WEBTRANSPORT_SESSION to WT_DRAIN_SESSION and CLOSE_WEBTRANSPORT_SESSION to WT_CLOSE_SESSION",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/194",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Rename DRAIN_WEBTRANSPORT_SESSION to WT_DRAIN_SESSION and CLOSE_WEBTRANSPORT_SESSION to WT_CLOSE_SESSION\r\n\r\nFixes #193",
       "createdAt": "2025-04-22T06:47:17Z",
-      "updatedAt": "2025-04-23T02:34:11Z",
+      "updatedAt": "2025-06-03T23:19:46Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "b25d52aad2e8b4ff876d466c91d4048ed7276ba2",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/capsule_rename",
       "headRefOid": "630b492ddc7a0663d867e50aec9d3c2674ca6cc7",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-06-03T23:19:46Z",
+      "mergedAt": "2025-06-03T23:19:46Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11"
+      },
       "comments": [],
       "reviews": [
         {
@@ -15777,6 +15845,19 @@
           "body": "",
           "createdAt": "2025-04-23T02:34:11Z",
           "updatedAt": "2025-04-23T02:34:11Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6shHiG",
+          "commit": {
+            "abbreviatedOid": "630b492"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-03T23:19:10Z",
+          "updatedAt": "2025-06-03T23:19:10Z",
           "comments": []
         }
       ]
