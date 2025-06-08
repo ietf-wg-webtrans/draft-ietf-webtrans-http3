@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-05T00:54:56.362877+00:00",
+  "timestamp": "2025-06-08T01:00:27.800988+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -15478,18 +15478,26 @@
       "labels": [],
       "body": "Closes #164.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-06-04T00:42:51Z",
+      "updatedAt": "2025-06-06T01:42:53Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "3fd751f5d5deaa7091daf2282eef0a800422bc68",
+      "baseRefOid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11",
       "headRepository": "martinthomson/draft-ietf-webtrans-http3",
       "headRefName": "iana-fields",
-      "headRefOid": "0265fa6a70f89451c068677076c0c86d5ac34cc9",
+      "headRefOid": "634a8ed2cf94dbb5f0f7b740662df677a1116796",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Can we just ban tokens, and use strings?",
+          "createdAt": "2025-06-06T01:42:53Z",
+          "updatedAt": "2025-06-06T01:42:53Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOCvK98s6hqQQJ",
@@ -15734,6 +15742,285 @@
               "body": "I should have said, RFC 9651 says:\r\n\r\n> Note that Tokens are defined largely for compatibility with the data model of existing HTTP fields and may require additional steps to use in some implementations. As a result, new fields are encouraged to use Strings.\r\n\r\nAside from protecting Victor's implementation (which can change, last I checked), is there a reason not to accept strings?  I say that because there are a range of valid protocol identifiers that can't be carried in tokens.  Those include anything with uppercase letters (strangely, the registry has none of those; even HTTP/1.1 is identified in lowercase).\r\n\r\nI understand why we wouldn't be able to *remove* tokens, but it seems like there's no reason to prohibit strings, where strings are what it should have been originally.",
               "createdAt": "2025-06-04T00:42:51Z",
               "updatedAt": "2025-06-04T00:42:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6s65BU",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T16:55:35Z",
+          "updatedAt": "2025-06-05T16:55:35Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Sure, I'd also add a SHOULD for strings in this case (so that we can expect strings in WPT).",
+              "createdAt": "2025-06-05T16:55:35Z",
+              "updatedAt": "2025-06-05T22:39:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tBWl-",
+          "commit": {
+            "abbreviatedOid": "0265fa6"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T22:46:03Z",
+          "updatedAt": "2025-06-05T22:46:03Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Thanks Victor, I'll do that.",
+              "createdAt": "2025-06-05T22:46:03Z",
+              "updatedAt": "2025-06-05T22:46:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tBjpP",
+          "commit": {
+            "abbreviatedOid": "1e41a88"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T22:58:25Z",
+          "updatedAt": "2025-06-05T22:58:25Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "I missed this on a previous pass -- is there a reason to ignore integers and such, instead of failing?",
+              "createdAt": "2025-06-05T22:58:25Z",
+              "updatedAt": "2025-06-05T22:58:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tBo-w",
+          "commit": {
+            "abbreviatedOid": "1e41a88"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T23:03:17Z",
+          "updatedAt": "2025-06-05T23:03:17Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "Fair question.  It was a coin toss on my end.  An advantage of ignoring is that you get to add extensions that aren't protocol identifiers.  A disadvantage of ignoring is that you get to add extensions that aren't protocol identifiers.\r\n\r\nThe easiest alternative would be to treat the presence of anything else as an error that causes the entire field to be dropped.  Which do you prefer?",
+              "createdAt": "2025-06-05T23:03:17Z",
+              "updatedAt": "2025-06-05T23:03:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tB15I",
+          "commit": {
+            "abbreviatedOid": "1e41a88"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T23:14:51Z",
+          "updatedAt": "2025-06-05T23:16:28Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "> the presence of anything else as an error that causes the entire field to be dropped\r\n\r\nThis would probably make more sense, since \"MUST ignore\" would require browsers to do things like add random floating point values as a GREASE to make sure that requirement is followed (otherwise it's pointless, since webapps will always expect browsers to send strings).\r\n\r\nWe also have a MUST on the server-to-client direction, and I interpret that MUST as \"will fail session if server value \u2209 client-offered values\".",
+              "createdAt": "2025-06-05T23:14:51Z",
+              "updatedAt": "2025-06-05T23:16:29Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "If client offers `\"foo\", \"bar\"`, and server offers `bar` (as a token, not as a string), is this valid under the new text?",
+              "createdAt": "2025-06-05T23:15:32Z",
+              "updatedAt": "2025-06-05T23:16:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tB7OM",
+          "commit": {
+            "abbreviatedOid": "1e41a88"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T23:19:14Z",
+          "updatedAt": "2025-06-05T23:19:14Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "OK, I'll update it.",
+              "createdAt": "2025-06-05T23:19:14Z",
+              "updatedAt": "2025-06-05T23:19:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tB77E",
+          "commit": {
+            "abbreviatedOid": "1e41a88"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T23:19:53Z",
+          "updatedAt": "2025-06-05T23:19:53Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "`\"bar\"` is the same value as `bar`.  I'll mention that more explicitly.",
+              "createdAt": "2025-06-05T23:19:53Z",
+              "updatedAt": "2025-06-05T23:19:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tCCFY",
+          "commit": {
+            "abbreviatedOid": "1e41a88"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-05T23:26:10Z",
+          "updatedAt": "2025-06-05T23:26:10Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I've also added a note that `WT-Protocol` not containing a value from `WT-Available-Protocols` is an error.",
+              "createdAt": "2025-06-05T23:26:10Z",
+              "updatedAt": "2025-06-05T23:26:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tC-yk",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T00:30:28Z",
+          "updatedAt": "2025-06-06T00:30:28Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "This seems to be a restatement (albeit a better one) of the requirement on L293\r\n\r\n>  If the server receives such a header, it MAY include a\r\n`WT-Protocol` field in a successful (2xx) response. If it does, the server\r\nSHALL include a single choice from the client's list in that field.\r\n\r\nShould we just remove the earlier one?",
+              "createdAt": "2025-06-06T00:30:28Z",
+              "updatedAt": "2025-06-06T00:30:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tDAtL",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T00:32:14Z",
+          "updatedAt": "2025-06-06T00:32:15Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "dare I ask about percent-encoding?",
+              "createdAt": "2025-06-06T00:32:15Z",
+              "updatedAt": "2025-06-06T00:32:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tDPLZ",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T00:47:41Z",
+          "updatedAt": "2025-06-06T00:47:41Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "Note that the first MAY is not redundant (you're allowed to not send any response).",
+              "createdAt": "2025-06-06T00:47:41Z",
+              "updatedAt": "2025-06-06T00:47:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tDPk4",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T00:48:23Z",
+          "updatedAt": "2025-06-06T00:48:23Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "I'm not sure how percent-encoding is relevant here; do structured headers say anything about that?",
+              "createdAt": "2025-06-06T00:48:23Z",
+              "updatedAt": "2025-06-06T00:48:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tDQC2",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-06T00:48:48Z",
+          "updatedAt": "2025-06-06T00:48:48Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6tD4OG",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T01:31:18Z",
+          "updatedAt": "2025-06-06T01:31:19Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "The question was motivated by the ugliness of Alt-Svc, and I think the issue is above structured fields. I know this proposal is **not** using ALPN IDs but I think that leaves the door open to people picking values that could hit interop issues.\r\n\r\nLet me use https://httpwg.org/specs/rfc7838.html#rfc.section.3 to illustrate. The Alt-Svc header is defined with ABNF as \r\n\r\n```\r\nAlt-Svc       = clear / 1#alt-value\r\nclear         = %s\"clear\"; \"clear\", case-sensitive\r\nalt-value     = alternative *( OWS \";\" OWS parameter )\r\nalternative   = protocol-id \"=\" alt-authority\r\nprotocol-id   = token ; percent-encoded ALPN protocol name\r\nalt-authority = quoted-string ; containing [ uri-host ] \":\" port\r\nparameter     = token \"=\" ( token / quoted-string )\r\n````\r\n\r\nin normal operations, you're sending ALPN IDs of `h2` or `h3`. But in our infinite wisdom people lso defined `http/0.9`, `http/1.0` and `http/1.1` https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids and so you have this horrible situation where you're sending `http%2F1.1` around. That meant RFC 7838 added all this gumpf\r\n\r\n> ALPN protocol names are octet sequences with no additional constraints on format. Octets not allowed in tokens ([[RFC7230]](https://httpwg.org/specs/rfc7838.html#RFC7230), [Section 3.2.6](https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7230.html#field.components)) MUST be percent-encoded as per [Section 2.1](https://www.rfc-editor.org/rfc/rfc3986.html#section-2.1) of [[RFC3986]](https://httpwg.org/specs/rfc7838.html#RFC3986). Consequently, the octet representing the percent character \"%\" (hex 25) MUST be percent-encoded as well.\r\n\r\n> In order to have precisely one way to represent any ALPN protocol name, the following additional constraints apply:\r\n\r\n    Octets in the ALPN protocol name MUST NOT be percent-encoded if they are valid token characters except \"%\", and\r\n    When using percent-encoding, uppercase hex digits MUST be used.\r\n\r\n> With these constraints, recipients can apply simple string comparison to match protocol identifiers.\r\n\r\nMy concern is that you're allowing endpoints to pick either Token or String and telling them WT-Protocol `MUST be one of the values` but are we talking exact wire match or logical match? For example, if I have a client that sends \r\n\r\n```\r\nWT-Available-Protocols: \"ch@t\", \"babble\"\r\n```\r\n\r\nand a server that responds\r\n\r\n```\r\nWT-Protocol: ch%40t\r\n```\r\n\r\nwill the subprotocol negotation succeed?",
+              "createdAt": "2025-06-06T01:31:19Z",
+              "updatedAt": "2025-06-06T01:33:01Z"
             }
           ]
         }
