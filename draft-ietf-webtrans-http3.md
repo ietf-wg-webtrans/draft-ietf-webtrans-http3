@@ -845,10 +845,10 @@ following conditions is met:
 * a WT_CLOSE_SESSION capsule is either sent or received.
 
 Upon learning that the session has been terminated, the endpoint MUST reset the
-send side and abort reading on the receive side of all of the streams
-associated with the session (see Section 2.4 of {{!RFC9000}}) using the
-WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
-open any new streams.
+send side and abort reading on the receive side of all unidirectional and
+bidirectional streams associated with the session (see Section 2.4 of
+{{!RFC9000}}) using the WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send
+any new datagrams or open any new streams.
 
 To terminate a session with a detailed error message, an application MAY send an
 HTTP capsule {{HTTP-DATAGRAM}} of type WT_CLOSE_SESSION (0x2843). The format of
@@ -875,12 +875,12 @@ Application Error Message:
   session.  The message takes up the remainder of the capsule, and its
   length MUST NOT exceed 1024 bytes.
 
-An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN.
-The endpoint MAY send a STOP_SENDING to indicate it is no longer reading from
-the CONNECT stream.  The recipient MUST either close or reset the stream in
-response.  If any additional stream data is received on the CONNECT stream
-after receiving a WT_CLOSE_SESSION capsule, the stream MUST be reset with code
-H3_MESSAGE_ERROR.
+An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
+the CONNECT Stream.  The endpoint MAY send a STOP_SENDING to indicate it is no
+longer reading from the CONNECT stream.  The recipient MUST either close or
+reset the stream in response.  If any additional stream data is received on the
+CONNECT stream after receiving a WT_CLOSE_SESSION capsule, the stream MUST be
+reset with code H3_MESSAGE_ERROR.
 
 Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
 semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
