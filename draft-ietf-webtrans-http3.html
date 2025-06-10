@@ -2258,10 +2258,10 @@ following conditions is met:<a href="#section-6-1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-6-3">Upon learning that the session has been terminated, the endpoint MUST reset the
-send side and abort reading on the receive side of all of the streams
-associated with the session (see Section 2.4 of <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>) using the
-WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send any new datagrams or
-open any new streams.<a href="#section-6-3" class="pilcrow">¶</a></p>
+send side and abort reading on the receive side of all unidirectional and
+bidirectional streams associated with the session (see Section 2.4 of
+<span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>) using the WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send
+any new datagrams or open any new streams.<a href="#section-6-3" class="pilcrow">¶</a></p>
 <p id="section-6-4">To terminate a session with a detailed error message, an application MAY send an
 HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> of type WT_CLOSE_SESSION (0x2843). The format of
 the capsule SHALL be as follows:<a href="#section-6-4" class="pilcrow">¶</a></p>
@@ -2290,12 +2290,12 @@ length MUST NOT exceed 1024 bytes.<a href="#section-6-7.4.1" class="pilcrow">¶<
 </dd>
       <dd class="break"></dd>
 </dl>
-<p id="section-6-8">An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN.
-The endpoint MAY send a STOP_SENDING to indicate it is no longer reading from
-the CONNECT stream.  The recipient MUST either close or reset the stream in
-response.  If any additional stream data is received on the CONNECT stream
-after receiving a WT_CLOSE_SESSION capsule, the stream MUST be reset with code
-H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
+<p id="section-6-8">An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
+the CONNECT Stream.  The endpoint MAY send a STOP_SENDING to indicate it is no
+longer reading from the CONNECT stream.  The recipient MUST either close or
+reset the stream in response.  If any additional stream data is received on the
+CONNECT stream after receiving a WT_CLOSE_SESSION capsule, the stream MUST be
+reset with code H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
 <p id="section-6-9">Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
 semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
 has an error code of 0 and an empty error string.<a href="#section-6-9" class="pilcrow">¶</a></p>
