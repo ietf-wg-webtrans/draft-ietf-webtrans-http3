@@ -517,9 +517,9 @@ WT_DRAIN_SESSION Capsule {
 ~~~
 
 After sending or receiving either a WT_DRAIN_SESSION capsule or a HTTP/3 GOAWAY
-frame, an endpoint MAY continue using the session and MAY open new streams. The
-signal is intended for the application using WebTransport, which is expected to
-attempt to gracefully terminate the session as soon as possible.
+frame, an endpoint MAY continue using the session and MAY open new WebTransport
+streams. The signal is intended for the application using WebTransport, which is
+expected to attempt to gracefully terminate the session as soon as possible.
 
 ## Use of Keying Material Exporters
 
