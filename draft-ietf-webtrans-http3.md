@@ -195,7 +195,7 @@ setting indicating WebTransport support from the server.
 
 \[\[RFC editor: please remove the following paragraph before publication.]]
 
-For draft verisons of WebTransport only, the server MUST NOT process any
+For draft versions of WebTransport only, the server MUST NOT process any
 incoming WebTransport requests until the client settings have been received, as
 the client may be using a version of the WebTransport extension that is
 different from the one used by the server.
@@ -721,7 +721,7 @@ Note that this limit includes streams that have been closed as well as those
 that are open.
 
 The WT_MAX_STREAMS capsule defines special intermediary handling, as
-described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume
+described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume
 WT_MAX_STREAMS capsules for flow control purposes and MUST generate and
 send appropriate flow control signals for their limits.
 
@@ -761,7 +761,7 @@ WT_STREAMS_BLOCKED capsules contain the following field:
      as it is not possible to encode stream IDs larger than 2<sup>62</sup>-1.
 
 The WT_STREAMS_BLOCKED capsule defines special intermediary handling, as
-described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume
+described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume
 WT_STREAMS_BLOCKED capsules for flow control purposes and MUST generate and
 send appropriate flow control signals for their limits.
 
@@ -799,7 +799,7 @@ lengths of Stream Data fields in WT_STREAM capsules MUST NOT exceed the value
 advertised by a receiver.
 
 The WT_MAX_DATA capsule defines special intermediary handling, as described in
-{{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume WT_MAX_DATA
+{{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume WT_MAX_DATA
 capsules for flow control purposes and MUST generate and send appropriate flow
 control signals for their limits; see {{flow-control-intermediaries}}.
 
@@ -831,7 +831,7 @@ WT_DATA_BLOCKED capsules contain the following field:
      blocking occurred.
 
 The WT_DATA_BLOCKED capsule defines special intermediary handling, as
-described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermedaries MUST consume
+described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume
 WT_DATA_BLOCKED capsules for flow control purposes and MUST generate and
 send appropriate flow control signals for their limits; see
 {{flow-control-intermediaries}}.
