@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-08T01:00:27.800988+00:00",
+  "timestamp": "2025-06-12T00:55:06.185995+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -4376,7 +4376,7 @@
       ],
       "body": "As mentioned by @marten-seemann [on the list](https://mailarchive.ietf.org/arch/msg/webtransport/JP3KS1rRTMQwQoGfht2GlCxtAZk/), making flow control optional requires the ability to negotiate it. We should add that to the protocol, using HTTP headers or SETTINGS.",
       "createdAt": "2024-03-05T23:38:05Z",
-      "updatedAt": "2025-03-20T09:03:23Z",
+      "updatedAt": "2025-06-10T23:50:05Z",
       "closedAt": null,
       "comments": [
         {
@@ -4441,6 +4441,13 @@
           "body": "@marten-seemann Thank you, of course you are correct.",
           "createdAt": "2025-03-20T09:03:22Z",
           "updatedAt": "2025-03-20T09:03:22Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Cases: \n- Client says \"1\", Server says \"1\" -> No flow control, no pooling, client can only ever send 1 Extended CONNECT request\n- Client says \"2\", Server says \"1\" -> No flow control, no pooling, client can only ever send 1 Extended CONNECT request\n- Client says \"1\", Server says \"2\" -> No flow control, no pooling, client must choose not to send more than 1 Extended CONNECT request\n- Client says \"2\", Server says \"2\" -> Flow control, pooling, both sides respect settings and capsules\n\nThere is the added caveat that the CONNECT requests can show up at the server before the client SETTINGS.\n\nIn the case that the client says \"1\" and server says \"2\", and the server sends a low number in SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA, you could have a situation where the client exceeds the limit before the server hears the declaration that the client is ignoring all of those limits.\n\nIn this case, a server that wants to parse the CONNECT request ahead of getting SETTINGS needs to refrain from enforcing the limits until they get SETTINGS. If you wait for SETTINGS, then you don't have to do anything special.\n",
+          "createdAt": "2025-06-10T23:50:05Z",
+          "updatedAt": "2025-06-10T23:50:05Z"
         }
       ]
     },
@@ -4668,7 +4675,7 @@
       "id": "I_kwDOCvK98s6NAT0u",
       "title": "Do we need DRAIN_WEBTRANSPORT_SESSION? ",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/167",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "aboba",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -4680,8 +4687,8 @@
       ],
       "body": "Reference: https://github.com/w3c/webtransport/issues/436\r\n\r\nIn WebTransport API Issue 436, Erik and Martin have made an argument for why client-initiated drain (via `DRAIN_WEBTRANSPORT_SESSION`) is not compelling. \r\n\r\nDo we buy this argument, and if so, does it apply to server-initiated drain as well?  ",
       "createdAt": "2024-06-21T04:05:07Z",
-      "updatedAt": "2025-03-05T00:19:26Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-10T23:21:21Z",
+      "closedAt": "2025-06-10T23:21:21Z",
       "comments": [
         {
           "author": "vasilvv",
@@ -4767,7 +4774,7 @@
       "id": "I_kwDOCvK98s6XfrTR",
       "title": "Should subprotocol negotiation be mandatory?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/172",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -4779,8 +4786,8 @@
       ],
       "body": "In QUIC we made ALPN mandatory to avoid protocol confusion attacks. Should the new mechanism we're introducing for WebTransport be mandatory as well?",
       "createdAt": "2024-09-23T06:14:41Z",
-      "updatedAt": "2025-03-20T08:56:02Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-10T23:54:42Z",
+      "closedAt": "2025-06-10T23:54:42Z",
       "comments": [
         {
           "author": "vasilvv",
@@ -4795,6 +4802,20 @@
           "body": "IETF 122 meeting:\n- there's consensus in the room to make subprotocol negotiation not mandatory\n- @ekinnear to check if it's already optional or not",
           "createdAt": "2025-03-20T08:30:27Z",
           "updatedAt": "2025-03-20T08:56:01Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is the current text on the topic:\n\n```\nThe user agent MAY include a `WT-Available-Protocols` header field in the\nCONNECT request. The `WT-Available-Protocols` enumerates the possible protocols\nin preference order, with the most preferred protocol listed first.\nIf the server receives such a header, it MAY include a\n`WT-Protocol` field in a successful (2xx) response. If it does, the server\nSHALL include a single choice from the client's list in that field. Servers MAY\nreject the request if the client did not include a suitable protocol.\n```\n\nCurrently it is not mandatory, and we also allow the server to decline to respond even if the client includes the available protocols list.",
+          "createdAt": "2025-06-10T19:47:05Z",
+          "updatedAt": "2025-06-10T22:12:21Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed in editor's meeting. WG consensus from IETF 122 was to not make it mandatory, and we've confirmed that this is what the spec currently says. Closing with no action.",
+          "createdAt": "2025-06-10T23:54:42Z",
+          "updatedAt": "2025-06-10T23:54:42Z"
         }
       ]
     },
@@ -4895,14 +4916,16 @@
       "state": "OPEN",
       "author": "afrind",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "afrind"
+      ],
       "labels": [
         "editorial",
         "ietf-122"
       ],
       "body": "> Implementing [WT_MAX_DATA](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#WT_MAX_DATA) requires that the QUIC stack provide the WebTransport implementation with information about the final size of streams; see { {Section 4.5 of !RFC9000}}. This allows both endpoints to agree on how much data was consumed by that stream, although the stream header exclusion above applies.\n\nFirst, this could use some more explanatory text to tell implementations more specifically what they need final size for.\n\nAre all implementations comfortable with the requirement?  Does it have W3C implications?  The mvfst API for delivering resets doesn't have a great place to stuff this value, but we can make something work.\n\nThe only alternative I can think of is a WT_RESET_STREAM capsule, which I don't think anybody loves, though if such a thing existed it could remove the dependency on reliable reset.",
       "createdAt": "2025-03-05T04:53:23Z",
-      "updatedAt": "2025-06-03T23:55:50Z",
+      "updatedAt": "2025-06-10T23:56:04Z",
       "closedAt": null,
       "comments": [
         {
@@ -5040,7 +5063,7 @@
       "id": "I_kwDOCvK98s6vi8CZ",
       "title": "Mildly conflicting advice for session termination",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/188",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5049,9 +5072,17 @@
       "labels": [],
       "body": "The doc says\n\n> A WebTransport session over HTTP/3 is considered terminated when either of the following conditions is met:\n\n> the CONNECT stream is closed, either cleanly or abruptly, on either side; or\n\n> a CLOSE_WEBTRANSPORT_SESSION capsule is either sent or received.\n\n> Upon learning that the session has been terminated, the endpoint MUST reset the send side and abort reading on the receive side of all of the streams associated with the session (see Section 2.4 of [[RFC9000](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9000)]) using the WEBTRANSPORT_SESSION_GONE error code;\n\nAnd later \n\n> An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send a FIN.\n\nIf you read the statements as \"the session is terminated when a CLOSE_WEBTRANSPORT_SESSION capsule is sent\" then there seems to be a conflict about whether the sender should FIN the stream or reset it. Since there is no language about using the RESET_STREAM_AT frame for the connect stream, it seems silly to reset your own stream when sending the capsule.",
       "createdAt": "2025-03-25T04:02:28Z",
-      "updatedAt": "2025-06-03T23:59:52Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-06-10T23:17:15Z",
+      "closedAt": "2025-06-10T23:17:15Z",
+      "comments": [
+        {
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@LPardue \n\nThis text:\n\n> Upon learning that the session has been terminated, the endpoint MUST reset the send side and abort reading on the receive side of **all of the streams associated with the session** (see Section 2.4 of [[RFC9000](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9000)]) using the WEBTRANSPORT_SESSION_GONE error code;\n\nMeans that when closure is detected/initiated, all the open web transport streams need to be immediately reset or abandoned.  It's not referring to the CONNECT stream. \n\nThis text\n\n> An endpoint that sends a CLOSE_WEBTRANSPORT_SESSION capsule MUST immediately send a FIN.\n\nIs about what to do on the CONNECT stream. \n\nThe endpoint initiating the session close MUST send\n\nConnect Stream: CLOSE_WEBTRANSPORT_SESSION + FIN.\nAll open egress streams in session: RESET_STREAM\nAll open ingress streams in session: STOP_SENDING\n\nLet me try to crisp up which streams are being referred to where.",
+          "createdAt": "2025-06-10T20:00:24Z",
+          "updatedAt": "2025-06-10T20:00:24Z"
+        }
+      ]
     },
     {
       "number": 189,
@@ -5078,15 +5109,17 @@
       "id": "I_kwDOCvK98s6vjDNN",
       "title": "Interaction with GOAWAY seems half-baked",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/190",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "afrind"
+      ],
       "labels": [],
       "body": "> After sending or receiving either a DRAIN_WEBTRANSPORT_SESSION capsule or a HTTP/3 GOAWAY frame, an endpoint MAY continue using the session and MAY open new streams.\n\nThis seems at odds with RFC 9114's normative statements about what clients and servers are expected to do when GOAWAY is exchanged.\n\nIn particular, if you're changing the rules for allowing a client to continue to open bidirectional streams then you need more text about what that means when a connection is pooling WebTransport. Does the sever reject new HTTP requests but not new WebTransport streams?",
       "createdAt": "2025-03-25T04:21:48Z",
-      "updatedAt": "2025-03-25T04:44:25Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-10T23:19:35Z",
+      "closedAt": "2025-06-10T23:19:35Z",
       "comments": [
         {
           "author": "afrind",
@@ -5112,13 +5145,15 @@
       "state": "OPEN",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [
         "editorial"
       ],
       "body": "I'm not sure how to articulate this issue too well. It's just that there seems to be a few cases where a \"client\" is something distinct from a user agent, and this isn't explained that well explicitly. So a drive by reviewer like me starts to thing about an HTTP/3 client rather than a WebTransport client.\n\nHere's an example, which reads like a potential editorial mistake without understanding the full context of terms \n\n> A client could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the client is untrusted, the user agent SHOULD limit the number of outgoing sessions the client can open.",
       "createdAt": "2025-03-25T04:30:58Z",
-      "updatedAt": "2025-06-04T00:03:30Z",
+      "updatedAt": "2025-06-10T23:57:21Z",
       "closedAt": null,
       "comments": [
         {
@@ -5142,15 +5177,15 @@
       "id": "I_kwDOCvK98s6vjQzd",
       "title": "Interaction with WRAP_UP capsule?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/192",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The HTTP WG has adopted the WRAP_UP capsule - https://httpwg.org/http-extensions/draft-ietf-httpbis-wrap-up.html\n\nWebTransport defines its own capsules for managing session lifecycles. I don't think it _needs_ to say anything about WRAP_UP but maybe others think it does? \n",
       "createdAt": "2025-03-25T04:52:00Z",
-      "updatedAt": "2025-04-07T04:32:53Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-10T23:56:33Z",
+      "closedAt": "2025-06-10T23:56:33Z",
       "comments": [
         {
           "author": "vasilvv",
@@ -5165,6 +5200,13 @@
           "body": "(by WebTransport GOAWAY I mean DRAIN)",
           "createdAt": "2025-04-07T04:32:52Z",
           "updatedAt": "2025-04-07T04:32:52Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Given that the timelines for WRAP_UP and WebTransport are different, let's keep them separate for now. If somehow WRAP_UP gets published before WebTransport, then we can reopen this.",
+          "createdAt": "2025-06-10T23:56:33Z",
+          "updatedAt": "2025-06-10T23:56:33Z"
         }
       ]
     },
@@ -5185,6 +5227,41 @@
       "updatedAt": "2025-06-03T23:19:47Z",
       "closedAt": "2025-06-03T23:19:47Z",
       "comments": []
+    },
+    {
+      "number": 198,
+      "id": "I_kwDOCvK98s662KZx",
+      "title": "Should we define \"application\"?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/198",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "editorial"
+      ],
+      "body": "WebTransport overview defines Client and Server to be \"Applications\", but I think WT/H3 talks about clients/servers more like transport roles, and \"the application\" as something else.  This caused some confusion noted in [167](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/167#issuecomment-2253635443)",
+      "createdAt": "2025-06-10T20:24:45Z",
+      "updatedAt": "2025-06-10T23:57:23Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "May need to update overview too, in that case",
+          "createdAt": "2025-06-10T23:27:49Z",
+          "updatedAt": "2025-06-10T23:27:49Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "See also https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/191",
+          "createdAt": "2025-06-10T23:55:42Z",
+          "updatedAt": "2025-06-10T23:55:42Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -15478,7 +15555,7 @@
       "labels": [],
       "body": "Closes #164.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-06-06T01:42:53Z",
+      "updatedAt": "2025-06-10T23:33:04Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11",
@@ -15496,6 +15573,13 @@
           "body": "Can we just ban tokens, and use strings?",
           "createdAt": "2025-06-06T01:42:53Z",
           "updatedAt": "2025-06-06T01:42:53Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed in the editor's meeting. There was anxiety around percent-encoding and the fact that the intent from JavaScript could be encoded in multiple different ways. Folks in the room thought that it might be simpler to just remove tokens entirely and only use strings.",
+          "createdAt": "2025-06-10T23:33:03Z",
+          "updatedAt": "2025-06-10T23:33:03Z"
         }
       ],
       "reviews": [
@@ -16023,6 +16107,46 @@
               "updatedAt": "2025-06-06T01:33:01Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twwSZ",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-10T23:13:16Z",
+          "updatedAt": "2025-06-10T23:13:16Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "Do we have any reason to not just reject the session if `WT-Protocol` is present and not set to a valid value?  This feels like it would make it more difficult to debug.",
+              "createdAt": "2025-06-10T23:13:16Z",
+              "updatedAt": "2025-06-10T23:13:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twwma",
+          "commit": {
+            "abbreviatedOid": "634a8ed"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-10T23:14:26Z",
+          "updatedAt": "2025-06-10T23:14:26Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Well, we don't have anything specified here, so presumably `\"ch@t\"` and `ch%40t` are different strings?",
+              "createdAt": "2025-06-10T23:14:26Z",
+              "updatedAt": "2025-06-10T23:14:26Z"
+            }
+          ]
         }
       ]
     },
@@ -16145,6 +16269,278 @@
           "body": "",
           "createdAt": "2025-06-03T23:19:10Z",
           "updatedAt": "2025-06-03T23:19:10Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 195,
+      "id": "PR_kwDOCvK98s6Z6_Ai",
+      "title": "Clarify which streams FIN / RESET during termination",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/195",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes: #188",
+      "createdAt": "2025-06-10T20:05:37Z",
+      "updatedAt": "2025-06-10T23:17:14Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "afrind-term",
+      "headRefOid": "da6cd3cd35f0c55f1d5239ac4f9038c011cd556f",
+      "closedAt": "2025-06-10T23:17:14Z",
+      "mergedAt": "2025-06-10T23:17:14Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "bf95fa66f6f0952714c2b02610c420c5fea2b3e8"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6twIw9",
+          "commit": {
+            "abbreviatedOid": "da6cd3c"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T21:26:41Z",
+          "updatedAt": "2025-06-10T21:26:41Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twxDY",
+          "commit": {
+            "abbreviatedOid": "da6cd3c"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:16:17Z",
+          "updatedAt": "2025-06-10T23:16:17Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twxRX",
+          "commit": {
+            "abbreviatedOid": "da6cd3c"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:17:07Z",
+          "updatedAt": "2025-06-10T23:17:07Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 196,
+      "id": "PR_kwDOCvK98s6Z7Bxp",
+      "title": "Clarify GOAWAY allows only new WebTransport streams",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/196",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This does not modify HTTP/3 rules indicating that HTTP clients cannot send new requests with a stream ID greater or equal to the one in GOAWAY.\r\n\r\nFixes: #190",
+      "createdAt": "2025-06-10T20:10:44Z",
+      "updatedAt": "2025-06-10T23:19:35Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "afrind-clarify-goaway-streams",
+      "headRefOid": "dc9e726890454308f1956f928cb93616bcc8694f",
+      "closedAt": "2025-06-10T23:19:34Z",
+      "mergedAt": "2025-06-10T23:19:34Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "65c1162e7bed2e1f3438f6cacec572c922ba2e6d"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6twHsq",
+          "commit": {
+            "abbreviatedOid": "dc9e726"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T21:24:15Z",
+          "updatedAt": "2025-06-10T21:24:15Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twxdK",
+          "commit": {
+            "abbreviatedOid": "dc9e726"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:17:49Z",
+          "updatedAt": "2025-06-10T23:17:49Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twxy6",
+          "commit": {
+            "abbreviatedOid": "dc9e726"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:19:10Z",
+          "updatedAt": "2025-06-10T23:19:10Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twx4N",
+          "commit": {
+            "abbreviatedOid": "dc9e726"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:19:29Z",
+          "updatedAt": "2025-06-10T23:19:29Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 197,
+      "id": "PR_kwDOCvK98s6Z7FJe",
+      "title": "Explain how WT_DRAIN_SESSION can be used for fun and profit",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/197",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes: #167",
+      "createdAt": "2025-06-10T20:17:40Z",
+      "updatedAt": "2025-06-10T23:21:21Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "afrind-why-drain",
+      "headRefOid": "31009465dfb2d24f81f761cf187dee7912a724d6",
+      "closedAt": "2025-06-10T23:21:21Z",
+      "mergedAt": "2025-06-10T23:21:20Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "08d68ff4a77e4fdccf091462848a8b253c5adfcb"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6twF26",
+          "commit": {
+            "abbreviatedOid": "b3131d7"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T21:20:43Z",
+          "updatedAt": "2025-06-10T21:21:12Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\npasses through an intermediary.  For example, when the backend shuts down, it\r\n```",
+              "createdAt": "2025-06-10T21:20:43Z",
+              "updatedAt": "2025-06-10T21:21:12Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "Don't feel strongly on this one:\r\n```suggestion\r\nsends a GOAWAY to the intermediary.  The intermediary can convert this signal\r\n```",
+              "createdAt": "2025-06-10T21:21:08Z",
+              "updatedAt": "2025-06-10T21:21:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twx-T",
+          "commit": {
+            "abbreviatedOid": "b3131d7"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:19:50Z",
+          "updatedAt": "2025-06-10T23:19:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6twyR3",
+          "commit": {
+            "abbreviatedOid": "3100946"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:21:01Z",
+          "updatedAt": "2025-06-10T23:21:01Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 199,
+      "id": "PR_kwDOCvK98s6Z7-8w",
+      "title": "Fix typos",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/199",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix some typos (editorial)",
+      "createdAt": "2025-06-10T22:52:24Z",
+      "updatedAt": "2025-06-10T23:00:51Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ekinnear/typos",
+      "headRefOid": "f340b0409fbf66ba05295376c4f23f5587c27c5d",
+      "closedAt": "2025-06-10T23:00:51Z",
+      "mergedAt": "2025-06-10T23:00:51Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "e45cc45e8b88eb0c590da5fd62634e1f1a56d3ba"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6tws4v",
+          "commit": {
+            "abbreviatedOid": "f340b04"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-10T23:00:47Z",
+          "updatedAt": "2025-06-10T23:00:47Z",
           "comments": []
         }
       ]
