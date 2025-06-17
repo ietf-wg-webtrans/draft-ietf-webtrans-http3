@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-12T00:55:06.185995+00:00",
+  "timestamp": "2025-06-17T00:55:33.551980+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -4655,7 +4655,7 @@
       "id": "I_kwDOCvK98s6L6sWd",
       "title": "WT-Available-Protocols IANA registration",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/164",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -4666,8 +4666,8 @@
       ],
       "body": "Nothing in the IANA considerations section for this.  We should do that.",
       "createdAt": "2024-06-11T22:36:06Z",
-      "updatedAt": "2024-07-24T18:58:11Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-16T23:31:56Z",
+      "closedAt": "2025-06-16T23:31:56Z",
       "comments": []
     },
     {
@@ -4965,7 +4965,7 @@
       "id": "I_kwDOCvK98s6viwE2",
       "title": "Does WT-Available-Protocols or WT-Protocol carry parameters?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/183",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -4974,8 +4974,8 @@
       "labels": [],
       "body": "I'm guessing today the answer is no but in future maybe you want to allow it (for example, to parameterize the protocol). Maybe worth adding some text about this ",
       "createdAt": "2025-03-25T03:35:20Z",
-      "updatedAt": "2025-06-03T23:56:18Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-16T23:31:57Z",
+      "closedAt": "2025-06-16T23:31:57Z",
       "comments": [
         {
           "author": "martinthomson",
@@ -5045,7 +5045,7 @@
       "id": "I_kwDOCvK98s6vi5Be",
       "title": "Field definitions need to be List or Item",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/187",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5054,8 +5054,8 @@
       "labels": [],
       "body": "...not Token.\n\nThis is an error.",
       "createdAt": "2025-03-25T03:56:31Z",
-      "updatedAt": "2025-06-03T23:58:08Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-16T23:31:57Z",
+      "closedAt": "2025-06-16T23:31:57Z",
       "comments": []
     },
     {
@@ -5262,6 +5262,38 @@
           "updatedAt": "2025-06-10T23:55:42Z"
         }
       ]
+    },
+    {
+      "number": 200,
+      "id": "I_kwDOCvK98s67qVuT",
+      "title": "Which error code to use for STOP_SENDING after sending WT_CLOSE_SESSION?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/200",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on the CONNECT Stream. The endpoint MAY send a STOP_SENDING to indicate it is no longer reading from the CONNECT stream.\n\nShould the document say which error code to use in the STOP_SENDING frame? I'm aware that this doesn't make a big difference in practice, but my QUIC stack's API forces me to pick a value, and I'm not sure which value to use. WEBTRANSPORT_SESSION_GONE might be the most appropriate, but it's only intended for use on data streams:\n> WebTransport data stream aborted because the associated WebTransport session has been closed.\n\nProposal: make WEBTRANSPORT_SESSION_GONE apply to the CONNECT stream as well.",
+      "createdAt": "2025-06-16T03:42:38Z",
+      "updatedAt": "2025-06-16T03:42:38Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 202,
+      "id": "I_kwDOCvK98s67qXwp",
+      "title": "settings and error code naming convention",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/202",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Recently the capsule were renamed from WEBTRANSPORT_* to WT_* (#193). Should we do the same for SETTINGS and error codes?",
+      "createdAt": "2025-06-16T03:49:19Z",
+      "updatedAt": "2025-06-16T03:49:19Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -15548,24 +15580,26 @@
       "id": "PR_kwDOCvK98s6P94LB",
       "title": "Register HTTP fields",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/181",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
-      "body": "Closes #164.",
+      "body": "Closes #164.\r\nCloses #187.",
       "createdAt": "2025-03-25T03:14:53Z",
-      "updatedAt": "2025-06-10T23:33:04Z",
+      "updatedAt": "2025-06-16T23:31:56Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "139915c21c4f9a3cf0f78cb83ac24d529e84cc11",
       "headRepository": "martinthomson/draft-ietf-webtrans-http3",
       "headRefName": "iana-fields",
-      "headRefOid": "634a8ed2cf94dbb5f0f7b740662df677a1116796",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "3393f67842c33f1472e2e088fbe6c2f9d36b2e27",
+      "closedAt": "2025-06-16T23:31:55Z",
+      "mergedAt": "2025-06-16T23:31:55Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "527ab9543aa5f899acf65802638593ebbb2d97c6"
+      },
       "comments": [
         {
           "author": "vasilvv",
@@ -16147,6 +16181,32 @@
               "updatedAt": "2025-06-10T23:14:26Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6ursk5",
+          "commit": {
+            "abbreviatedOid": "3393f67"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-16T05:38:02Z",
+          "updatedAt": "2025-06-16T05:38:02Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6uz5mI",
+          "commit": {
+            "abbreviatedOid": "3393f67"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-16T16:51:06Z",
+          "updatedAt": "2025-06-16T16:51:06Z",
+          "comments": []
         }
       ]
     },
@@ -16544,6 +16604,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 201,
+      "id": "PR_kwDOCvK98s6aoprK",
+      "title": "specify error code for STOP_SENDING frame sent on the CONNECT stream",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/201",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #200.",
+      "createdAt": "2025-06-16T03:46:07Z",
+      "updatedAt": "2025-06-16T03:46:08Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "08d68ff4a77e4fdccf091462848a8b253c5adfcb",
+      "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
+      "headRefName": "connect-stream-stop-sending-error-code",
+      "headRefOid": "c1e35901c8005f2a662642d266957c0926662925",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
