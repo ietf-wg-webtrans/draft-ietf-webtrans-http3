@@ -369,7 +369,7 @@ followed by the user-specified stream data ({{fig-unidi}}).
 Unidirectional Stream {
     Stream Type (i) = 0x54,
     Session ID (i),
-    Stream Body (..)
+    User Specified Stream Data (..)
 }
 ~~~~~~~~~~
 {: #fig-unidi title="Unidirectional WebTransport stream format"}
