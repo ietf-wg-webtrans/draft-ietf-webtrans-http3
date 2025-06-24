@@ -75,10 +75,9 @@ Table of Contents
      2.2.  Protocol Overview
    3.  Session Establishment
      3.1.  Establishing a WebTransport-Capable HTTP/3 Connection
-     3.2.  Extended CONNECT in HTTP/3
-     3.3.  Creating a New Session
-     3.4.  Application Protocol Negotiation
-     3.5.  Prioritization
+     3.2.  Creating a New Session
+     3.3.  Application Protocol Negotiation
+     3.4.  Prioritization
    4.  WebTransport Features
      4.1.  Unidirectional streams
      4.2.  Bidirectional Streams
@@ -260,15 +259,23 @@ Table of Contents
 
 3.1.  Establishing a WebTransport-Capable HTTP/3 Connection
 
-   In order to indicate support for WebTransport, the server MUST send a
-   SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in its
-   SETTINGS frame.  The default value for the
-   SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the
-   endpoint is not willing to receive any WebTransport sessions.  Note
-   that the client does not need to send any value to indicate support
-   for WebTransport; clients indicate support for WebTransport by using
-   the "webtransport" upgrade token in CONNECT requests establishing
-   WebTransport sessions (see Section 9.1).
+   A WebTransport-Capable HTTP/3 connection requires two mandatory
+   indicators to be sent by the server in its SETTINGS frames.  Clients
+   do not use SETTINGS but instead use the the "webtransport" upgrade
+   token in CONNECT requests establishing WebTransport sessions (see
+   Section 9.1).
+
+   WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described
+   in [RFC9220], which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL
+   setting.  This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+   setting for indicating the number of WebTransport sessions a
+   connection supports.  The default value for the
+   SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that the
+   endpoint is not willing to receive any WebTransport sessions.  A
+   server supporting WebTransport over HTTP/3 MUST send both the
+   SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than
+   "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of
+   "1".
 
    The client MUST NOT send a WebTransport request until it has received
    the setting indicating WebTransport support from the server.
@@ -305,16 +312,7 @@ Table of Contents
    server MUST enable the extension as described in Section 3 of
    [RESET-STREAM-AT].
 
-3.2.  Extended CONNECT in HTTP/3
-
-   Usage of extended CONNECT in HTTP/3 is described in [RFC9220], which
-   defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  A server
-   supporting WebTransport over HTTP/3 MUST send both the
-   SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than
-   "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of
-   "1".
-
-3.3.  Creating a New Session
+3.2.  Creating a New Session
 
    As WebTransport sessions are established over HTTP/3, they are
    identified using the https URI scheme ([HTTP], Section 4.2.2).
@@ -365,7 +363,7 @@ Table of Contents
    Section 3.4 of [HTTP-DATAGRAM] is not required by WebTransport and
    can safely be ignored by WebTransport endpoints.
 
-3.4.  Application Protocol Negotiation
+3.3.  Application Protocol Negotiation
 
    WebTransport over HTTP/3 offers a protocol negotiation mechanism,
    similar to TLS Application-Layer Protocol Negotiation Extension
@@ -396,7 +394,7 @@ Table of Contents
    WT-Protocol are determined by the WebTransport resource in question
    and are not registered in IANA's "ALPN Protocol IDs" registry.
 
-3.5.  Prioritization
+3.4.  Prioritization
 
    WebTransport sessions are initiated using extended CONNECT.  While
    Section 11 of [RFC9218] describes how extensible priorities can be
@@ -1308,7 +1306,7 @@ Table of Contents
 9.7.  Protocol Negotiation HTTP Header Fields
 
    The following HTTP header fields are used for negotiating a protocol
-   (Section 3.4.  These are added to the "HTTP Field Name" registry
+   (Section 3.3.  These are added to the "HTTP Field Name" registry
    established in Section 18.4 of [HTTP]:
 
    The WT-Available-Protocols field:
@@ -1316,7 +1314,7 @@ Table of Contents
    Field Name:  WT-Available-Protocols
    Status:  permanent
    Structured Type:  List
-   Reference:  Section 3.4
+   Reference:  Section 3.3
    Comments:  None
 
    The WT-Protocol field:
@@ -1324,7 +1322,7 @@ Table of Contents
    Field Name:  WT-Protocol
    Status:  permanent
    Structured Type:  Item
-   Reference:  Section 3.4
+   Reference:  Section 3.3
    Comments:  None
 
 10.  References

@@ -1191,16 +1191,13 @@ web API draft corresponding to this document can be found at
                 <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-establishing-a-webtransport" class="internal xref">Establishing a WebTransport-Capable HTTP/3 Connection</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-extended-connect-in-http-3" class="internal xref">Extended CONNECT in HTTP/3</a></p>
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-creating-a-new-session" class="internal xref">Creating a New Session</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-creating-a-new-session" class="internal xref">Creating a New Session</a></p>
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-application-protocol-negoti" class="internal xref">Application Protocol Negotiation</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-application-protocol-negoti" class="internal xref">Application Protocol Negotiation</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
-                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-prioritization" class="internal xref">Prioritization</a></p>
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-prioritization" class="internal xref">Prioritization</a></p>
 </li>
             </ul>
 </li>
@@ -1513,67 +1510,60 @@ closed.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
         <h3 id="name-establishing-a-webtransport">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-establishing-a-webtransport" class="section-name selfRef">Establishing a WebTransport-Capable HTTP/3 Connection</a>
         </h3>
-<p id="section-3.1-1">In order to indicate support for WebTransport, the server MUST send a
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in its SETTINGS
-frame.  The default value for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter
-is "0", meaning that the endpoint is not willing to receive any WebTransport
-sessions.  Note that the client does not need to send any value to indicate
-support for WebTransport; clients indicate support for WebTransport by using
-the "webtransport" upgrade token in CONNECT requests establishing WebTransport
-sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">The client MUST NOT send a WebTransport request until it has received the
-setting indicating WebTransport support from the server.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
-<p id="section-3.1-3">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">For draft versions of WebTransport only, the server MUST NOT process any
+<p id="section-3.1-1">A WebTransport-Capable HTTP/3 connection requires two mandatory indicators to be
+sent by the server in its SETTINGS frames. Clients do not use SETTINGS but
+instead use the the "webtransport" upgrade token in CONNECT requests
+establishing WebTransport sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
+<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. This
+document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting for indicating the
+number of WebTransport sessions a connection supports. The default value for the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that the endpoint
+is not willing to receive any WebTransport sessions. A server supporting
+WebTransport over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+setting with a value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL
+setting with a value of "1".<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">The client MUST NOT send a WebTransport request until it has received the
+setting indicating WebTransport support from the server.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-4">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-5">For draft versions of WebTransport only, the server MUST NOT process any
 incoming WebTransport requests until the client settings have been received, as
 the client may be using a version of the WebTransport extension that is
-different from the one used by the server.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
+different from the one used by the server.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
 Capsule Protocol, both the client and the server MUST indicate support for
 HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM value set to 1 in their
 SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>). Servers should also
 note that CONNECT requests to establish new WebTransport sessions, in addition
 to other messages, may arrive before this SETTING is received (see
-<a href="#buffering-incoming" class="auto internal xref">Section 4.5</a>).<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
+<a href="#buffering-incoming" class="auto internal xref">Section 4.5</a>).<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+<p id="section-3.1-7">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
 support, both the client and the server MUST send a max_datagram_frame_size
-transport parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-6" class="pilcrow">¶</a></p>
-<p id="section-3.1-7">Any WebTransport requests sent by the client without enabling QUIC and HTTP
+transport parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<p id="section-3.1-8">Any WebTransport requests sent by the client without enabling QUIC and HTTP
 datagrams MUST be treated as malformed by the server,
-as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
-<p id="section-3.1-8">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
+as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
+<p id="section-3.1-9">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.  To indicate support,
 both the client and the server MUST enable the extension as described
-in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="extended-connect-in-http3">
-<section id="section-3.2">
-        <h3 id="name-extended-connect-in-http-3">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-extended-connect-in-http-3" class="section-name selfRef">Extended CONNECT in HTTP/3</a>
-        </h3>
-<p id="section-3.2-1">Usage of extended CONNECT in HTTP/3 is described in <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines
-the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  A server supporting WebTransport
-over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a
-value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a
-value of "1".<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="creating-a-new-session">
-<section id="section-3.3">
+<section id="section-3.2">
         <h3 id="name-creating-a-new-session">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-creating-a-new-session" class="section-name selfRef">Creating a New Session</a>
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-creating-a-new-session" class="section-name selfRef">Creating a New Session</a>
         </h3>
-<p id="section-3.3-1">As WebTransport sessions are established over HTTP/3, they are identified using
-the <code>https</code> URI scheme (<span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>, Section 4.2.2).<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.3-2">In order to create a new WebTransport session, a client can send an HTTP extended
+<p id="section-3.2-1">As WebTransport sessions are established over HTTP/3, they are identified using
+the <code>https</code> URI scheme (<span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>, Section 4.2.2).<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">In order to create a new WebTransport session, a client can send an HTTP extended
 CONNECT request.  The <code>:protocol</code> pseudo-header field (<span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span>) MUST be set to
 <code>webtransport</code>.  The <code>:scheme</code> field MUST be <code>https</code>.  Both the <code>:authority</code>
 and the <code>:path</code> value MUST be set; those fields indicate the desired
 WebTransport server.  If the WebTransport session is coming from a browser
 client, an <code>Origin</code> header <span>[<a href="#RFC6454" class="cite xref">RFC6454</a>]</span> MUST be provided within the request;
-otherwise, the header is OPTIONAL.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
-<p id="section-3.3-3">Upon receiving an extended CONNECT request with a <code>:protocol</code> field set to
+otherwise, the header is OPTIONAL.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">Upon receiving an extended CONNECT request with a <code>:protocol</code> field set to
 <code>webtransport</code>, the HTTP/3 server can check if it has a WebTransport server
 associated with the specified <code>:authority</code> and <code>:path</code> values.  If it does not,
 it SHOULD reply with status code 404 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.5" class="relref">Section 15.5.5</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).
@@ -1582,66 +1572,66 @@ verify the <code>Origin</code> header to ensure that the specified origin is all
 access the server in question. If the verification fails, the WebTransport
 server SHOULD reply with status code 403 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.4" class="relref">Section 15.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  If all
 checks pass, the WebTransport server MAY accept the session by replying with a
-2xx series status code, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.3" class="relref">Section 15.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
-<p id="section-3.3-4">From the client's perspective, a WebTransport session is established when the
+2xx series status code, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.3" class="relref">Section 15.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-4">From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
-established once it sends a 2xx response.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
-<p id="section-3.3-5">The server may reply with a 3xx response, indicating a redirection (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.4" class="relref">Section 15.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  The user agent MUST NOT automatically follow such redirects,
+established once it sends a 2xx response.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-5">The server may reply with a 3xx response, indicating a redirection (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.4" class="relref">Section 15.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  The user agent MUST NOT automatically follow such redirects,
 as the client could potentially already have sent data for the WebTransport
-session in question; it MAY notify the client about the redirect.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
-<p id="section-3.3-6">Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
+session in question; it MAY notify the client about the redirect.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
 not considered safe (see <span><a href="https://rfc-editor.org/rfc/rfc9114#section-10.9" class="relref">Section 10.9</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>). However,
 WebTransport-related SETTINGS parameters may be retained from the previous
 session as described in Section 7.2.4.2 of <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.  If the server accepts
 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
 sessions from the one negotiated during the previous session; such change would
 be deemed incompatible, and MUST result in a H3_SETTINGS_ERROR connection
-error.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
-<p id="section-3.3-7">The <code>webtransport</code> HTTP Upgrade Token uses the Capsule Protocol as defined in
+error.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<p id="section-3.2-7">The <code>webtransport</code> HTTP Upgrade Token uses the Capsule Protocol as defined in
 <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  The Capsule Protocol is negotiated when the server sends a
 2xx response.  The <code>capsule-protocol</code> header field <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.4" class="relref">Section 3.4</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> is not required by WebTransport and can safely be ignored by WebTransport
-endpoints.<a href="#section-3.3-7" class="pilcrow">¶</a></p>
+endpoints.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protocol-negotiation">
-<section id="section-3.4">
+<section id="section-3.3">
         <h3 id="name-application-protocol-negoti">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-application-protocol-negoti" class="section-name selfRef">Application Protocol Negotiation</a>
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-application-protocol-negoti" class="section-name selfRef">Application Protocol Negotiation</a>
         </h3>
-<p id="section-3.4-1">WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to
+<p id="section-3.3-1">WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to
 TLS Application-Layer Protocol Negotiation Extension (ALPN) <span>[<a href="#RFC7301" class="cite xref">RFC7301</a>]</span>; the
 intent is to simplify porting pre-existing protocols that use QUIC and rely on
-this functionality.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<p id="section-3.4-2">The user agent MAY include a <code>WT-Available-Protocols</code> header field in the
+this functionality.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">The user agent MAY include a <code>WT-Available-Protocols</code> header field in the
 CONNECT request. The <code>WT-Available-Protocols</code> enumerates the possible protocols
 in preference order, with the most preferred protocol listed first.
 If the server receives such a header, it MAY include a
 <code>WT-Protocol</code> field in a successful (2xx) response. If it does, the server
 SHALL include a single choice from the client's list in that field. Servers MAY
-reject the request if the client did not include a suitable protocol.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
-<p id="section-3.4-3">Both <code>WT-Available-Protocols</code> and <code>WT-Protocol</code> are Structured Fields
+reject the request if the client did not include a suitable protocol.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-3">Both <code>WT-Available-Protocols</code> and <code>WT-Protocol</code> are Structured Fields
 <span>[<a href="#FIELDS" class="cite xref">FIELDS</a>]</span>. <code>WT-Available-Protocols</code> is a List.  <code>WT-Protocol</code> is
 defined as an Item. In both cases, the only valid value type is a String. Any
 value type other than String MUST be treated as an error that causes the entire
 field to be ignored.  No semantics are defined for parameters on either field;
-parameters MUST be ignored.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
-<p id="section-3.4-4">The value in the <code>WT-Protocol</code> response header field MUST be one of the values
+parameters MUST be ignored.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<p id="section-3.3-4">The value in the <code>WT-Protocol</code> response header field MUST be one of the values
 listed in <code>WT-Available-Protocols</code> of the request.  Otherwise, the <code>WT-Protocol</code>
-field MUST be ignored.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
-<p id="section-3.4-5">The semantics of individual values used in <code>WT-Available-Protocols</code> and
+field MUST be ignored.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+<p id="section-3.3-5">The semantics of individual values used in <code>WT-Available-Protocols</code> and
 <code>WT-Protocol</code> are determined by the WebTransport resource in question and are
-not registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.4-5" class="pilcrow">¶</a></p>
+not registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="prioritization">
-<section id="section-3.5">
+<section id="section-3.4">
         <h3 id="name-prioritization">
-<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-prioritization" class="section-name selfRef">Prioritization</a>
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-prioritization" class="section-name selfRef">Prioritization</a>
         </h3>
-<p id="section-3.5-1">WebTransport sessions are initiated using extended CONNECT. While <span><a href="https://rfc-editor.org/rfc/rfc9218#section-11" class="relref">Section 11</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span> describes how extensible priorities can be applied to data sent on
+<p id="section-3.4-1">WebTransport sessions are initiated using extended CONNECT. While <span><a href="https://rfc-editor.org/rfc/rfc9218#section-11" class="relref">Section 11</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span> describes how extensible priorities can be applied to data sent on
 a CONNECT stream, WebTransport extends the types of data that are exchanged in
-relation to the request and response, which requires additional considerations.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
-<p id="section-3.5-2">WebTransport CONNECT requests and responses MAY contain the Priority header
+relation to the request and response, which requires additional considerations.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">WebTransport CONNECT requests and responses MAY contain the Priority header
 field (<span><a href="https://rfc-editor.org/rfc/rfc9218#section-5" class="relref">Section 5</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>); clients MAY reprioritize by sending
 PRIORITY_UPDATE frames (<span><a href="https://rfc-editor.org/rfc/rfc9218#section-7" class="relref">Section 7</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>). In extension to <span>[<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>,
 it is RECOMMENDED that clients and servers apply the scheduling guidance in both
@@ -1651,13 +1641,13 @@ streams and datagrams. WebTransport does not provide any priority signaling
 mechanism for streams and datagrams within a WebTransport session; such
 mechanisms can be defined by application protocols using WebTransport.  It is
 RECOMMENDED that such mechanisms only affect scheduling within a session and not
-scheduling of other data on the same HTTP/3 connection.<a href="#section-3.5-2" class="pilcrow">¶</a></p>
-<p id="section-3.5-3">The client/server priority merging guidance given in <span><a href="https://rfc-editor.org/rfc/rfc9218#section-8" class="relref">Section 8</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>
+scheduling of other data on the same HTTP/3 connection.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.4-3">The client/server priority merging guidance given in <span><a href="https://rfc-editor.org/rfc/rfc9218#section-8" class="relref">Section 8</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>
 also applies to WebTransport session. For example, a client that receives a
 response Priority header field could alter its view of a WebTransport session
-priority and alter the scheduling of outgoing data as a result.<a href="#section-3.5-3" class="pilcrow">¶</a></p>
-<p id="section-3.5-4">Endpoints that prioritize WebTransport sessions need to consider how they
-interact with other sessions or requests on the same HTTP/3 connection.<a href="#section-3.5-4" class="pilcrow">¶</a></p>
+priority and alter the scheduling of outgoing data as a result.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.4-4">Endpoints that prioritize WebTransport sessions need to consider how they
+interact with other sessions or requests on the same HTTP/3 connection.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2935,7 +2925,7 @@ by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<
 <a href="#section-9.7" class="section-number selfRef">9.7. </a><a href="#name-protocol-negotiation-http-h" class="section-name selfRef">Protocol Negotiation HTTP Header Fields</a>
         </h3>
 <p id="section-9.7-1">The following HTTP header fields are used for negotiating a protocol
-(<a href="#protocol-negotiation" class="auto internal xref">Section 3.4</a>.  These are added to the "HTTP Field Name" registry
+(<a href="#protocol-negotiation" class="auto internal xref">Section 3.3</a>.  These are added to the "HTTP Field Name" registry
 established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" class="relref">Section 18.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>:<a href="#section-9.7-1" class="pilcrow">¶</a></p>
 <p id="section-9.7-2">The <code>WT-Available-Protocols</code> field:<a href="#section-9.7-2" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlCompact dlParallel" id="section-9.7-3">
@@ -2956,7 +2946,7 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
           <dd class="break"></dd>
 <dt id="section-9.7-3.7">Reference:</dt>
           <dd style="margin-left: 1.5em" id="section-9.7-3.8">
-            <p id="section-9.7-3.8.1"><a href="#protocol-negotiation" class="auto internal xref">Section 3.4</a><a href="#section-9.7-3.8.1" class="pilcrow">¶</a></p>
+            <p id="section-9.7-3.8.1"><a href="#protocol-negotiation" class="auto internal xref">Section 3.3</a><a href="#section-9.7-3.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.7-3.9">Comments:</dt>
@@ -2984,7 +2974,7 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
           <dd class="break"></dd>
 <dt id="section-9.7-5.7">Reference:</dt>
           <dd style="margin-left: 1.5em" id="section-9.7-5.8">
-            <p id="section-9.7-5.8.1"><a href="#protocol-negotiation" class="auto internal xref">Section 3.4</a><a href="#section-9.7-5.8.1" class="pilcrow">¶</a></p>
+            <p id="section-9.7-5.8.1"><a href="#protocol-negotiation" class="auto internal xref">Section 3.3</a><a href="#section-9.7-5.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.7-5.9">Comments:</dt>
