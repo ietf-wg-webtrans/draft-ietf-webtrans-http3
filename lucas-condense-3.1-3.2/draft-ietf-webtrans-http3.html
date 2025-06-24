@@ -1,0 +1,3314 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>WebTransport over HTTP/3</title>
+<meta content="Alan Frindell" name="author">
+<meta content="Eric Kinnear" name="author">
+<meta content="Victor Vasiliev" name="author">
+<meta content="
+       WebTransport   is a protocol framework
+that enables clients constrained by the Web security model to communicate with
+a remote server using a secure multiplexed transport.  This document describes
+a WebTransport protocol that is based on HTTP/3   and provides
+support for unidirectional streams, bidirectional streams and datagrams, all
+multiplexed within the same HTTP/3 connection. 
+    " name="description">
+<meta content="xml2rfc 3.29.0" name="generator">
+<meta content="draft-ietf-webtrans-http3-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.29.0
+    Python 3.12.11
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.6
+    lxml 5.3.1
+    platformdirs 4.3.8
+    pycountry 24.6.1
+    PyYAML 6.0.2
+    requests 2.32.4
+    setuptools 80.9.0
+    wcwidth 0.2.13
+-->
+<link href="draft-ietf-webtrans-http3.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+    }
+  }
+  &.olPercent > dt {
+    float: none;
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+}
+dl:not(.dlNewline) > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+}
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+/* Comments */
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc nav {
+    font-family: var(--font-title);
+    font-weight: 360;
+    & > ul { margin-bottom: 2em; }
+    & ul {
+      margin: 0 0 0 4px;
+      & :is(p, li) {
+        margin: 2px 0;
+      }
+    }
+  }
+  #toc a.toplink {
+    float: right;
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    &::before { /* css hamburger */
+      float: right;
+      position: relative;
+      width: 1em;
+      height: 1px;
+      left: -164px;
+      margin: 8px 0 0 0;
+      background: white none repeat scroll 0 0;
+      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+      content: "";
+    }
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active {
+    opacity: 1;
+    & nav { display: block; }
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:is(:link, :focus, :hover),
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin: 2px 0.5em 0;
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+  #toc a.toplink {
+    margin: 8px 0.5em 0;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">WebTransport-H3</td>
+<td class="right">June 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Frindell, et al.</td>
+<td class="center">Expires 26 December 2025</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Network Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-06-24" class="published">24 June 2025</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2025-12-26">26 December 2025</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">A. Frindell</div>
+<div class="org">Facebook</div>
+</div>
+<div class="author">
+      <div class="author-name">E. Kinnear</div>
+<div class="org">Apple Inc.</div>
+</div>
+<div class="author">
+      <div class="author-name">V. Vasiliev</div>
+<div class="org">Google</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">WebTransport over HTTP/3</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">WebTransport <span>[<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span> is a protocol framework
+that enables clients constrained by the Web security model to communicate with
+a remote server using a secure multiplexed transport.  This document describes
+a WebTransport protocol that is based on HTTP/3 <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span> and provides
+support for unidirectional streams, bidirectional streams and datagrams, all
+multiplexed within the same HTTP/3 connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note" id="section-note.1">
+      <h2 id="name-note-to-readers">
+<a href="#name-note-to-readers" class="section-name selfRef">Note to Readers</a>
+      </h2>
+<p id="section-note.1-1">Discussion of this draft takes place on the WebTransport mailing list
+(webtransport@ietf.org), which is archived at
+&lt;https://mailarchive.ietf.org/arch/search/?email_list=webtransport&gt;.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">The repository tracking the issues for this draft can be found at
+&lt;https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues&gt;.  The
+web API draft corresponding to this document can be found at
+&lt;https://w3c.github.io/webtransport/&gt;.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 26 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-overview" class="internal xref">Overview</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-quic-webtransport-and-http-" class="internal xref">QUIC, WebTransport, and HTTP/3</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.1">
+                    <p id="section-toc.1-1.2.2.1.2.1.1" class="keepWithNext"><a href="#section-2.1.1" class="auto internal xref">2.1.1</a>.  <a href="#name-minimizing-implementation-c" class="internal xref">Minimizing Implementation Complexity</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-protocol-overview" class="internal xref">Protocol Overview</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-session-establishment" class="internal xref">Session Establishment</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-establishing-a-webtransport" class="internal xref">Establishing a WebTransport-Capable HTTP/3 Connection</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-creating-a-new-session" class="internal xref">Creating a New Session</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-application-protocol-negoti" class="internal xref">Application Protocol Negotiation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-prioritization" class="internal xref">Prioritization</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-webtransport-features" class="internal xref">WebTransport Features</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-unidirectional-streams" class="internal xref">Unidirectional streams</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-bidirectional-streams" class="internal xref">Bidirectional Streams</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-resetting-data-streams" class="internal xref">Resetting Data Streams</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-datagrams" class="internal xref">Datagrams</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-buffering-incoming-streams-" class="internal xref">Buffering Incoming Streams and Datagrams</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.6">
+                <p id="section-toc.1-1.4.2.6.1"><a href="#section-4.6" class="auto internal xref">4.6</a>.  <a href="#name-interaction-with-http-3-goa" class="internal xref">Interaction with HTTP/3 GOAWAY frame</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.7">
+                <p id="section-toc.1-1.4.2.7.1"><a href="#section-4.7" class="auto internal xref">4.7</a>.  <a href="#name-use-of-keying-material-expo" class="internal xref">Use of Keying Material Exporters</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-flow-control" class="internal xref">Flow Control</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-limiting-the-number-of-simu" class="internal xref">Limiting the Number of Simultaneous Sessions</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-limiting-the-number-of-stre" class="internal xref">Limiting the Number of Streams Within a Session</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-data-limits" class="internal xref">Data Limits</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-flow-control-and-intermedia" class="internal xref">Flow Control and Intermediaries</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
+                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-flow-control-settings" class="internal xref">Flow Control SETTINGS</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6">
+                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-flow-control-capsules" class="internal xref">Flow Control Capsules</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.1">
+                    <p id="section-toc.1-1.5.2.6.2.1.1"><a href="#section-5.6.1" class="auto internal xref">5.6.1</a>.  <a href="#name-wt_max_streams-capsule" class="internal xref">WT_MAX_STREAMS Capsule</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.7">
+                <p id="section-toc.1-1.5.2.7.1"><a href="#section-5.7" class="auto internal xref">5.7</a>.  <a href="#name-wt_streams_blocked-capsule" class="internal xref">WT_STREAMS_BLOCKED Capsule</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.8">
+                <p id="section-toc.1-1.5.2.8.1"><a href="#section-5.8" class="auto internal xref">5.8</a>.  <a href="#name-wt_max_data-capsule" class="internal xref">WT_MAX_DATA Capsule</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.9">
+                <p id="section-toc.1-1.5.2.9.1"><a href="#section-5.9" class="auto internal xref">5.9</a>.  <a href="#name-wt_data_blocked-capsule" class="internal xref">WT_DATA_BLOCKED Capsule</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-session-termination" class="internal xref">Session Termination</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-considerations-for-future-v" class="internal xref">Considerations for Future Versions</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-negotiating-the-draft-versi" class="internal xref">Negotiating the Draft Version</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-upgrade-token-registration" class="internal xref">Upgrade Token Registration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-http-3-settings-parameter-r" class="internal xref">HTTP/3 SETTINGS Parameter Registration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-frame-type-registration" class="internal xref">Frame Type Registration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
+                <p id="section-toc.1-1.9.2.4.1"><a href="#section-9.4" class="auto internal xref">9.4</a>.  <a href="#name-stream-type-registration" class="internal xref">Stream Type Registration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.5">
+                <p id="section-toc.1-1.9.2.5.1"><a href="#section-9.5" class="auto internal xref">9.5</a>.  <a href="#name-http-3-error-code-registrat" class="internal xref">HTTP/3 Error Code Registration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6">
+                <p id="section-toc.1-1.9.2.6.1"><a href="#section-9.6" class="auto internal xref">9.6</a>.  <a href="#name-capsule-types" class="internal xref">Capsule Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.7">
+                <p id="section-toc.1-1.9.2.7.1"><a href="#section-9.7" class="auto internal xref">9.7</a>.  <a href="#name-protocol-negotiation-http-h" class="internal xref">Protocol Negotiation HTTP Header Fields</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-changelog" class="internal xref">Changelog</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-changes-between-draft-versi" class="internal xref">Changes between draft versions 02 and 07</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-index" class="internal xref">Index</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">HTTP/3 <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span> is a protocol defined on top of QUIC <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> that can
+multiplex HTTP requests over a QUIC connection.  This document defines a
+mechanism for multiplexing non-HTTP data with HTTP/3 in a manner that conforms
+with the WebTransport protocol requirements and semantics<span>[<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span>.  Using the
+mechanism described here, multiple WebTransport instances can be multiplexed
+simultaneously with regular HTTP traffic on the same HTTP/3 connection.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<div id="terminology">
+<section id="section-1.1">
+        <h3 id="name-terminology">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<p id="section-1.1-1">The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span>
+when, and only when, they appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">This document follows terminology defined in Section 1.2 of <span>[<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span>.  Note
+that this document distinguishes between a WebTransport server and an HTTP/3
+server.  An HTTP/3 server is the server that terminates HTTP/3 connections; a
+WebTransport server is an application that accepts WebTransport sessions, which
+can be accessed via an HTTP/3 server.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="overview">
+<section id="section-2">
+      <h2 id="name-overview">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-overview" class="section-name selfRef">Overview</a>
+      </h2>
+<div id="quic-webtransport-and-http3">
+<section id="section-2.1">
+        <h3 id="name-quic-webtransport-and-http-">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-quic-webtransport-and-http-" class="section-name selfRef">QUIC, WebTransport, and HTTP/3</a>
+        </h3>
+<p id="section-2.1-1">QUIC version 1 <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> is a secure transport protocol with flow control and
+congestion control. QUIC supports application data exchange via streams;
+reliable and ordered byte streams that can be multiplexed. Stream independence
+can mitigate head-of-line blocking. While QUIC provides streams as a transport
+service, it is unopinionated about their usage. The applicability of streams is
+described by section 4 of <span>[<a href="#RFC9308" class="cite xref">RFC9308</a>]</span>.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">HTTP is an application-layer protocol, defined by "HTTP Semantics" <span>[<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>.
+HTTP/3 is the application mapping for QUIC, defined in <span>[<a href="#RFC9114" class="cite xref">RFC9114</a>]</span>. It
+describes how QUIC streams are used to carry control data or HTTP request and
+response message sequences in the form of frames and describes details
+of stream and connection lifecycle management. HTTP/3 offers two features in
+addition to HTTP Semantics: QPACK header compression <span>[<a href="#RFC9208" class="cite xref">RFC9208</a>]</span> and Server
+Push <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.6" class="relref">Section 4.6</a> of [<a href="#RFC9114" class="cite xref">RFC9114</a>]</span>.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+<p id="section-2.1-3">WebTransport session establishment involves interacting at the HTTP layer with a
+resource. For Web user agents, this interaction is important for security
+reasons, especially to ensure that the resource is willing to use WebTransport.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
+HTTP is not used for anything else related to an established session. Instead,
+QUIC streams begin with a header sequence of bytes that links them to the established
+session. The remainder of the stream is the body, which carries the payload supplied by
+the application using WebTransport. This process is similar to WebSockets over
+HTTP/1.1 <span>[<a href="#ORIGIN" class="cite xref">ORIGIN</a>]</span>, where access to the underlying byte stream is enabled
+after both sides have completed the handshake.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<p id="section-2.1-5">The layering of QUIC, HTTP/3, and WebTransport is shown in
+<a href="#fig-webtransport-layers" class="auto internal xref">Figure 1</a>. Once a WebTransport session is established,
+applications have nearly direct access to QUIC.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
+<span id="name-webtransport-layering"></span><div id="fig-webtransport-layers">
+<figure id="figure-1">
+          <div id="section-2.1-6.1">
+            <div class="alignLeft art-svg artwork" id="section-2.1-6.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="280" viewBox="0 0 280 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,32 L 8,192" fill="none" stroke="black"></path>
+                <path d="M 144,64 L 144,160" fill="none" stroke="black"></path>
+                <path d="M 272,32 L 272,192" fill="none" stroke="black"></path>
+                <path d="M 8,32 L 272,32" fill="none" stroke="black"></path>
+                <path d="M 8,64 L 272,64" fill="none" stroke="black"></path>
+                <path d="M 8,128 L 144,128" fill="none" stroke="black"></path>
+                <path d="M 8,160 L 272,160" fill="none" stroke="black"></path>
+                <path d="M 8,192 L 272,192" fill="none" stroke="black"></path>
+                <g class="text">
+                  <text x="156" y="52">WebTransport</text>
+                  <text x="36" y="84">HTTP</text>
+                  <text x="96" y="84">Semantics</text>
+                  <text x="72" y="100">and</text>
+                  <text x="48" y="116">Session</text>
+                  <text x="104" y="116">Setup</text>
+                  <text x="180" y="116">Nearly</text>
+                  <text x="236" y="116">direct</text>
+                  <text x="76" y="148">HTTP/3</text>
+                  <text x="148" y="180">QUIC</text>
+                </g>
+              </svg><a href="#section-2.1-6.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-webtransport-layering" class="selfRef">WebTransport Layering</a>
+          </figcaption></figure>
+</div>
+<div id="minimizing-implementation-complexity">
+<section id="section-2.1.1">
+          <h4 id="name-minimizing-implementation-c">
+<a href="#section-2.1.1" class="section-number selfRef">2.1.1. </a><a href="#name-minimizing-implementation-c" class="section-name selfRef">Minimizing Implementation Complexity</a>
+          </h4>
+<p id="section-2.1.1-1">WebTransport has minimal interaction with HTTP and HTTP/3. Clients or servers
+can constrain their use of features to only those required to complete a
+WebTransport handshake:<a href="#section-2.1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.1.1-2.1">
+              <p id="section-2.1.1-2.1.1">Generating/parsing the request method, host, path, protocol, optional Origin
+header, and perhaps some extra headers.<a href="#section-2.1.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-2.1.1-2.2">
+              <p id="section-2.1.1-2.2.1">Generating/parsing the response status code, and possibly some extra headers.<a href="#section-2.1.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-2.1.1-3">The receiver can likely perform several of its HTTP-level requirements using
+bytestring comparisons.<a href="#section-2.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1.1-4">While HTTP/3 encodes HTTP messages using QPACK, the complexity can be minimized.
+Receivers can disable dynamic decompression entirely but must always support
+static decompression and Huffman decoding. Senders can opt to never use dynamic
+compression, static compression, or Huffman encoding.<a href="#section-2.1.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="protocol-overview">
+<section id="section-2.2">
+        <h3 id="name-protocol-overview">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
+        </h3>
+<p id="section-2.2-1">WebTransport servers in general are identified by a pair of authority value and
+path value (defined in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Sections 3.2 and 3.3 correspondingly).<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-2">When an HTTP/3 connection is established, the server sends a
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting in order to indicate support for
+WebTransport over HTTP/3.  This process also negotiates the use of additional
+HTTP/3 extensions.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
+<p id="section-2.2-3">WebTransport sessions are initiated inside a given HTTP/3 connection by the
+client, who sends an extended CONNECT request <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>.  If the server
+accepts the request, a WebTransport session is established.  The resulting
+stream will be further referred to as a <em>CONNECT stream</em>, and its stream ID is
+used to uniquely identify a given WebTransport session within the connection.
+The ID of the CONNECT stream that established a given WebTransport session will
+be further referred to as a <em>Session ID</em>.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.2-4">After the session is established, the peers can exchange data using the
+following mechanisms:<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.2-5.1">
+            <p id="section-2.2-5.1.1">A client can create a bidirectional stream and transfer its ownership to
+WebTransport by providing a special signal in the first bytes.<a href="#section-2.2-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-5.2">
+            <p id="section-2.2-5.2.1">A server can create a bidirectional stream and transfer its ownership to
+WebTransport by providing a special signal in the first bytes.<a href="#section-2.2-5.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-5.3">
+            <p id="section-2.2-5.3.1">Both client and server can create a unidirectional stream using a special
+stream type.<a href="#section-2.2-5.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-5.4">
+            <p id="section-2.2-5.4.1">A datagram can be sent using HTTP Datagrams <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.<a href="#section-2.2-5.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-2.2-6">A WebTransport session is terminated when the CONNECT stream that created it is
+closed.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="session-establishment">
+<section id="section-3">
+      <h2 id="name-session-establishment">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-session-establishment" class="section-name selfRef">Session Establishment</a>
+      </h2>
+<div id="establishing">
+<section id="section-3.1">
+        <h3 id="name-establishing-a-webtransport">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-establishing-a-webtransport" class="section-name selfRef">Establishing a WebTransport-Capable HTTP/3 Connection</a>
+        </h3>
+<p id="section-3.1-1">A WebTransport-Capable HTTP/3 connection requires two mandatory indicators to be
+sent by the server in its SETTINGS frames. Clients do not use SETTINGS but
+instead use the the "webtransport" upgrade token in CONNECT requests
+establishing WebTransport sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
+<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. This
+document defines SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter for indicating the
+number of WebTransport sessions a connection supports. The default value for the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the endpoint
+is not willing to receive any WebTransport sessions. A server supporting
+WebTransport over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+setting with a value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL
+setting with a value of "1".<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">The client MUST NOT send a WebTransport request until it has received the
+setting indicating WebTransport support from the server.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-4">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-5">For draft versions of WebTransport only, the server MUST NOT process any
+incoming WebTransport requests until the client settings have been received, as
+the client may be using a version of the WebTransport extension that is
+different from the one used by the server.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
+Capsule Protocol, both the client and the server MUST indicate support for
+HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM value set to 1 in their
+SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>). Servers should also
+note that CONNECT requests to establish new WebTransport sessions, in addition
+to other messages, may arrive before this SETTING is received (see
+<a href="#buffering-incoming" class="auto internal xref">Section 4.5</a>).<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+<p id="section-3.1-7">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
+support, both the client and the server MUST send a max_datagram_frame_size
+transport parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<p id="section-3.1-8">Any WebTransport requests sent by the client without enabling QUIC and HTTP
+datagrams MUST be treated as malformed by the server,
+as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
+<p id="section-3.1-9">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
+<span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.  To indicate support,
+both the client and the server MUST enable the extension as described
+in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="creating-a-new-session">
+<section id="section-3.2">
+        <h3 id="name-creating-a-new-session">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-creating-a-new-session" class="section-name selfRef">Creating a New Session</a>
+        </h3>
+<p id="section-3.2-1">As WebTransport sessions are established over HTTP/3, they are identified using
+the <code>https</code> URI scheme (<span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>, Section 4.2.2).<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">In order to create a new WebTransport session, a client can send an HTTP extended
+CONNECT request.  The <code>:protocol</code> pseudo-header field (<span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span>) MUST be set to
+<code>webtransport</code>.  The <code>:scheme</code> field MUST be <code>https</code>.  Both the <code>:authority</code>
+and the <code>:path</code> value MUST be set; those fields indicate the desired
+WebTransport server.  If the WebTransport session is coming from a browser
+client, an <code>Origin</code> header <span>[<a href="#RFC6454" class="cite xref">RFC6454</a>]</span> MUST be provided within the request;
+otherwise, the header is OPTIONAL.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">Upon receiving an extended CONNECT request with a <code>:protocol</code> field set to
+<code>webtransport</code>, the HTTP/3 server can check if it has a WebTransport server
+associated with the specified <code>:authority</code> and <code>:path</code> values.  If it does not,
+it SHOULD reply with status code 404 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.5" class="relref">Section 15.5.5</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).
+When the request contains the <code>Origin</code> header, the WebTransport server MUST
+verify the <code>Origin</code> header to ensure that the specified origin is allowed to
+access the server in question. If the verification fails, the WebTransport
+server SHOULD reply with status code 403 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.4" class="relref">Section 15.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  If all
+checks pass, the WebTransport server MAY accept the session by replying with a
+2xx series status code, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.3" class="relref">Section 15.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-4">From the client's perspective, a WebTransport session is established when the
+client receives a 2xx response.  From the server's perspective, a session is
+established once it sends a 2xx response.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-5">The server may reply with a 3xx response, indicating a redirection (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.4" class="relref">Section 15.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  The user agent MUST NOT automatically follow such redirects,
+as the client could potentially already have sent data for the WebTransport
+session in question; it MAY notify the client about the redirect.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
+not considered safe (see <span><a href="https://rfc-editor.org/rfc/rfc9114#section-10.9" class="relref">Section 10.9</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>). However,
+WebTransport-related SETTINGS parameters may be retained from the previous
+session as described in Section 7.2.4.2 of <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.  If the server accepts
+0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
+sessions from the one negotiated during the previous session; such change would
+be deemed incompatible, and MUST result in a H3_SETTINGS_ERROR connection
+error.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<p id="section-3.2-7">The <code>webtransport</code> HTTP Upgrade Token uses the Capsule Protocol as defined in
+<span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  The Capsule Protocol is negotiated when the server sends a
+2xx response.  The <code>capsule-protocol</code> header field <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.4" class="relref">Section 3.4</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> is not required by WebTransport and can safely be ignored by WebTransport
+endpoints.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="protocol-negotiation">
+<section id="section-3.3">
+        <h3 id="name-application-protocol-negoti">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-application-protocol-negoti" class="section-name selfRef">Application Protocol Negotiation</a>
+        </h3>
+<p id="section-3.3-1">WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to
+TLS Application-Layer Protocol Negotiation Extension (ALPN) <span>[<a href="#RFC7301" class="cite xref">RFC7301</a>]</span>; the
+intent is to simplify porting pre-existing protocols that use QUIC and rely on
+this functionality.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">The user agent MAY include a <code>WT-Available-Protocols</code> header field in the
+CONNECT request. The <code>WT-Available-Protocols</code> enumerates the possible protocols
+in preference order, with the most preferred protocol listed first.
+If the server receives such a header, it MAY include a
+<code>WT-Protocol</code> field in a successful (2xx) response. If it does, the server
+SHALL include a single choice from the client's list in that field. Servers MAY
+reject the request if the client did not include a suitable protocol.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-3">Both <code>WT-Available-Protocols</code> and <code>WT-Protocol</code> are Structured Fields
+<span>[<a href="#FIELDS" class="cite xref">FIELDS</a>]</span>. <code>WT-Available-Protocols</code> is a List.  <code>WT-Protocol</code> is
+defined as an Item. In both cases, the only valid value type is a String. Any
+value type other than String MUST be treated as an error that causes the entire
+field to be ignored.  No semantics are defined for parameters on either field;
+parameters MUST be ignored.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<p id="section-3.3-4">The value in the <code>WT-Protocol</code> response header field MUST be one of the values
+listed in <code>WT-Available-Protocols</code> of the request.  Otherwise, the <code>WT-Protocol</code>
+field MUST be ignored.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+<p id="section-3.3-5">The semantics of individual values used in <code>WT-Available-Protocols</code> and
+<code>WT-Protocol</code> are determined by the WebTransport resource in question and are
+not registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="prioritization">
+<section id="section-3.4">
+        <h3 id="name-prioritization">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-prioritization" class="section-name selfRef">Prioritization</a>
+        </h3>
+<p id="section-3.4-1">WebTransport sessions are initiated using extended CONNECT. While <span><a href="https://rfc-editor.org/rfc/rfc9218#section-11" class="relref">Section 11</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span> describes how extensible priorities can be applied to data sent on
+a CONNECT stream, WebTransport extends the types of data that are exchanged in
+relation to the request and response, which requires additional considerations.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">WebTransport CONNECT requests and responses MAY contain the Priority header
+field (<span><a href="https://rfc-editor.org/rfc/rfc9218#section-5" class="relref">Section 5</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>); clients MAY reprioritize by sending
+PRIORITY_UPDATE frames (<span><a href="https://rfc-editor.org/rfc/rfc9218#section-7" class="relref">Section 7</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>). In extension to <span>[<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>,
+it is RECOMMENDED that clients and servers apply the scheduling guidance in both
+<span><a href="https://rfc-editor.org/rfc/rfc9218#section-9" class="relref">Section 9</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span> and <span><a href="https://rfc-editor.org/rfc/rfc9218#section-10" class="relref">Section 10</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span> for all data that they
+send in the enclosing WebTransport session, including Capsules, WebTransport
+streams and datagrams. WebTransport does not provide any priority signaling
+mechanism for streams and datagrams within a WebTransport session; such
+mechanisms can be defined by application protocols using WebTransport.  It is
+RECOMMENDED that such mechanisms only affect scheduling within a session and not
+scheduling of other data on the same HTTP/3 connection.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.4-3">The client/server priority merging guidance given in <span><a href="https://rfc-editor.org/rfc/rfc9218#section-8" class="relref">Section 8</a> of [<a href="#RFC9218" class="cite xref">RFC9218</a>]</span>
+also applies to WebTransport session. For example, a client that receives a
+response Priority header field could alter its view of a WebTransport session
+priority and alter the scheduling of outgoing data as a result.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.4-4">Endpoints that prioritize WebTransport sessions need to consider how they
+interact with other sessions or requests on the same HTTP/3 connection.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="webtransport-features">
+<section id="section-4">
+      <h2 id="name-webtransport-features">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-webtransport-features" class="section-name selfRef">WebTransport Features</a>
+      </h2>
+<p id="section-4-1">WebTransport over HTTP/3 provides the following features described in
+<span>[<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span>: unidirectional streams, bidirectional streams and datagrams,
+initiated by either endpoint. Protocols designed for use with WebTransport over
+HTTP/3 are constrained to these features.  The Capsule Protocol is an
+implementation detail of WebTransport over HTTP/3 and is not a WebTransport
+feature.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">Session IDs are used to demultiplex streams and datagrams belonging to different
+WebTransport sessions.  On the wire, session IDs are encoded using the QUIC
+variable length integer scheme described in <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">The client MAY optimistically open unidirectional and bidirectional streams, as
+well as send datagrams, for a session that it has sent the CONNECT request for,
+even if it has not yet received the server's response to the request. On the
+server side, opening streams and sending datagrams is possible as soon as the
+CONNECT request has been received.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">If at any point a session ID is received that cannot be a valid ID for a
+client-initiated bidirectional stream, the recipient MUST close the connection
+with an H3_ID_ERROR error code.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<div id="unidirectional-streams">
+<section id="section-4.1">
+        <h3 id="name-unidirectional-streams">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-unidirectional-streams" class="section-name selfRef">Unidirectional streams</a>
+        </h3>
+<p id="section-4.1-1">WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
+unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the
+stream type, followed by the session ID, encoded as a variable-length integer,
+followed by the user-specified stream data (<a href="#fig-unidi" class="auto internal xref">Figure 2</a>).<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<span id="name-unidirectional-webtransport"></span><div id="fig-unidi">
+<figure id="figure-2">
+          <div class="lang-drawing sourcecode" id="section-4.1-2.1">
+<pre>
+Unidirectional Stream {
+    Stream Type (i) = 0x54,
+    Session ID (i),
+    Stream Body (..)
+}
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-unidirectional-webtransport" class="selfRef">Unidirectional WebTransport stream format</a>
+          </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="bidirectional-streams">
+<section id="section-4.2">
+        <h3 id="name-bidirectional-streams">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-bidirectional-streams" class="section-name selfRef">Bidirectional Streams</a>
+        </h3>
+<p id="section-4.2-1">All client-initiated bidirectional streams are reserved by HTTP/3 as request
+streams, which are a sequence of HTTP/3 frames with a variety of rules (see
+Sections <a href="https://rfc-editor.org/rfc/rfc9114#section-4.1" class="relref">4.1</a> and <a href="https://rfc-editor.org/rfc/rfc9114#section-6.1" class="relref">6.1</a> of <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>).<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">WebTransport extends HTTP/3 to allow clients to declare and use alternative
+request stream rules.  Once a client receives settings indicating WebTransport
+support (<a href="#establishing" class="auto internal xref">Section 3.1</a>), it can send a special signal value, encoded as
+a variable-length integer, as the first bytes of the stream in order to indicate
+how the remaining bytes on the stream are used.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">WebTransport extends HTTP/3 by defining rules for all server-initiated
+bidirectional streams.  Once a server receives an incoming CONNECT request
+establishing a WebTransport session (<a href="#establishing" class="auto internal xref">Section 3.1</a>), it can open a
+bidirectional stream for use with that session and SHALL send a special signal
+value, encoded as a variable-length integer, as the first bytes of the stream
+in order to indicate how the remaining bytes on the stream are used.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">The signal value, 0x41, is used by clients and servers to open a bidirectional
+WebTransport stream.  Following this is the associated session ID, encoded as a
+variable-length integer; the rest of the stream is the application payload of
+the WebTransport stream (<a href="#fig-bidi-client" class="auto internal xref">Figure 3</a>).<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<span id="name-bidirectional-webtransport-"></span><div id="fig-bidi-client">
+<figure id="figure-3">
+          <div class="lang-drawing sourcecode" id="section-4.2-5.1">
+<pre>
+Bidirectional Stream {
+    Signal Value (i) = 0x41,
+    Session ID (i),
+    Stream Body (..)
+}
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-bidirectional-webtransport-" class="selfRef">Bidirectional WebTransport stream format</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.2-6">This document reserves the special signal value 0x41 as a WEBTRANSPORT_STREAM
+frame type.  While it is registered as an HTTP/3 frame type to avoid
+collisions, WEBTRANSPORT_STREAM is not a proper HTTP/3 frame, as it lacks
+length; it is an extension of HTTP/3 frame syntax that MUST be supported by any
+peer negotiating WebTransport.  Endpoints that implement this extension are
+also subject to additional frame handling requirements. Endpoints MUST NOT send
+WEBTRANSPORT_STREAM as a frame type on HTTP/3 streams other than the very first
+bytes of a request stream.  Receiving this frame type in any other
+circumstances MUST be treated as a connection error of type H3_FRAME_ERROR.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="resetting-data-streams">
+<section id="section-4.3">
+        <h3 id="name-resetting-data-streams">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-resetting-data-streams" class="section-name selfRef">Resetting Data Streams</a>
+        </h3>
+<p id="section-4.3-1">A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING frame for a
+WebTransport data stream.  Those signals are propagated by the WebTransport
+implementation to the application.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">A WebTransport application SHALL provide an error code for those operations.
+Since WebTransport shares the error code space with HTTP/3, WebTransport
+application errors for streams are limited to an unsigned 32-bit integer,
+assuming values between 0x00000000 and 0xffffffff.  WebTransport
+implementations SHALL remap those error codes into the error range reserved for
+WEBTRANSPORT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db,
+and 0xffffffff corresponds to 0x52e5ac983162.  Note that there are code points
+inside that range of form "0x1f * N + 0x21" that are reserved by <span><a href="https://rfc-editor.org/rfc/rfc9114#section-8.1" class="relref">Section 8.1</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>; those have to be skipped when mapping the error codes
+(i.e. the two HTTP/3 error codepoints adjacent to a reserved
+codepoint would map to two adjacent WebTransport application error codepoints).
+An example pseudocode can be seen in <a href="#fig-remap-errors" class="auto internal xref">Figure 4</a>.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
+<span id="name-pseudocode-for-converting-b"></span><div id="fig-remap-errors">
+<figure id="figure-4">
+          <div class="alignLeft art-text artwork" id="section-4.3-3.1">
+<pre>
+    first = 0x52e4a40fa8db
+    last = 0x52e5ac983162
+
+    def webtransport_code_to_http_code(n):
+        return first + n + floor(n / 0x1e)
+
+    def http_code_to_webtransport_code(h):
+        assert(first &lt;= h &lt;= last)
+        assert((h - 0x21) % 0x1f != 0)
+        shifted = h - first
+        return shifted - floor(shifted / 0x1f)
+</pre>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-pseudocode-for-converting-b" class="selfRef">Pseudocode for converting between WebTransport application errors and HTTP/3 error codes</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.3-4">WebTransport data streams are associated with sessions through a header at the
+beginning of the stream; resetting a stream might result in that data being
+discarded when using a RESET_STREAM frame.  To prevent this, WebTransport
+implementations MUST use the RESET_STREAM_AT frame <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span> with a
+Reliable Size set to at least the size of the WebTransport header when
+resetting a WebTransport data stream.  This ensures that the ID field
+associating the data stream with a WebTransport session is always delivered.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+<p id="section-4.3-5">WebTransport implementations SHALL forward the error code for a stream
+associated with a known session to the application that owns that session;
+similarly, the intermediaries SHALL reset the streams with corresponding error
+code when receiving a reset from the peer.  If a WebTransport implementation
+intentionally allows only one session over a given HTTP/3 connection, it SHALL
+forward the error codes within WebTransport application error code range to the
+application that owns the only session on that connection.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="datagrams">
+<section id="section-4.4">
+        <h3 id="name-datagrams">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-datagrams" class="section-name selfRef">Datagrams</a>
+        </h3>
+<p id="section-4.4-1">Datagrams can be sent using HTTP Datagrams. The WebTransport datagram payload is
+sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram
+(Section 2.1 of <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>). Note that the payload field directly
+follows the Quarter Stream ID field, which is at the start of the QUIC DATAGRAM
+frame payload and refers to the CONNECT stream that established the
+WebTransport session.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="buffering-incoming">
+<section id="section-4.5">
+        <h3 id="name-buffering-incoming-streams-">
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-buffering-incoming-streams-" class="section-name selfRef">Buffering Incoming Streams and Datagrams</a>
+        </h3>
+<p id="section-4.5-1">In WebTransport over HTTP/3, the client MUST wait for receipt of the server's
+SETTINGS frame before establishing any WebTransport sessions by sending CONNECT
+requests using the WebTransport upgrade token (see <a href="#establishing" class="auto internal xref">Section 3.1</a>). This
+ensures that the client will always know what versions of WebTransport can be
+used on a given HTTP/3 connection.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.5-2">Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT
+requests, WebTransport data streams, and WebTransport datagrams all within a
+single flight.  As those can arrive out of order, a WebTransport server could
+be put into a situation where it receives a stream or a datagram without a
+corresponding session.  Similarly, a client may receive a server-initiated
+stream or a datagram before receiving the CONNECT response headers from the
+server.<a href="#section-4.5-2" class="pilcrow">¶</a></p>
+<p id="section-4.5-3">To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
+until those can be associated with an established session.  To avoid resource
+exhaustion, the endpoints MUST limit the number of buffered streams and
+datagrams.  When the number of buffered streams is exceeded, a stream SHALL be
+closed by sending a RESET_STREAM and/or STOP_SENDING with the
+<code>WEBTRANSPORT_BUFFERED_STREAM_REJECTED</code> error code.  When the number of
+buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to an
+implementation to choose what stream or datagram to discard.<a href="#section-4.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="interaction-with-http3-goaway-frame">
+<section id="section-4.6">
+        <h3 id="name-interaction-with-http-3-goa">
+<a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-interaction-with-http-3-goa" class="section-name selfRef">Interaction with HTTP/3 GOAWAY frame</a>
+        </h3>
+<p id="section-4.6-1">HTTP/3 defines a graceful shutdown mechanism (<span><a href="https://rfc-editor.org/rfc/rfc9114#section-5.2" class="relref">Section 5.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>) that
+allows a peer to send a GOAWAY frame indicating that it will no longer accept
+any new incoming requests or pushes.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
+<p id="section-4.6-2">A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
+sessions on that HTTP/3 connection; it must open a new HTTP/3 connection to
+initiate new WebTransport sessions with the same peer.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
+<p id="section-4.6-3">An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
+all WebTransport sessions.  To shut down a single WebTransport session, either
+endpoint can send a WT_DRAIN_SESSION (0x78ae) capsule.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.6-4">
+<pre>
+WT_DRAIN_SESSION Capsule {
+  Type (i) = WT_DRAIN_SESSION,
+  Length (i) = 0
+}
+</pre><a href="#section-4.6-4" class="pilcrow">¶</a>
+</div>
+<p id="section-4.6-5">After sending or receiving either a WT_DRAIN_SESSION capsule or a HTTP/3 GOAWAY
+frame, an endpoint MAY continue using the session and MAY open new WebTransport
+streams. The signal is intended for the application using WebTransport, which is
+expected to attempt to gracefully terminate the session as soon as possible.<a href="#section-4.6-5" class="pilcrow">¶</a></p>
+<p id="section-4.6-6">The WT_DRAIN_SESSION capsule is useful when an end-to-end WebTransport session
+passes through an intermediary.  For example, when the backend shuts down, it
+sends a GOAWAY to the intermediary.  The intermediary can convert this signal
+to a WT_DRAIN_SESSION capsule on the client-facing session, without impacting
+other requests or sessions carried on that connection.<a href="#section-4.6-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="use-of-keying-material-exporters">
+<section id="section-4.7">
+        <h3 id="name-use-of-keying-material-expo">
+<a href="#section-4.7" class="section-number selfRef">4.7. </a><a href="#name-use-of-keying-material-expo" class="section-name selfRef">Use of Keying Material Exporters</a>
+        </h3>
+<p id="section-4.7-1">WebTransport over HTTP/3 supports the use of TLS keying material exporters
+<span>[<a href="#RFC8446" class="cite xref">RFC8446</a>], <a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a></span>.  Since the underlying QUIC connection may be shared
+by multiple WebTransport sessions, WebTransport defines its own mechanism for
+deriving a TLS exporter that separates keying material for different sessions.
+If the user requests an exporter for a given WebTransport session with a
+specified label and context, the resulting exporter SHALL be a TLS exporter as
+defined in<span>[<a href="#RFC8446" class="cite xref">RFC8446</a>], <a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a></span> with the label set
+to "EXPORTER-WebTransport" and the context set to the serialization of
+the "WebTransport Exporter Context" struct as defined below.<a href="#section-4.7-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.7-2">
+<pre>
+WebTransport Exporter Context {
+  WebTransport Session ID (64),
+  WebTransport Application-Supplied Exporter Label Length (8),
+  WebTransport Application-Supplied Exporter Label (8..),
+  WebTransport Application-Supplied Exporter Context Length (8),
+  WebTransport Application-Supplied Exporter Context (..)
+}
+</pre><a href="#section-4.7-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.7-3">A TLS exporter API might permit the context field to be omitted. In this case,
+as with TLS 1.3, the WebTransport Application-Supplied Exporter Context
+becomes zero-length if omitted.<a href="#section-4.7-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="flow-control">
+<section id="section-5">
+      <h2 id="name-flow-control">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-flow-control" class="section-name selfRef">Flow Control</a>
+      </h2>
+<p id="section-5-1">Flow control governs the amount of resources that can be consumed or data that
+can be sent.  When using WebTransport over HTTP/3, endpoints can limit the
+number of sessions that a peer can create on a single HTTP/3 connection and the
+number of streams that a peer can create within a session.  Endpoints can also
+limit the amount of data that can be consumed by each session and by each
+stream within a session.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">WebTransport over HTTP/3 provides connection-level limit that governs the number
+of sessions that can be created on an HTTP/3 connection; see
+<a href="#flow-control-limit-sessions" class="auto internal xref">Section 5.1</a>.  It also provides the session-level limits that
+govern the number of streams that can be created in a session and limit the
+amount of data that can be exchanged across all streams in each session; see
+<a href="#flow-control-limit-streams" class="auto internal xref">Section 5.2</a>.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">The underlying QUIC connection provides connection and stream level flow
+control.  The connection data limit defines the total amount of data that can be
+sent across all WebTransport sessions and other non-WebTransport streams.  A
+stream's data limit controls the amount of data that can be sent on that
+stream, WebTransport or otherwise; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4" class="relref">Section 4</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<div id="flow-control-limit-sessions">
+<section id="section-5.1">
+        <h3 id="name-limiting-the-number-of-simu">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-limiting-the-number-of-simu" class="section-name selfRef">Limiting the Number of Simultaneous Sessions</a>
+        </h3>
+<p id="section-5.1-1">This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter that allows
+the server to limit the maximum number of concurrent WebTransport sessions on a
+single HTTP/3 connection.  The client MUST NOT open more simultaneous sessions
+than indicated in the server SETTINGS parameter.  The server MUST NOT close
+the connection if the client opens sessions exceeding this limit, as the client
+and the server do not have a consistent view of how many sessions are open due
+to the asynchronous nature of the protocol; instead, it MUST reset all of the
+CONNECT streams it is not willing to process with the <code>H3_REQUEST_REJECTED</code>
+status defined in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-8.1" class="relref">Section 8.1</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="flow-control-limit-streams">
+<section id="section-5.2">
+        <h3 id="name-limiting-the-number-of-stre">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-limiting-the-number-of-stre" class="section-name selfRef">Limiting the Number of Streams Within a Session</a>
+        </h3>
+<p id="section-5.2-1">The <span id="iref-wt_max_streams-1" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule (<a href="#WT_MAX_STREAMS" class="auto internal xref">Section 5.6.1</a>) establishes a limit on the
+number of streams within a WebTransport session.  Like the QUIC MAX_STREAMS
+frame (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-19.11" class="relref">Section 19.11</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>), this capsule has two types that provide
+separate limits for unidirectional and bidirectional streams that are initiated
+by a peer.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-2">Note that the CONNECT stream for the session is not included in either the
+bidirectional or the unidirectional stream limits; the number of CONNECT
+streams a client can open is limited by the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+setting and QUIC flow control's stream limits.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
+<p id="section-5.2-3">The session-level stream limit applies in addition to the QUIC MAX_STREAMS
+frame, which provides a connection-level stream limit.  New streams can only be
+created within the session if both the stream- and the connection-level limit
+permit; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.6" class="relref">Section 4.6</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> for details on how QUIC stream limits
+are applied.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.2-4">Unlike the the QUIC MAX_STREAMS frame, there is no simple relationship between
+the value in this frame and stream IDs in QUIC STREAM frames.  This especially
+applies if there are other users of streams on the connection.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
+<p id="section-5.2-5">The <span id="iref-wt_streams_blocked-2" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (<a href="#WT_STREAMS_BLOCKED" class="auto internal xref">Section 5.7</a>) can be sent to indicate
+that an endpoint was unable to create a stream due to the session-level stream
+limit.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
+<p id="section-5.2-6">Note that enforcing this limit requires reliable resets for stream headers so
+that both endpoints can agree on the number of streams that are open.<a href="#section-5.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="flow-control-limit-data">
+<section id="section-5.3">
+        <h3 id="name-data-limits">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-data-limits" class="section-name selfRef">Data Limits</a>
+        </h3>
+<p id="section-5.3-1">The <span id="iref-wt_max_data-3" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule (<a href="#WT_MAX_DATA" class="auto internal xref">Section 5.8</a>) establishes a limit on the amount of
+data that can be sent within a WebTransport session.  This limit counts all data
+that is sent on streams of the corresponding type, excluding the stream header
+(see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a> and <a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  The stream
+header is excluded from this limit so that this limit does not prevent the
+sending of information that is essential in linking new streams to a specific
+WebTransport session.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.3-2">Implementing <span id="iref-wt_max_data-4" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC stack provide the WebTransport
+implementation with information about the final size of streams; see {
+{Section 4.5 of !RFC9000}}.  This allows both endpoints to agree on how much
+data was consumed by that stream, although the stream header exclusion above
+applies.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+<p id="section-5.3-3">The <span id="iref-wt_data_blocked-5" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (<a href="#WT_DATA_BLOCKED" class="auto internal xref">Section 5.9</a>) can be sent to indicate that an
+endpoint was unable to send data due to a limit set by the <span id="iref-wt_max_data-6" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
+capsule.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+<p id="section-5.3-4">Because WebTransport over HTTP/3 uses a native QUIC stream for each WebTransport
+stream, per-stream data limits are provided by QUIC natively; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.  The WT_MAX_STREAM_DATA and WT_STREAM_DATA_BLOCKED capsules
+(<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-11#appendix-Xx" class="relref">Part XX</a> of [<a href="#I-D.ietf-webtrans-http2" class="cite xref">I-D.ietf-webtrans-http2</a>]</span>) are not used and so are prohibited.
+Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
+WT_STREAM_DATA_BLOCKED capsule as a session error.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="flow-control-intermediaries">
+<section id="section-5.4">
+        <h3 id="name-flow-control-and-intermedia">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-flow-control-and-intermedia" class="section-name selfRef">Flow Control and Intermediaries</a>
+        </h3>
+<p id="section-5.4-1">WebTransport over HTTP/3 uses several capsules for flow control, and all of
+these capsules define special intermediary handling as described in
+<span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  These capsules, referred to as the "flow
+control capsules" are <span id="iref-wt_max_data-7" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>, <span id="iref-wt_max_streams-8" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a>, <span id="iref-wt_data_blocked-9" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a>, and
+<span id="iref-wt_streams_blocked-10" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a>.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.4-2">Because flow control in WebTransport is hop-by-hop and does not provide an
+end-to-end signal, intermediaries MUST consume flow control signals and express
+their own flow control limits to the next hop.  The intermediary can send these
+signals via HTTP/3 flow control messages, HTTP/2 flow control messages, or as
+WebTransport flow control capsules, where appropriate.  Intermediaries are
+responsible for storing any data for which they advertise flow control credit
+if that data cannot be immediately forwarded to the next hop.<a href="#section-5.4-2" class="pilcrow">¶</a></p>
+<p id="section-5.4-3">In practice, an intermediary that translates flow control signals between
+similar WebTransport protocols, such as between two HTTP/3 connections, can
+often simply reexpress the same limits received on one connection directly on
+the other connection.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
+<p id="section-5.4-4">An intermediary that does not want to be responsible for storing data that
+cannot be immediately sent on its translated connection can ensure that it
+does not advertise a higher flow control limit on one connection than the
+corresponding limit on the translated connection.<a href="#section-5.4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="flow-control-settings">
+<section id="section-5.5">
+        <h3 id="name-flow-control-settings">
+<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-flow-control-settings" class="section-name selfRef">Flow Control SETTINGS</a>
+        </h3>
+<p id="section-5.5-1">Initial flow control limits can be exchanged via HTTP/3 SETTINGS
+(<a href="#http3-settings" class="auto internal xref">Section 9.2</a>) by providing non-zero values for<a href="#section-5.5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.5-2.1">
+            <p id="section-5.5-2.1.1"><span id="iref-wt_max_streams-11" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> via <span id="iref-settings_webtransport_initi" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> and
+<span id="iref-settings_webtransport_initia" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a><a href="#section-5.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.5-2.2">
+            <p id="section-5.5-2.2.1"><span id="iref-wt_max_data-14" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> via <span id="iref-settings_webtransport_initial" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a><a href="#section-5.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="flow-control-capsules">
+<section id="section-5.6">
+        <h3 id="name-flow-control-capsules">
+<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-flow-control-capsules" class="section-name selfRef">Flow Control Capsules</a>
+        </h3>
+<div id="WT_MAX_STREAMS">
+<section id="section-5.6.1">
+          <h4 id="name-wt_max_streams-capsule">
+<a href="#section-5.6.1" class="section-number selfRef">5.6.1. </a><a href="#name-wt_max_streams-capsule" class="section-name selfRef">WT_MAX_STREAMS Capsule</a>
+          </h4>
+<p id="section-5.6.1-1">An HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> called <span id="iref-wt_max_streams-16" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> is introduced to inform
+the peer of the cumulative number of streams of a given type it is permitted to
+open.  A <span id="iref-wt_max_streams-17" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule with a type of 0x190B4D3F applies to
+bidirectional streams, and a <span id="iref-wt_max_streams-18" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule with a type of 0x190B4D40
+applies to unidirectional streams.<a href="#section-5.6.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.6.1-2">Note that, because Maximum Streams is a cumulative value representing the total
+allowed number of streams, including previously closed streams, endpoints
+repeatedly send new <span id="iref-wt_max_streams-19" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules with increasing Maximum Streams
+values as streams are opened.<a href="#section-5.6.1-2" class="pilcrow">¶</a></p>
+<span id="name-wt_max_streams-capsule-form"></span><div id="fig-wt_max_streams">
+<figure id="figure-5">
+            <div class="alignLeft art-text artwork" id="section-5.6.1-3.1">
+<pre>
+WT_MAX_STREAMS Capsule {
+  Type (i) = 0x190B4D3F..0x190B4D40,
+  Length (i),
+  Maximum Streams (i),
+}
+</pre>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-wt_max_streams-capsule-form" class="selfRef">WT_MAX_STREAMS Capsule Format</a>
+            </figcaption></figure>
+</div>
+<p id="section-5.6.1-4"><span id="iref-wt_max_streams-20" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules contain the following field:<a href="#section-5.6.1-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.6.1-5">
+            <dt id="section-5.6.1-5.1">Maximum Streams:</dt>
+            <dd style="margin-left: 1.5em" id="section-5.6.1-5.2">
+              <p id="section-5.6.1-5.2.1">A count of the cumulative number of streams of the corresponding type that
+can be opened over the lifetime of the session. This value cannot
+exceed 2<sup>60</sup>, as it is not possible to encode stream IDs larger
+than 2<sup>62</sup>-1.<a href="#section-5.6.1-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<p id="section-5.6.1-6">An endpoint MUST NOT open more streams than permitted by the current stream
+limit set by its peer.  For instance, a server that receives a unidirectional
+stream limit of 3 is permitted to open streams 3, 7, and 11, but not stream
+15.<a href="#section-5.6.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.6.1-7">Note that this limit includes streams that have been closed as well as those
+that are open.<a href="#section-5.6.1-7" class="pilcrow">¶</a></p>
+<p id="section-5.6.1-8">The <span id="iref-wt_max_streams-21" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule defines special intermediary handling, as
+described in <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume
+<span id="iref-wt_max_streams-22" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules for flow control purposes and MUST generate and
+send appropriate flow control signals for their limits.<a href="#section-5.6.1-8" class="pilcrow">¶</a></p>
+<p id="section-5.6.1-9">Initial values for these limits MAY be communicated by sending non-zero values
+for <span id="iref-settings_webtransport_initial_" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> and
+<span id="iref-settings_webtransport_initial_m" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a>.<a href="#section-5.6.1-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="WT_STREAMS_BLOCKED">
+<section id="section-5.7">
+        <h3 id="name-wt_streams_blocked-capsule">
+<a href="#section-5.7" class="section-number selfRef">5.7. </a><a href="#name-wt_streams_blocked-capsule" class="section-name selfRef">WT_STREAMS_BLOCKED Capsule</a>
+        </h3>
+<p id="section-5.7-1">A sender SHOULD send a <span id="iref-wt_streams_blocked-25" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (type=0x190B4D43 or
+0x190B4D44) when it wishes to open a stream but is unable to do so due to the
+maximum stream limit set by its peer.  A <span id="iref-wt_streams_blocked-26" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule of type
+0x190B4D43 is used to indicate reaching the bidirectional stream limit, and a
+STREAMS_BLOCKED capsule of type 0x190B4D44 is used to indicate reaching the
+unidirectional stream limit.<a href="#section-5.7-1" class="pilcrow">¶</a></p>
+<p id="section-5.7-2">A <span id="iref-wt_streams_blocked-27" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule does not open the stream, but informs the peer that
+a new stream was needed and the stream limit prevented the creation of the
+stream.<a href="#section-5.7-2" class="pilcrow">¶</a></p>
+<span id="name-wt_streams_blocked-capsule-"></span><div id="fig-wt_streams_blocked">
+<figure id="figure-6">
+          <div class="alignLeft art-text artwork" id="section-5.7-3.1">
+<pre>
+WT_STREAMS_BLOCKED Capsule {
+  Type (i) = 0x190B4D43..0x190B4D44,
+  Length (i),
+  Maximum Streams (i),
+}
+</pre>
+</div>
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<a href="#name-wt_streams_blocked-capsule-" class="selfRef">WT_STREAMS_BLOCKED Capsule Format</a>
+          </figcaption></figure>
+</div>
+<p id="section-5.7-4"><span id="iref-wt_streams_blocked-28" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsules contain the following field:<a href="#section-5.7-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.7-5">
+          <dt id="section-5.7-5.1">Maximum Streams:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.7-5.2">
+            <p id="section-5.7-5.2.1">A variable-length integer indicating the maximum number of streams allowed
+at the time the capsule was sent. This value cannot exceed 2<sup>60</sup>,
+as it is not possible to encode stream IDs larger than 2<sup>62</sup>-1.<a href="#section-5.7-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-5.7-6">The <span id="iref-wt_streams_blocked-29" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule defines special intermediary handling, as
+described in <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume
+<span id="iref-wt_streams_blocked-30" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsules for flow control purposes and MUST generate and
+send appropriate flow control signals for their limits.<a href="#section-5.7-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="WT_MAX_DATA">
+<section id="section-5.8">
+        <h3 id="name-wt_max_data-capsule">
+<a href="#section-5.8" class="section-number selfRef">5.8. </a><a href="#name-wt_max_data-capsule" class="section-name selfRef">WT_MAX_DATA Capsule</a>
+        </h3>
+<p id="section-5.8-1">An HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> called <span id="iref-wt_max_data-31" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> (type=0x190B4D3D) is
+introduced to inform the peer of the maximum amount of data that can be sent on
+the WebTransport session as a whole.<a href="#section-5.8-1" class="pilcrow">¶</a></p>
+<p id="section-5.8-2">This limit counts all data that is sent on streams of the corresponding type,
+excluding the stream header (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a> and
+<a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  Implementing <span id="iref-wt_max_data-32" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC
+stack provide the WebTransport implementation with information about the final
+size of streams; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-5.8-2" class="pilcrow">¶</a></p>
+<span id="name-wt_max_data-capsule-format"></span><div id="fig-wt_max_data">
+<figure id="figure-7">
+          <div class="alignLeft art-text artwork" id="section-5.8-3.1">
+<pre>
+WT_MAX_DATA Capsule {
+  Type (i) = 0x190B4D3D,
+  Length (i),
+  Maximum Data (i),
+}
+</pre>
+</div>
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<a href="#name-wt_max_data-capsule-format" class="selfRef">WT_MAX_DATA Capsule Format</a>
+          </figcaption></figure>
+</div>
+<p id="section-5.8-4"><span id="iref-wt_max_data-33" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsules contain the following field:<a href="#section-5.8-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.8-5">
+          <dt id="section-5.8-5.1">Maximum Data:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.8-5.2">
+            <p id="section-5.8-5.2.1">A variable-length integer indicating the maximum amount of data that can be
+sent on the entire session, in units of bytes.<a href="#section-5.8-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-5.8-6">All data sent in WT_STREAM capsules counts toward this limit. The sum of the
+lengths of Stream Data fields in WT_STREAM capsules MUST NOT exceed the value
+advertised by a receiver.<a href="#section-5.8-6" class="pilcrow">¶</a></p>
+<p id="section-5.8-7">The <span id="iref-wt_max_data-34" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule defines special intermediary handling, as described in
+<span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume <span id="iref-wt_max_data-35" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
+capsules for flow control purposes and MUST generate and send appropriate flow
+control signals for their limits; see <a href="#flow-control-intermediaries" class="auto internal xref">Section 5.4</a>.<a href="#section-5.8-7" class="pilcrow">¶</a></p>
+<p id="section-5.8-8">The initial value for this limit MAY be communicated by sending a non-zero value
+for <span id="iref-settings_webtransport_initial_ma" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a>.<a href="#section-5.8-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="WT_DATA_BLOCKED">
+<section id="section-5.9">
+        <h3 id="name-wt_data_blocked-capsule">
+<a href="#section-5.9" class="section-number selfRef">5.9. </a><a href="#name-wt_data_blocked-capsule" class="section-name selfRef">WT_DATA_BLOCKED Capsule</a>
+        </h3>
+<p id="section-5.9-1">A sender SHOULD send a <span id="iref-wt_data_blocked-37" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (type=0x190B4D41) when it wishes
+to send data but is unable to do so due to WebTransport session-level flow
+control.  <span id="iref-wt_data_blocked-38" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsules can be used as input to tuning of flow
+control algorithms.<a href="#section-5.9-1" class="pilcrow">¶</a></p>
+<span id="name-wt_data_blocked-capsule-for"></span><div id="fig-wt_data_blocked">
+<figure id="figure-8">
+          <div class="alignLeft art-text artwork" id="section-5.9-2.1">
+<pre>
+WT_DATA_BLOCKED Capsule {
+  Type (i) = 0x190B4D41,
+  Length (i),
+  Maximum Data (i),
+}
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-wt_data_blocked-capsule-for" class="selfRef">WT_DATA_BLOCKED Capsule Format</a>
+          </figcaption></figure>
+</div>
+<p id="section-5.9-3"><span id="iref-wt_data_blocked-39" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsules contain the following field:<a href="#section-5.9-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.9-4">
+          <dt id="section-5.9-4.1">Maximum Data:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.9-4.2">
+            <p id="section-5.9-4.2.1">A variable-length integer indicating the session-level limit at which
+blocking occurred.<a href="#section-5.9-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-5.9-5">The <span id="iref-wt_data_blocked-40" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule defines special intermediary handling, as
+described in <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume
+<span id="iref-wt_data_blocked-41" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsules for flow control purposes and MUST generate and
+send appropriate flow control signals for their limits; see
+<a href="#flow-control-intermediaries" class="auto internal xref">Section 5.4</a>.<a href="#section-5.9-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="session-termination">
+<section id="section-6">
+      <h2 id="name-session-termination">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-session-termination" class="section-name selfRef">Session Termination</a>
+      </h2>
+<p id="section-6-1">A WebTransport session over HTTP/3 is considered terminated when either of the
+following conditions is met:<a href="#section-6-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6-2.1">
+          <p id="section-6-2.1.1">the CONNECT stream is closed, either cleanly or abruptly, on either side; or<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-6-2.2">
+          <p id="section-6-2.2.1">a WT_CLOSE_SESSION capsule is either sent or received.<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-6-3">Upon learning that the session has been terminated, the endpoint MUST reset the
+send side and abort reading on the receive side of all unidirectional and
+bidirectional streams associated with the session (see Section 2.4 of
+<span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>) using the WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send
+any new datagrams or open any new streams.<a href="#section-6-3" class="pilcrow">¶</a></p>
+<p id="section-6-4">To terminate a session with a detailed error message, an application MAY send an
+HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> of type WT_CLOSE_SESSION (0x2843). The format of
+the capsule SHALL be as follows:<a href="#section-6-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6-5">
+<pre>
+WT_CLOSE_SESSION Capsule {
+  Type (i) = WT_CLOSE_SESSION,
+  Length (i),
+  Application Error Code (32),
+  Application Error Message (..8192),
+}
+</pre><a href="#section-6-5" class="pilcrow">¶</a>
+</div>
+<p id="section-6-6">WT_CLOSE_SESSION has the following fields:<a href="#section-6-6" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-6-7">
+        <dt id="section-6-7.1">Application Error Code:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-7.2">
+          <p id="section-6-7.2.1">A 32-bit error code provided by the application closing the session.<a href="#section-6-7.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-6-7.3">Application Error Message:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-7.4">
+          <p id="section-6-7.4.1">A UTF-8 encoded error message string provided by the application closing the
+session.  The message takes up the remainder of the capsule, and its
+length MUST NOT exceed 1024 bytes.<a href="#section-6-7.4.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-6-8">An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
+the CONNECT Stream.  The endpoint MAY send a STOP_SENDING to indicate it is no
+longer reading from the CONNECT stream.  The recipient MUST either close or
+reset the stream in response.  If any additional stream data is received on the
+CONNECT stream after receiving a WT_CLOSE_SESSION capsule, the stream MUST be
+reset with code H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
+<p id="section-6-9">Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
+semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
+has an error code of 0 and an empty error string.<a href="#section-6-9" class="pilcrow">¶</a></p>
+<p id="section-6-10">In some scenarios, an endpoint might want to send a WT_CLOSE_SESSION with
+detailed close information and then immediately close the underlying QUIC
+connection.  If the endpoint were to do both of those simultaneously, the peer
+could potentially receive the CONNECTION_CLOSE before receiving the
+WT_CLOSE_SESSION, thus never receiving the application error data contained in
+the latter.  To avoid this, the endpoint SHOULD wait until all CONNECT streams
+have been closed by the peer before sending the CONNECTION_CLOSE; this gives
+WT_CLOSE_SESSION properties similar to that of the QUIC CONNECTION_CLOSE
+mechanism as a best-effort mechanism of delivering application close metadata.<a href="#section-6-10" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="considerations-for-future-versions">
+<section id="section-7">
+      <h2 id="name-considerations-for-future-v">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-considerations-for-future-v" class="section-name selfRef">Considerations for Future Versions</a>
+      </h2>
+<p id="section-7-1">Future versions of WebTransport that change the syntax of the CONNECT requests
+used to establish WebTransport sessions will need to modify the upgrade token
+used to identify WebTransport, allowing servers to offer multiple
+versions simultaneously (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">Servers that support future incompatible versions of WebTransport signal that
+support by changing the codepoint used for the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter (see <a href="#http3-settings" class="auto internal xref">Section 9.2</a>).  Clients
+can select the associated upgrade token, if applicable, to use when
+establishing a new session, ensuring that servers will always know the syntax
+in use for every incoming request.<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">Changes to future stream formats require changes to the Unidirectional Stream
+type (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a>) and Bidirectional Stream signal value
+(see <a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>) to allow recipients of incoming frames to
+determine the WebTransport version, and corresponding wire format, used for the
+session associated with that stream.<a href="#section-7-3" class="pilcrow">¶</a></p>
+<div id="negotiating-the-draft-version">
+<section id="section-7.1">
+        <h3 id="name-negotiating-the-draft-versi">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-negotiating-the-draft-versi" class="section-name selfRef">Negotiating the Draft Version</a>
+        </h3>
+<p id="section-7.1-1">[[RFC editor: please remove this section before publication.]]<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.1-2">The wire format aspects of the protocol are negotiated by changing the codepoint
+used for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter.  Because of that,
+any WebTransport endpoint MUST wait for the peer's SETTINGS frame before
+sending or processing any WebTransport traffic.  When multiple versions are
+supported by both of the peers, the most recent version supported by both is
+selected.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-8">
+      <h2 id="name-security-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-8-1">WebTransport over HTTP/3 satisfies all of the security requirements imposed by
+<span>[<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span> on WebTransport protocols, thus providing a secure framework for
+client-server communication in cases when the client is potentially untrusted.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">WebTransport over HTTP/3 requires explicit opt-in through the use of an HTTP/3
+setting; this avoids potential protocol confusion attacks by ensuring the
+HTTP/3 server explicitly supports it.  It also requires the use of the Origin
+header, providing the server with the ability to deny access to Web-based
+clients that do not originate from a trusted origin.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3">Just like HTTP traffic going over HTTP/3, WebTransport pools traffic to
+different origins within a single connection.  Different origins imply
+different trust domains, meaning that the implementations have to treat each
+transport as potentially hostile towards others on the same connection.  One
+potential attack is a resource exhaustion attack: since all of the transports
+share both congestion control and flow control context, a single client
+aggressively using up those resources can cause other transports to stall.  The
+user agent thus SHOULD implement a fairness scheme that ensures that each
+transport within connection gets a reasonable share of controlled resources;
+this applies both to sending data and to opening new streams.<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-4">A client could attempt to exhaust resources by opening too many WebTransport
+sessions at once.  In cases when the client is untrusted, the user agent SHOULD
+limit the number of outgoing sessions the client can open.<a href="#section-8-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-9">
+      <h2 id="name-iana-considerations">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<div id="upgrade-token">
+<section id="section-9.1">
+        <h3 id="name-upgrade-token-registration">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-upgrade-token-registration" class="section-name selfRef">Upgrade Token Registration</a>
+        </h3>
+<p id="section-9.1-1">The following entry is added to the "Hypertext Transfer Protocol (HTTP) Upgrade
+Token Registry" registry established by Section 16.7 of <span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.1-2">The "webtransport" label identifies HTTP/3 used as a protocol for WebTransport:<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.1-3">
+          <dt id="section-9.1-3.1">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.1-3.2">
+            <p id="section-9.1-3.2.1">webtransport<a href="#section-9.1-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.1-3.3">Description:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.1-3.4">
+            <p id="section-9.1-3.4.1">WebTransport over HTTP/3<a href="#section-9.1-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.1-3.5">Reference:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.1-3.6">
+            <p id="section-9.1-3.6.1">This document and <span>[<a href="#I-D.ietf-webtrans-http2" class="cite xref">I-D.ietf-webtrans-http2</a>]</span><a href="#section-9.1-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="http3-settings">
+<section id="section-9.2">
+        <h3 id="name-http-3-settings-parameter-r">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-http-3-settings-parameter-r" class="section-name selfRef">HTTP/3 SETTINGS Parameter Registration</a>
+        </h3>
+<p id="section-9.2-1">The following entry is added to the "HTTP/3 Settings" registry established by
+<span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>:<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.2-2">The <code>SETTINGS_WEBTRANSPORT_MAX_SESSIONS</code> parameter indicates that the specified
+HTTP/3 endpoint is WebTransport-capable and the number of concurrent sessions
+it is willing to receive. The default value for the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the endpoint
+is not willing to receive any WebTransport sessions.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.2-3">
+          <dt id="section-9.2-3.1">Setting Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-3.2">
+            <p id="section-9.2-3.2.1">WEBTRANSPORT_MAX_SESSIONS<a href="#section-9.2-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-3.3">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-3.4">
+            <p id="section-9.2-3.4.1">0xc671706a<a href="#section-9.2-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-3.5">Default:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-3.6">
+            <p id="section-9.2-3.6.1">0<a href="#section-9.2-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-3.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-3.8">
+            <p id="section-9.2-3.8.1">This document<a href="#section-9.2-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<div id="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI">
+<p id="section-9.2-4">The <span id="iref-settings_webtransport_initial_max" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> parameter indicates the
+initial value for the unidirectional max stream limit, otherwise communicated
+by the <span id="iref-wt_max_streams-43" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule (see <a href="#WT_MAX_STREAMS" class="auto internal xref">Section 5.6.1</a>). The default value for
+the <span id="iref-settings_webtransport_initial_max_" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> parameter is "0", indicating
+that the endpoint needs to send <span id="iref-wt_max_streams-45" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules on each individual
+WebTransport session before its peer is allowed to create any unidirectional
+streams within that session.<a href="#section-9.2-4" class="pilcrow">¶</a></p>
+</div>
+<p id="section-9.2-5">Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.<a href="#section-9.2-5" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.2-6">
+          <dt id="section-9.2-6.1">Setting Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-6.2">
+            <p id="section-9.2-6.2.1"><span id="iref-settings_webtransport_initial_max_s" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a><a href="#section-9.2-6.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-6.3">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-6.4">
+            <p id="section-9.2-6.4.1">0x2b64<a href="#section-9.2-6.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-6.5">Default:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-6.6">
+            <p id="section-9.2-6.6.1">0<a href="#section-9.2-6.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-6.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-6.8">
+            <p id="section-9.2-6.8.1">This document<a href="#section-9.2-6.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<div id="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI">
+<p id="section-9.2-7">The <span id="iref-settings_webtransport_initial_max_s-2" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a> parameter indicates the
+initial value for the bidirectional max stream limit, otherwise communicated by
+the <span id="iref-wt_max_streams-48" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule (see <a href="#WT_MAX_STREAMS" class="auto internal xref">Section 5.6.1</a>). The default value for the
+<span id="iref-settings_webtransport_initial_max_s-3" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a> parameter is "0", indicating
+that the endpoint needs to send <span id="iref-wt_max_streams-50" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules on each individual
+WebTransport session before its peer is allowed to create any bidirectional
+streams within that session.<a href="#section-9.2-7" class="pilcrow">¶</a></p>
+</div>
+<p id="section-9.2-8">Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.<a href="#section-9.2-8" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.2-9">
+          <dt id="section-9.2-9.1">Setting Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-9.2">
+            <p id="section-9.2-9.2.1"><span id="iref-settings_webtransport_initial_max_s-4" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a><a href="#section-9.2-9.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-9.3">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-9.4">
+            <p id="section-9.2-9.4.1">0x2b65<a href="#section-9.2-9.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-9.5">Default:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-9.6">
+            <p id="section-9.2-9.6.1">0<a href="#section-9.2-9.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-9.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-9.8">
+            <p id="section-9.2-9.8.1">This document<a href="#section-9.2-9.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<div id="SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA">
+<p id="section-9.2-10">The <span id="iref-settings_webtransport_initial_max_d" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> parameter indicates the initial value
+for the session data limit, otherwise communicated by the <span id="iref-wt_max_data-53" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule
+(see <a href="#WT_MAX_DATA" class="auto internal xref">Section 5.8</a>). The default value for the
+<span id="iref-settings_webtransport_initial_max_d-2" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> parameter is "0", indicating that the
+endpoint needs to send a <span id="iref-wt_max_data-55" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule within each session before its
+peer is allowed to send any stream data within that session.<a href="#section-9.2-10" class="pilcrow">¶</a></p>
+</div>
+<p id="section-9.2-11">Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.<a href="#section-9.2-11" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.2-12">
+          <dt id="section-9.2-12.1">Setting Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-12.2">
+            <p id="section-9.2-12.2.1"><span id="iref-settings_webtransport_initial_max_d-3" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a><a href="#section-9.2-12.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-12.3">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-12.4">
+            <p id="section-9.2-12.4.1">0x2b61<a href="#section-9.2-12.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-12.5">Default:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-12.6">
+            <p id="section-9.2-12.6.1">0<a href="#section-9.2-12.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.2-12.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.2-12.8">
+            <p id="section-9.2-12.8.1">This document<a href="#section-9.2-12.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="frame-type-registration">
+<section id="section-9.3">
+        <h3 id="name-frame-type-registration">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-frame-type-registration" class="section-name selfRef">Frame Type Registration</a>
+        </h3>
+<p id="section-9.3-1">The following entry is added to the "HTTP/3 Frame Type" registry established by
+<span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>:<a href="#section-9.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.3-2">The <code>WEBTRANSPORT_STREAM</code> frame is reserved for the purpose of avoiding
+collision with WebTransport HTTP/3 extensions:<a href="#section-9.3-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.3-3">
+          <dt id="section-9.3-3.1">Code:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.3-3.2">
+            <p id="section-9.3-3.2.1">0x41<a href="#section-9.3-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.3-3.3">Frame Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.3-3.4">
+            <p id="section-9.3-3.4.1">WEBTRANSPORT_STREAM<a href="#section-9.3-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.3-3.5">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.3-3.6">
+            <p id="section-9.3-3.6.1">This document<a href="#section-9.3-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="stream-type-registration">
+<section id="section-9.4">
+        <h3 id="name-stream-type-registration">
+<a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-stream-type-registration" class="section-name selfRef">Stream Type Registration</a>
+        </h3>
+<p id="section-9.4-1">The following entry is added to the "HTTP/3 Stream Type" registry established by
+<span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>:<a href="#section-9.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.4-2">The "WebTransport stream" type allows unidirectional streams to be used by
+WebTransport:<a href="#section-9.4-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.4-3">
+          <dt id="section-9.4-3.1">Code:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.4-3.2">
+            <p id="section-9.4-3.2.1">0x54<a href="#section-9.4-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.4-3.3">Stream Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.4-3.4">
+            <p id="section-9.4-3.4.1">WebTransport stream<a href="#section-9.4-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.4-3.5">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.4-3.6">
+            <p id="section-9.4-3.6.1">This document<a href="#section-9.4-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.4-3.7">Sender:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.4-3.8">
+            <p id="section-9.4-3.8.1">Both<a href="#section-9.4-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="http3-error-code-registration">
+<section id="section-9.5">
+        <h3 id="name-http-3-error-code-registrat">
+<a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-http-3-error-code-registrat" class="section-name selfRef">HTTP/3 Error Code Registration</a>
+        </h3>
+<p id="section-9.5-1">The following entry is added to the "HTTP/3 Error Code" registry established by
+<span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>:<a href="#section-9.5-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.5-2">
+          <dt id="section-9.5-2.1">Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.2">
+            <p id="section-9.5-2.2.1">WEBTRANSPORT_BUFFERED_STREAM_REJECTED<a href="#section-9.5-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.3">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.4">
+            <p id="section-9.5-2.4.1">0x3994bd84<a href="#section-9.5-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.5">Description:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.6">
+            <p id="section-9.5-2.6.1">WebTransport data stream rejected due to lack of associated session.<a href="#section-9.5-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.8">
+            <p id="section-9.5-2.8.1">This document.<a href="#section-9.5-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.9">Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.10">
+            <p id="section-9.5-2.10.1">WEBTRANSPORT_SESSION_GONE<a href="#section-9.5-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.11">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.12">
+            <p id="section-9.5-2.12.1">0x170d7b68<a href="#section-9.5-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.13">Description:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.14">
+            <p id="section-9.5-2.14.1">WebTransport data stream aborted because the associated WebTransport session
+has been closed.<a href="#section-9.5-2.14.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.15">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.16">
+            <p id="section-9.5-2.16.1">This document.<a href="#section-9.5-2.16.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-9.5-3">In addition, the following range of entries is registered:<a href="#section-9.5-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.5-4">
+          <dt id="section-9.5-4.1">Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-4.2">
+            <p id="section-9.5-4.2.1">WEBTRANSPORT_APPLICATION_ERROR<a href="#section-9.5-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-4.3">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-4.4">
+            <p id="section-9.5-4.4.1">0x52e4a40fa8db to 0x52e5ac983162 inclusive, with the exception of
+the codepoints of form 0x1f * N + 0x21.<a href="#section-9.5-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-4.5">Description:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-4.6">
+            <p id="section-9.5-4.6.1">WebTransport application error codes.<a href="#section-9.5-4.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-4.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-4.8">
+            <p id="section-9.5-4.8.1">This document.<a href="#section-9.5-4.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="capsule-types">
+<section id="section-9.6">
+        <h3 id="name-capsule-types">
+<a href="#section-9.6" class="section-number selfRef">9.6. </a><a href="#name-capsule-types" class="section-name selfRef">Capsule Types</a>
+        </h3>
+<p id="section-9.6-1">The following entries are added to the "HTTP Capsule Types" registry established
+by <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>:<a href="#section-9.6-1" class="pilcrow">¶</a></p>
+<p id="section-9.6-2">The <code>WT_CLOSE_SESSION</code> capsule.<a href="#section-9.6-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-3">
+          <dt id="section-9.6-3.1">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-3.2">
+            <p id="section-9.6-3.2.1">0x2843<a href="#section-9.6-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-3.3">Capsule Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-3.4">
+            <p id="section-9.6-3.4.1">WT_CLOSE_SESSION<a href="#section-9.6-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-3.5">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-3.6">
+            <p id="section-9.6-3.6.1">permanent<a href="#section-9.6-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-3.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-3.8">
+            <p id="section-9.6-3.8.1">This document<a href="#section-9.6-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-3.9">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-3.10">
+            <p id="section-9.6-3.10.1">IETF<a href="#section-9.6-3.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-3.11">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-3.12">
+            <p id="section-9.6-3.12.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.6-3.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-3.13">Notes:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-3.14">
+            <p id="section-9.6-3.14.1">None<a href="#section-9.6-3.14.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-9.6-4">The <code>WT_DRAIN_SESSION</code> capsule.<a href="#section-9.6-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-5">
+          <dt id="section-9.6-5.1">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-5.2">
+            <p id="section-9.6-5.2.1">0x78ae<a href="#section-9.6-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-5.3">Capsule Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-5.4">
+            <p id="section-9.6-5.4.1">WT_DRAIN_SESSION<a href="#section-9.6-5.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-5.5">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-5.6">
+            <p id="section-9.6-5.6.1">provisional (when this document is approved this will become permanent)<a href="#section-9.6-5.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-5.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-5.8">
+            <p id="section-9.6-5.8.1">This document<a href="#section-9.6-5.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-5.9">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-5.10">
+            <p id="section-9.6-5.10.1">IETF<a href="#section-9.6-5.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-5.11">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-5.12">
+            <p id="section-9.6-5.12.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.6-5.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-5.13">Notes:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-5.14">
+            <p id="section-9.6-5.14.1">None<a href="#section-9.6-5.14.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-9.6-6">The <code>WT_MAX_STREAMS</code> capsule:<a href="#section-9.6-6" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-7">
+          <dt id="section-9.6-7.1">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-7.2">
+            <p id="section-9.6-7.2.1">0x190B4D3F..0x190B4D40<a href="#section-9.6-7.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-7.3">Capsule Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-7.4">
+            <p id="section-9.6-7.4.1"><span id="iref-wt_max_streams-57" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a><a href="#section-9.6-7.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-7.5">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-7.6">
+            <p id="section-9.6-7.6.1">permanent<a href="#section-9.6-7.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-7.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-7.8">
+            <p id="section-9.6-7.8.1">This document<a href="#section-9.6-7.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-7.9">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-7.10">
+            <p id="section-9.6-7.10.1">IETF<a href="#section-9.6-7.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-7.11">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-7.12">
+            <p id="section-9.6-7.12.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.6-7.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-7.13">Notes:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-7.14">
+            <p id="section-9.6-7.14.1">None<a href="#section-9.6-7.14.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-9.6-8">The <code>WT_STREAMS_BLOCKED</code> capsule:<a href="#section-9.6-8" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-9">
+          <dt id="section-9.6-9.1">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-9.2">
+            <p id="section-9.6-9.2.1">0x190B4D43..0x190B4D44<a href="#section-9.6-9.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-9.3">Capsule Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-9.4">
+            <p id="section-9.6-9.4.1"><span id="iref-wt_streams_blocked-58" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a><a href="#section-9.6-9.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-9.5">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-9.6">
+            <p id="section-9.6-9.6.1">permanent<a href="#section-9.6-9.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-9.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-9.8">
+            <p id="section-9.6-9.8.1">This document<a href="#section-9.6-9.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-9.9">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-9.10">
+            <p id="section-9.6-9.10.1">IETF<a href="#section-9.6-9.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-9.11">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-9.12">
+            <p id="section-9.6-9.12.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.6-9.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-9.13">Notes:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-9.14">
+            <p id="section-9.6-9.14.1">None<a href="#section-9.6-9.14.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-9.6-10">The <code>WT_MAX_DATA</code> capsule:<a href="#section-9.6-10" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-11">
+          <dt id="section-9.6-11.1">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-11.2">
+            <p id="section-9.6-11.2.1">0x190B4D3D<a href="#section-9.6-11.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-11.3">Capsule Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-11.4">
+            <p id="section-9.6-11.4.1"><span id="iref-wt_max_data-59" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a><a href="#section-9.6-11.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-11.5">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-11.6">
+            <p id="section-9.6-11.6.1">permanent<a href="#section-9.6-11.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-11.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-11.8">
+            <p id="section-9.6-11.8.1">This document<a href="#section-9.6-11.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-11.9">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-11.10">
+            <p id="section-9.6-11.10.1">IETF<a href="#section-9.6-11.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-11.11">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-11.12">
+            <p id="section-9.6-11.12.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.6-11.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-11.13">Notes:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-11.14">
+            <p id="section-9.6-11.14.1">None<a href="#section-9.6-11.14.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-9.6-12">The <code>WT_DATA_BLOCKED</code> capsule:<a href="#section-9.6-12" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.6-13">
+          <dt id="section-9.6-13.1">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-13.2">
+            <p id="section-9.6-13.2.1">0x190B4D41<a href="#section-9.6-13.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-13.3">Capsule Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-13.4">
+            <p id="section-9.6-13.4.1"><span id="iref-wt_data_blocked-60" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a><a href="#section-9.6-13.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-13.5">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-13.6">
+            <p id="section-9.6-13.6.1">permanent<a href="#section-9.6-13.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-13.7">Specification:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-13.8">
+            <p id="section-9.6-13.8.1">This document<a href="#section-9.6-13.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-13.9">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-13.10">
+            <p id="section-9.6-13.10.1">IETF<a href="#section-9.6-13.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-13.11">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-13.12">
+            <p id="section-9.6-13.12.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.6-13.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.6-13.13">Notes:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.6-13.14">
+            <p id="section-9.6-13.14.1">None<a href="#section-9.6-13.14.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="iana-http">
+<section id="section-9.7">
+        <h3 id="name-protocol-negotiation-http-h">
+<a href="#section-9.7" class="section-number selfRef">9.7. </a><a href="#name-protocol-negotiation-http-h" class="section-name selfRef">Protocol Negotiation HTTP Header Fields</a>
+        </h3>
+<p id="section-9.7-1">The following HTTP header fields are used for negotiating a protocol
+(<a href="#protocol-negotiation" class="auto internal xref">Section 3.3</a>.  These are added to the "HTTP Field Name" registry
+established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" class="relref">Section 18.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>:<a href="#section-9.7-1" class="pilcrow">¶</a></p>
+<p id="section-9.7-2">The <code>WT-Available-Protocols</code> field:<a href="#section-9.7-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.7-3">
+          <dt id="section-9.7-3.1">Field Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-3.2">
+            <p id="section-9.7-3.2.1">WT-Available-Protocols<a href="#section-9.7-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-3.3">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-3.4">
+            <p id="section-9.7-3.4.1">permanent<a href="#section-9.7-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-3.5">Structured Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-3.6">
+            <p id="section-9.7-3.6.1">List<a href="#section-9.7-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-3.7">Reference:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-3.8">
+            <p id="section-9.7-3.8.1"><a href="#protocol-negotiation" class="auto internal xref">Section 3.3</a><a href="#section-9.7-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-3.9">Comments:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-3.10">
+            <p id="section-9.7-3.10.1">None<a href="#section-9.7-3.10.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-9.7-4">The <code>WT-Protocol</code> field:<a href="#section-9.7-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-9.7-5">
+          <dt id="section-9.7-5.1">Field Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-5.2">
+            <p id="section-9.7-5.2.1">WT-Protocol<a href="#section-9.7-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-5.3">Status:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-5.4">
+            <p id="section-9.7-5.4.1">permanent<a href="#section-9.7-5.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-5.5">Structured Type:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-5.6">
+            <p id="section-9.7-5.6.1">Item<a href="#section-9.7-5.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-5.7">Reference:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-5.8">
+            <p id="section-9.7-5.8.1"><a href="#protocol-negotiation" class="auto internal xref">Section 3.3</a><a href="#section-9.7-5.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.7-5.9">Comments:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.7-5.10">
+            <p id="section-9.7-5.10.1">None<a href="#section-9.7-5.10.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-10">
+      <h2 id="name-references">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-10.1">
+        <h3 id="name-normative-references">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="FIELDS">[FIELDS]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="seriesInfo">RFC 9651</span>, <span class="seriesInfo">DOI 10.17487/RFC9651</span>, <time datetime="2024-09" class="refDate">September 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9651">https://www.rfc-editor.org/rfc/rfc9651</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HTTP">[HTTP]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HTTP-DATAGRAM">[HTTP-DATAGRAM]</dt>
+        <dd>
+<span class="refAuthor">Schinazi, D.</span> and <span class="refAuthor">L. Pardue</span>, <span class="refTitle">"HTTP Datagrams and the Capsule Protocol"</span>, <span class="seriesInfo">RFC 9297</span>, <span class="seriesInfo">DOI 10.17487/RFC9297</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9297">https://www.rfc-editor.org/rfc/rfc9297</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HTTP3">[HTTP3]</dt>
+        <dd>
+<span class="refAuthor">Bishop, M., Ed.</span>, <span class="refTitle">"HTTP/3"</span>, <span class="seriesInfo">RFC 9114</span>, <span class="seriesInfo">DOI 10.17487/RFC9114</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9114">https://www.rfc-editor.org/rfc/rfc9114</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="OVERVIEW">[OVERVIEW]</dt>
+        <dd>
+<span class="refAuthor">Vasiliev, V.</span>, <span class="refTitle">"The WebTransport Protocol Framework"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-overview-09</span>, <time datetime="2025-02-25" class="refDate">25 February 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-09">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-09</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="QUIC-DATAGRAM">[QUIC-DATAGRAM]</dt>
+        <dd>
+<span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Kinnear, E.</span>, and <span class="refAuthor">D. Schinazi</span>, <span class="refTitle">"An Unreliable Datagram Extension to QUIC"</span>, <span class="seriesInfo">RFC 9221</span>, <span class="seriesInfo">DOI 10.17487/RFC9221</span>, <time datetime="2022-03" class="refDate">March 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9221">https://www.rfc-editor.org/rfc/rfc9221</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RESET-STREAM-AT">[RESET-STREAM-AT]</dt>
+        <dd>
+<span class="refAuthor">Seemann, M.</span> and <span class="refAuthor">K. Oku</span>, <span class="refTitle">"QUIC Stream Resets with Partial Delivery"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-quic-reliable-stream-reset-07</span>, <time datetime="2025-06-14" class="refDate">14 June 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07">https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3986">[RFC3986]</dt>
+        <dd>
+<span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6454">[RFC6454]</dt>
+        <dd>
+<span class="refAuthor">Barth, A.</span>, <span class="refTitle">"The Web Origin Concept"</span>, <span class="seriesInfo">RFC 6454</span>, <span class="seriesInfo">DOI 10.17487/RFC6454</span>, <time datetime="2011-12" class="refDate">December 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6454">https://www.rfc-editor.org/rfc/rfc6454</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8441">[RFC8441]</dt>
+        <dd>
+<span class="refAuthor">McManus, P.</span>, <span class="refTitle">"Bootstrapping WebSockets with HTTP/2"</span>, <span class="seriesInfo">RFC 8441</span>, <span class="seriesInfo">DOI 10.17487/RFC8441</span>, <time datetime="2018-09" class="refDate">September 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8441">https://www.rfc-editor.org/rfc/rfc8441</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8446">[RFC8446]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9000">[RFC9000]</dt>
+        <dd>
+<span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9000">https://www.rfc-editor.org/rfc/rfc9000</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9110">[RFC9110]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9114">[RFC9114]</dt>
+        <dd>
+<span class="refAuthor">Bishop, M., Ed.</span>, <span class="refTitle">"HTTP/3"</span>, <span class="seriesInfo">RFC 9114</span>, <span class="seriesInfo">DOI 10.17487/RFC9114</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9114">https://www.rfc-editor.org/rfc/rfc9114</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9218">[RFC9218]</dt>
+        <dd>
+<span class="refAuthor">Oku, K.</span> and <span class="refAuthor">L. Pardue</span>, <span class="refTitle">"Extensible Prioritization Scheme for HTTP"</span>, <span class="seriesInfo">RFC 9218</span>, <span class="seriesInfo">DOI 10.17487/RFC9218</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9218">https://www.rfc-editor.org/rfc/rfc9218</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9220">[RFC9220]</dt>
+      <dd>
+<span class="refAuthor">Hamilton, R.</span>, <span class="refTitle">"Bootstrapping WebSockets with HTTP/3"</span>, <span class="seriesInfo">RFC 9220</span>, <span class="seriesInfo">DOI 10.17487/RFC9220</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9220">https://www.rfc-editor.org/rfc/rfc9220</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-10.2">
+        <h3 id="name-informative-references">
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="I-D.ietf-webtrans-http2">[I-D.ietf-webtrans-http2]</dt>
+        <dd>
+<span class="refAuthor">Frindell, A.</span>, <span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Vasiliev, V.</span>, and <span class="refAuthor">G. Xie</span>, <span class="refTitle">"WebTransport over HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-http2-11</span>, <time datetime="2025-03-16" class="refDate">16 March 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-11">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-11</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="ORIGIN">[ORIGIN]</dt>
+        <dd>
+<span class="refAuthor">Fette, I.</span> and <span class="refAuthor">A. Melnikov</span>, <span class="refTitle">"The WebSocket Protocol"</span>, <span class="seriesInfo">RFC 6455</span>, <span class="seriesInfo">DOI 10.17487/RFC6455</span>, <time datetime="2011-12" class="refDate">December 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6455">https://www.rfc-editor.org/rfc/rfc6455</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7301">[RFC7301]</dt>
+        <dd>
+<span class="refAuthor">Friedl, S.</span>, <span class="refAuthor">Popov, A.</span>, <span class="refAuthor">Langley, A.</span>, and <span class="refAuthor">E. Stephan</span>, <span class="refTitle">"Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension"</span>, <span class="seriesInfo">RFC 7301</span>, <span class="seriesInfo">DOI 10.17487/RFC7301</span>, <time datetime="2014-07" class="refDate">July 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7301">https://www.rfc-editor.org/rfc/rfc7301</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9208">[RFC9208]</dt>
+        <dd>
+<span class="refAuthor">Melnikov, A.</span>, <span class="refTitle">"IMAP QUOTA Extension"</span>, <span class="seriesInfo">RFC 9208</span>, <span class="seriesInfo">DOI 10.17487/RFC9208</span>, <time datetime="2022-03" class="refDate">March 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9208">https://www.rfc-editor.org/rfc/rfc9208</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9308">[RFC9308]</dt>
+      <dd>
+<span class="refAuthor">Kühlewind, M.</span> and <span class="refAuthor">B. Trammell</span>, <span class="refTitle">"Applicability of the QUIC Transport Protocol"</span>, <span class="seriesInfo">RFC 9308</span>, <span class="seriesInfo">DOI 10.17487/RFC9308</span>, <time datetime="2022-09" class="refDate">September 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9308">https://www.rfc-editor.org/rfc/rfc9308</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="changelog">
+<section id="appendix-A">
+      <h2 id="name-changelog">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-changelog" class="section-name selfRef">Changelog</a>
+      </h2>
+<div id="changes-between-draft-versions-02-and-07">
+<section id="appendix-A.1">
+        <h3 id="name-changes-between-draft-versi">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-changes-between-draft-versi" class="section-name selfRef">Changes between draft versions 02 and 07</a>
+        </h3>
+<p id="appendix-A.1-1">The following changes make the draft-02 and draft-07 versions of this protocol
+incompatible:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-A.1-2.1">
+            <p id="appendix-A.1-2.1.1">draft-07 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86) and uses it for
+version negotiation (#129)<a href="#appendix-A.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-2.2">
+            <p id="appendix-A.1-2.2.1">draft-07 explicitly requires SETTINGS_ENABLE_CONNECT_PROTOCOL to be enabled
+(#93)<a href="#appendix-A.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-2.3">
+            <p id="appendix-A.1-2.3.1">draft-07 explicitly requires SETTINGS_H3_DATAGRAM to be enabled (#106)<a href="#appendix-A.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-2.4">
+            <p id="appendix-A.1-2.4.1">draft-07 only allows WEBTRANSPORT_STREAM at the beginning of the stream<a href="#appendix-A.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="appendix-A.1-3">The following changes that are present in draft-07 can be also implemented by a
+draft-02 implementation safely:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-A.1-4.1">
+            <p id="appendix-A.1-4.1.1">Expanding stream reset error code space from 8 to 32 bits (#115)<a href="#appendix-A.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-4.2">
+            <p id="appendix-A.1-4.2.1">WEBTRANSPORT_SESSION_GONE error code (#75)<a href="#appendix-A.1-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-4.3">
+            <p id="appendix-A.1-4.3.1">Handling for HTTP GOAWAY (#76)<a href="#appendix-A.1-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-4.4">
+            <p id="appendix-A.1-4.4.1">DRAIN_WEBTRANSPORT_SESSION capsule (#79)<a href="#appendix-A.1-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-4.5">
+            <p id="appendix-A.1-4.5.1">Disallowing following redirects automatically (#113)<a href="#appendix-A.1-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<section id="appendix-B">
+      <h2 id="name-index">
+<a href="#name-index" class="section-name selfRef">Index</a>
+      </h2>
+<div id="rfc.index.index">
+<p id="appendix-B-1">
+        <a href="#rfc.index.u83" class="internal xref">S</a>
+        <a href="#rfc.index.u87" class="internal xref">W</a><a href="#appendix-B-1" class="pilcrow">¶</a></p>
+</div>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="appendix-B-2.1">
+          <div id="rfc.index.u83">
+<p id="appendix-B-2.1.1" class="keepWithNext">
+            <a href="#rfc.index.u83" class="internal xref">S</a><a href="#appendix-B-2.1.1" class="pilcrow">¶</a></p>
+</div>
+<ul class="compact normal ulEmpty">
+<li class="compact normal ulEmpty" id="appendix-B-2.1.2.1">
+              <span class="break"></span><dl class="dlCompact dlParallel" id="appendix-B-2.1.2.1.1">
+                <dt id="appendix-B-2.1.2.1.1.1">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</dt>
+                <dd style="margin-left: 1.5em" id="appendix-B-2.1.2.1.1.2">
+                  <p id="appendix-B-2.1.2.1.1.2.1">
+                    <a href="#section-5.5-2.2.1" class="auto internal xref">Section 5.5, Paragraph 2.2.1</a>; 
+<a href="#section-5.8-8" class="auto internal xref">Section 5.8, Paragraph 8</a>; 
+<a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="auto internal xref">Section 9.2, Paragraph 10</a>; 
+<a href="#section-9.2-12.2.1" class="auto internal xref">Section 9.2, Paragraph 12.2.1</a><a href="#appendix-B-2.1.2.1.1.2.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt id="appendix-B-2.1.2.1.1.3">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</dt>
+                <dd style="margin-left: 1.5em" id="appendix-B-2.1.2.1.1.4">
+                  <p id="appendix-B-2.1.2.1.1.4.1">
+                    <a href="#section-5.5-2.1.1" class="auto internal xref">Section 5.5, Paragraph 2.1.1</a>; 
+<a href="#section-5.6.1-9" class="auto internal xref">Section 5.6.1, Paragraph 9</a>; 
+<a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="auto internal xref">Section 9.2, Paragraph 7</a>; 
+<a href="#section-9.2-9.2.1" class="auto internal xref">Section 9.2, Paragraph 9.2.1</a><a href="#appendix-B-2.1.2.1.1.4.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt id="appendix-B-2.1.2.1.1.5">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</dt>
+                <dd style="margin-left: 1.5em" id="appendix-B-2.1.2.1.1.6">
+                  <p id="appendix-B-2.1.2.1.1.6.1">
+                    <a href="#section-5.5-2.1.1" class="auto internal xref">Section 5.5, Paragraph 2.1.1</a>; 
+<a href="#section-5.6.1-9" class="auto internal xref">Section 5.6.1, Paragraph 9</a>; 
+<a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="auto internal xref">Section 9.2, Paragraph 4</a>; 
+<a href="#section-9.2-6.2.1" class="auto internal xref">Section 9.2, Paragraph 6.2.1</a><a href="#appendix-B-2.1.2.1.1.6.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+</li>
+          </ul>
+</li>
+        <li class="normal ulEmpty" id="appendix-B-2.2">
+          <div id="rfc.index.u87">
+<p id="appendix-B-2.2.1" class="keepWithNext">
+            <a href="#rfc.index.u87" class="internal xref">W</a><a href="#appendix-B-2.2.1" class="pilcrow">¶</a></p>
+</div>
+<ul class="compact normal ulEmpty">
+<li class="compact normal ulEmpty" id="appendix-B-2.2.2.1">
+              <span class="break"></span><dl class="dlCompact dlParallel" id="appendix-B-2.2.2.1.1">
+                <dt id="appendix-B-2.2.2.1.1.1">WT_DATA_BLOCKED</dt>
+                <dd style="margin-left: 1.5em" id="appendix-B-2.2.2.1.1.2">
+                  <p id="appendix-B-2.2.2.1.1.2.1">
+                    <a href="#section-5.3-3" class="auto internal xref">Section 5.3, Paragraph 3</a>; 
+<a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
+<a href="#section-5.9-1" class="auto internal xref">Section 5.9, Paragraph 1</a>; 
+<a href="#section-5.9-3" class="auto internal xref">Section 5.9, Paragraph 3</a>; 
+<a href="#section-5.9-5" class="auto internal xref">Section 5.9, Paragraph 5</a>; 
+<a href="#section-9.6-13.4.1" class="auto internal xref">Section 9.6, Paragraph 13.4.1</a><a href="#appendix-B-2.2.2.1.1.2.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt id="appendix-B-2.2.2.1.1.3">WT_MAX_DATA</dt>
+                <dd style="margin-left: 1.5em" id="appendix-B-2.2.2.1.1.4">
+                  <p id="appendix-B-2.2.2.1.1.4.1">
+                    <a href="#section-5.3-1" class="auto internal xref">Section 5.3, Paragraph 1</a>; 
+<a href="#section-5.3-2" class="auto internal xref">Section 5.3, Paragraph 2</a>; 
+<a href="#section-5.3-3" class="auto internal xref">Section 5.3, Paragraph 3</a>; 
+<a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
+<a href="#section-5.5-2.2.1" class="auto internal xref">Section 5.5, Paragraph 2.2.1</a>; 
+<a href="#section-5.8-1" class="auto internal xref">Section 5.8, Paragraph 1</a>; 
+<a href="#section-5.8-2" class="auto internal xref">Section 5.8, Paragraph 2</a>; 
+<a href="#section-5.8-4" class="auto internal xref">Section 5.8, Paragraph 4</a>; 
+<a href="#section-5.8-7" class="auto internal xref">Section 5.8, Paragraph 7</a>; 
+<a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="auto internal xref">Section 9.2, Paragraph 10</a>; 
+<a href="#section-9.6-11.4.1" class="auto internal xref">Section 9.6, Paragraph 11.4.1</a><a href="#appendix-B-2.2.2.1.1.4.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt id="appendix-B-2.2.2.1.1.5">WT_MAX_STREAMS</dt>
+                <dd style="margin-left: 1.5em" id="appendix-B-2.2.2.1.1.6">
+                  <p id="appendix-B-2.2.2.1.1.6.1">
+                    <a href="#section-5.2-1" class="auto internal xref">Section 5.2, Paragraph 1</a>; 
+<a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
+<a href="#section-5.5-2.1.1" class="auto internal xref">Section 5.5, Paragraph 2.1.1</a>; 
+<a href="#section-5.6.1-1" class="auto internal xref">Section 5.6.1, Paragraph 1</a>; 
+<a href="#section-5.6.1-2" class="auto internal xref">Section 5.6.1, Paragraph 2</a>; 
+<a href="#section-5.6.1-4" class="auto internal xref">Section 5.6.1, Paragraph 4</a>; 
+<a href="#section-5.6.1-8" class="auto internal xref">Section 5.6.1, Paragraph 8</a>; 
+<a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="auto internal xref">Section 9.2, Paragraph 4</a>; 
+<a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="auto internal xref">Section 9.2, Paragraph 7</a>; 
+<a href="#section-9.6-7.4.1" class="auto internal xref">Section 9.6, Paragraph 7.4.1</a><a href="#appendix-B-2.2.2.1.1.6.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt id="appendix-B-2.2.2.1.1.7">WT_STREAMS_BLOCKED</dt>
+                <dd style="margin-left: 1.5em" id="appendix-B-2.2.2.1.1.8">
+                  <p id="appendix-B-2.2.2.1.1.8.1">
+                    <a href="#section-5.2-5" class="auto internal xref">Section 5.2, Paragraph 5</a>; 
+<a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
+<a href="#section-5.7-1" class="auto internal xref">Section 5.7, Paragraph 1</a>; 
+<a href="#section-5.7-2" class="auto internal xref">Section 5.7, Paragraph 2</a>; 
+<a href="#section-5.7-4" class="auto internal xref">Section 5.7, Paragraph 4</a>; 
+<a href="#section-5.7-6" class="auto internal xref">Section 5.7, Paragraph 6</a>; 
+<a href="#section-9.6-9.4.1" class="auto internal xref">Section 9.6, Paragraph 9.4.1</a><a href="#appendix-B-2.2.2.1.1.8.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+</li>
+          </ul>
+</li>
+      </ul>
+</section>
+<div id="authors-addresses">
+<section id="appendix-C">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Alan Frindell</span></div>
+<div dir="auto" class="left"><span class="org">Facebook</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:afrind@fb.com" class="email">afrind@fb.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Eric Kinnear</span></div>
+<div dir="auto" class="left"><span class="org">Apple Inc.</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:ekinnear@apple.com" class="email">ekinnear@apple.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Victor Vasiliev</span></div>
+<div dir="auto" class="left"><span class="org">Google</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:vasilvv@google.com" class="email">vasilvv@google.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
