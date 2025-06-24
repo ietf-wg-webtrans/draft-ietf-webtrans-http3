@@ -1532,11 +1532,11 @@ the client may be using a version of the WebTransport extension that is
 different from the one used by the server.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
 <p id="section-3.1-6">Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
 Capsule Protocol, both the client and the server MUST indicate support for
-HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM value set to 1 in their
-SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>). Servers should also
-note that CONNECT requests to establish new WebTransport sessions, in addition
-to other messages, may arrive before this SETTING is received (see
-<a href="#buffering-incoming" class="auto internal xref">Section 4.5</a>).<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM setting value set to 1 in
+their SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>). Servers should
+also note that CONNECT requests to establish new WebTransport sessions, in
+addition to other messages, may arrive before this SETTING is received (see{
+{buffering-incoming}}).<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 <p id="section-3.1-7">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
 support, both the client and the server MUST send a max_datagram_frame_size
 transport parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-7" class="pilcrow">¶</a></p>
@@ -1937,7 +1937,7 @@ stream, WebTransport or otherwise; see <span><a href="https://rfc-editor.org/rfc
         <h3 id="name-limiting-the-number-of-simu">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-limiting-the-number-of-simu" class="section-name selfRef">Limiting the Number of Simultaneous Sessions</a>
         </h3>
-<p id="section-5.1-1">This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter that allows
+<p id="section-5.1-1">This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting that allows
 the server to limit the maximum number of concurrent WebTransport sessions on a
 single HTTP/3 connection.  The client MUST NOT open more simultaneous sessions
 than indicated in the server SETTINGS parameter.  The server MUST NOT close
@@ -2325,7 +2325,7 @@ used to identify WebTransport, allowing servers to offer multiple
 versions simultaneously (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-7-1" class="pilcrow">¶</a></p>
 <p id="section-7-2">Servers that support future incompatible versions of WebTransport signal that
 support by changing the codepoint used for the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter (see <a href="#http3-settings" class="auto internal xref">Section 9.2</a>).  Clients
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting (see <a href="#http3-settings" class="auto internal xref">Section 9.2</a>).  Clients
 can select the associated upgrade token, if applicable, to use when
 establishing a new session, ensuring that servers will always know the syntax
 in use for every incoming request.<a href="#section-7-2" class="pilcrow">¶</a></p>
@@ -2341,7 +2341,7 @@ session associated with that stream.<a href="#section-7-3" class="pilcrow">¶</a
         </h3>
 <p id="section-7.1-1">[[RFC editor: please remove this section before publication.]]<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 <p id="section-7.1-2">The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter.  Because of that,
+used for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting.  Because of that,
 any WebTransport endpoint MUST wait for the peer's SETTINGS frame before
 sending or processing any WebTransport traffic.  When multiple versions are
 supported by both of the peers, the most recent version supported by both is
@@ -2417,10 +2417,10 @@ Token Registry" registry established by Section 16.7 of <span>[<a href="#HTTP" c
         </h3>
 <p id="section-9.2-1">The following entry is added to the "HTTP/3 Settings" registry established by
 <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>:<a href="#section-9.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.2-2">The <code>SETTINGS_WEBTRANSPORT_MAX_SESSIONS</code> parameter indicates that the specified
+<p id="section-9.2-2">The <code>SETTINGS_WEBTRANSPORT_MAX_SESSIONS</code> setting indicates that the specified
 HTTP/3 endpoint is WebTransport-capable and the number of concurrent sessions
 it is willing to receive. The default value for the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the endpoint
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that the endpoint
 is not willing to receive any WebTransport sessions.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-9.2-3">
           <dt id="section-9.2-3.1">Setting Name:</dt>
@@ -2445,10 +2445,10 @@ is not willing to receive any WebTransport sessions.<a href="#section-9.2-2" cla
         <dd class="break"></dd>
 </dl>
 <div id="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI">
-<p id="section-9.2-4">The <span id="iref-settings_webtransport_initial_max" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> parameter indicates the
+<p id="section-9.2-4">The <span id="iref-settings_webtransport_initial_max" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> setting indicates the
 initial value for the unidirectional max stream limit, otherwise communicated
 by the <span id="iref-wt_max_streams-43" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule (see <a href="#WT_MAX_STREAMS" class="auto internal xref">Section 5.6.1</a>). The default value for
-the <span id="iref-settings_webtransport_initial_max_" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> parameter is "0", indicating
+the <span id="iref-settings_webtransport_initial_max_" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI</a> setting is "0", indicating
 that the endpoint needs to send <span id="iref-wt_max_streams-45" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules on each individual
 WebTransport session before its peer is allowed to create any unidirectional
 streams within that session.<a href="#section-9.2-4" class="pilcrow">¶</a></p>
@@ -2478,10 +2478,10 @@ connection on which this SETTING is sent.<a href="#section-9.2-5" class="pilcrow
         <dd class="break"></dd>
 </dl>
 <div id="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI">
-<p id="section-9.2-7">The <span id="iref-settings_webtransport_initial_max_s-2" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a> parameter indicates the
+<p id="section-9.2-7">The <span id="iref-settings_webtransport_initial_max_s-2" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a> setting indicates the
 initial value for the bidirectional max stream limit, otherwise communicated by
 the <span id="iref-wt_max_streams-48" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule (see <a href="#WT_MAX_STREAMS" class="auto internal xref">Section 5.6.1</a>). The default value for the
-<span id="iref-settings_webtransport_initial_max_s-3" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a> parameter is "0", indicating
+<span id="iref-settings_webtransport_initial_max_s-3" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a> setting is "0", indicating
 that the endpoint needs to send <span id="iref-wt_max_streams-50" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules on each individual
 WebTransport session before its peer is allowed to create any bidirectional
 streams within that session.<a href="#section-9.2-7" class="pilcrow">¶</a></p>
@@ -2511,10 +2511,10 @@ connection on which this SETTING is sent.<a href="#section-9.2-8" class="pilcrow
         <dd class="break"></dd>
 </dl>
 <div id="SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA">
-<p id="section-9.2-10">The <span id="iref-settings_webtransport_initial_max_d" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> parameter indicates the initial value
+<p id="section-9.2-10">The <span id="iref-settings_webtransport_initial_max_d" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> setting indicates the initial value
 for the session data limit, otherwise communicated by the <span id="iref-wt_max_data-53" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule
 (see <a href="#WT_MAX_DATA" class="auto internal xref">Section 5.8</a>). The default value for the
-<span id="iref-settings_webtransport_initial_max_d-2" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> parameter is "0", indicating that the
+<span id="iref-settings_webtransport_initial_max_d-2" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> setting is "0", indicating that the
 endpoint needs to send a <span id="iref-wt_max_data-55" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule within each session before its
 peer is allowed to send any stream data within that session.<a href="#section-9.2-10" class="pilcrow">¶</a></p>
 </div>

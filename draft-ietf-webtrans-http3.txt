@@ -292,11 +292,11 @@ Table of Contents
    Because WebTransport over HTTP/3 requires support for HTTP/3
    datagrams and the Capsule Protocol, both the client and the server
    MUST indicate support for HTTP/3 datagrams by sending a
-   SETTINGS_H3_DATAGRAM value set to 1 in their SETTINGS frame (see
-   Section 2.1.1 of [HTTP-DATAGRAM]).  Servers should also note that
-   CONNECT requests to establish new WebTransport sessions, in addition
-   to other messages, may arrive before this SETTING is received (see
-   Section 4.5).
+   SETTINGS_H3_DATAGRAM setting value set to 1 in their SETTINGS frame
+   (see Section 2.1.1 of [HTTP-DATAGRAM]).  Servers should also note
+   that CONNECT requests to establish new WebTransport sessions, in
+   addition to other messages, may arrive before this SETTING is
+   received (see{ {buffering-incoming}}).
 
    WebTransport over HTTP/3 also requires support for QUIC datagrams.
    To indicate support, both the client and the server MUST send a
@@ -689,7 +689,7 @@ Table of Contents
 
 5.1.  Limiting the Number of Simultaneous Sessions
 
-   This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter
+   This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting
    that allows the server to limit the maximum number of concurrent
    WebTransport sessions on a single HTTP/3 connection.  The client MUST
    NOT open more simultaneous sessions than indicated in the server
@@ -1018,7 +1018,7 @@ Table of Contents
 
    Servers that support future incompatible versions of WebTransport
    signal that support by changing the codepoint used for the
-   SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter (see Section 9.2).
+   SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting (see Section 9.2).
    Clients can select the associated upgrade token, if applicable, to
    use when establishing a new session, ensuring that servers will
    always know the syntax in use for every incoming request.
@@ -1035,7 +1035,7 @@ Table of Contents
 
    The wire format aspects of the protocol are negotiated by changing
    the codepoint used for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
-   parameter.  Because of that, any WebTransport endpoint MUST wait for
+   setting.  Because of that, any WebTransport endpoint MUST wait for
    the peer's SETTINGS frame before sending or processing any
    WebTransport traffic.  When multiple versions are supported by both
    of the peers, the most recent version supported by both is selected.
@@ -1093,10 +1093,10 @@ Table of Contents
    The following entry is added to the "HTTP/3 Settings" registry
    established by [HTTP3]:
 
-   The SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter indicates that the
+   The SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting indicates that the
    specified HTTP/3 endpoint is WebTransport-capable and the number of
    concurrent sessions it is willing to receive.  The default value for
-   the SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that
+   the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that
    the endpoint is not willing to receive any WebTransport sessions.
 
    Setting Name:  WEBTRANSPORT_MAX_SESSIONS
@@ -1107,11 +1107,11 @@ Table of Contents
 
    Specification:  This document
 
-   The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI parameter indicates
+   The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI setting indicates
    the initial value for the unidirectional max stream limit, otherwise
    communicated by the WT_MAX_STREAMS capsule (see Section 5.6.1).  The
    default value for the SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI
-   parameter is "0", indicating that the endpoint needs to send
+   setting is "0", indicating that the endpoint needs to send
    WT_MAX_STREAMS capsules on each individual WebTransport session
    before its peer is allowed to create any unidirectional streams
    within that session.
@@ -1127,14 +1127,14 @@ Table of Contents
 
    Specification:  This document
 
-   The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI parameter
-   indicates the initial value for the bidirectional max stream limit,
-   otherwise communicated by the WT_MAX_STREAMS capsule (see
-   Section 5.6.1).  The default value for the
-   SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI parameter is "0",
-   indicating that the endpoint needs to send WT_MAX_STREAMS capsules on
-   each individual WebTransport session before its peer is allowed to
-   create any bidirectional streams within that session.
+   The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI setting indicates
+   the initial value for the bidirectional max stream limit, otherwise
+   communicated by the WT_MAX_STREAMS capsule (see Section 5.6.1).  The
+   default value for the SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI
+   setting is "0", indicating that the endpoint needs to send
+   WT_MAX_STREAMS capsules on each individual WebTransport session
+   before its peer is allowed to create any bidirectional streams within
+   that session.
 
    Note that this limit applies to all WebTransport sessions that use
    the HTTP/3 connection on which this SETTING is sent.
@@ -1147,10 +1147,10 @@ Table of Contents
 
    Specification:  This document
 
-   The SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA parameter indicates the
+   The SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA setting indicates the
    initial value for the session data limit, otherwise communicated by
    the WT_MAX_DATA capsule (see Section 5.8).  The default value for the
-   SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA parameter is "0", indicating
+   SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA setting is "0", indicating
    that the endpoint needs to send a WT_MAX_DATA capsule within each
    session before its peer is allowed to send any stream data within
    that session.
