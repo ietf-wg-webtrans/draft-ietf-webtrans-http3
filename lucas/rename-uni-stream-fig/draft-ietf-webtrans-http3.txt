@@ -463,7 +463,7 @@ Table of Contents
    Unidirectional Stream {
        Stream Type (i) = 0x54,
        Session ID (i),
-       User Specified Stream Data (..)
+       User-Specified Stream Data (..)
    }
 
             Figure 2: Unidirectional WebTransport stream format
