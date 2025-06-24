@@ -741,7 +741,7 @@ Initial values for these limits MAY be communicated by sending non-zero values
 for SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI and
 SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI.
 
-## WT_STREAMS_BLOCKED Capsule {#WT_STREAMS_BLOCKED}
+### WT_STREAMS_BLOCKED Capsule {#WT_STREAMS_BLOCKED}
 
 *[WT_STREAMS_BLOCKED]: #
 
@@ -777,7 +777,7 @@ described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume
 WT_STREAMS_BLOCKED capsules for flow control purposes and MUST generate and
 send appropriate flow control signals for their limits.
 
-## WT_MAX_DATA Capsule {#WT_MAX_DATA}
+### WT_MAX_DATA Capsule {#WT_MAX_DATA}
 
 *[WT_MAX_DATA]: #
 
@@ -818,7 +818,7 @@ control signals for their limits; see {{flow-control-intermediaries}}.
 The initial value for this limit MAY be communicated by sending a non-zero value
 for SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA.
 
-## WT_DATA_BLOCKED Capsule {#WT_DATA_BLOCKED}
+### WT_DATA_BLOCKED Capsule {#WT_DATA_BLOCKED}
 
 *[WT_DATA_BLOCKED]: #
 
