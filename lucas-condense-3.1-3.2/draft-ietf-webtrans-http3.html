@@ -2295,11 +2295,11 @@ length MUST NOT exceed 1024 bytes.<a href="#section-6-7.4.1" class="pilcrow">¶<
       <dd class="break"></dd>
 </dl>
 <p id="section-6-8">An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
-the CONNECT Stream.  The endpoint MAY send a STOP_SENDING to indicate it is no
-longer reading from the CONNECT stream.  The recipient MUST either close or
-reset the stream in response.  If any additional stream data is received on the
-CONNECT stream after receiving a WT_CLOSE_SESSION capsule, the stream MUST be
-reset with code H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
+the CONNECT Stream.  The endpoint MAY send a STOP_SENDING with error code
+WEBTRANSPORT_SESSION_GONE to indicate it is no longer reading from the CONNECT
+stream.  The recipient MUST either close or reset the stream in response.  If
+any additional stream data is received on the CONNECT stream after receiving a
+WT_CLOSE_SESSION capsule, the stream MUST be reset with code H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
 <p id="section-6-9">Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
 semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
 has an error code of 0 and an empty error string.<a href="#section-6-9" class="pilcrow">¶</a></p>
@@ -2646,7 +2646,8 @@ WebTransport:<a href="#section-9.4-2" class="pilcrow">¶</a></p>
 <dt id="section-9.5-2.13">Description:</dt>
           <dd style="margin-left: 1.5em" id="section-9.5-2.14">
             <p id="section-9.5-2.14.1">WebTransport data stream aborted because the associated WebTransport session
-has been closed.<a href="#section-9.5-2.14.1" class="pilcrow">¶</a></p>
+has been closed. Also used to indicate that the endpoint is no longer reading
+from the CONNECT stream.<a href="#section-9.5-2.14.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.5-2.15">Specification:</dt>
