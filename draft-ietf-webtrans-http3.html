@@ -1251,16 +1251,16 @@ web API draft corresponding to this document can be found at
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.1">
                     <p id="section-toc.1-1.5.2.6.2.1.1"><a href="#section-5.6.1" class="auto internal xref">5.6.1</a>.  <a href="#name-wt_max_streams-capsule" class="internal xref">WT_MAX_STREAMS Capsule</a></p>
 </li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.2">
+                    <p id="section-toc.1-1.5.2.6.2.2.1"><a href="#section-5.6.2" class="auto internal xref">5.6.2</a>.  <a href="#name-wt_streams_blocked-capsule" class="internal xref">WT_STREAMS_BLOCKED Capsule</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.3">
+                    <p id="section-toc.1-1.5.2.6.2.3.1"><a href="#section-5.6.3" class="auto internal xref">5.6.3</a>.  <a href="#name-wt_max_data-capsule" class="internal xref">WT_MAX_DATA Capsule</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.4">
+                    <p id="section-toc.1-1.5.2.6.2.4.1"><a href="#section-5.6.4" class="auto internal xref">5.6.4</a>.  <a href="#name-wt_data_blocked-capsule" class="internal xref">WT_DATA_BLOCKED Capsule</a></p>
+</li>
                 </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.7">
-                <p id="section-toc.1-1.5.2.7.1"><a href="#section-5.7" class="auto internal xref">5.7</a>.  <a href="#name-wt_streams_blocked-capsule" class="internal xref">WT_STREAMS_BLOCKED Capsule</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.8">
-                <p id="section-toc.1-1.5.2.8.1"><a href="#section-5.8" class="auto internal xref">5.8</a>.  <a href="#name-wt_max_data-capsule" class="internal xref">WT_MAX_DATA Capsule</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.9">
-                <p id="section-toc.1-1.5.2.9.1"><a href="#section-5.9" class="auto internal xref">5.9</a>.  <a href="#name-wt_data_blocked-capsule" class="internal xref">WT_DATA_BLOCKED Capsule</a></p>
 </li>
             </ul>
 </li>
@@ -1970,7 +1970,7 @@ are applied.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
 <p id="section-5.2-4">Unlike the the QUIC MAX_STREAMS frame, there is no simple relationship between
 the value in this frame and stream IDs in QUIC STREAM frames.  This especially
 applies if there are other users of streams on the connection.<a href="#section-5.2-4" class="pilcrow">¶</a></p>
-<p id="section-5.2-5">The <span id="iref-wt_streams_blocked-2" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (<a href="#WT_STREAMS_BLOCKED" class="auto internal xref">Section 5.7</a>) can be sent to indicate
+<p id="section-5.2-5">The <span id="iref-wt_streams_blocked-2" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (<a href="#WT_STREAMS_BLOCKED" class="auto internal xref">Section 5.6.2</a>) can be sent to indicate
 that an endpoint was unable to create a stream due to the session-level stream
 limit.<a href="#section-5.2-5" class="pilcrow">¶</a></p>
 <p id="section-5.2-6">Note that enforcing this limit requires reliable resets for stream headers so
@@ -1982,7 +1982,7 @@ that both endpoints can agree on the number of streams that are open.<a href="#s
         <h3 id="name-data-limits">
 <a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-data-limits" class="section-name selfRef">Data Limits</a>
         </h3>
-<p id="section-5.3-1">The <span id="iref-wt_max_data-3" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule (<a href="#WT_MAX_DATA" class="auto internal xref">Section 5.8</a>) establishes a limit on the amount of
+<p id="section-5.3-1">The <span id="iref-wt_max_data-3" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule (<a href="#WT_MAX_DATA" class="auto internal xref">Section 5.6.3</a>) establishes a limit on the amount of
 data that can be sent within a WebTransport session.  This limit counts all data
 that is sent on streams of the corresponding type, excluding the stream header
 (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a> and <a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  The stream
@@ -1994,7 +1994,7 @@ implementation with information about the final size of streams; see {
 {Section 4.5 of !RFC9000}}.  This allows both endpoints to agree on how much
 data was consumed by that stream, although the stream header exclusion above
 applies.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
-<p id="section-5.3-3">The <span id="iref-wt_data_blocked-5" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (<a href="#WT_DATA_BLOCKED" class="auto internal xref">Section 5.9</a>) can be sent to indicate that an
+<p id="section-5.3-3">The <span id="iref-wt_data_blocked-5" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (<a href="#WT_DATA_BLOCKED" class="auto internal xref">Section 5.6.4</a>) can be sent to indicate that an
 endpoint was unable to send data due to a limit set by the <span id="iref-wt_max_data-6" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
 capsule.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
 <p id="section-5.3-4">Because WebTransport over HTTP/3 uses a native QUIC stream for each WebTransport
@@ -2109,25 +2109,23 @@ for <span id="iref-settings_webtransport_initial_" class="iref"></span><a href="
 <span id="iref-settings_webtransport_initial_m" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI</a>.<a href="#section-5.6.1-9" class="pilcrow">¶</a></p>
 </section>
 </div>
-</section>
-</div>
 <div id="WT_STREAMS_BLOCKED">
-<section id="section-5.7">
-        <h3 id="name-wt_streams_blocked-capsule">
-<a href="#section-5.7" class="section-number selfRef">5.7. </a><a href="#name-wt_streams_blocked-capsule" class="section-name selfRef">WT_STREAMS_BLOCKED Capsule</a>
-        </h3>
-<p id="section-5.7-1">A sender SHOULD send a <span id="iref-wt_streams_blocked-25" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (type=0x190B4D43 or
+<section id="section-5.6.2">
+          <h4 id="name-wt_streams_blocked-capsule">
+<a href="#section-5.6.2" class="section-number selfRef">5.6.2. </a><a href="#name-wt_streams_blocked-capsule" class="section-name selfRef">WT_STREAMS_BLOCKED Capsule</a>
+          </h4>
+<p id="section-5.6.2-1">A sender SHOULD send a <span id="iref-wt_streams_blocked-25" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule (type=0x190B4D43 or
 0x190B4D44) when it wishes to open a stream but is unable to do so due to the
 maximum stream limit set by its peer.  A <span id="iref-wt_streams_blocked-26" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule of type
 0x190B4D43 is used to indicate reaching the bidirectional stream limit, and a
 STREAMS_BLOCKED capsule of type 0x190B4D44 is used to indicate reaching the
-unidirectional stream limit.<a href="#section-5.7-1" class="pilcrow">¶</a></p>
-<p id="section-5.7-2">A <span id="iref-wt_streams_blocked-27" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule does not open the stream, but informs the peer that
+unidirectional stream limit.<a href="#section-5.6.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.6.2-2">A <span id="iref-wt_streams_blocked-27" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule does not open the stream, but informs the peer that
 a new stream was needed and the stream limit prevented the creation of the
-stream.<a href="#section-5.7-2" class="pilcrow">¶</a></p>
+stream.<a href="#section-5.6.2-2" class="pilcrow">¶</a></p>
 <span id="name-wt_streams_blocked-capsule-"></span><div id="fig-wt_streams_blocked">
 <figure id="figure-6">
-          <div class="alignLeft art-text artwork" id="section-5.7-3.1">
+            <div class="alignLeft art-text artwork" id="section-5.6.2-3.1">
 <pre>
 WT_STREAMS_BLOCKED Capsule {
   Type (i) = 0x190B4D43..0x190B4D44,
@@ -2138,40 +2136,40 @@ WT_STREAMS_BLOCKED Capsule {
 </div>
 <figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-wt_streams_blocked-capsule-" class="selfRef">WT_STREAMS_BLOCKED Capsule Format</a>
-          </figcaption></figure>
+            </figcaption></figure>
 </div>
-<p id="section-5.7-4"><span id="iref-wt_streams_blocked-28" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsules contain the following field:<a href="#section-5.7-4" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-5.7-5">
-          <dt id="section-5.7-5.1">Maximum Streams:</dt>
-          <dd style="margin-left: 1.5em" id="section-5.7-5.2">
-            <p id="section-5.7-5.2.1">A variable-length integer indicating the maximum number of streams allowed
+<p id="section-5.6.2-4"><span id="iref-wt_streams_blocked-28" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsules contain the following field:<a href="#section-5.6.2-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.6.2-5">
+            <dt id="section-5.6.2-5.1">Maximum Streams:</dt>
+            <dd style="margin-left: 1.5em" id="section-5.6.2-5.2">
+              <p id="section-5.6.2-5.2.1">A variable-length integer indicating the maximum number of streams allowed
 at the time the capsule was sent. This value cannot exceed 2<sup>60</sup>,
-as it is not possible to encode stream IDs larger than 2<sup>62</sup>-1.<a href="#section-5.7-5.2.1" class="pilcrow">¶</a></p>
+as it is not possible to encode stream IDs larger than 2<sup>62</sup>-1.<a href="#section-5.6.2-5.2.1" class="pilcrow">¶</a></p>
 </dd>
-        <dd class="break"></dd>
+          <dd class="break"></dd>
 </dl>
-<p id="section-5.7-6">The <span id="iref-wt_streams_blocked-29" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule defines special intermediary handling, as
+<p id="section-5.6.2-6">The <span id="iref-wt_streams_blocked-29" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsule defines special intermediary handling, as
 described in <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume
 <span id="iref-wt_streams_blocked-30" class="iref"></span><a href="#WT_STREAMS_BLOCKED" class="internal xref">WT_STREAMS_BLOCKED</a> capsules for flow control purposes and MUST generate and
-send appropriate flow control signals for their limits.<a href="#section-5.7-6" class="pilcrow">¶</a></p>
+send appropriate flow control signals for their limits.<a href="#section-5.6.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="WT_MAX_DATA">
-<section id="section-5.8">
-        <h3 id="name-wt_max_data-capsule">
-<a href="#section-5.8" class="section-number selfRef">5.8. </a><a href="#name-wt_max_data-capsule" class="section-name selfRef">WT_MAX_DATA Capsule</a>
-        </h3>
-<p id="section-5.8-1">An HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> called <span id="iref-wt_max_data-31" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> (type=0x190B4D3D) is
+<section id="section-5.6.3">
+          <h4 id="name-wt_max_data-capsule">
+<a href="#section-5.6.3" class="section-number selfRef">5.6.3. </a><a href="#name-wt_max_data-capsule" class="section-name selfRef">WT_MAX_DATA Capsule</a>
+          </h4>
+<p id="section-5.6.3-1">An HTTP capsule <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> called <span id="iref-wt_max_data-31" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> (type=0x190B4D3D) is
 introduced to inform the peer of the maximum amount of data that can be sent on
-the WebTransport session as a whole.<a href="#section-5.8-1" class="pilcrow">¶</a></p>
-<p id="section-5.8-2">This limit counts all data that is sent on streams of the corresponding type,
+the WebTransport session as a whole.<a href="#section-5.6.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.6.3-2">This limit counts all data that is sent on streams of the corresponding type,
 excluding the stream header (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a> and
 <a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  Implementing <span id="iref-wt_max_data-32" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC
 stack provide the WebTransport implementation with information about the final
-size of streams; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-5.8-2" class="pilcrow">¶</a></p>
+size of streams; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.<a href="#section-5.6.3-2" class="pilcrow">¶</a></p>
 <span id="name-wt_max_data-capsule-format"></span><div id="fig-wt_max_data">
 <figure id="figure-7">
-          <div class="alignLeft art-text artwork" id="section-5.8-3.1">
+            <div class="alignLeft art-text artwork" id="section-5.6.3-3.1">
 <pre>
 WT_MAX_DATA Capsule {
   Type (i) = 0x190B4D3D,
@@ -2182,40 +2180,40 @@ WT_MAX_DATA Capsule {
 </div>
 <figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
 <a href="#name-wt_max_data-capsule-format" class="selfRef">WT_MAX_DATA Capsule Format</a>
-          </figcaption></figure>
+            </figcaption></figure>
 </div>
-<p id="section-5.8-4"><span id="iref-wt_max_data-33" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsules contain the following field:<a href="#section-5.8-4" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-5.8-5">
-          <dt id="section-5.8-5.1">Maximum Data:</dt>
-          <dd style="margin-left: 1.5em" id="section-5.8-5.2">
-            <p id="section-5.8-5.2.1">A variable-length integer indicating the maximum amount of data that can be
-sent on the entire session, in units of bytes.<a href="#section-5.8-5.2.1" class="pilcrow">¶</a></p>
+<p id="section-5.6.3-4"><span id="iref-wt_max_data-33" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsules contain the following field:<a href="#section-5.6.3-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.6.3-5">
+            <dt id="section-5.6.3-5.1">Maximum Data:</dt>
+            <dd style="margin-left: 1.5em" id="section-5.6.3-5.2">
+              <p id="section-5.6.3-5.2.1">A variable-length integer indicating the maximum amount of data that can be
+sent on the entire session, in units of bytes.<a href="#section-5.6.3-5.2.1" class="pilcrow">¶</a></p>
 </dd>
-        <dd class="break"></dd>
+          <dd class="break"></dd>
 </dl>
-<p id="section-5.8-6">All data sent in WT_STREAM capsules counts toward this limit. The sum of the
+<p id="section-5.6.3-6">All data sent in WT_STREAM capsules counts toward this limit. The sum of the
 lengths of Stream Data fields in WT_STREAM capsules MUST NOT exceed the value
-advertised by a receiver.<a href="#section-5.8-6" class="pilcrow">¶</a></p>
-<p id="section-5.8-7">The <span id="iref-wt_max_data-34" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule defines special intermediary handling, as described in
+advertised by a receiver.<a href="#section-5.6.3-6" class="pilcrow">¶</a></p>
+<p id="section-5.6.3-7">The <span id="iref-wt_max_data-34" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule defines special intermediary handling, as described in
 <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume <span id="iref-wt_max_data-35" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
 capsules for flow control purposes and MUST generate and send appropriate flow
-control signals for their limits; see <a href="#flow-control-intermediaries" class="auto internal xref">Section 5.4</a>.<a href="#section-5.8-7" class="pilcrow">¶</a></p>
-<p id="section-5.8-8">The initial value for this limit MAY be communicated by sending a non-zero value
-for <span id="iref-settings_webtransport_initial_ma" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a>.<a href="#section-5.8-8" class="pilcrow">¶</a></p>
+control signals for their limits; see <a href="#flow-control-intermediaries" class="auto internal xref">Section 5.4</a>.<a href="#section-5.6.3-7" class="pilcrow">¶</a></p>
+<p id="section-5.6.3-8">The initial value for this limit MAY be communicated by sending a non-zero value
+for <span id="iref-settings_webtransport_initial_ma" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a>.<a href="#section-5.6.3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="WT_DATA_BLOCKED">
-<section id="section-5.9">
-        <h3 id="name-wt_data_blocked-capsule">
-<a href="#section-5.9" class="section-number selfRef">5.9. </a><a href="#name-wt_data_blocked-capsule" class="section-name selfRef">WT_DATA_BLOCKED Capsule</a>
-        </h3>
-<p id="section-5.9-1">A sender SHOULD send a <span id="iref-wt_data_blocked-37" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (type=0x190B4D41) when it wishes
+<section id="section-5.6.4">
+          <h4 id="name-wt_data_blocked-capsule">
+<a href="#section-5.6.4" class="section-number selfRef">5.6.4. </a><a href="#name-wt_data_blocked-capsule" class="section-name selfRef">WT_DATA_BLOCKED Capsule</a>
+          </h4>
+<p id="section-5.6.4-1">A sender SHOULD send a <span id="iref-wt_data_blocked-37" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (type=0x190B4D41) when it wishes
 to send data but is unable to do so due to WebTransport session-level flow
 control.  <span id="iref-wt_data_blocked-38" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsules can be used as input to tuning of flow
-control algorithms.<a href="#section-5.9-1" class="pilcrow">¶</a></p>
+control algorithms.<a href="#section-5.6.4-1" class="pilcrow">¶</a></p>
 <span id="name-wt_data_blocked-capsule-for"></span><div id="fig-wt_data_blocked">
 <figure id="figure-8">
-          <div class="alignLeft art-text artwork" id="section-5.9-2.1">
+            <div class="alignLeft art-text artwork" id="section-5.6.4-2.1">
 <pre>
 WT_DATA_BLOCKED Capsule {
   Type (i) = 0x190B4D41,
@@ -2226,22 +2224,24 @@ WT_DATA_BLOCKED Capsule {
 </div>
 <figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
 <a href="#name-wt_data_blocked-capsule-for" class="selfRef">WT_DATA_BLOCKED Capsule Format</a>
-          </figcaption></figure>
+            </figcaption></figure>
 </div>
-<p id="section-5.9-3"><span id="iref-wt_data_blocked-39" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsules contain the following field:<a href="#section-5.9-3" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-5.9-4">
-          <dt id="section-5.9-4.1">Maximum Data:</dt>
-          <dd style="margin-left: 1.5em" id="section-5.9-4.2">
-            <p id="section-5.9-4.2.1">A variable-length integer indicating the session-level limit at which
-blocking occurred.<a href="#section-5.9-4.2.1" class="pilcrow">¶</a></p>
+<p id="section-5.6.4-3"><span id="iref-wt_data_blocked-39" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsules contain the following field:<a href="#section-5.6.4-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.6.4-4">
+            <dt id="section-5.6.4-4.1">Maximum Data:</dt>
+            <dd style="margin-left: 1.5em" id="section-5.6.4-4.2">
+              <p id="section-5.6.4-4.2.1">A variable-length integer indicating the session-level limit at which
+blocking occurred.<a href="#section-5.6.4-4.2.1" class="pilcrow">¶</a></p>
 </dd>
-        <dd class="break"></dd>
+          <dd class="break"></dd>
 </dl>
-<p id="section-5.9-5">The <span id="iref-wt_data_blocked-40" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule defines special intermediary handling, as
+<p id="section-5.6.4-5">The <span id="iref-wt_data_blocked-40" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule defines special intermediary handling, as
 described in <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume
 <span id="iref-wt_data_blocked-41" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsules for flow control purposes and MUST generate and
 send appropriate flow control signals for their limits; see
-<a href="#flow-control-intermediaries" class="auto internal xref">Section 5.4</a>.<a href="#section-5.9-5" class="pilcrow">¶</a></p>
+<a href="#flow-control-intermediaries" class="auto internal xref">Section 5.4</a>.<a href="#section-5.6.4-5" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 </section>
@@ -2513,7 +2513,7 @@ connection on which this SETTING is sent.<a href="#section-9.2-8" class="pilcrow
 <div id="SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA">
 <p id="section-9.2-10">The <span id="iref-settings_webtransport_initial_max_d" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> setting indicates the initial value
 for the session data limit, otherwise communicated by the <span id="iref-wt_max_data-53" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule
-(see <a href="#WT_MAX_DATA" class="auto internal xref">Section 5.8</a>). The default value for the
+(see <a href="#WT_MAX_DATA" class="auto internal xref">Section 5.6.3</a>). The default value for the
 <span id="iref-settings_webtransport_initial_max_d-2" class="iref"></span><a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="internal xref">SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA</a> setting is "0", indicating that the
 endpoint needs to send a <span id="iref-wt_max_data-55" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule within each session before its
 peer is allowed to send any stream data within that session.<a href="#section-9.2-10" class="pilcrow">¶</a></p>
@@ -3177,7 +3177,7 @@ draft-02 implementation safely:<a href="#appendix-A.1-3" class="pilcrow">¶</a><
                 <dd style="margin-left: 1.5em" id="appendix-B-2.1.2.1.1.2">
                   <p id="appendix-B-2.1.2.1.1.2.1">
                     <a href="#section-5.5-2.2.1" class="auto internal xref">Section 5.5, Paragraph 2.2.1</a>; 
-<a href="#section-5.8-8" class="auto internal xref">Section 5.8, Paragraph 8</a>; 
+<a href="#section-5.6.3-8" class="auto internal xref">Section 5.6.3, Paragraph 8</a>; 
 <a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="auto internal xref">Section 9.2, Paragraph 10</a>; 
 <a href="#section-9.2-12.2.1" class="auto internal xref">Section 9.2, Paragraph 12.2.1</a><a href="#appendix-B-2.1.2.1.1.2.1" class="pilcrow">¶</a></p>
 </dd>
@@ -3217,9 +3217,9 @@ draft-02 implementation safely:<a href="#appendix-A.1-3" class="pilcrow">¶</a><
                   <p id="appendix-B-2.2.2.1.1.2.1">
                     <a href="#section-5.3-3" class="auto internal xref">Section 5.3, Paragraph 3</a>; 
 <a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
-<a href="#section-5.9-1" class="auto internal xref">Section 5.9, Paragraph 1</a>; 
-<a href="#section-5.9-3" class="auto internal xref">Section 5.9, Paragraph 3</a>; 
-<a href="#section-5.9-5" class="auto internal xref">Section 5.9, Paragraph 5</a>; 
+<a href="#section-5.6.4-1" class="auto internal xref">Section 5.6.4, Paragraph 1</a>; 
+<a href="#section-5.6.4-3" class="auto internal xref">Section 5.6.4, Paragraph 3</a>; 
+<a href="#section-5.6.4-5" class="auto internal xref">Section 5.6.4, Paragraph 5</a>; 
 <a href="#section-9.6-13.4.1" class="auto internal xref">Section 9.6, Paragraph 13.4.1</a><a href="#appendix-B-2.2.2.1.1.2.1" class="pilcrow">¶</a></p>
 </dd>
                 <dd class="break"></dd>
@@ -3231,10 +3231,10 @@ draft-02 implementation safely:<a href="#appendix-A.1-3" class="pilcrow">¶</a><
 <a href="#section-5.3-3" class="auto internal xref">Section 5.3, Paragraph 3</a>; 
 <a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
 <a href="#section-5.5-2.2.1" class="auto internal xref">Section 5.5, Paragraph 2.2.1</a>; 
-<a href="#section-5.8-1" class="auto internal xref">Section 5.8, Paragraph 1</a>; 
-<a href="#section-5.8-2" class="auto internal xref">Section 5.8, Paragraph 2</a>; 
-<a href="#section-5.8-4" class="auto internal xref">Section 5.8, Paragraph 4</a>; 
-<a href="#section-5.8-7" class="auto internal xref">Section 5.8, Paragraph 7</a>; 
+<a href="#section-5.6.3-1" class="auto internal xref">Section 5.6.3, Paragraph 1</a>; 
+<a href="#section-5.6.3-2" class="auto internal xref">Section 5.6.3, Paragraph 2</a>; 
+<a href="#section-5.6.3-4" class="auto internal xref">Section 5.6.3, Paragraph 4</a>; 
+<a href="#section-5.6.3-7" class="auto internal xref">Section 5.6.3, Paragraph 7</a>; 
 <a href="#SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA" class="auto internal xref">Section 9.2, Paragraph 10</a>; 
 <a href="#section-9.6-11.4.1" class="auto internal xref">Section 9.6, Paragraph 11.4.1</a><a href="#appendix-B-2.2.2.1.1.4.1" class="pilcrow">¶</a></p>
 </dd>
@@ -3259,10 +3259,10 @@ draft-02 implementation safely:<a href="#appendix-A.1-3" class="pilcrow">¶</a><
                   <p id="appendix-B-2.2.2.1.1.8.1">
                     <a href="#section-5.2-5" class="auto internal xref">Section 5.2, Paragraph 5</a>; 
 <a href="#section-5.4-1" class="auto internal xref">Section 5.4, Paragraph 1</a>; 
-<a href="#section-5.7-1" class="auto internal xref">Section 5.7, Paragraph 1</a>; 
-<a href="#section-5.7-2" class="auto internal xref">Section 5.7, Paragraph 2</a>; 
-<a href="#section-5.7-4" class="auto internal xref">Section 5.7, Paragraph 4</a>; 
-<a href="#section-5.7-6" class="auto internal xref">Section 5.7, Paragraph 6</a>; 
+<a href="#section-5.6.2-1" class="auto internal xref">Section 5.6.2, Paragraph 1</a>; 
+<a href="#section-5.6.2-2" class="auto internal xref">Section 5.6.2, Paragraph 2</a>; 
+<a href="#section-5.6.2-4" class="auto internal xref">Section 5.6.2, Paragraph 4</a>; 
+<a href="#section-5.6.2-6" class="auto internal xref">Section 5.6.2, Paragraph 6</a>; 
 <a href="#section-9.6-9.4.1" class="auto internal xref">Section 9.6, Paragraph 9.4.1</a><a href="#appendix-B-2.2.2.1.1.8.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>

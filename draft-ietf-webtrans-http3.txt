@@ -94,9 +94,9 @@ Table of Contents
      5.5.  Flow Control SETTINGS
      5.6.  Flow Control Capsules
        5.6.1.  WT_MAX_STREAMS Capsule
-     5.7.  WT_STREAMS_BLOCKED Capsule
-     5.8.  WT_MAX_DATA Capsule
-     5.9.  WT_DATA_BLOCKED Capsule
+       5.6.2.  WT_STREAMS_BLOCKED Capsule
+       5.6.3.  WT_MAX_DATA Capsule
+       5.6.4.  WT_DATA_BLOCKED Capsule
    6.  Session Termination
    7.  Considerations for Future Versions
      7.1.  Negotiating the Draft Version
@@ -725,9 +725,9 @@ Table of Contents
    STREAM frames.  This especially applies if there are other users of
    streams on the connection.
 
-   The WT_STREAMS_BLOCKED capsule (Section 5.7) can be sent to indicate
-   that an endpoint was unable to create a stream due to the session-
-   level stream limit.
+   The WT_STREAMS_BLOCKED capsule (Section 5.6.2) can be sent to
+   indicate that an endpoint was unable to create a stream due to the
+   session-level stream limit.
 
    Note that enforcing this limit requires reliable resets for stream
    headers so that both endpoints can agree on the number of streams
@@ -735,7 +735,7 @@ Table of Contents
 
 5.3.  Data Limits
 
-   The WT_MAX_DATA capsule (Section 5.8) establishes a limit on the
+   The WT_MAX_DATA capsule (Section 5.6.3) establishes a limit on the
    amount of data that can be sent within a WebTransport session.  This
    limit counts all data that is sent on streams of the corresponding
    type, excluding the stream header (see Section 4.1 and Section 4.2).
@@ -749,7 +749,7 @@ Table of Contents
    endpoints to agree on how much data was consumed by that stream,
    although the stream header exclusion above applies.
 
-   The WT_DATA_BLOCKED capsule (Section 5.9) can be sent to indicate
+   The WT_DATA_BLOCKED capsule (Section 5.6.4) can be sent to indicate
    that an endpoint was unable to send data due to a limit set by the
    WT_MAX_DATA capsule.
 
@@ -845,7 +845,7 @@ Table of Contents
    zero values for SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI and
    SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI.
 
-5.7.  WT_STREAMS_BLOCKED Capsule
+5.6.2.  WT_STREAMS_BLOCKED Capsule
 
    A sender SHOULD send a WT_STREAMS_BLOCKED capsule (type=0x190B4D43 or
    0x190B4D44) when it wishes to open a stream but is unable to do so
@@ -880,7 +880,7 @@ Table of Contents
    MUST generate and send appropriate flow control signals for their
    limits.
 
-5.8.  WT_MAX_DATA Capsule
+5.6.3.  WT_MAX_DATA Capsule
 
    An HTTP capsule [HTTP-DATAGRAM] called WT_MAX_DATA (type=0x190B4D3D)
    is introduced to inform the peer of the maximum amount of data that
@@ -919,7 +919,7 @@ Table of Contents
    The initial value for this limit MAY be communicated by sending a
    non-zero value for SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA.
 
-5.9.  WT_DATA_BLOCKED Capsule
+5.6.4.  WT_DATA_BLOCKED Capsule
 
    A sender SHOULD send a WT_DATA_BLOCKED capsule (type=0x190B4D41) when
    it wishes to send data but is unable to do so due to WebTransport
@@ -1149,8 +1149,8 @@ Table of Contents
 
    The SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA setting indicates the
    initial value for the session data limit, otherwise communicated by
-   the WT_MAX_DATA capsule (see Section 5.8).  The default value for the
-   SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA setting is "0", indicating
+   the WT_MAX_DATA capsule (see Section 5.6.3).  The default value for
+   the SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA setting is "0", indicating
    that the endpoint needs to send a WT_MAX_DATA capsule within each
    session before its peer is allowed to send any stream data within
    that session.
@@ -1477,8 +1477,8 @@ Index
       S
 
          SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA  Section 5.5, Paragraph
-            2.2.1; Section 5.8, Paragraph 8; Section 9.2, Paragraph 10;
-            Section 9.2, Paragraph 12.2.1
+            2.2.1; Section 5.6.3, Paragraph 8; Section 9.2, Paragraph
+            10; Section 9.2, Paragraph 12.2.1
          SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI  Section 5.5,
             Paragraph 2.1.1; Section 5.6.1, Paragraph 9; Section 9.2,
             Paragraph 7; Section 9.2, Paragraph 9.2.1
@@ -1489,14 +1489,14 @@ Index
       W
 
          WT_DATA_BLOCKED  Section 5.3, Paragraph 3; Section 5.4,
-            Paragraph 1; Section 5.9, Paragraph 1; Section 5.9,
-            Paragraph 3; Section 5.9, Paragraph 5; Section 9.6,
+            Paragraph 1; Section 5.6.4, Paragraph 1; Section 5.6.4,
+            Paragraph 3; Section 5.6.4, Paragraph 5; Section 9.6,
             Paragraph 13.4.1
          WT_MAX_DATA  Section 5.3, Paragraph 1; Section 5.3, Paragraph
             2; Section 5.3, Paragraph 3; Section 5.4, Paragraph 1;
-            Section 5.5, Paragraph 2.2.1; Section 5.8, Paragraph 1;
-            Section 5.8, Paragraph 2; Section 5.8, Paragraph 4;
-            Section 5.8, Paragraph 7; Section 9.2, Paragraph 10;
+            Section 5.5, Paragraph 2.2.1; Section 5.6.3, Paragraph 1;
+            Section 5.6.3, Paragraph 2; Section 5.6.3, Paragraph 4;
+            Section 5.6.3, Paragraph 7; Section 9.2, Paragraph 10;
             Section 9.6, Paragraph 11.4.1
          WT_MAX_STREAMS  Section 5.2, Paragraph 1; Section 5.4,
             Paragraph 1; Section 5.5, Paragraph 2.1.1; Section 5.6.1,
@@ -1505,8 +1505,8 @@ Index
             Paragraph 4; Section 9.2, Paragraph 7; Section 9.6,
             Paragraph 7.4.1
          WT_STREAMS_BLOCKED  Section 5.2, Paragraph 5; Section 5.4,
-            Paragraph 1; Section 5.7, Paragraph 1; Section 5.7,
-            Paragraph 2; Section 5.7, Paragraph 4; Section 5.7,
+            Paragraph 1; Section 5.6.2, Paragraph 1; Section 5.6.2,
+            Paragraph 2; Section 5.6.2, Paragraph 4; Section 5.6.2,
             Paragraph 6; Section 9.6, Paragraph 9.4.1
 
 Authors' Addresses
