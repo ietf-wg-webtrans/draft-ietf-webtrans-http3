@@ -151,7 +151,7 @@ WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
 When an HTTP/3 connection is established, the server sends a
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting in order to indicate support for
+SETTINGS_WT_MAX_SESSIONS setting in order to indicate support for
 WebTransport over HTTP/3.  This process also negotiates the use of additional
 HTTP/3 extensions.
 
@@ -188,11 +188,11 @@ establishing WebTransport sessions (see {{upgrade-token}}).
 
 WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 {{!RFC9220}}, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. This
-document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting for indicating the
+document defines a SETTINGS_WT_MAX_SESSIONS setting for indicating the
 number of WebTransport sessions a connection supports. The default value for the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that the endpoint
+SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint
 is not willing to receive any WebTransport sessions. A server supporting
-WebTransport over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+WebTransport over HTTP/3 MUST send both the SETTINGS_WT_MAX_SESSIONS
 setting with a value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL
 setting with a value of "1".
 
@@ -405,13 +405,13 @@ Bidirectional Stream {
 ~~~~~~~~~~
 {: #fig-bidi-client title="Bidirectional WebTransport stream format"}
 
-This document reserves the special signal value 0x41 as a WEBTRANSPORT_STREAM
+This document reserves the special signal value 0x41 as a WT_STREAM
 frame type.  While it is registered as an HTTP/3 frame type to avoid
-collisions, WEBTRANSPORT_STREAM is not a proper HTTP/3 frame, as it lacks
+collisions, WT_STREAM is not a proper HTTP/3 frame, as it lacks
 length; it is an extension of HTTP/3 frame syntax that MUST be supported by any
 peer negotiating WebTransport.  Endpoints that implement this extension are
 also subject to additional frame handling requirements. Endpoints MUST NOT send
-WEBTRANSPORT_STREAM as a frame type on HTTP/3 streams other than the very first
+WT_STREAM as a frame type on HTTP/3 streams other than the very first
 bytes of a request stream.  Receiving this frame type in any other
 circumstances MUST be treated as a connection error of type H3_FRAME_ERROR.
 
@@ -427,7 +427,7 @@ Since WebTransport shares the error code space with HTTP/3, WebTransport
 application errors for streams are limited to an unsigned 32-bit integer,
 assuming values between 0x00000000 and 0xffffffff.  WebTransport
 implementations SHALL remap those error codes into the error range reserved for
-WEBTRANSPORT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db,
+WT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db,
 and 0xffffffff corresponds to 0x52e5ac983162.  Note that there are code points
 inside that range of form "0x1f * N + 0x21" that are reserved by {{Section 8.1
 of HTTP3}}; those have to be skipped when mapping the error codes
@@ -497,7 +497,7 @@ until those can be associated with an established session.  To avoid resource
 exhaustion, the endpoints MUST limit the number of buffered streams and
 datagrams.  When the number of buffered streams is exceeded, a stream SHALL be
 closed by sending a RESET_STREAM and/or STOP_SENDING with the
-`WEBTRANSPORT_BUFFERED_STREAM_REJECTED` error code.  When the number of
+`WT_BUFFERED_STREAM_REJECTED` error code.  When the number of
 buffered datagrams is exceeded, a datagram SHALL be dropped.  It is up to an
 implementation to choose what stream or datagram to discard.
 
@@ -583,7 +583,7 @@ stream, WebTransport or otherwise; see {{Section 4 of !RFC9000}}.
 
 ## Limiting the Number of Simultaneous Sessions {#flow-control-limit-sessions}
 
-This document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting that allows
+This document defines a SETTINGS_WT_MAX_SESSIONS setting that allows
 the server to limit the maximum number of concurrent WebTransport sessions on a
 single HTTP/3 connection.  The client MUST NOT open more simultaneous sessions
 than indicated in the server SETTINGS parameter.  The server MUST NOT close
@@ -603,7 +603,7 @@ by a peer.
 
 Note that the CONNECT stream for the session is not included in either the
 bidirectional or the unidirectional stream limits; the number of CONNECT
-streams a client can open is limited by the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+streams a client can open is limited by the SETTINGS_WT_MAX_SESSIONS
 setting and QUIC flow control's stream limits.
 
 The session-level stream limit applies in addition to the QUIC MAX_STREAMS
@@ -678,16 +678,16 @@ corresponding limit on the translated connection.
 
 ## Flow Control SETTINGS
 
-*[SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI]: #
-*[SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI]: #
-*[SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA]: #
+*[SETTINGS_WT_INITIAL_MAX_STREAMS_UNI]: #
+*[SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI]: #
+*[SETTINGS_WT_INITIAL_MAX_DATA]: #
 
 Initial flow control limits can be exchanged via HTTP/3 SETTINGS
 ({{http3-settings}}) by providing non-zero values for
 
-* WT_MAX_STREAMS via SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI and
-  SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI
-* WT_MAX_DATA via SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA
+* WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
+  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+* WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
 
 
 ## Flow Control Capsules
@@ -738,8 +738,8 @@ WT_MAX_STREAMS capsules for flow control purposes and MUST generate and
 send appropriate flow control signals for their limits.
 
 Initial values for these limits MAY be communicated by sending non-zero values
-for SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI and
-SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI.
+for SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
+SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI.
 
 ### WT_STREAMS_BLOCKED Capsule {#WT_STREAMS_BLOCKED}
 
@@ -816,7 +816,7 @@ capsules for flow control purposes and MUST generate and send appropriate flow
 control signals for their limits; see {{flow-control-intermediaries}}.
 
 The initial value for this limit MAY be communicated by sending a non-zero value
-for SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA.
+for SETTINGS_WT_INITIAL_MAX_DATA.
 
 ### WT_DATA_BLOCKED Capsule {#WT_DATA_BLOCKED}
 
@@ -859,7 +859,7 @@ following conditions is met:
 Upon learning that the session has been terminated, the endpoint MUST reset the
 send side and abort reading on the receive side of all unidirectional and
 bidirectional streams associated with the session (see Section 2.4 of
-{{!RFC9000}}) using the WEBTRANSPORT_SESSION_GONE error code; it MUST NOT send
+{{!RFC9000}}) using the WT_SESSION_GONE error code; it MUST NOT send
 any new datagrams or open any new streams.
 
 To terminate a session with a detailed error message, an application MAY send an
@@ -889,7 +889,7 @@ Application Error Message:
 
 An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
 the CONNECT Stream.  The endpoint MAY send a STOP_SENDING with error code
-WEBTRANSPORT_SESSION_GONE to indicate it is no longer reading from the CONNECT
+WT_SESSION_GONE to indicate it is no longer reading from the CONNECT
 stream.  The recipient MUST either close or reset the stream in response.  If
 any additional stream data is received on the CONNECT stream after receiving a
 WT_CLOSE_SESSION capsule, the stream MUST be reset with code H3_MESSAGE_ERROR.
@@ -917,7 +917,7 @@ versions simultaneously (see {{upgrade-token}}).
 
 Servers that support future incompatible versions of WebTransport signal that
 support by changing the codepoint used for the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting (see {{http3-settings}}).  Clients
+SETTINGS_WT_MAX_SESSIONS setting (see {{http3-settings}}).  Clients
 can select the associated upgrade token, if applicable, to use when
 establishing a new session, ensuring that servers will always know the syntax
 in use for every incoming request.
@@ -933,7 +933,7 @@ session associated with that stream.
 \[\[RFC editor: please remove this section before publication.]]
 
 The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting.  Because of that,
+used for the SETTINGS_WT_MAX_SESSIONS setting.  Because of that,
 any WebTransport endpoint MUST wait for the peer's SETTINGS frame before
 sending or processing any WebTransport traffic.  When multiple versions are
 supported by both of the peers, the most recent version supported by both is
@@ -992,15 +992,15 @@ Reference:
 The following entry is added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
-The `SETTINGS_WEBTRANSPORT_MAX_SESSIONS` setting indicates that the specified
+The `SETTINGS_WT_MAX_SESSIONS` setting indicates that the specified
 HTTP/3 endpoint is WebTransport-capable and the number of concurrent sessions
 it is willing to receive. The default value for the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that the endpoint
+SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint
 is not willing to receive any WebTransport sessions.
 
 Setting Name:
 
-: WEBTRANSPORT_MAX_SESSIONS
+: WT_MAX_SESSIONS
 
 Value:
 
@@ -1014,12 +1014,12 @@ Specification:
 
 : This document
 
-{: anchor="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI"}
+{: anchor="SETTINGS_WT_INITIAL_MAX_STREAMS_UNI"}
 
-The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI setting indicates the
+The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the
 initial value for the unidirectional max stream limit, otherwise communicated
 by the WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}). The default value for
-the SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI setting is "0", indicating
+the SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is "0", indicating
 that the endpoint needs to send WT_MAX_STREAMS capsules on each individual
 WebTransport session before its peer is allowed to create any unidirectional
 streams within that session.
@@ -1029,7 +1029,7 @@ connection on which this SETTING is sent.
 
 Setting Name:
 
-: SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_UNI
+: SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
 
 Value:
 
@@ -1043,12 +1043,12 @@ Specification:
 
 : This document
 
-{: anchor="SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI"}
+{: anchor="SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI"}
 
-The SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI setting indicates the
+The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the
 initial value for the bidirectional max stream limit, otherwise communicated by
 the WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}). The default value for the
-SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI setting is "0", indicating
+SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting is "0", indicating
 that the endpoint needs to send WT_MAX_STREAMS capsules on each individual
 WebTransport session before its peer is allowed to create any bidirectional
 streams within that session.
@@ -1058,7 +1058,7 @@ connection on which this SETTING is sent.
 
 Setting Name:
 
-: SETTINGS_WEBTRANSPORT_INITIAL_MAX_STREAMS_BIDI
+: SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
 
 Value:
 
@@ -1072,12 +1072,12 @@ Specification:
 
 : This document
 
-{: anchor="SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA"}
+{: anchor="SETTINGS_WT_INITIAL_MAX_DATA"}
 
-The SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA setting indicates the initial value
+The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value
 for the session data limit, otherwise communicated by the WT_MAX_DATA capsule
 (see {{WT_MAX_DATA}}). The default value for the
-SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA setting is "0", indicating that the
+SETTINGS_WT_INITIAL_MAX_DATA setting is "0", indicating that the
 endpoint needs to send a WT_MAX_DATA capsule within each session before its
 peer is allowed to send any stream data within that session.
 
@@ -1086,7 +1086,7 @@ connection on which this SETTING is sent.
 
 Setting Name:
 
-: SETTINGS_WEBTRANSPORT_INITIAL_MAX_DATA
+: SETTINGS_WT_INITIAL_MAX_DATA
 
 Value:
 
@@ -1105,7 +1105,7 @@ Specification:
 The following entry is added to the "HTTP/3 Frame Type" registry established by
 [HTTP3]:
 
-The `WEBTRANSPORT_STREAM` frame is reserved for the purpose of avoiding
+The `WT_STREAM` frame is reserved for the purpose of avoiding
 collision with WebTransport HTTP/3 extensions:
 
 Code:
@@ -1114,7 +1114,7 @@ Code:
 
 Frame Type:
 
-: WEBTRANSPORT_STREAM
+: WT_STREAM
 
 Specification:
 
@@ -1151,7 +1151,7 @@ The following entry is added to the "HTTP/3 Error Code" registry established by
 
 Name:
 
-: WEBTRANSPORT_BUFFERED_STREAM_REJECTED
+: WT_BUFFERED_STREAM_REJECTED
 
 Value:
 
@@ -1167,7 +1167,7 @@ Specification:
 
 Name:
 
-: WEBTRANSPORT_SESSION_GONE
+: WT_SESSION_GONE
 
 Value:
 
@@ -1187,7 +1187,7 @@ In addition, the following range of entries is registered:
 
 Name:
 
-: WEBTRANSPORT_APPLICATION_ERROR
+: WT_APPLICATION_ERROR
 
 Value:
 
