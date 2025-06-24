@@ -1472,7 +1472,7 @@ SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting in order to indicate support for
 WebTransport over HTTP/3.  This process also negotiates the use of additional
 HTTP/3 extensions.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
 <p id="section-2.2-3">WebTransport sessions are initiated inside a given HTTP/3 connection by the
-client, who sends an extended CONNECT request <span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span>.  If the server
+client, who sends an extended CONNECT request <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>.  If the server
 accepts the request, a WebTransport session is established.  The resulting
 stream will be further referred to as a <em>CONNECT stream</em>, and its stream ID is
 used to uniquely identify a given WebTransport session within the connection.
@@ -1552,11 +1552,11 @@ in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable
         <h3 id="name-extended-connect-in-http-3">
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-extended-connect-in-http-3" class="section-name selfRef">Extended CONNECT in HTTP/3</a>
         </h3>
-<p id="section-3.2-1"><span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span> defines an extended CONNECT method in Section 4, enabled by the
-SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for HTTP/3
-by <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>.  A server supporting WebTransport over HTTP/3 MUST send both
-the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0"
-and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-1">Usage of extended CONNECT in HTTP/3 is described in <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines
+the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  A server supporting WebTransport
+over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a
+value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a
+value of "1".<a href="#section-3.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="creating-a-new-session">
@@ -1566,8 +1566,8 @@ and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".<a href="#s
         </h3>
 <p id="section-3.3-1">As WebTransport sessions are established over HTTP/3, they are identified using
 the <code>https</code> URI scheme (<span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>, Section 4.2.2).<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.3-2">In order to create a new WebTransport session, a client can send an HTTP CONNECT
-request.  The <code>:protocol</code> pseudo-header field (<span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span>) MUST be set to
+<p id="section-3.3-2">In order to create a new WebTransport session, a client can send an HTTP extended
+CONNECT request.  The <code>:protocol</code> pseudo-header field (<span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span>) MUST be set to
 <code>webtransport</code>.  The <code>:scheme</code> field MUST be <code>https</code>.  Both the <code>:authority</code>
 and the <code>:path</code> value MUST be set; those fields indicate the desired
 WebTransport server.  If the WebTransport session is coming from a browser
