@@ -1516,9 +1516,9 @@ instead use the the "webtransport" upgrade token in CONNECT requests
 establishing WebTransport sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.1-2">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. This
-document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter for indicating the
+document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting for indicating the
 number of WebTransport sessions a connection supports. The default value for the
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the endpoint
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that the endpoint
 is not willing to receive any WebTransport sessions. A server supporting
 WebTransport over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
 setting with a value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL
