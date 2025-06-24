@@ -156,7 +156,7 @@ WebTransport over HTTP/3.  This process also negotiates the use of additional
 HTTP/3 extensions.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
-client, who sends an extended CONNECT request {{!RFC8441}}.  If the server
+client, who sends an extended CONNECT request {{!RFC9220}}.  If the server
 accepts the request, a WebTransport session is established.  The resulting
 stream will be further referred to as a *CONNECT stream*, and its stream ID is
 used to uniquely identify a given WebTransport session within the connection.
@@ -224,19 +224,19 @@ in {{Section 3 of RESET-STREAM-AT}}.
 
 ## Extended CONNECT in HTTP/3
 
-{{!RFC8441}} defines an extended CONNECT method in Section 4, enabled by the
-SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  That setting is defined for HTTP/3
-by {{!RFC9220}}.  A server supporting WebTransport over HTTP/3 MUST send both
-the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a value greater than "0"
-and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
+Usage of extended CONNECT in HTTP/3 is described in {{!RFC9220}}, which defines
+the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  A server supporting WebTransport
+over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a
+value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a
+value of "1".
 
 ## Creating a New Session
 
 As WebTransport sessions are established over HTTP/3, they are identified using
 the `https` URI scheme ([HTTP], Section 4.2.2).
 
-In order to create a new WebTransport session, a client can send an HTTP CONNECT
-request.  The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be set to
+In order to create a new WebTransport session, a client can send an HTTP extended
+CONNECT request.  The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be set to
 `webtransport`.  The `:scheme` field MUST be `https`.  Both the `:authority`
 and the `:path` value MUST be set; those fields indicate the desired
 WebTransport server.  If the WebTransport session is coming from a browser
