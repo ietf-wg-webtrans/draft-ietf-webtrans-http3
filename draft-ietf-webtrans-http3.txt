@@ -5,10 +5,10 @@
 Network Working Group                                        A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 18 December 2025                                     Apple Inc.
+Expires: 26 December 2025                                     Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                            16 June 2025
+                                                            24 June 2025
 
 
                         WebTransport over HTTP/3
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 December 2025.
+   This Internet-Draft will expire on 26 December 2025.
 
 Copyright Notice
 
@@ -986,11 +986,12 @@ Table of Contents
 
    An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately
    send a FIN on the CONNECT Stream.  The endpoint MAY send a
-   STOP_SENDING to indicate it is no longer reading from the CONNECT
-   stream.  The recipient MUST either close or reset the stream in
-   response.  If any additional stream data is received on the CONNECT
-   stream after receiving a WT_CLOSE_SESSION capsule, the stream MUST be
-   reset with code H3_MESSAGE_ERROR.
+   STOP_SENDING with error code WEBTRANSPORT_SESSION_GONE to indicate it
+   is no longer reading from the CONNECT stream.  The recipient MUST
+   either close or reset the stream in response.  If any additional
+   stream data is received on the CONNECT stream after receiving a
+   WT_CLOSE_SESSION capsule, the stream MUST be reset with code
+   H3_MESSAGE_ERROR.
 
    Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION
    capsule SHALL be semantically equivalent to terminating it with a
@@ -1215,7 +1216,8 @@ Table of Contents
    Value:  0x170d7b68
 
    Description:  WebTransport data stream aborted because the associated
-      WebTransport session has been closed.
+      WebTransport session has been closed.  Also used to indicate that
+      the endpoint is no longer reading from the CONNECT stream.
 
    Specification:  This document.
 

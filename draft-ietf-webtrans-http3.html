@@ -16,10 +16,10 @@ a WebTransport protocol that is based on HTTP/3   and provides
 support for unidirectional streams, bidirectional streams and datagrams, all
 multiplexed within the same HTTP/3 connection. 
     " name="description">
-<meta content="xml2rfc 3.28.1" name="generator">
+<meta content="xml2rfc 3.29.0" name="generator">
 <meta content="draft-ietf-webtrans-http3-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.1
+  xml2rfc 3.29.0
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -1054,7 +1054,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 18 December 2025</td>
+<td class="center">Expires 26 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1067,12 +1067,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-16" class="published">16 June 2025</time>
+<time datetime="2025-06-24" class="published">24 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-18">18 December 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-26">26 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1131,7 +1131,7 @@ web API draft corresponding to this document can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 18 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2305,11 +2305,11 @@ length MUST NOT exceed 1024 bytes.<a href="#section-6-7.4.1" class="pilcrow">¶<
       <dd class="break"></dd>
 </dl>
 <p id="section-6-8">An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
-the CONNECT Stream.  The endpoint MAY send a STOP_SENDING to indicate it is no
-longer reading from the CONNECT stream.  The recipient MUST either close or
-reset the stream in response.  If any additional stream data is received on the
-CONNECT stream after receiving a WT_CLOSE_SESSION capsule, the stream MUST be
-reset with code H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
+the CONNECT Stream.  The endpoint MAY send a STOP_SENDING with error code
+WEBTRANSPORT_SESSION_GONE to indicate it is no longer reading from the CONNECT
+stream.  The recipient MUST either close or reset the stream in response.  If
+any additional stream data is received on the CONNECT stream after receiving a
+WT_CLOSE_SESSION capsule, the stream MUST be reset with code H3_MESSAGE_ERROR.<a href="#section-6-8" class="pilcrow">¶</a></p>
 <p id="section-6-9">Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
 semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
 has an error code of 0 and an empty error string.<a href="#section-6-9" class="pilcrow">¶</a></p>
@@ -2656,7 +2656,8 @@ WebTransport:<a href="#section-9.4-2" class="pilcrow">¶</a></p>
 <dt id="section-9.5-2.13">Description:</dt>
           <dd style="margin-left: 1.5em" id="section-9.5-2.14">
             <p id="section-9.5-2.14.1">WebTransport data stream aborted because the associated WebTransport session
-has been closed.<a href="#section-9.5-2.14.1" class="pilcrow">¶</a></p>
+has been closed. Also used to indicate that the endpoint is no longer reading
+from the CONNECT stream.<a href="#section-9.5-2.14.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.5-2.15">Specification:</dt>
