@@ -181,14 +181,20 @@ closed.
 
 ## Establishing a WebTransport-Capable HTTP/3 Connection {#establishing}
 
-In order to indicate support for WebTransport, the server MUST send a
-SETTINGS_WEBTRANSPORT_MAX_SESSIONS value greater than "0" in its SETTINGS
-frame.  The default value for the SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter
-is "0", meaning that the endpoint is not willing to receive any WebTransport
-sessions.  Note that the client does not need to send any value to indicate
-support for WebTransport; clients indicate support for WebTransport by using
-the "webtransport" upgrade token in CONNECT requests establishing WebTransport
-sessions (see {{upgrade-token}}).
+A WebTransport-Capable HTTP/3 connection requires two mandatory indicators to be
+sent by the server in its SETTINGS frames. Clients do not use SETTINGS but
+instead use the the "webtransport" upgrade token in CONNECT requests
+establishing WebTransport sessions (see {{upgrade-token}}).
+
+WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
+{{!RFC9220}}, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. This
+document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting for indicating the
+number of WebTransport sessions a connection supports. The default value for the
+SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is "0", meaning that the endpoint
+is not willing to receive any WebTransport sessions. A server supporting
+WebTransport over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS
+setting with a value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL
+setting with a value of "1".
 
 The client MUST NOT send a WebTransport request until it has received the
 setting indicating WebTransport support from the server.
@@ -221,14 +227,6 @@ WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 {{!RESET-STREAM-AT=I-D.ietf-quic-reliable-stream-reset}}.  To indicate support,
 both the client and the server MUST enable the extension as described
 in {{Section 3 of RESET-STREAM-AT}}.
-
-## Extended CONNECT in HTTP/3
-
-Usage of extended CONNECT in HTTP/3 is described in {{!RFC9220}}, which defines
-the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  A server supporting WebTransport
-over HTTP/3 MUST send both the SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting with a
-value greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a
-value of "1".
 
 ## Creating a New Session
 
