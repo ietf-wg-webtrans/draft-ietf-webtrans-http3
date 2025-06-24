@@ -188,7 +188,7 @@ establishing WebTransport sessions (see {{upgrade-token}}).
 
 WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 {{!RFC9220}}, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. This
-document defines SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter for indicating the
+document defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter for indicating the
 number of WebTransport sessions a connection supports. The default value for the
 SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter is "0", meaning that the endpoint
 is not willing to receive any WebTransport sessions. A server supporting
