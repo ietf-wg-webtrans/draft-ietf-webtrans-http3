@@ -890,11 +890,11 @@ Application Error Message:
   length MUST NOT exceed 1024 bytes.
 
 An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
-the CONNECT Stream.  The endpoint MAY send a STOP_SENDING to indicate it is no
-longer reading from the CONNECT stream.  The recipient MUST either close or
-reset the stream in response.  If any additional stream data is received on the
-CONNECT stream after receiving a WT_CLOSE_SESSION capsule, the stream MUST be
-reset with code H3_MESSAGE_ERROR.
+the CONNECT Stream.  The endpoint MAY send a STOP_SENDING with error code
+WEBTRANSPORT_SESSION_GONE to indicate it is no longer reading from the CONNECT
+stream.  The recipient MUST either close or reset the stream in response.  If
+any additional stream data is received on the CONNECT stream after receiving a
+WT_CLOSE_SESSION capsule, the stream MUST be reset with code H3_MESSAGE_ERROR.
 
 Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
 semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
@@ -1178,7 +1178,8 @@ Value:
 Description:
 
 : WebTransport data stream aborted because the associated WebTransport session
-  has been closed.
+  has been closed. Also used to indicate that the endpoint is no longer reading
+  from the CONNECT stream.
 
 Specification:
 
