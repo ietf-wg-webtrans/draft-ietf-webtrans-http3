@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-17T00:55:33.551980+00:00",
+  "timestamp": "2025-06-26T00:55:57.626084+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5005,7 +5005,7 @@
       "id": "I_kwDOCvK98s6vix3E",
       "title": "Only mention the spec that's relevant",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/184",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5016,8 +5016,8 @@
       ],
       "body": "The spec says\n\n> [[RFC8441](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC8441)] defines an extended CONNECT method in Section 4, enabled by the SETTINGS_ENABLE_CONNECT_PROTOCOL setting. That setting is defined for HTTP/3 by [[RFC9220](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9220)].\n\nThe mention of RFC 8441 is superfluous here, better to just point to 9220 that explains all of this.",
       "createdAt": "2025-03-25T03:39:11Z",
-      "updatedAt": "2025-06-03T23:56:53Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T23:12:30Z",
+      "closedAt": "2025-06-24T23:12:30Z",
       "comments": []
     },
     {
@@ -5025,7 +5025,7 @@
       "id": "I_kwDOCvK98s6vi1jz",
       "title": "Condense sections 3.1 and 3.2",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/185",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5036,8 +5036,8 @@
       ],
       "body": "These sections have evolved organically. It feels like we could condense them down and make it \n\nA) a lot clearer what TPs and settings are needed to negotiate a WebTransport session\nB) clearer what to do when one of the conditions is not satisfied and an error thus occurs",
       "createdAt": "2025-03-25T03:47:28Z",
-      "updatedAt": "2025-06-03T23:57:57Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T23:17:38Z",
+      "closedAt": "2025-06-24T23:17:38Z",
       "comments": []
     },
     {
@@ -5089,7 +5089,7 @@
       "id": "I_kwDOCvK98s6vi-az",
       "title": "Unidirectional stream contents",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/189",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5100,8 +5100,8 @@
       ],
       "body": "All unidirectional streams have a type header, then the rest of the stream is type dependent. The definition of the webtransport uni stream is a little recursive when considering the figures mention of \"stream body\"\n\n> The HTTP/3 unidirectional stream type SHALL be 0x54. The body of the stream SHALL be the stream type, followed by the session ID, encoded as a variable-length integer, followed by the user-specified stream data (Figure 2).\n\n> Unidirectional Stream {\n    Stream Type (i) = 0x54,\n    Session ID (i),\n    Stream Body (..)\n}\n\nMaybe just rename the field in the figure?\n\n\n\n\n\n\n",
       "createdAt": "2025-03-25T04:08:05Z",
-      "updatedAt": "2025-06-04T00:02:01Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T23:19:41Z",
+      "closedAt": "2025-06-24T23:19:41Z",
       "comments": []
     },
     {
@@ -5153,7 +5153,7 @@
       ],
       "body": "I'm not sure how to articulate this issue too well. It's just that there seems to be a few cases where a \"client\" is something distinct from a user agent, and this isn't explained that well explicitly. So a drive by reviewer like me starts to thing about an HTTP/3 client rather than a WebTransport client.\n\nHere's an example, which reads like a potential editorial mistake without understanding the full context of terms \n\n> A client could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the client is untrusted, the user agent SHOULD limit the number of outgoing sessions the client can open.",
       "createdAt": "2025-03-25T04:30:58Z",
-      "updatedAt": "2025-06-10T23:57:21Z",
+      "updatedAt": "2025-06-24T23:44:07Z",
       "closedAt": null,
       "comments": [
         {
@@ -5169,6 +5169,20 @@
           "body": "OK that makes sense. I might suggest an editorial pass to ensure these terms are used clearly and consistently. There seems to me at least several occasions where the term \"client\" is used in the sense of \"HTTP/3 client\" rather than \"WebTransport client\". For example, is this fragment consistent with the naming conventions?\n\n> WebTransport CONNECT requests and responses MAY contain the Priority header field ([Section 5](https://rfc-editor.org/rfc/rfc9218#section-5) of [[RFC9218](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9218)]); clients MAY reprioritize by sending PRIORITY_UPDATE frames ([Section 7](https://rfc-editor.org/rfc/rfc9218#section-7) of [[RFC9218](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#RFC9218)])",
           "createdAt": "2025-03-30T10:11:05Z",
           "updatedAt": "2025-03-30T10:11:05Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Just to bring the definitions into this issue: \n\n- Application: Developer supplied code, often JavaScript\n- Client: An application that establishes the WebTransport session.\n- Server: An application that receives incoming WebTransport sessions.\n- WebTransport Client/Server implementation: The implementation in user agents of WebTransport using HTTP/3\n\nThat last one doesn't read super well, and we use `client` in many places throughout the draft to refer to the WebTransport implementation itself, like: \n\n- Endpoint: A WebTransport implementation\n- Client: A WebTransport implementation that sends a CONNECT request to start a session\n- Server: A WebTransport implementation that receives a CONNECT request to start a session",
+          "createdAt": "2025-06-24T19:22:44Z",
+          "updatedAt": "2025-06-24T19:27:21Z"
+        },
+        {
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Editors meeting:\n- User agent becomes \"WebTransport client\" or \"client\"\n- Client becomes \"application client\"\n- Server becomes \"application server\"\n- WebTransport server refers to a WebTransport implementation that receives a CONNECT request to start a session\n- Application: Developer supplied code, often JavaScript\n- Endpoint: A WebTransport implementation",
+          "createdAt": "2025-06-24T23:44:07Z",
+          "updatedAt": "2025-06-24T23:44:07Z"
         }
       ]
     },
@@ -5268,31 +5282,43 @@
       "id": "I_kwDOCvK98s67qVuT",
       "title": "Which error code to use for STOP_SENDING after sending WT_CLOSE_SESSION?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/200",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "> An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on the CONNECT Stream. The endpoint MAY send a STOP_SENDING to indicate it is no longer reading from the CONNECT stream.\n\nShould the document say which error code to use in the STOP_SENDING frame? I'm aware that this doesn't make a big difference in practice, but my QUIC stack's API forces me to pick a value, and I'm not sure which value to use. WEBTRANSPORT_SESSION_GONE might be the most appropriate, but it's only intended for use on data streams:\n> WebTransport data stream aborted because the associated WebTransport session has been closed.\n\nProposal: make WEBTRANSPORT_SESSION_GONE apply to the CONNECT stream as well.",
       "createdAt": "2025-06-16T03:42:38Z",
-      "updatedAt": "2025-06-16T03:42:38Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-06-24T23:09:09Z",
+      "closedAt": "2025-06-24T23:09:09Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Seems reasonable to me, thanks for the PR!",
+          "createdAt": "2025-06-24T23:08:50Z",
+          "updatedAt": "2025-06-24T23:08:50Z"
+        }
+      ]
     },
     {
       "number": 202,
       "id": "I_kwDOCvK98s67qXwp",
       "title": "settings and error code naming convention",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/202",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "editorial"
+      ],
       "body": "Recently the capsule were renamed from WEBTRANSPORT_* to WT_* (#193). Should we do the same for SETTINGS and error codes?",
       "createdAt": "2025-06-16T03:49:19Z",
-      "updatedAt": "2025-06-16T03:49:19Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-24T23:54:09Z",
+      "closedAt": "2025-06-24T23:54:09Z",
       "comments": []
     }
   ],
@@ -16610,26 +16636,419 @@
       "id": "PR_kwDOCvK98s6aoprK",
       "title": "specify error code for STOP_SENDING frame sent on the CONNECT stream",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/201",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #200.",
       "createdAt": "2025-06-16T03:46:07Z",
-      "updatedAt": "2025-06-16T03:46:08Z",
+      "updatedAt": "2025-06-24T23:09:08Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "08d68ff4a77e4fdccf091462848a8b253c5adfcb",
       "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
       "headRefName": "connect-stream-stop-sending-error-code",
       "headRefOid": "c1e35901c8005f2a662642d266957c0926662925",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-06-24T23:09:08Z",
+      "mergedAt": "2025-06-24T23:09:08Z",
+      "mergedBy": "nidhijaju",
+      "mergeCommit": {
+        "oid": "2eada4e5b43ad6226a41d1e4cb6e7275dff95adf"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6wK8hf",
+          "commit": {
+            "abbreviatedOid": "c1e3590"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:08:59Z",
+          "updatedAt": "2025-06-24T23:08:59Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 203,
+      "id": "PR_kwDOCvK98s6b8np6",
+      "title": "Prefer RFC 9220 instead of RFC 8441 when talking about extended CONNECT for H3",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/203",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #184\r\n",
+      "createdAt": "2025-06-24T22:37:35Z",
+      "updatedAt": "2025-06-24T23:12:32Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "527ab9543aa5f899acf65802638593ebbb2d97c6",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "ref-9220-ext-connect",
+      "headRefOid": "e48b4c273a42d157721e21e861af1bb31a397edd",
+      "closedAt": "2025-06-24T23:12:29Z",
+      "mergedAt": "2025-06-24T23:12:29Z",
+      "mergedBy": "nidhijaju",
+      "mergeCommit": {
+        "oid": "84938f6accacc7609e19ef13b3561830c05b34fd"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6wKtq5",
+          "commit": {
+            "abbreviatedOid": "e48b4c2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T22:39:00Z",
+          "updatedAt": "2025-06-24T22:39:01Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "the only change here is to state clearly it is extended CONNECT. The `:protocol` pseudo header is defined in RFC 8441 so I figured leaving that reference untouched made sense.",
+              "createdAt": "2025-06-24T22:39:00Z",
+              "updatedAt": "2025-06-24T22:39:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6wK-ns",
+          "commit": {
+            "abbreviatedOid": "e48b4c2"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:12:17Z",
+          "updatedAt": "2025-06-24T23:12:17Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6wK-vJ",
+          "commit": {
+            "abbreviatedOid": "e48b4c2"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:12:32Z",
+          "updatedAt": "2025-06-24T23:12:32Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 204,
+      "id": "PR_kwDOCvK98s6b8wN9",
+      "title": "Condense sections 3.1 and 3.2",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/204",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Builds on top of #203 ",
+      "createdAt": "2025-06-24T23:03:22Z",
+      "updatedAt": "2025-06-24T23:17:37Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "84938f6accacc7609e19ef13b3561830c05b34fd",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "lucas-condense-3.1-3.2",
+      "headRefOid": "88dff95b6103f4e1a16c8c8364b72f9cab0a14ac",
+      "closedAt": "2025-06-24T23:17:37Z",
+      "mergedAt": "2025-06-24T23:17:37Z",
+      "mergedBy": "nidhijaju",
+      "mergeCommit": {
+        "oid": "3a569c679fd0d0e78e98331d0beb033545cf03fd"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6wK_-X",
+          "commit": {
+            "abbreviatedOid": "2fed66d"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T23:14:04Z",
+          "updatedAt": "2025-06-24T23:14:04Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\ndocument defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS parameter for indicating the\r\n```",
+              "createdAt": "2025-06-24T23:14:04Z",
+              "updatedAt": "2025-06-24T23:14:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6wLAK0",
+          "commit": {
+            "abbreviatedOid": "2fed66d"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:14:26Z",
+          "updatedAt": "2025-06-24T23:14:26Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6wLA2q",
+          "commit": {
+            "abbreviatedOid": "7b2cb99"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T23:16:14Z",
+          "updatedAt": "2025-06-24T23:16:40Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\ndocument defines a SETTINGS_WEBTRANSPORT_MAX_SESSIONS setting for indicating the\r\n```",
+              "createdAt": "2025-06-24T23:16:14Z",
+              "updatedAt": "2025-06-24T23:16:40Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\nSETTINGS_WEBTRANSPORT_MAX_SESSIONS setting is \"0\", meaning that the endpoint\r\n```",
+              "createdAt": "2025-06-24T23:16:27Z",
+              "updatedAt": "2025-06-24T23:16:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6wLBFu",
+          "commit": {
+            "abbreviatedOid": "88dff95"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:17:03Z",
+          "updatedAt": "2025-06-24T23:17:03Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 205,
+      "id": "PR_kwDOCvK98s6b8ywc",
+      "title": "Rename figure uni stream field to match prose",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/205",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #189 ",
+      "createdAt": "2025-06-24T23:09:09Z",
+      "updatedAt": "2025-06-24T23:19:40Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "2eada4e5b43ad6226a41d1e4cb6e7275dff95adf",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "lucas/rename-uni-stream-fig",
+      "headRefOid": "56774ee25088d3bbe477eb4eefe21adfa6fc41fd",
+      "closedAt": "2025-06-24T23:19:40Z",
+      "mergedAt": "2025-06-24T23:19:40Z",
+      "mergedBy": "nidhijaju",
+      "mergeCommit": {
+        "oid": "02dc8d9c074c95c7b5884800c07a133b8ebb0a4b"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6wLB9l",
+          "commit": {
+            "abbreviatedOid": "9911ea5"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:19:09Z",
+          "updatedAt": "2025-06-24T23:19:09Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6wLB3h",
+          "commit": {
+            "abbreviatedOid": "9911ea5"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T23:19:03Z",
+          "updatedAt": "2025-06-24T23:19:13Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n    User-Specified Stream Data (..)\r\n```",
+              "createdAt": "2025-06-24T23:19:03Z",
+              "updatedAt": "2025-06-24T23:19:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6wLCJP",
+          "commit": {
+            "abbreviatedOid": "56774ee"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:19:29Z",
+          "updatedAt": "2025-06-24T23:19:29Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 206,
+      "id": "PR_kwDOCvK98s6b82oi",
+      "title": "Update naming for settings",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/206",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Update naming for settings",
+      "createdAt": "2025-06-24T23:19:59Z",
+      "updatedAt": "2025-06-24T23:23:14Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "02dc8d9c074c95c7b5884800c07a133b8ebb0a4b",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/settings_naming",
+      "headRefOid": "d12f68cef9970b89199203d15317769fa219eaf7",
+      "closedAt": "2025-06-24T23:23:12Z",
+      "mergedAt": "2025-06-24T23:23:12Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "7738ba138a961e1e058f2717005dc97d9f1f5317"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6wLCjY",
+          "commit": {
+            "abbreviatedOid": "941a4ee"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:20:35Z",
+          "updatedAt": "2025-06-24T23:20:35Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 207,
+      "id": "PR_kwDOCvK98s6b86FP",
+      "title": "Fix section headers for capsules",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/207",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-24T23:33:52Z",
+      "updatedAt": "2025-06-24T23:35:20Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "7738ba138a961e1e058f2717005dc97d9f1f5317",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/sectioning",
+      "headRefOid": "3cc4944d6704741aae0b04f952e3cce1d70b9b9b",
+      "closedAt": "2025-06-24T23:35:13Z",
+      "mergedAt": "2025-06-24T23:35:13Z",
+      "mergedBy": "nidhijaju",
+      "mergeCommit": {
+        "oid": "6571ebb1249075f93e24cccd8503e545c1d60a9d"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6wLG1k",
+          "commit": {
+            "abbreviatedOid": "3cc4944"
+          },
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:35:20Z",
+          "updatedAt": "2025-06-24T23:35:20Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 208,
+      "id": "PR_kwDOCvK98s6b8-oR",
+      "title": "Rename WEBTRANSPORT -> WT",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/208",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Rename WEBTRANSPORT -> WT\r\n\r\nFixes #202 ",
+      "createdAt": "2025-06-24T23:49:51Z",
+      "updatedAt": "2025-06-24T23:54:21Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "6571ebb1249075f93e24cccd8503e545c1d60a9d",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/rename_wt",
+      "headRefOid": "e3036a38ff18add28f2dd3b010646628ea6a3521",
+      "closedAt": "2025-06-24T23:54:08Z",
+      "mergedAt": "2025-06-24T23:54:08Z",
+      "mergedBy": "nidhijaju",
+      "mergeCommit": {
+        "oid": "782578d53392c47f2c7ccf20aed9f17882d4df5c"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6wLOTw",
+          "commit": {
+            "abbreviatedOid": "e3036a3"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-24T23:53:55Z",
+          "updatedAt": "2025-06-24T23:53:55Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
