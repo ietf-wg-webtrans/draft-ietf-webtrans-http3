@@ -604,12 +604,11 @@ of !RFC9000}}).
 
 ## Negotiating the Use of Flow Control {#flow-control-negotiate}
 
-The use of flow control is optional and can be negotiated.  A WebTransport
-endpoint that allows a WebTransport session to share an underlying transport
-connection with other WebTransport sessions MUST enable flow control.  This
-prevents an application from consuming excessive resources on a
-single session and starving traffic for other sessions (see
-{{security-considerations}}).
+A WebTransport endpoint that allows a WebTransport session to share an
+underlying transport connection with other WebTransport sessions MUST enable
+flow control.  This prevents an application from consuming excessive resources
+on a single session and starving traffic for other sessions 
+(see {{security-considerations}}).
 
 An endpoint indicates that it is willing to support more than one WebTransport
 session, and thus flow control, by sending the SETTINGS_WT_MAX_SESSIONS with a
