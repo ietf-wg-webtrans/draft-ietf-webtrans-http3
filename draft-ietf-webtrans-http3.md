@@ -160,10 +160,10 @@ static compression, or Huffman encoding.
 WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
-When an HTTP/3 connection is established, the server sends a
-SETTINGS_WT_MAX_SESSIONS setting in order to indicate support for WebTransport
-over HTTP/3.  This process also negotiates the use of additional HTTP/3
-extensions.
+When an HTTP/3 connection is established, both the client and the server send a
+SETTINGS_WT_MAX_SESSIONS setting to indicate support for WebTransport over
+HTTP/3.  This process also negotiates the use of additional HTTP/3 extensions
+to enable both endpoints to open WebTransport streams.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC9220}}.  If the server
@@ -192,23 +192,27 @@ closed.
 
 ## Establishing a WebTransport-Capable HTTP/3 Connection {#establishing}
 
-A WebTransport-Capable HTTP/3 connection requires two mandatory indicators to be
-sent by the server in its SETTINGS frames.  Clients do not use SETTINGS but
-instead use the the "webtransport" upgrade token in CONNECT requests
-establishing WebTransport sessions (see {{upgrade-token}}).
+A WebTransport-Capable HTTP/3 connection requires the client and server to both
+signal support for WebTransport over HTTP/3 using a setting. Clients also
+signal support by using the "webtransport" upgrade token in extended CONNECT
+requests when establishing sessions (see {{upgrade-token}}).
 
 WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 {{!RFC9220}}, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  This
 document defines a SETTINGS_WT_MAX_SESSIONS setting for indicating the number
 of WebTransport sessions a connection supports.  The default value for the
 SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint is not
-willing to receive any WebTransport sessions.  A server supporting WebTransport
-over HTTP/3 MUST send both the SETTINGS_WT_MAX_SESSIONS setting with a value
-greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value
-of "1".
+willing to receive any WebTransport sessions.
 
-The client MUST NOT send a WebTransport request until it has received the
-setting indicating WebTransport support from the server.
+A server supporting WebTransport over HTTP/3 MUST send both the
+SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0" and the
+SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
+
+A client supporting WebTransport over HTTP/3 MUST send the
+SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0".
+
+Clients MUST NOT attempt to establish WebTransport sessions until they have
+received the settings indicating WebTransport support from the server.
 
 \[\[RFC editor: please remove the following paragraph before publication.]]
 
@@ -598,6 +602,32 @@ streams.  A QUIC stream's data limit controls the amount of data that can be
 sent on that stream, WebTransport or otherwise (see {{Section 4
 of !RFC9000}}).
 
+## Negotiating the Use of Flow Control {#flow-control-negotiate}
+
+The use of flow control is optional and can be negotiated.  A WebTransport
+endpoint that allows a WebTransport session to share an underlying transport
+connection with other WebTransport sessions MUST enable flow control.  This
+prevents attacks where an application can consuming excessive resources on a
+single session and starve traffic for other sessions (see
+{{security-considerations}}).
+
+An endpoint indicates that it is willing to support more than one WebTransport
+session, and thus flow control, by sending the SETTINGS_WT_MAX_SESSIONS with a
+value greater than "1".  If either endpoint sends SETTINGS_WT_MAX_SESSIONS with
+a value of "1", flow control is not enabled, and clients MUST NOT attempt to
+establish more than one simultaneous WebTransport session.  A server that
+receives more than one session on an underlying transport connection when flow
+control is not enabled MUST reset the excessive CONNECT streams with a
+`H3_REQUEST_REJECTED` status (see{{flow-control-limit-sessions}}).
+
+If both endpoints send SETTINGS_WT_MAX_SESSIONS with a value greater than "1",
+flow control is enabled, and the limits described in the entirety of
+{{flow-control}} apply.
+
+If flow control is not enabled, an endpoint MUST treat receipt of any flow
+control capsules (see {{flow-control-capsules}}) as a session error of type
+WT_INVALID_CAPSULE.
+
 ## Limiting the Number of Simultaneous Sessions {#flow-control-limit-sessions}
 
 This document defines a SETTINGS_WT_MAX_SESSIONS setting that allows
@@ -665,15 +695,30 @@ stream, per-stream data limits are provided by QUIC natively (see {{Section 4.1
 of !RFC9000}}).  The WT_MAX_STREAM_DATA and WT_STREAM_DATA_BLOCKED capsules
 ({{Section XX of ?I-D.ietf-webtrans-http2}}) are not used and so are prohibited.
 Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a WT_STREAM_DATA_BLOCKED
-capsule as a session error.
+capsule as a session error of type WT_INVALID_CAPSULE.
 
-## Flow Control and Intermediaries {#flow-control-intermediaries}
+## Flow Control SETTINGS
+
+*[SETTINGS_WT_INITIAL_MAX_STREAMS_UNI]: #
+*[SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI]: #
+*[SETTINGS_WT_INITIAL_MAX_DATA]: #
+
+Initial flow control limits can be exchanged via HTTP/3 SETTINGS
+({{http3-settings}}) by providing non-zero values for
+
+* WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
+  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+* WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
+
+## Flow Control Capsules
 
 WebTransport over HTTP/3 uses several capsules for flow control, and all of
 these capsules define special intermediary handling as described in
 {{Section 3.2 of HTTP-DATAGRAM}}.  These capsules, referred to as the "flow
 control capsules", are WT_MAX_DATA, WT_MAX_STREAMS, WT_DATA_BLOCKED, and
 WT_STREAMS_BLOCKED.
+
+### Flow Control and Intermediaries {#flow-control-intermediaries}
 
 Because flow control in WebTransport is hop-by-hop and does not provide an
 end-to-end signal, intermediaries MUST consume flow control signals and express
@@ -692,21 +737,6 @@ An intermediary that does not want to be responsible for storing data that
 cannot be immediately sent on its translated connection can ensure that it
 does not advertise a higher flow control limit on one connection than the
 corresponding limit on the translated connection.
-
-## Flow Control SETTINGS
-
-*[SETTINGS_WT_INITIAL_MAX_STREAMS_UNI]: #
-*[SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI]: #
-*[SETTINGS_WT_INITIAL_MAX_DATA]: #
-
-Initial flow control limits can be exchanged via HTTP/3 SETTINGS
-({{http3-settings}}) by providing non-zero values for
-
-* WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
-  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
-* WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
-
-## Flow Control Capsules
 
 ### WT_MAX_STREAMS Capsule {#WT_MAX_STREAMS}
 
@@ -974,11 +1004,13 @@ different trust domains, meaning that the implementations have to treat each
 transport as potentially hostile towards others on the same connection.  One
 potential attack is a resource exhaustion attack: since all of the WebTransport
 sessions share both congestion control and flow control context, a single
-session aggressively using up those resources can cause other sessions to
-stall.  A WebTransport endpoint thus SHOULD implement a fairness scheme that
-ensures that each session that shares a transport connection gets a reasonable
-share of controlled resources; this applies both to sending data and to opening
-new streams.
+application aggressively using up those resources can cause other sessions to
+stall.  A WebTransport endpoint MUST implement flow control mechanisms if it
+allows a WebTransport session to share the transport connection with other
+WebTransport sessions.  WebTransport endpoints SHOULD implement a fairness
+scheme that ensures that each session that shares a transport connection gets a
+reasonable share of controlled resources; this applies both to sending data and
+to opening new streams.
 
 An application could attempt to exhaust resources by opening too many
 WebTransport sessions at once.  In cases when the application is untrusted, the
@@ -1196,6 +1228,23 @@ Description:
 : WebTransport data stream aborted because the associated WebTransport session
   has been closed.  Also used to indicate that the endpoint is no longer
   reading from the CONNECT stream.
+
+Specification:
+
+: This document.
+
+Name:
+
+: WT_INVALID_CAPSULE
+
+Value:
+
+: 0x0d189ed4
+
+Description:
+
+: WebTransport session closed because an invalid capsule was received on the
+  session.
 
 Specification:
 
