@@ -624,9 +624,10 @@ If both endpoints send SETTINGS_WT_MAX_SESSIONS with a value greater than "1",
 flow control is enabled, and the limits described in the entirety of
 {{flow-control}} apply.
 
-If flow control is not enabled, an endpoint MUST treat receipt of any flow
-control capsules (see {{flow-control-capsules}}) as a session error of type
-WT_INVALID_CAPSULE.
+If flow control is not enabled, an endpoint MUST ignore receipt of any flow
+control capsules (see {{flow-control-capsules}}), since the peer might not have
+received SETTINGS at the time they were sent or packets might have been
+reordered.
 
 ## Limiting the Number of Simultaneous Sessions {#flow-control-limit-sessions}
 
@@ -695,7 +696,7 @@ stream, per-stream data limits are provided by QUIC natively (see {{Section 4.1
 of !RFC9000}}).  The WT_MAX_STREAM_DATA and WT_STREAM_DATA_BLOCKED capsules
 ({{Section XX of ?I-D.ietf-webtrans-http2}}) are not used and so are prohibited.
 Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a WT_STREAM_DATA_BLOCKED
-capsule as a session error of type WT_INVALID_CAPSULE.
+capsule as a session error.
 
 ## Flow Control SETTINGS
 
@@ -1228,23 +1229,6 @@ Description:
 : WebTransport data stream aborted because the associated WebTransport session
   has been closed.  Also used to indicate that the endpoint is no longer
   reading from the CONNECT stream.
-
-Specification:
-
-: This document.
-
-Name:
-
-: WT_INVALID_CAPSULE
-
-Value:
-
-: 0x0d189ed4
-
-Description:
-
-: WebTransport session closed because an invalid capsule was received on the
-  session.
 
 Specification:
 
