@@ -2028,10 +2028,9 @@ header is excluded from this limit so that this limit does not prevent the
 sending of information that is essential in linking new streams to a specific
 WebTransport session.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.3-2">Implementing <span id="iref-wt_max_data-4" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC stack provide the WebTransport
-implementation with information about the final size of streams; see
-<span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.  This allows both endpoints to agree on how much
-data was consumed by that stream, although the stream header exclusion above
-applies.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+implementation with information about the final size of streams; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.  This guarantees that both endpoints agree on how much
+WebTransport session flow control credit was consumed by the sender on that
+stream, after subtracting the number of bytes used by the stream header.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
 <p id="section-5.3-3">The <span id="iref-wt_data_blocked-5" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (<a href="#WT_DATA_BLOCKED" class="auto internal xref">Section 5.6.4</a>) can be sent to indicate that
 an endpoint was unable to send data due to a limit set by the <span id="iref-wt_max_data-6" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
 capsule.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
