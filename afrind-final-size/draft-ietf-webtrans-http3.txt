@@ -16,12 +16,13 @@ Expires: 8 January 2026                                       Apple Inc.
 
 Abstract
 
-   WebTransport [OVERVIEW] is a protocol framework that enables clients
-   constrained by the Web security model to communicate with a remote
-   server using a secure multiplexed transport.  This document describes
-   a WebTransport protocol that is based on HTTP/3 [HTTP3] and provides
-   support for unidirectional streams, bidirectional streams and
-   datagrams, all multiplexed within the same HTTP/3 connection.
+   WebTransport [OVERVIEW] is a protocol framework that enables
+   application clients constrained by the Web security model to
+   communicate with a remote application server using a secure
+   multiplexed transport.  This document describes a WebTransport
+   protocol that is based on HTTP/3 [HTTP3] and provides support for
+   unidirectional streams, bidirectional streams, and datagrams, all
+   multiplexed within the same HTTP/3 connection.
 
 Note to Readers
 
@@ -84,19 +85,20 @@ Table of Contents
      4.3.  Resetting Data Streams
      4.4.  Datagrams
      4.5.  Buffering Incoming Streams and Datagrams
-     4.6.  Interaction with HTTP/3 GOAWAY frame
+     4.6.  Interaction with the HTTP/3 GOAWAY frame
      4.7.  Use of Keying Material Exporters
    5.  Flow Control
-     5.1.  Limiting the Number of Simultaneous Sessions
-     5.2.  Limiting the Number of Streams Within a Session
-     5.3.  Data Limits
-     5.4.  Flow Control and Intermediaries
+     5.1.  Negotiating the Use of Flow Control
+     5.2.  Limiting the Number of Simultaneous Sessions
+     5.3.  Limiting the Number of Streams Within a Session
+     5.4.  Data Limits
      5.5.  Flow Control SETTINGS
      5.6.  Flow Control Capsules
-       5.6.1.  WT_MAX_STREAMS Capsule
-       5.6.2.  WT_STREAMS_BLOCKED Capsule
-       5.6.3.  WT_MAX_DATA Capsule
-       5.6.4.  WT_DATA_BLOCKED Capsule
+       5.6.1.  Flow Control and Intermediaries
+       5.6.2.  WT_MAX_STREAMS Capsule
+       5.6.3.  WT_STREAMS_BLOCKED Capsule
+       5.6.4.  WT_MAX_DATA Capsule
+       5.6.5.  WT_DATA_BLOCKED Capsule
    6.  Session Termination
    7.  Considerations for Future Versions
      7.1.  Negotiating the Draft Version
@@ -123,9 +125,10 @@ Table of Contents
    can multiplex HTTP requests over a QUIC connection.  This document
    defines a mechanism for multiplexing non-HTTP data with HTTP/3 in a
    manner that conforms with the WebTransport protocol requirements and
-   semantics[OVERVIEW].  Using the mechanism described here, multiple
-   WebTransport instances can be multiplexed simultaneously with regular
-   HTTP traffic on the same HTTP/3 connection.
+   semantics [OVERVIEW].  Using the mechanism described here, multiple
+   WebTransport instances, or sessions, can be multiplexed
+   simultaneously with regular HTTP traffic on the same HTTP/3
+   connection.
 
 1.1.  Terminology
 
@@ -140,7 +143,11 @@ Table of Contents
    WebTransport server and an HTTP/3 server.  An HTTP/3 server is the
    server that terminates HTTP/3 connections; a WebTransport server is
    an application that accepts WebTransport sessions, which can be
-   accessed via an HTTP/3 server.
+   accessed via an HTTP/3 server.  An application client is user or
+   developer-provided code, often untrusted, that utilizes the interface
+   offered by the WebTransport client to communicate with an application
+   server.  The application server uses the interface offered by the
+   WebTransport server to accept incoming WebTransport sessions.
 
 2.  Overview
 
@@ -164,18 +171,20 @@ Table of Contents
    Section 4.6 of [RFC9114].
 
    WebTransport session establishment involves interacting at the HTTP
-   layer with a resource.  For Web user agents, this interaction is
-   important for security reasons, especially to ensure that the
-   resource is willing to use WebTransport.
+   layer with a resource.  For Web user agents and other WebTransport
+   clients, this interaction is important for security reasons,
+   especially to ensure that the resource is willing to use
+   WebTransport.
 
    Although WebTransport requires HTTP for its handshake, when HTTP/3 is
    in use, HTTP is not used for anything else related to an established
-   session.  Instead, QUIC streams begin with a header sequence of bytes
+   session.  Instead, QUIC streams begin with a sequence of header bytes
    that links them to the established session.  The remainder of the
    stream is the body, which carries the payload supplied by the
    application using WebTransport.  This process is similar to
    WebSockets over HTTP/1.1 [ORIGIN], where access to the underlying
-   byte stream is enabled after both sides have completed the handshake.
+   byte stream is enabled after both sides have completed an initial
+   handshake.
 
    The layering of QUIC, HTTP/3, and WebTransport is shown in Figure 1.
    Once a WebTransport session is established, applications have nearly
@@ -198,23 +207,26 @@ Table of Contents
 2.1.1.  Minimizing Implementation Complexity
 
    WebTransport has minimal interaction with HTTP and HTTP/3.  Clients
-   or servers can constrain their use of features to only those required
-   to complete a WebTransport handshake:
+   and servers can constrain their use of features to only those
+   required to complete a WebTransport handshake:
 
    *  Generating/parsing the request method, host, path, protocol,
-      optional Origin header, and perhaps some extra headers.
+      optional Origin header field, and perhaps some extra header
+      fields.
 
-   *  Generating/parsing the response status code, and possibly some
-      extra headers.
+   *  Generating/parsing the response status code and possibly some
+      extra header fields.
 
-   The receiver can likely perform several of its HTTP-level
-   requirements using bytestring comparisons.
+   A WebTransport endpoint, whether a client or a server, can likely
+   perform several of its HTTP-level requirements using bytestring
+   comparisons.
 
-   While HTTP/3 encodes HTTP messages using QPACK, the complexity can be
-   minimized.  Receivers can disable dynamic decompression entirely but
-   must always support static decompression and Huffman decoding.
-   Senders can opt to never use dynamic compression, static compression,
-   or Huffman encoding.
+   While HTTP/3 encodes HTTP messages using QPACK, this complexity can
+   be minimized.  When receiving, a WebTransport endpoint can disable
+   dynamic decompression entirely but must always support static
+   decompression and Huffman decoding.  When sending, endpoints can opt
+   to never use dynamic compression, static compression, or Huffman
+   encoding.
 
 2.2.  Protocol Overview
 
@@ -222,10 +234,11 @@ Table of Contents
    value and path value (defined in [RFC3986] Sections 3.2 and 3.3
    correspondingly).
 
-   When an HTTP/3 connection is established, the server sends a
-   SETTINGS_WT_MAX_SESSIONS setting in order to indicate support for
-   WebTransport over HTTP/3.  This process also negotiates the use of
-   additional HTTP/3 extensions.
+   When an HTTP/3 connection is established, both the client and the
+   server send a SETTINGS_WT_MAX_SESSIONS setting to indicate support
+   for WebTransport over HTTP/3.  This process also negotiates the use
+   of additional HTTP/3 extensions to enable both endpoints to open
+   WebTransport streams.
 
    WebTransport sessions are initiated inside a given HTTP/3 connection
    by the client, who sends an extended CONNECT request [RFC9220].  If
@@ -236,8 +249,8 @@ Table of Contents
    CONNECT stream that established a given WebTransport session will be
    further referred to as a _Session ID_.
 
-   After the session is established, the peers can exchange data using
-   the following mechanisms:
+   After the session is established, the endpoints can exchange data
+   using the following mechanisms:
 
    *  A client can create a bidirectional stream and transfer its
       ownership to WebTransport by providing a special signal in the
@@ -250,7 +263,8 @@ Table of Contents
    *  Both client and server can create a unidirectional stream using a
       special stream type.
 
-   *  A datagram can be sent using HTTP Datagrams [HTTP-DATAGRAM].
+   *  Both client and server can send datagrams using HTTP Datagrams
+      [HTTP-DATAGRAM].
 
    A WebTransport session is terminated when the CONNECT stream that
    created it is closed.
@@ -259,11 +273,11 @@ Table of Contents
 
 3.1.  Establishing a WebTransport-Capable HTTP/3 Connection
 
-   A WebTransport-Capable HTTP/3 connection requires two mandatory
-   indicators to be sent by the server in its SETTINGS frames.  Clients
-   do not use SETTINGS but instead use the the "webtransport" upgrade
-   token in CONNECT requests establishing WebTransport sessions (see
-   Section 9.1).
+   A WebTransport-Capable HTTP/3 connection requires the client and
+   server to both signal support for WebTransport over HTTP/3 using a
+   setting.  Clients also signal support by using the "webtransport"
+   upgrade token in extended CONNECT requests when establishing sessions
+   (see Section 9.1).
 
    WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described
    in [RFC9220], which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL
@@ -271,13 +285,18 @@ Table of Contents
    for indicating the number of WebTransport sessions a connection
    supports.  The default value for the SETTINGS_WT_MAX_SESSIONS setting
    is "0", meaning that the endpoint is not willing to receive any
-   WebTransport sessions.  A server supporting WebTransport over HTTP/3
-   MUST send both the SETTINGS_WT_MAX_SESSIONS setting with a value
-   greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting
-   with a value of "1".
+   WebTransport sessions.
 
-   The client MUST NOT send a WebTransport request until it has received
-   the setting indicating WebTransport support from the server.
+   A server supporting WebTransport over HTTP/3 MUST send both the
+   SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0" and
+   the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
+
+   A client supporting WebTransport over HTTP/3 MUST send the
+   SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0".
+
+   Clients MUST NOT attempt to establish WebTransport sessions until
+   they have received the settings indicating WebTransport support from
+   the server.
 
    [[RFC editor: please remove the following paragraph before
    publication.]]
@@ -295,7 +314,7 @@ Table of Contents
    (see Section 2.1.1 of [HTTP-DATAGRAM]).  Servers should also note
    that CONNECT requests to establish new WebTransport sessions, in
    addition to other messages, may arrive before this SETTING is
-   received (see{ {buffering-incoming}}).
+   received (see Section 4.5).
 
    WebTransport over HTTP/3 also requires support for QUIC datagrams.
    To indicate support, both the client and the server MUST send a
@@ -314,16 +333,22 @@ Table of Contents
 3.2.  Creating a New Session
 
    As WebTransport sessions are established over HTTP/3, they are
-   identified using the https URI scheme ([HTTP], Section 4.2.2).
+   identified using the https URI scheme (Section 4.2.2 of [HTTP]).
 
-   In order to create a new WebTransport session, a client can send an
-   HTTP extended CONNECT request.  The :protocol pseudo-header field
-   ([RFC8441]) MUST be set to webtransport.  The :scheme field MUST be
-   https.  Both the :authority and the :path value MUST be set; those
-   fields indicate the desired WebTransport server.  If the WebTransport
-   session is coming from a browser client, an Origin header [RFC6454]
-   MUST be provided within the request; otherwise, the header is
-   OPTIONAL.
+   In order to create a new WebTransport session, a WebTransport client
+   sends an HTTP extended CONNECT request.  In this request:
+
+   *  The :protocol pseudo-header field([RFC8441]) MUST be set to
+      webtransport.
+
+   *  The :scheme field MUST be https.
+
+   *  Both the :authority and the :path value MUST be set; these fields
+      identify the desired WebTransport server resource.
+
+   *  If the WebTransport session is coming from a browser client, an
+      Origin header [RFC6454] MUST be provided within the request.
+      Otherwise, the header is OPTIONAL.
 
    Upon receiving an extended CONNECT request with a :protocol field set
    to webtransport, the HTTP/3 server can check if it has a WebTransport
@@ -342,19 +367,20 @@ Table of Contents
    perspective, a session is established once it sends a 2xx response.
 
    The server may reply with a 3xx response, indicating a redirection
-   (Section 15.4 of [HTTP]).  The user agent MUST NOT automatically
-   follow such redirects, as the client could potentially already have
-   sent data for the WebTransport session in question; it MAY notify the
-   client about the redirect.
+   (Section 15.4 of [HTTP]).  The WebTransport client MUST NOT
+   automatically follow such redirects, as it potentially could have
+   already sent data for the WebTransport session in question; it MAY
+   notify the application client about the redirect.
 
    Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT
    method is not considered safe (see Section 10.9 of [HTTP3]).
    However, WebTransport-related SETTINGS parameters may be retained
    from the previous session as described in Section 7.2.4.2 of [HTTP3].
    If the server accepts 0-RTT, the server MUST NOT reduce the limit of
-   maximum open WebTransport sessions from the one negotiated during the
-   previous session; such change would be deemed incompatible, and MUST
-   result in a H3_SETTINGS_ERROR connection error.
+   maximum open WebTransport sessions, or other initial flow control
+   values, from the values negotiated during the previous session; such
+   change would be deemed incompatible, and MUST result in a
+   H3_SETTINGS_ERROR connection error.
 
    The webtransport HTTP Upgrade Token uses the Capsule Protocol as
    defined in [HTTP-DATAGRAM].  The Capsule Protocol is negotiated when
@@ -366,15 +392,15 @@ Table of Contents
 
    WebTransport over HTTP/3 offers a protocol negotiation mechanism,
    similar to TLS Application-Layer Protocol Negotiation Extension
-   (ALPN) [RFC7301]; the intent is to simplify porting pre-existing
+   (ALPN) [RFC7301]; the intent is to simplify porting existing
    protocols that use QUIC and rely on this functionality.
 
-   The user agent MAY include a WT-Available-Protocols header field in
-   the CONNECT request.  The WT-Available-Protocols enumerates the
+   The client MAY include a WT-Available-Protocols header field in the
+   CONNECT request.  The WT-Available-Protocols field enumerates the
    possible protocols in preference order, with the most preferred
    protocol listed first.  If the server receives such a header, it MAY
    include a WT-Protocol field in a successful (2xx) response.  If it
-   does, the server SHALL include a single choice from the client's list
+   does, the server MUST include a single choice from the client's list
    in that field.  Servers MAY reject the request if the client did not
    include a suitable protocol.
 
@@ -391,7 +417,8 @@ Table of Contents
 
    The semantics of individual values used in WT-Available-Protocols and
    WT-Protocol are determined by the WebTransport resource in question
-   and are not registered in IANA's "ALPN Protocol IDs" registry.
+   and are not required to be registered in IANA's "ALPN Protocol IDs"
+   registry.
 
 3.4.  Prioritization
 
@@ -415,11 +442,11 @@ Table of Contents
    scheduling within a session and not scheduling of other data on the
    same HTTP/3 connection.
 
-   The client/server priority merging guidance given in Section 8 of
-   [RFC9218] also applies to WebTransport session.  For example, a
-   client that receives a response Priority header field could alter its
-   view of a WebTransport session priority and alter the scheduling of
-   outgoing data as a result.
+   The client/server priority merging guidance in Section 8 of [RFC9218]
+   also applies to WebTransport sessions.  For example, a client that
+   receives a response Priority header field could alter its view of a
+   WebTransport session priority and alter the scheduling of outgoing
+   data as a result.
 
    Endpoints that prioritize WebTransport sessions need to consider how
    they interact with other sessions or requests on the same HTTP/3
@@ -428,11 +455,12 @@ Table of Contents
 4.  WebTransport Features
 
    WebTransport over HTTP/3 provides the following features described in
-   [OVERVIEW]: unidirectional streams, bidirectional streams and
-   datagrams, initiated by either endpoint.  Protocols designed for use
-   with WebTransport over HTTP/3 are constrained to these features.  The
-   Capsule Protocol is an implementation detail of WebTransport over
-   HTTP/3 and is not a WebTransport feature.
+   [OVERVIEW]: unidirectional streams, bidirectional streams, and
+   datagrams, all of which can be initiated by either endpoint.
+   Protocols designed for use with WebTransport over HTTP/3 are
+   constrained to these features.  The Capsule Protocol is an
+   implementation detail of WebTransport over HTTP/3 and is not a
+   WebTransport feature.
 
    Session IDs are used to demultiplex streams and datagrams belonging
    to different WebTransport sessions.  On the wire, session IDs are
@@ -440,11 +468,11 @@ Table of Contents
    [RFC9000].
 
    The client MAY optimistically open unidirectional and bidirectional
-   streams, as well as send datagrams, for a session that it has sent
-   the CONNECT request for, even if it has not yet received the server's
-   response to the request.  On the server side, opening streams and
-   sending datagrams is possible as soon as the CONNECT request has been
-   received.
+   streams, as well as send datagrams, on a session for which it has
+   sent the CONNECT request, even if it has not yet received the
+   server's response to the request.  On the server side, opening
+   streams and sending datagrams is possible as soon as the CONNECT
+   request has been received.
 
    If at any point a session ID is received that cannot be a valid ID
    for a client-initiated bidirectional stream, the recipient MUST close
@@ -472,26 +500,25 @@ Table of Contents
    request streams, which are a sequence of HTTP/3 frames with a variety
    of rules (see Sections 4.1 and 6.1 of [HTTP3]).
 
-   WebTransport extends HTTP/3 to allow clients to declare and use
+   WebTransport extends HTTP/3 to allow clients to declare and to use
    alternative request stream rules.  Once a client receives settings
-   indicating WebTransport support (Section 3.1), it can send a special
+   indicating WebTransport support (Section 3.1), it MUST send a special
    signal value, encoded as a variable-length integer, as the first
-   bytes of the stream in order to indicate how the remaining bytes on
-   the stream are used.
+   bytes of each bidirectional WebTransport stream it initiates to
+   indicate how the remaining bytes on the stream are used.
 
    WebTransport extends HTTP/3 by defining rules for all server-
    initiated bidirectional streams.  Once a server receives an incoming
    CONNECT request establishing a WebTransport session (Section 3.1), it
-   can open a bidirectional stream for use with that session and SHALL
+   can open a bidirectional stream for use with that session and MUST
    send a special signal value, encoded as a variable-length integer, as
    the first bytes of the stream in order to indicate how the remaining
    bytes on the stream are used.
 
-   The signal value, 0x41, is used by clients and servers to open a
-   bidirectional WebTransport stream.  Following this is the associated
-   session ID, encoded as a variable-length integer; the rest of the
-   stream is the application payload of the WebTransport stream
-   (Figure 3).
+   Clients and servers use the signal value 0x41 to open a bidirectional
+   WebTransport stream.  Following this is the associated session ID,
+   encoded as a variable-length integer; the rest of the stream is the
+   application payload of the WebTransport stream (Figure 3).
 
    Bidirectional Stream {
        Signal Value (i) = 0x41,
@@ -503,14 +530,14 @@ Table of Contents
 
    This document reserves the special signal value 0x41 as a WT_STREAM
    frame type.  While it is registered as an HTTP/3 frame type to avoid
-   collisions, WT_STREAM is not a proper HTTP/3 frame, as it lacks
-   length; it is an extension of HTTP/3 frame syntax that MUST be
-   supported by any peer negotiating WebTransport.  Endpoints that
-   implement this extension are also subject to additional frame
-   handling requirements.  Endpoints MUST NOT send WT_STREAM as a frame
-   type on HTTP/3 streams other than the very first bytes of a request
-   stream.  Receiving this frame type in any other circumstances MUST be
-   treated as a connection error of type H3_FRAME_ERROR.
+   collisions, WT_STREAM lacks length and is not a proper HTTP/3 frame;
+   it is an extension of HTTP/3 frame syntax that MUST be supported by
+   any peer negotiating WebTransport.  Endpoints that implement this
+   extension are also subject to additional frame handling requirements.
+   Endpoints MUST NOT send WT_STREAM as a frame type on HTTP/3 streams
+   other than the very first bytes of a request stream.  Receiving this
+   frame type in any other circumstances MUST be treated as a connection
+   error of type H3_FRAME_ERROR.
 
 4.3.  Resetting Data Streams
 
@@ -518,16 +545,16 @@ Table of Contents
    frame for a WebTransport data stream.  Those signals are propagated
    by the WebTransport implementation to the application.
 
-   A WebTransport application SHALL provide an error code for those
+   A WebTransport application MUST provide an error code for those
    operations.  Since WebTransport shares the error code space with
    HTTP/3, WebTransport application errors for streams are limited to an
    unsigned 32-bit integer, assuming values between 0x00000000 and
-   0xffffffff.  WebTransport implementations SHALL remap those error
+   0xffffffff.  WebTransport implementations MUST remap those error
    codes into the error range reserved for WT_APPLICATION_ERROR, where
    0x00000000 corresponds to 0x52e4a40fa8db, and 0xffffffff corresponds
-   to 0x52e5ac983162.  Note that there are code points inside that range
+   to 0x52e5ac983162.  Note that there are codepoints inside that range
    of form "0x1f * N + 0x21" that are reserved by Section 8.1 of
-   [HTTP3]; those have to be skipped when mapping the error codes (i.e.
+   [HTTP3]; those have to be skipped when mapping the error codes (i.e.,
    the two HTTP/3 error codepoints adjacent to a reserved codepoint
    would map to two adjacent WebTransport application error codepoints).
    An example pseudocode can be seen in Figure 4.
@@ -553,17 +580,13 @@ Table of Contents
    To prevent this, WebTransport implementations MUST use the
    RESET_STREAM_AT frame [RESET-STREAM-AT] with a Reliable Size set to
    at least the size of the WebTransport header when resetting a
-   WebTransport data stream.  This ensures that the ID field associating
-   the data stream with a WebTransport session is always delivered.
+   WebTransport data stream.  This ensures reliable delivery of the ID
+   field associating the data stream with a WebTransport session.
 
-   WebTransport implementations SHALL forward the error code for a
-   stream associated with a known session to the application that owns
-   that session; similarly, the intermediaries SHALL reset the streams
-   with corresponding error code when receiving a reset from the peer.
-   If a WebTransport implementation intentionally allows only one
-   session over a given HTTP/3 connection, it SHALL forward the error
-   codes within WebTransport application error code range to the
-   application that owns the only session on that connection.
+   WebTransport endpoints MUST forward the error code for a stream
+   associated with a known session to the application that owns that
+   session; similarly, intermediaries MUST reset such streams with a
+   corresponding error code when receiving a reset from their peer.
 
 4.4.  Datagrams
 
@@ -592,8 +615,8 @@ Table of Contents
    server.
 
    To handle this case, WebTransport endpoints SHOULD buffer streams and
-   datagrams until those can be associated with an established session.
-   To avoid resource exhaustion, the endpoints MUST limit the number of
+   datagrams until they can be associated with an established session.
+   To avoid resource exhaustion, endpoints MUST limit the number of
    buffered streams and datagrams.  When the number of buffered streams
    is exceeded, a stream SHALL be closed by sending a RESET_STREAM and/
    or STOP_SENDING with the WT_BUFFERED_STREAM_REJECTED error code.
@@ -601,7 +624,7 @@ Table of Contents
    be dropped.  It is up to an implementation to choose what stream or
    datagram to discard.
 
-4.6.  Interaction with HTTP/3 GOAWAY frame
+4.6.  Interaction with the HTTP/3 GOAWAY frame
 
    HTTP/3 defines a graceful shutdown mechanism (Section 5.2 of [HTTP3])
    that allows a peer to send a GOAWAY frame indicating that it will no
@@ -622,6 +645,8 @@ Table of Contents
      Length (i) = 0
    }
 
+                 Figure 5: WT_DRAIN_SESSION Capsule Format
+
    After sending or receiving either a WT_DRAIN_SESSION capsule or a
    HTTP/3 GOAWAY frame, an endpoint MAY continue using the session and
    MAY open new WebTransport streams.  The signal is intended for the
@@ -638,13 +663,13 @@ Table of Contents
 4.7.  Use of Keying Material Exporters
 
    WebTransport over HTTP/3 supports the use of TLS keying material
-   exporters [RFC8446], Section 7.5.  Since the underlying QUIC
+   exporters Section 7.5 of [RFC8446].  Since the underlying QUIC
    connection may be shared by multiple WebTransport sessions,
-   WebTransport defines its own mechanism for deriving a TLS exporter
-   that separates keying material for different sessions.  If the user
+   WebTransport defines a mechanism for deriving a TLS exporter that
+   separates keying material for different sessions.  If the application
    requests an exporter for a given WebTransport session with a
    specified label and context, the resulting exporter SHALL be a TLS
-   exporter as defined in[RFC8446], Section 7.5 with the label set to
+   exporter as defined in Section 7.5 of [RFC8446] with the label set to
    "EXPORTER-WebTransport" and the context set to the serialization of
    the "WebTransport Exporter Context" struct as defined below.
 
@@ -655,6 +680,8 @@ Table of Contents
      WebTransport Application-Supplied Exporter Context Length (8),
      WebTransport Application-Supplied Exporter Context (..)
    }
+
+               Figure 6: WebTransport Exporter Context struct
 
    A TLS exporter API might permit the context field to be omitted.  In
    this case, as with TLS 1.3, the WebTransport Application-Supplied
@@ -670,21 +697,48 @@ Table of Contents
    that can be consumed by each session and by each stream within a
    session.
 
-   WebTransport over HTTP/3 provides connection-level limit that governs
-   the number of sessions that can be created on an HTTP/3 connection;
-   see Section 5.1.  It also provides the session-level limits that
-   govern the number of streams that can be created in a session and
-   limit the amount of data that can be exchanged across all streams in
-   each session; see Section 5.2.
+   WebTransport over HTTP/3 provides a connection-level limit that
+   governs the number of sessions that can be created on an HTTP/3
+   connection (see Section 5.2).  It also provides session-level limits
+   that govern the number of streams that can be created in a session
+   and limit the amount of data that can be exchanged across all streams
+   in each session (see Section 5.3).
 
    The underlying QUIC connection provides connection and stream level
-   flow control.  The connection data limit defines the total amount of
-   data that can be sent across all WebTransport sessions and other non-
-   WebTransport streams.  A stream's data limit controls the amount of
-   data that can be sent on that stream, WebTransport or otherwise; see
-   Section 4 of [RFC9000].
+   flow control.  The QUIC connection data limit defines the total
+   amount of data that can be sent across all WebTransport sessions and
+   other non-WebTransport streams.  A QUIC stream's data limit controls
+   the amount of data that can be sent on that stream, WebTransport or
+   otherwise (see Section 4 of [RFC9000]).
 
-5.1.  Limiting the Number of Simultaneous Sessions
+5.1.  Negotiating the Use of Flow Control
+
+   The use of flow control is optional and can be negotiated.  A
+   WebTransport endpoint that allows a WebTransport session to share an
+   underlying transport connection with other WebTransport sessions MUST
+   enable flow control.  This prevents attacks where an application can
+   consuming excessive resources on a single session and starve traffic
+   for other sessions (see Section 8).
+
+   An endpoint indicates that it is willing to support more than one
+   WebTransport session, and thus flow control, by sending the
+   SETTINGS_WT_MAX_SESSIONS with a value greater than "1".  If either
+   endpoint sends SETTINGS_WT_MAX_SESSIONS with a value of "1", flow
+   control is not enabled, and clients MUST NOT attempt to establish
+   more than one simultaneous WebTransport session.  A server that
+   receives more than one session on an underlying transport connection
+   when flow control is not enabled MUST reset the excessive CONNECT
+   streams with a H3_REQUEST_REJECTED status (seeSection 5.2).
+
+   If both endpoints send SETTINGS_WT_MAX_SESSIONS with a value greater
+   than "1", flow control is enabled, and the limits described in the
+   entirety of Section 5 apply.
+
+   If flow control is not enabled, an endpoint MUST treat receipt of any
+   flow control capsules (see Section 5.6) as a session error of type
+   WT_INVALID_CAPSULE.
+
+5.2.  Limiting the Number of Simultaneous Sessions
 
    This document defines a SETTINGS_WT_MAX_SESSIONS setting that allows
    the server to limit the maximum number of concurrent WebTransport
@@ -697,13 +751,13 @@ Table of Contents
    the CONNECT streams it is not willing to process with the
    H3_REQUEST_REJECTED status defined in Section 8.1 of [HTTP3].
 
-5.2.  Limiting the Number of Streams Within a Session
+5.3.  Limiting the Number of Streams Within a Session
 
-   The WT_MAX_STREAMS capsule (Section 5.6.1) establishes a limit on the
+   The WT_MAX_STREAMS capsule (Section 5.6.2) establishes a limit on the
    number of streams within a WebTransport session.  Like the QUIC
    MAX_STREAMS frame (Section 19.11 of [RFC9000]), this capsule has two
    types that provide separate limits for unidirectional and
-   bidirectional streams that are initiated by a peer.
+   bidirectional streams that a peer initiates.
 
    Note that the CONNECT stream for the session is not included in
    either the bidirectional or the unidirectional stream limits; the
@@ -714,7 +768,7 @@ Table of Contents
    The session-level stream limit applies in addition to the QUIC
    MAX_STREAMS frame, which provides a connection-level stream limit.
    New streams can only be created within the session if both the
-   stream- and the connection-level limit permit; see Section 4.6 of
+   stream- and the connection-level limit permit, see Section 4.6 of
    [RFC9000] for details on how QUIC stream limits are applied.
 
    Unlike the the QUIC MAX_STREAMS frame, there is no simple
@@ -722,7 +776,7 @@ Table of Contents
    STREAM frames.  This especially applies if there are other users of
    streams on the connection.
 
-   The WT_STREAMS_BLOCKED capsule (Section 5.6.2) can be sent to
+   The WT_STREAMS_BLOCKED capsule (Section 5.6.3) can be sent to
    indicate that an endpoint was unable to create a stream due to the
    session-level stream limit.
 
@@ -730,9 +784,9 @@ Table of Contents
    headers so that both endpoints can agree on the number of streams
    that are open.
 
-5.3.  Data Limits
+5.4.  Data Limits
 
-   The WT_MAX_DATA capsule (Section 5.6.3) establishes a limit on the
+   The WT_MAX_DATA capsule (Section 5.6.4) establishes a limit on the
    amount of data that can be sent within a WebTransport session.  This
    limit counts all data that is sent on streams of the corresponding
    type, excluding the stream header (see Section 4.1 and Section 4.2).
@@ -747,25 +801,38 @@ Table of Contents
    was consumed by the sender on that stream, after subtracting the
    number of bytes used by the stream header.
 
-   The WT_DATA_BLOCKED capsule (Section 5.6.4) can be sent to indicate
+   The WT_DATA_BLOCKED capsule (Section 5.6.5) can be sent to indicate
    that an endpoint was unable to send data due to a limit set by the
    WT_MAX_DATA capsule.
 
    Because WebTransport over HTTP/3 uses a native QUIC stream for each
    WebTransport stream, per-stream data limits are provided by QUIC
-   natively; see Section 4.1 of [RFC9000].  The WT_MAX_STREAM_DATA and
+   natively (see Section 4.1 of [RFC9000]).  The WT_MAX_STREAM_DATA and
    WT_STREAM_DATA_BLOCKED capsules (Part XX of
    [I-D.ietf-webtrans-http2]) are not used and so are prohibited.
    Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
-   WT_STREAM_DATA_BLOCKED capsule as a session error.
+   WT_STREAM_DATA_BLOCKED capsule as a session error of type
+   WT_INVALID_CAPSULE.
 
-5.4.  Flow Control and Intermediaries
+5.5.  Flow Control SETTINGS
+
+   Initial flow control limits can be exchanged via HTTP/3 SETTINGS
+   (Section 9.2) by providing non-zero values for
+
+   *  WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
+      SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+
+   *  WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
+
+5.6.  Flow Control Capsules
 
    WebTransport over HTTP/3 uses several capsules for flow control, and
    all of these capsules define special intermediary handling as
    described in Section 3.2 of [HTTP-DATAGRAM].  These capsules,
-   referred to as the "flow control capsules" are WT_MAX_DATA,
+   referred to as the "flow control capsules", are WT_MAX_DATA,
    WT_MAX_STREAMS, WT_DATA_BLOCKED, and WT_STREAMS_BLOCKED.
+
+5.6.1.  Flow Control and Intermediaries
 
    Because flow control in WebTransport is hop-by-hop and does not
    provide an end-to-end signal, intermediaries MUST consume flow
@@ -786,19 +853,7 @@ Table of Contents
    ensure that it does not advertise a higher flow control limit on one
    connection than the corresponding limit on the translated connection.
 
-5.5.  Flow Control SETTINGS
-
-   Initial flow control limits can be exchanged via HTTP/3 SETTINGS
-   (Section 9.2) by providing non-zero values for
-
-   *  WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
-      SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
-
-   *  WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
-
-5.6.  Flow Control Capsules
-
-5.6.1.  WT_MAX_STREAMS Capsule
+5.6.2.  WT_MAX_STREAMS Capsule
 
    An HTTP capsule [HTTP-DATAGRAM] called WT_MAX_STREAMS is introduced
    to inform the peer of the cumulative number of streams of a given
@@ -817,7 +872,7 @@ Table of Contents
      Maximum Streams (i),
    }
 
-                  Figure 5: WT_MAX_STREAMS Capsule Format
+                  Figure 7: WT_MAX_STREAMS Capsule Format
 
    WT_MAX_STREAMS capsules contain the following field:
 
@@ -843,7 +898,7 @@ Table of Contents
    zero values for SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
    SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI.
 
-5.6.2.  WT_STREAMS_BLOCKED Capsule
+5.6.3.  WT_STREAMS_BLOCKED Capsule
 
    A sender SHOULD send a WT_STREAMS_BLOCKED capsule (type=0x190B4D43 or
    0x190B4D44) when it wishes to open a stream but is unable to do so
@@ -863,7 +918,7 @@ Table of Contents
      Maximum Streams (i),
    }
 
-                Figure 6: WT_STREAMS_BLOCKED Capsule Format
+                Figure 8: WT_STREAMS_BLOCKED Capsule Format
 
    WT_STREAMS_BLOCKED capsules contain the following field:
 
@@ -878,7 +933,7 @@ Table of Contents
    MUST generate and send appropriate flow control signals for their
    limits.
 
-5.6.3.  WT_MAX_DATA Capsule
+5.6.4.  WT_MAX_DATA Capsule
 
    An HTTP capsule [HTTP-DATAGRAM] called WT_MAX_DATA (type=0x190B4D3D)
    is introduced to inform the peer of the maximum amount of data that
@@ -888,7 +943,7 @@ Table of Contents
    corresponding type, excluding the stream header (see Section 4.1 and
    Section 4.2).  Implementing WT_MAX_DATA requires that the QUIC stack
    provide the WebTransport implementation with information about the
-   final size of streams; see Section 4.5 of [RFC9000].
+   final size of streams (see Section 4.5 of [RFC9000]).
 
    WT_MAX_DATA Capsule {
      Type (i) = 0x190B4D3D,
@@ -896,7 +951,7 @@ Table of Contents
      Maximum Data (i),
    }
 
-                    Figure 7: WT_MAX_DATA Capsule Format
+                    Figure 9: WT_MAX_DATA Capsule Format
 
    WT_MAX_DATA capsules contain the following field:
 
@@ -911,13 +966,13 @@ Table of Contents
    The WT_MAX_DATA capsule defines special intermediary handling, as
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
    consume WT_MAX_DATA capsules for flow control purposes and MUST
-   generate and send appropriate flow control signals for their limits;
-   see Section 5.4.
+   generate and send appropriate flow control signals for their limits
+   (see Section 5.6.1).
 
    The initial value for this limit MAY be communicated by sending a
    non-zero value for SETTINGS_WT_INITIAL_MAX_DATA.
 
-5.6.4.  WT_DATA_BLOCKED Capsule
+5.6.5.  WT_DATA_BLOCKED Capsule
 
    A sender SHOULD send a WT_DATA_BLOCKED capsule (type=0x190B4D41) when
    it wishes to send data but is unable to do so due to WebTransport
@@ -930,7 +985,7 @@ Table of Contents
      Maximum Data (i),
    }
 
-                  Figure 8: WT_DATA_BLOCKED Capsule Format
+                 Figure 10: WT_DATA_BLOCKED Capsule Format
 
    WT_DATA_BLOCKED capsules contain the following field:
 
@@ -940,8 +995,8 @@ Table of Contents
    The WT_DATA_BLOCKED capsule defines special intermediary handling, as
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
    consume WT_DATA_BLOCKED capsules for flow control purposes and MUST
-   generate and send appropriate flow control signals for their limits;
-   see Section 5.4.
+   generate and send appropriate flow control signals for their limits
+   (see Section 5.6.1).
 
 6.  Session Termination
 
@@ -960,8 +1015,9 @@ Table of Contents
    it MUST NOT send any new datagrams or open any new streams.
 
    To terminate a session with a detailed error message, an application
-   MAY send an HTTP capsule [HTTP-DATAGRAM] of type WT_CLOSE_SESSION
-   (0x2843).  The format of the capsule SHALL be as follows:
+   MAY provide such a message for the WebTransport endpoint to send in
+   an HTTP capsule [HTTP-DATAGRAM] of type WT_CLOSE_SESSION (0x2843).
+   The format of the capsule SHALL be as follows:
 
    WT_CLOSE_SESSION Capsule {
      Type (i) = WT_CLOSE_SESSION,
@@ -969,6 +1025,8 @@ Table of Contents
      Application Error Code (32),
      Application Error Message (..8192),
    }
+
+                 Figure 11: WT_CLOSE_SESSION Capsule Format
 
    WT_CLOSE_SESSION has the following fields:
 
@@ -981,7 +1039,7 @@ Table of Contents
       exceed 1024 bytes.
 
    An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately
-   send a FIN on the CONNECT Stream.  The endpoint MAY send a
+   send a FIN on the CONNECT Stream.  The endpoint MAY also send a
    STOP_SENDING with error code WT_SESSION_GONE to indicate it is no
    longer reading from the CONNECT stream.  The recipient MUST either
    close or reset the stream in response.  If any additional stream data
@@ -1041,31 +1099,34 @@ Table of Contents
    WebTransport over HTTP/3 satisfies all of the security requirements
    imposed by [OVERVIEW] on WebTransport protocols, thus providing a
    secure framework for client-server communication in cases when the
-   client is potentially untrusted.
+   application is potentially untrusted.
 
    WebTransport over HTTP/3 requires explicit opt-in through the use of
    an HTTP/3 setting; this avoids potential protocol confusion attacks
    by ensuring the HTTP/3 server explicitly supports it.  It also
-   requires the use of the Origin header, providing the server with the
-   ability to deny access to Web-based clients that do not originate
-   from a trusted origin.
+   requires the use of the Origin header for browser traffic, providing
+   the server with the ability to deny access to Web-based applications
+   that do not originate from a trusted origin.
 
    Just like HTTP traffic going over HTTP/3, WebTransport pools traffic
    to different origins within a single connection.  Different origins
    imply different trust domains, meaning that the implementations have
    to treat each transport as potentially hostile towards others on the
    same connection.  One potential attack is a resource exhaustion
-   attack: since all of the transports share both congestion control and
-   flow control context, a single client aggressively using up those
-   resources can cause other transports to stall.  The user agent thus
-   SHOULD implement a fairness scheme that ensures that each transport
-   within connection gets a reasonable share of controlled resources;
+   attack: since all of the WebTransport sessions share both congestion
+   control and flow control context, a single application aggressively
+   using up those resources can cause other sessions to stall.  A
+   WebTransport endpoint MUST implement flow control mechanisms if it
+   allows a WebTransport session to share the transport connection with
+   other WebTransport sessions.  WebTransport endpoints SHOULD implement
+   a fairness scheme that ensures that each session that shares a
+   transport connection gets a reasonable share of controlled resources;
    this applies both to sending data and to opening new streams.
 
-   A client could attempt to exhaust resources by opening too many
-   WebTransport sessions at once.  In cases when the client is
-   untrusted, the user agent SHOULD limit the number of outgoing
-   sessions the client can open.
+   An application could attempt to exhaust resources by opening too many
+   WebTransport sessions at once.  In cases when the application is
+   untrusted, the WebTransport client SHOULD limit the number of
+   outgoing sessions it will open.
 
 9.  IANA Considerations
 
@@ -1105,7 +1166,7 @@ Table of Contents
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial
    value for the unidirectional max stream limit, otherwise communicated
-   by the WT_MAX_STREAMS capsule (see Section 5.6.1).  The default value
+   by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The default value
    for the SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is "0",
    indicating that the endpoint needs to send WT_MAX_STREAMS capsules on
    each individual WebTransport session before its peer is allowed to
@@ -1124,7 +1185,7 @@ Table of Contents
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the
    initial value for the bidirectional max stream limit, otherwise
-   communicated by the WT_MAX_STREAMS capsule (see Section 5.6.1).  The
+   communicated by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The
    default value for the SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting is
    "0", indicating that the endpoint needs to send WT_MAX_STREAMS
    capsules on each individual WebTransport session before its peer is
@@ -1143,7 +1204,7 @@ Table of Contents
 
    The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value
    for the session data limit, otherwise communicated by the WT_MAX_DATA
-   capsule (see Section 5.6.3).  The default value for the
+   capsule (see Section 5.6.4).  The default value for the
    SETTINGS_WT_INITIAL_MAX_DATA setting is "0", indicating that the
    endpoint needs to send a WT_MAX_DATA capsule within each session
    before its peer is allowed to send any stream data within that
@@ -1211,6 +1272,15 @@ Table of Contents
    Description:  WebTransport data stream aborted because the associated
       WebTransport session has been closed.  Also used to indicate that
       the endpoint is no longer reading from the CONNECT stream.
+
+   Specification:  This document.
+
+   Name:  WT_INVALID_CAPSULE
+
+   Value:  0x0d189ed4
+
+   Description:  WebTransport session closed because an invalid capsule
+      was received on the session.
 
    Specification:  This document.
 
@@ -1471,36 +1541,36 @@ Index
       S
 
          SETTINGS_WT_INITIAL_MAX_DATA  Section 5.5, Paragraph 2.2.1;
-            Section 5.6.3, Paragraph 8; Section 9.2, Paragraph 10;
+            Section 5.6.4, Paragraph 8; Section 9.2, Paragraph 10;
             Section 9.2, Paragraph 12.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI  Section 5.5, Paragraph
-            2.1.1; Section 5.6.1, Paragraph 9; Section 9.2, Paragraph 7;
+            2.1.1; Section 5.6.2, Paragraph 9; Section 9.2, Paragraph 7;
             Section 9.2, Paragraph 9.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_UNI  Section 5.5, Paragraph
-            2.1.1; Section 5.6.1, Paragraph 9; Section 9.2, Paragraph 4;
+            2.1.1; Section 5.6.2, Paragraph 9; Section 9.2, Paragraph 4;
             Section 9.2, Paragraph 6.2.1
 
       W
 
-         WT_DATA_BLOCKED  Section 5.3, Paragraph 3; Section 5.4,
-            Paragraph 1; Section 5.6.4, Paragraph 1; Section 5.6.4,
-            Paragraph 3; Section 5.6.4, Paragraph 5; Section 9.6,
+         WT_DATA_BLOCKED  Section 5.4, Paragraph 3; Section 5.6,
+            Paragraph 1; Section 5.6.5, Paragraph 1; Section 5.6.5,
+            Paragraph 3; Section 5.6.5, Paragraph 5; Section 9.6,
             Paragraph 13.4.1
-         WT_MAX_DATA  Section 5.3, Paragraph 1; Section 5.3, Paragraph
-            2; Section 5.3, Paragraph 3; Section 5.4, Paragraph 1;
-            Section 5.5, Paragraph 2.2.1; Section 5.6.3, Paragraph 1;
-            Section 5.6.3, Paragraph 2; Section 5.6.3, Paragraph 4;
-            Section 5.6.3, Paragraph 7; Section 9.2, Paragraph 10;
+         WT_MAX_DATA  Section 5.4, Paragraph 1; Section 5.4, Paragraph
+            2; Section 5.4, Paragraph 3; Section 5.5, Paragraph 2.2.1;
+            Section 5.6, Paragraph 1; Section 5.6.4, Paragraph 1;
+            Section 5.6.4, Paragraph 2; Section 5.6.4, Paragraph 4;
+            Section 5.6.4, Paragraph 7; Section 9.2, Paragraph 10;
             Section 9.6, Paragraph 11.4.1
-         WT_MAX_STREAMS  Section 5.2, Paragraph 1; Section 5.4,
-            Paragraph 1; Section 5.5, Paragraph 2.1.1; Section 5.6.1,
-            Paragraph 1; Section 5.6.1, Paragraph 2; Section 5.6.1,
-            Paragraph 4; Section 5.6.1, Paragraph 8; Section 9.2,
+         WT_MAX_STREAMS  Section 5.3, Paragraph 1; Section 5.5,
+            Paragraph 2.1.1; Section 5.6, Paragraph 1; Section 5.6.2,
+            Paragraph 1; Section 5.6.2, Paragraph 2; Section 5.6.2,
+            Paragraph 4; Section 5.6.2, Paragraph 8; Section 9.2,
             Paragraph 4; Section 9.2, Paragraph 7; Section 9.6,
             Paragraph 7.4.1
-         WT_STREAMS_BLOCKED  Section 5.2, Paragraph 5; Section 5.4,
-            Paragraph 1; Section 5.6.2, Paragraph 1; Section 5.6.2,
-            Paragraph 2; Section 5.6.2, Paragraph 4; Section 5.6.2,
+         WT_STREAMS_BLOCKED  Section 5.3, Paragraph 5; Section 5.6,
+            Paragraph 1; Section 5.6.3, Paragraph 1; Section 5.6.3,
+            Paragraph 2; Section 5.6.3, Paragraph 4; Section 5.6.3,
             Paragraph 6; Section 9.6, Paragraph 9.4.1
 
 Authors' Addresses
