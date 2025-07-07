@@ -77,10 +77,10 @@ that this document distinguishes between a WebTransport server and an HTTP/3
 server.  An HTTP/3 server is the server that terminates HTTP/3 connections; a
 WebTransport server is an application that accepts WebTransport sessions, which
 can be accessed via an HTTP/3 server.  An application client is user or
-developer-provided code, often untrusted, that utilizes the interface offered by
-the WebTransport client to communicate with an application server. The 
-application server uses the interface offered by the WebTransport server 
-to accept incoming WebTransport sessions.
+developer-provided code, often untrusted, that utilizes the interface offered
+by the WebTransport client to communicate with an application server. The
+application server uses the interface offered by the WebTransport server to
+accept incoming WebTransport sessions.
 
 # Overview
 
@@ -102,8 +102,8 @@ addition to HTTP Semantics: QPACK header compression {{?RFC9208}} and Server
 Push {{Section 4.6 of RFC9114}}.
 
 WebTransport session establishment involves interacting at the HTTP layer with a
-resource.  For Web user agents, or "WebTransport clients", this interaction is
-important for security reasons, especially to ensure that the resource is
+resource.  For Web user agents and other WebTransport clients, this interaction
+is important for security reasons, especially to ensure that the resource is
 willing to use WebTransport.
 
 Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
@@ -244,8 +244,8 @@ in {{Section 3 of RESET-STREAM-AT}}.
 As WebTransport sessions are established over HTTP/3, they are identified using
 the `https` URI scheme ({{Section 4.2.2 of HTTP}}).
 
-In order to create a new WebTransport session, a client sends an HTTP extended
-CONNECT request.  In this request:
+In order to create a new WebTransport session, a WebTransport client sends an
+HTTP extended CONNECT request.  In this request:
 
 * The `:protocol` pseudo-header field({{!RFC8441}}) MUST be set to
   `webtransport`.
