@@ -607,7 +607,7 @@ of !RFC9000}}).
 A WebTransport endpoint that allows a WebTransport session to share an
 underlying transport connection with other WebTransport sessions MUST enable
 flow control.  This prevents an application from consuming excessive resources
-on a single session and starving traffic for other sessions 
+on a single session and starving traffic for other sessions
 (see {{security-considerations}}).
 
 An endpoint indicates that it is willing to support more than one WebTransport
