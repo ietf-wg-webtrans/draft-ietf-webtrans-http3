@@ -77,10 +77,10 @@ that this document distinguishes between a WebTransport server and an HTTP/3
 server.  An HTTP/3 server is the server that terminates HTTP/3 connections; a
 WebTransport server is an application that accepts WebTransport sessions, which
 can be accessed via an HTTP/3 server.  An application client is user or
-developer-provided code, often untrusted, that uses the interface offered by
-the WebTransport client to communicate with an application server, which in
-turn uses the interface offered by the WebTransport server to accept incoming
-WebTransport sessions.
+developer-provided code, often untrusted, that utilizes the interface offered by
+the WebTransport client to communicate with an application server. The 
+application server uses the interface offered by the WebTransport server 
+to accept incoming WebTransport sessions.
 
 # Overview
 
@@ -108,7 +108,7 @@ willing to use WebTransport.
 
 Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
 HTTP is not used for anything else related to an established session.  Instead,
-QUIC streams begin with a header sequence of bytes that links them to the
+QUIC streams begin with a sequence of header bytes that links them to the
 established session.  The remainder of the stream is the body, which carries
 the payload supplied by the application using WebTransport.  This process is
 similar to WebSockets over HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the
@@ -250,8 +250,8 @@ CONNECT request.  In this request:
 * The `:protocol` pseudo-header field({{!RFC8441}}) MUST be set to
   `webtransport`.
 * The `:scheme` field MUST be `https`.
-* Both the `:authority` and the `:path` value MUST be set; these fields indicate
-  the desired WebTransport server.
+* Both the `:authority` and the `:path` value MUST be set; these fields identify
+  the desired WebTransport server resource.
 * If the WebTransport session is coming from a browser client, an `Origin`
   header {{!RFC6454}} MUST be provided within the request.  Otherwise, the
   header is OPTIONAL.
@@ -446,7 +446,7 @@ implementations MUST remap those error codes into the error range reserved for
 WT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db, and
 0xffffffff corresponds to 0x52e5ac983162.  Note that there are codepoints
 inside that range of form "0x1f * N + 0x21" that are reserved by {{Section 8.1
-of HTTP3}}; those have to be skipped when mapping the error codes (i.e. the two
+of HTTP3}}; those have to be skipped when mapping the error codes (i.e., the two
 HTTP/3 error codepoints adjacent to a reserved codepoint would map to two
 adjacent WebTransport application error codepoints). An example pseudocode can
 be seen in {{fig-remap-errors}}.
