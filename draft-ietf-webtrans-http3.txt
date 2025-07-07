@@ -88,16 +88,17 @@ Table of Contents
      4.6.  Interaction with the HTTP/3 GOAWAY frame
      4.7.  Use of Keying Material Exporters
    5.  Flow Control
-     5.1.  Limiting the Number of Simultaneous Sessions
-     5.2.  Limiting the Number of Streams Within a Session
-     5.3.  Data Limits
-     5.4.  Flow Control and Intermediaries
+     5.1.  Negotiating the Use of Flow Control
+     5.2.  Limiting the Number of Simultaneous Sessions
+     5.3.  Limiting the Number of Streams Within a Session
+     5.4.  Data Limits
      5.5.  Flow Control SETTINGS
      5.6.  Flow Control Capsules
-       5.6.1.  WT_MAX_STREAMS Capsule
-       5.6.2.  WT_STREAMS_BLOCKED Capsule
-       5.6.3.  WT_MAX_DATA Capsule
-       5.6.4.  WT_DATA_BLOCKED Capsule
+       5.6.1.  Flow Control and Intermediaries
+       5.6.2.  WT_MAX_STREAMS Capsule
+       5.6.3.  WT_STREAMS_BLOCKED Capsule
+       5.6.4.  WT_MAX_DATA Capsule
+       5.6.5.  WT_DATA_BLOCKED Capsule
    6.  Session Termination
    7.  Considerations for Future Versions
      7.1.  Negotiating the Draft Version
@@ -233,10 +234,11 @@ Table of Contents
    value and path value (defined in [RFC3986] Sections 3.2 and 3.3
    correspondingly).
 
-   When an HTTP/3 connection is established, the server sends a
-   SETTINGS_WT_MAX_SESSIONS setting in order to indicate support for
-   WebTransport over HTTP/3.  This process also negotiates the use of
-   additional HTTP/3 extensions.
+   When an HTTP/3 connection is established, both the client and the
+   server send a SETTINGS_WT_MAX_SESSIONS setting to indicate support
+   for WebTransport over HTTP/3.  This process also negotiates the use
+   of additional HTTP/3 extensions to enable both endpoints to open
+   WebTransport streams.
 
    WebTransport sessions are initiated inside a given HTTP/3 connection
    by the client, who sends an extended CONNECT request [RFC9220].  If
@@ -271,11 +273,11 @@ Table of Contents
 
 3.1.  Establishing a WebTransport-Capable HTTP/3 Connection
 
-   A WebTransport-Capable HTTP/3 connection requires two mandatory
-   indicators to be sent by the server in its SETTINGS frames.  Clients
-   do not use SETTINGS but instead use the the "webtransport" upgrade
-   token in CONNECT requests establishing WebTransport sessions (see
-   Section 9.1).
+   A WebTransport-Capable HTTP/3 connection requires the client and
+   server to both signal support for WebTransport over HTTP/3 using a
+   setting.  Clients also signal support by using the "webtransport"
+   upgrade token in extended CONNECT requests when establishing sessions
+   (see Section 9.1).
 
    WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described
    in [RFC9220], which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL
@@ -283,13 +285,18 @@ Table of Contents
    for indicating the number of WebTransport sessions a connection
    supports.  The default value for the SETTINGS_WT_MAX_SESSIONS setting
    is "0", meaning that the endpoint is not willing to receive any
-   WebTransport sessions.  A server supporting WebTransport over HTTP/3
-   MUST send both the SETTINGS_WT_MAX_SESSIONS setting with a value
-   greater than "0" and the SETTINGS_ENABLE_CONNECT_PROTOCOL setting
-   with a value of "1".
+   WebTransport sessions.
 
-   The client MUST NOT send a WebTransport request until it has received
-   the setting indicating WebTransport support from the server.
+   A server supporting WebTransport over HTTP/3 MUST send both the
+   SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0" and
+   the SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".
+
+   A client supporting WebTransport over HTTP/3 MUST send the
+   SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0".
+
+   Clients MUST NOT attempt to establish WebTransport sessions until
+   they have received the settings indicating WebTransport support from
+   the server.
 
    [[RFC editor: please remove the following paragraph before
    publication.]]
@@ -692,10 +699,10 @@ Table of Contents
 
    WebTransport over HTTP/3 provides a connection-level limit that
    governs the number of sessions that can be created on an HTTP/3
-   connection (see Section 5.1).  It also provides session-level limits
+   connection (see Section 5.2).  It also provides session-level limits
    that govern the number of streams that can be created in a session
    and limit the amount of data that can be exchanged across all streams
-   in each session (see Section 5.2).
+   in each session (see Section 5.3).
 
    The underlying QUIC connection provides connection and stream level
    flow control.  The QUIC connection data limit defines the total
@@ -704,7 +711,34 @@ Table of Contents
    the amount of data that can be sent on that stream, WebTransport or
    otherwise (see Section 4 of [RFC9000]).
 
-5.1.  Limiting the Number of Simultaneous Sessions
+5.1.  Negotiating the Use of Flow Control
+
+   A WebTransport endpoint that allows a WebTransport session to share
+   an underlying transport connection with other WebTransport sessions
+   MUST enable flow control.  This prevents an application from
+   consuming excessive resources on a single session and starving
+   traffic for other sessions (see Section 8).
+
+   An endpoint indicates that it is willing to support more than one
+   WebTransport session, and thus flow control, by sending the
+   SETTINGS_WT_MAX_SESSIONS with a value greater than "1".  If either
+   endpoint sends SETTINGS_WT_MAX_SESSIONS with a value of "1", flow
+   control is not enabled, and clients MUST NOT attempt to establish
+   more than one simultaneous WebTransport session.  A server that
+   receives more than one session on an underlying transport connection
+   when flow control is not enabled MUST reset the excessive CONNECT
+   streams with a H3_REQUEST_REJECTED status (seeSection 5.2).
+
+   If both endpoints send SETTINGS_WT_MAX_SESSIONS with a value greater
+   than "1", flow control is enabled, and the limits described in the
+   entirety of Section 5 apply.
+
+   If flow control is not enabled, an endpoint MUST ignore receipt of
+   any flow control capsules (see Section 5.6), since the peer might not
+   have received SETTINGS at the time they were sent or packets might
+   have been reordered.
+
+5.2.  Limiting the Number of Simultaneous Sessions
 
    This document defines a SETTINGS_WT_MAX_SESSIONS setting that allows
    the server to limit the maximum number of concurrent WebTransport
@@ -717,9 +751,9 @@ Table of Contents
    the CONNECT streams it is not willing to process with the
    H3_REQUEST_REJECTED status defined in Section 8.1 of [HTTP3].
 
-5.2.  Limiting the Number of Streams Within a Session
+5.3.  Limiting the Number of Streams Within a Session
 
-   The WT_MAX_STREAMS capsule (Section 5.6.1) establishes a limit on the
+   The WT_MAX_STREAMS capsule (Section 5.6.2) establishes a limit on the
    number of streams within a WebTransport session.  Like the QUIC
    MAX_STREAMS frame (Section 19.11 of [RFC9000]), this capsule has two
    types that provide separate limits for unidirectional and
@@ -742,7 +776,7 @@ Table of Contents
    STREAM frames.  This especially applies if there are other users of
    streams on the connection.
 
-   The WT_STREAMS_BLOCKED capsule (Section 5.6.2) can be sent to
+   The WT_STREAMS_BLOCKED capsule (Section 5.6.3) can be sent to
    indicate that an endpoint was unable to create a stream due to the
    session-level stream limit.
 
@@ -750,9 +784,9 @@ Table of Contents
    headers so that both endpoints can agree on the number of streams
    that are open.
 
-5.3.  Data Limits
+5.4.  Data Limits
 
-   The WT_MAX_DATA capsule (Section 5.6.3) establishes a limit on the
+   The WT_MAX_DATA capsule (Section 5.6.4) establishes a limit on the
    amount of data that can be sent within a WebTransport session.  This
    limit counts all data that is sent on streams of the corresponding
    type, excluding the stream header (see Section 4.1 and Section 4.2).
@@ -767,7 +801,7 @@ Table of Contents
    was consumed by the sender on that stream, after subtracting the
    number of bytes used by the stream header.
 
-   The WT_DATA_BLOCKED capsule (Section 5.6.4) can be sent to indicate
+   The WT_DATA_BLOCKED capsule (Section 5.6.5) can be sent to indicate
    that an endpoint was unable to send data due to a limit set by the
    WT_MAX_DATA capsule.
 
@@ -779,13 +813,25 @@ Table of Contents
    Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
    WT_STREAM_DATA_BLOCKED capsule as a session error.
 
-5.4.  Flow Control and Intermediaries
+5.5.  Flow Control SETTINGS
+
+   Initial flow control limits can be exchanged via HTTP/3 SETTINGS
+   (Section 9.2) by providing non-zero values for
+
+   *  WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
+      SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+
+   *  WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
+
+5.6.  Flow Control Capsules
 
    WebTransport over HTTP/3 uses several capsules for flow control, and
    all of these capsules define special intermediary handling as
    described in Section 3.2 of [HTTP-DATAGRAM].  These capsules,
    referred to as the "flow control capsules", are WT_MAX_DATA,
    WT_MAX_STREAMS, WT_DATA_BLOCKED, and WT_STREAMS_BLOCKED.
+
+5.6.1.  Flow Control and Intermediaries
 
    Because flow control in WebTransport is hop-by-hop and does not
    provide an end-to-end signal, intermediaries MUST consume flow
@@ -806,19 +852,7 @@ Table of Contents
    ensure that it does not advertise a higher flow control limit on one
    connection than the corresponding limit on the translated connection.
 
-5.5.  Flow Control SETTINGS
-
-   Initial flow control limits can be exchanged via HTTP/3 SETTINGS
-   (Section 9.2) by providing non-zero values for
-
-   *  WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
-      SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
-
-   *  WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
-
-5.6.  Flow Control Capsules
-
-5.6.1.  WT_MAX_STREAMS Capsule
+5.6.2.  WT_MAX_STREAMS Capsule
 
    An HTTP capsule [HTTP-DATAGRAM] called WT_MAX_STREAMS is introduced
    to inform the peer of the cumulative number of streams of a given
@@ -863,7 +897,7 @@ Table of Contents
    zero values for SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
    SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI.
 
-5.6.2.  WT_STREAMS_BLOCKED Capsule
+5.6.3.  WT_STREAMS_BLOCKED Capsule
 
    A sender SHOULD send a WT_STREAMS_BLOCKED capsule (type=0x190B4D43 or
    0x190B4D44) when it wishes to open a stream but is unable to do so
@@ -898,7 +932,7 @@ Table of Contents
    MUST generate and send appropriate flow control signals for their
    limits.
 
-5.6.3.  WT_MAX_DATA Capsule
+5.6.4.  WT_MAX_DATA Capsule
 
    An HTTP capsule [HTTP-DATAGRAM] called WT_MAX_DATA (type=0x190B4D3D)
    is introduced to inform the peer of the maximum amount of data that
@@ -932,12 +966,12 @@ Table of Contents
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
    consume WT_MAX_DATA capsules for flow control purposes and MUST
    generate and send appropriate flow control signals for their limits
-   (see Section 5.4).
+   (see Section 5.6.1).
 
    The initial value for this limit MAY be communicated by sending a
    non-zero value for SETTINGS_WT_INITIAL_MAX_DATA.
 
-5.6.4.  WT_DATA_BLOCKED Capsule
+5.6.5.  WT_DATA_BLOCKED Capsule
 
    A sender SHOULD send a WT_DATA_BLOCKED capsule (type=0x190B4D41) when
    it wishes to send data but is unable to do so due to WebTransport
@@ -961,7 +995,7 @@ Table of Contents
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
    consume WT_DATA_BLOCKED capsules for flow control purposes and MUST
    generate and send appropriate flow control signals for their limits
-   (see Section 5.4).
+   (see Section 5.6.1).
 
 6.  Session Termination
 
@@ -1079,12 +1113,14 @@ Table of Contents
    to treat each transport as potentially hostile towards others on the
    same connection.  One potential attack is a resource exhaustion
    attack: since all of the WebTransport sessions share both congestion
-   control and flow control context, a single session aggressively using
-   up those resources can cause other sessions to stall.  A WebTransport
-   endpoint thus SHOULD implement a fairness scheme that ensures that
-   each session that shares a transport connection gets a reasonable
-   share of controlled resources; this applies both to sending data and
-   to opening new streams.
+   control and flow control context, a single application aggressively
+   using up those resources can cause other sessions to stall.  A
+   WebTransport endpoint MUST implement flow control mechanisms if it
+   allows a WebTransport session to share the transport connection with
+   other WebTransport sessions.  WebTransport endpoints SHOULD implement
+   a fairness scheme that ensures that each session that shares a
+   transport connection gets a reasonable share of controlled resources;
+   this applies both to sending data and to opening new streams.
 
    An application could attempt to exhaust resources by opening too many
    WebTransport sessions at once.  In cases when the application is
@@ -1121,7 +1157,7 @@ Table of Contents
 
    Setting Name:  WT_MAX_SESSIONS
 
-   Value:  0xc671706a
+   Value:  0x14e9cd29
 
    Default:  0
 
@@ -1129,7 +1165,7 @@ Table of Contents
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial
    value for the unidirectional max stream limit, otherwise communicated
-   by the WT_MAX_STREAMS capsule (see Section 5.6.1).  The default value
+   by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The default value
    for the SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is "0",
    indicating that the endpoint needs to send WT_MAX_STREAMS capsules on
    each individual WebTransport session before its peer is allowed to
@@ -1148,7 +1184,7 @@ Table of Contents
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the
    initial value for the bidirectional max stream limit, otherwise
-   communicated by the WT_MAX_STREAMS capsule (see Section 5.6.1).  The
+   communicated by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The
    default value for the SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting is
    "0", indicating that the endpoint needs to send WT_MAX_STREAMS
    capsules on each individual WebTransport session before its peer is
@@ -1167,7 +1203,7 @@ Table of Contents
 
    The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value
    for the session data limit, otherwise communicated by the WT_MAX_DATA
-   capsule (see Section 5.6.3).  The default value for the
+   capsule (see Section 5.6.4).  The default value for the
    SETTINGS_WT_INITIAL_MAX_DATA setting is "0", indicating that the
    endpoint needs to send a WT_MAX_DATA capsule within each session
    before its peer is allowed to send any stream data within that
@@ -1435,9 +1471,9 @@ Table of Contents
    [I-D.ietf-webtrans-http2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
               Vasiliev, V., and G. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-11,
-              16 March 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-11>.
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-12,
+              7 July 2025, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-webtrans-http2-12>.
 
    [ORIGIN]   Fette, I. and A. Melnikov, "The WebSocket Protocol",
               RFC 6455, DOI 10.17487/RFC6455, December 2011,
@@ -1495,36 +1531,36 @@ Index
       S
 
          SETTINGS_WT_INITIAL_MAX_DATA  Section 5.5, Paragraph 2.2.1;
-            Section 5.6.3, Paragraph 8; Section 9.2, Paragraph 10;
+            Section 5.6.4, Paragraph 8; Section 9.2, Paragraph 10;
             Section 9.2, Paragraph 12.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI  Section 5.5, Paragraph
-            2.1.1; Section 5.6.1, Paragraph 9; Section 9.2, Paragraph 7;
+            2.1.1; Section 5.6.2, Paragraph 9; Section 9.2, Paragraph 7;
             Section 9.2, Paragraph 9.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_UNI  Section 5.5, Paragraph
-            2.1.1; Section 5.6.1, Paragraph 9; Section 9.2, Paragraph 4;
+            2.1.1; Section 5.6.2, Paragraph 9; Section 9.2, Paragraph 4;
             Section 9.2, Paragraph 6.2.1
 
       W
 
-         WT_DATA_BLOCKED  Section 5.3, Paragraph 3; Section 5.4,
-            Paragraph 1; Section 5.6.4, Paragraph 1; Section 5.6.4,
-            Paragraph 3; Section 5.6.4, Paragraph 5; Section 9.6,
+         WT_DATA_BLOCKED  Section 5.4, Paragraph 3; Section 5.6,
+            Paragraph 1; Section 5.6.5, Paragraph 1; Section 5.6.5,
+            Paragraph 3; Section 5.6.5, Paragraph 5; Section 9.6,
             Paragraph 13.4.1
-         WT_MAX_DATA  Section 5.3, Paragraph 1; Section 5.3, Paragraph
-            2; Section 5.3, Paragraph 3; Section 5.4, Paragraph 1;
-            Section 5.5, Paragraph 2.2.1; Section 5.6.3, Paragraph 1;
-            Section 5.6.3, Paragraph 2; Section 5.6.3, Paragraph 4;
-            Section 5.6.3, Paragraph 7; Section 9.2, Paragraph 10;
+         WT_MAX_DATA  Section 5.4, Paragraph 1; Section 5.4, Paragraph
+            2; Section 5.4, Paragraph 3; Section 5.5, Paragraph 2.2.1;
+            Section 5.6, Paragraph 1; Section 5.6.4, Paragraph 1;
+            Section 5.6.4, Paragraph 2; Section 5.6.4, Paragraph 4;
+            Section 5.6.4, Paragraph 7; Section 9.2, Paragraph 10;
             Section 9.6, Paragraph 11.4.1
-         WT_MAX_STREAMS  Section 5.2, Paragraph 1; Section 5.4,
-            Paragraph 1; Section 5.5, Paragraph 2.1.1; Section 5.6.1,
-            Paragraph 1; Section 5.6.1, Paragraph 2; Section 5.6.1,
-            Paragraph 4; Section 5.6.1, Paragraph 8; Section 9.2,
+         WT_MAX_STREAMS  Section 5.3, Paragraph 1; Section 5.5,
+            Paragraph 2.1.1; Section 5.6, Paragraph 1; Section 5.6.2,
+            Paragraph 1; Section 5.6.2, Paragraph 2; Section 5.6.2,
+            Paragraph 4; Section 5.6.2, Paragraph 8; Section 9.2,
             Paragraph 4; Section 9.2, Paragraph 7; Section 9.6,
             Paragraph 7.4.1
-         WT_STREAMS_BLOCKED  Section 5.2, Paragraph 5; Section 5.4,
-            Paragraph 1; Section 5.6.2, Paragraph 1; Section 5.6.2,
-            Paragraph 2; Section 5.6.2, Paragraph 4; Section 5.6.2,
+         WT_STREAMS_BLOCKED  Section 5.3, Paragraph 5; Section 5.6,
+            Paragraph 1; Section 5.6.3, Paragraph 1; Section 5.6.3,
+            Paragraph 2; Section 5.6.3, Paragraph 4; Section 5.6.3,
             Paragraph 6; Section 9.6, Paragraph 9.4.1
 
 Authors' Addresses
