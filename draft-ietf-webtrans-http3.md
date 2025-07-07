@@ -375,7 +375,7 @@ with an H3_ID_ERROR error code.
 ## Unidirectional streams {#unidirectional-streams}
 
 WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
-unidirectional stream type SHALL be `0x54`.  The body of the stream SHALL be the
+unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the
 stream type, followed by the session ID, encoded as a variable-length integer,
 followed by the user-specified stream data ({{fig-unidi}}).
 
@@ -408,7 +408,7 @@ bidirectional stream for use with that session and MUST send a special signal
 value, encoded as a variable-length integer, as the first bytes of the stream
 in order to indicate how the remaining bytes on the stream are used.
 
-Clients and servers use the signal value `0x41` to open a bidirectional
+Clients and servers use the signal value 0x41 to open a bidirectional
 WebTransport stream.  Following this is the associated session ID, encoded as a
 variable-length integer; the rest of the stream is the application payload of
 the WebTransport stream ({{fig-bidi-client}}).
@@ -422,7 +422,7 @@ Bidirectional Stream {
 ~~~~~~~~~~
 {: #fig-bidi-client title="Bidirectional WebTransport stream format"}
 
-This document reserves the special signal value `0x41` as a WT_STREAM frame
+This document reserves the special signal value 0x41 as a WT_STREAM frame
 type.  While it is registered as an HTTP/3 frame type to avoid collisions,
 WT_STREAM lacks length and is not a proper HTTP/3 frame; it is an extension of
 HTTP/3 frame syntax that MUST be supported by any peer negotiating
