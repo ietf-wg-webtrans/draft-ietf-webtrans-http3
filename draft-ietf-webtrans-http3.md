@@ -2,27 +2,34 @@
 title: WebTransport over HTTP/3
 abbrev: WebTransport-H3
 docname: draft-ietf-webtrans-http3-latest
-date: {DATE}
+number:
+date:
+consensus: true
+v: 3
 category: std
-
-ipr: trust200902
-area: Transport
-
-stand_alone: yes
-pi: [toc, sortrefs, symrefs]
-
+area: "Web and Internet Transport"
+wg: WEBTRANS
+venue:
+  group: "WebTransport"
+  type: "Working Group"
+  mail: "webtransport@ietf.org"
+  arch: "https://mailarchive.ietf.org/arch/browse/webtransport/"
+  github: "ietf-wg-webtrans/draft-ietf-webtrans-http3"
+  latest: "https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/#go.draft-ietf-webtrans-http3.html"
+keyword:
+  - webtransport
 author:
- -
+  -
     ins: A. Frindell
     name: Alan Frindell
     org: Facebook
     email: afrind@fb.com
- -
+  -
     ins: E. Kinnear
     name: Eric Kinnear
     org: Apple Inc.
     email: ekinnear@apple.com
- -
+  -
     ins: V. Vasiliev
     name: Victor Vasiliev
     org: Google
@@ -41,17 +48,6 @@ transport.  This document describes a WebTransport protocol that is based on
 HTTP/3 {{!HTTP3=RFC9114}} and provides support for unidirectional streams,
 bidirectional streams, and datagrams, all multiplexed within the same HTTP/3
 connection.
-
---- note_Note_to_Readers
-
-Discussion of this draft takes place on the WebTransport mailing list
-(webtransport@ietf.org), which is archived at
-\<https://mailarchive.ietf.org/arch/search/?email_list=webtransport\>.
-
-The repository tracking the issues for this draft can be found at
-\<https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues\>.  The
-web API draft corresponding to this document can be found at
-\<https://w3c.github.io/webtransport/\>.
 
 --- middle
 
