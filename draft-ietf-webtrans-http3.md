@@ -676,11 +676,12 @@ header is excluded from this limit so that this limit does not prevent the
 sending of information that is essential in linking new streams to a specific
 WebTransport session.
 
-Implementing WT_MAX_DATA requires that the QUIC stack provide the WebTransport
-implementation with information about the final size of streams; see {{Section
-4.5 of !RFC9000}}.  This guarantees that both endpoints agree on how much
-WebTransport session flow control credit was consumed by the sender on that
-stream, after subtracting the number of bytes used by the stream header.
+For streams that were reset, implementing WT_MAX_DATA requires that the QUIC
+stack provide the WebTransport implementation with information about the final
+size of streams; see {{Section 4.5 of !RFC9000}}.  This guarantees that both
+endpoints agree on how much WebTransport session flow control credit was
+consumed by the sender on that stream, after subtracting the number of bytes
+used by the stream header.
 
 The WT_DATA_BLOCKED capsule ({{WT_DATA_BLOCKED}}) can be sent to indicate that
 an endpoint was unable to send data due to a limit set by the WT_MAX_DATA
@@ -829,9 +830,10 @@ the WebTransport session as a whole.
 
 This limit counts all data that is sent on streams of the corresponding type,
 excluding the stream header (see {{unidirectional-streams}} and
-{{bidirectional-streams}}).  Implementing WT_MAX_DATA requires that the QUIC
-stack provide the WebTransport implementation with information about the final
-size of streams (see {{Section 4.5 of !RFC9000}}).
+{{bidirectional-streams}}).  For streams that were reset, implementing
+WT_MAX_DATA requires that the QUIC stack provide the WebTransport implementation
+with information about the final size of streams (see {{Section 4.5 of
+!RFC9000}}).
 
 ~~~
 WT_MAX_DATA Capsule {
