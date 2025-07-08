@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-26T00:55:57.626084+00:00",
+  "timestamp": "2025-07-08T00:56:24.860817+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -4364,7 +4364,7 @@
       "id": "I_kwDOCvK98s6BXMwc",
       "title": "Negotiation of flow control",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/150",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -4376,8 +4376,8 @@
       ],
       "body": "As mentioned by @marten-seemann [on the list](https://mailarchive.ietf.org/arch/msg/webtransport/JP3KS1rRTMQwQoGfht2GlCxtAZk/), making flow control optional requires the ability to negotiate it. We should add that to the protocol, using HTTP headers or SETTINGS.",
       "createdAt": "2024-03-05T23:38:05Z",
-      "updatedAt": "2025-06-10T23:50:05Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-07T23:34:54Z",
+      "closedAt": "2025-07-07T23:34:54Z",
       "comments": [
         {
           "author": "martinthomson",
@@ -4913,7 +4913,7 @@
       "id": "I_kwDOCvK98s6sn7aF",
       "title": "Flow control requirement on final size",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/179",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "afrind",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -4925,8 +4925,8 @@
       ],
       "body": "> Implementing [WT_MAX_DATA](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#WT_MAX_DATA) requires that the QUIC stack provide the WebTransport implementation with information about the final size of streams; see { {Section 4.5 of !RFC9000}}. This allows both endpoints to agree on how much data was consumed by that stream, although the stream header exclusion above applies.\n\nFirst, this could use some more explanatory text to tell implementations more specifically what they need final size for.\n\nAre all implementations comfortable with the requirement?  Does it have W3C implications?  The mvfst API for delivering resets doesn't have a great place to stuff this value, but we can make something work.\n\nThe only alternative I can think of is a WT_RESET_STREAM capsule, which I don't think anybody loves, though if such a thing existed it could remove the dependency on reliable reset.",
       "createdAt": "2025-03-05T04:53:23Z",
-      "updatedAt": "2025-06-10T23:56:04Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-07T22:16:16Z",
+      "closedAt": "2025-07-07T22:16:16Z",
       "comments": [
         {
           "author": "nidhijaju",
@@ -5142,7 +5142,7 @@
       "id": "I_kwDOCvK98s6vjG5b",
       "title": "Tighten up terminology around user-agent and clients",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/191",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5153,8 +5153,8 @@
       ],
       "body": "I'm not sure how to articulate this issue too well. It's just that there seems to be a few cases where a \"client\" is something distinct from a user agent, and this isn't explained that well explicitly. So a drive by reviewer like me starts to thing about an HTTP/3 client rather than a WebTransport client.\n\nHere's an example, which reads like a potential editorial mistake without understanding the full context of terms \n\n> A client could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the client is untrusted, the user agent SHOULD limit the number of outgoing sessions the client can open.",
       "createdAt": "2025-03-25T04:30:58Z",
-      "updatedAt": "2025-06-24T23:44:07Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-07T21:27:23Z",
+      "closedAt": "2025-07-07T21:27:23Z",
       "comments": [
         {
           "author": "vasilvv",
@@ -17046,6 +17046,681 @@
           "body": "",
           "createdAt": "2025-06-24T23:53:55Z",
           "updatedAt": "2025-06-24T23:53:55Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 209,
+      "id": "PR_kwDOCvK98s6drYRB",
+      "title": "Align on terminology for application vs. endpoint",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/209",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Align on terminology for application vs. endpoint\r\n\r\nAlso took the opportunity to do an editorial pass.\r\n\r\nGenerally, this is fairly editorial, although there are a few changes to normative text -- they're not intended to change the meaning, but please do double check.\r\n\r\nFixes #191",
+      "createdAt": "2025-07-07T03:47:31Z",
+      "updatedAt": "2025-07-07T21:34:07Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "782578d53392c47f2c7ccf20aed9f17882d4df5c",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/terminology",
+      "headRefOid": "46c2fc9a34822a66f46732678daa7d0516de8fd5",
+      "closedAt": "2025-07-07T21:27:22Z",
+      "mergedAt": "2025-07-07T21:27:22Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "eca96c7dc33fae6e874b39ab1a989e975c5fb20d"
+      },
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">  Next time can we do the reflow and random editorial changes in their own PRs?\r\n\r\nYeah, sorry about that -- the diff display for the reflow is surprisingly bad and hard to read",
+          "createdAt": "2025-07-07T21:23:54Z",
+          "updatedAt": "2025-07-07T21:23:54Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6yV5Or",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-07T03:56:35Z",
+          "updatedAt": "2025-07-07T04:02:30Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "```suggestion\r\nQUIC streams begin with a sequence of header bytes that links them to the\r\n```\r\n\r\n\"header sequence of bytes\" is a bit off",
+              "createdAt": "2025-07-07T03:56:35Z",
+              "updatedAt": "2025-07-07T04:02:30Z"
+            },
+            {
+              "originalPosition": 237,
+              "body": "```suggestion\r\n* Both the `:authority` and the `:path` value MUST be set; these fields identify\r\n  the desired WebTransport server resource.\r\n```\r\n\r\nI know that the scheme is also part of that identification, but in the context of webtransport, the scheme is fixed.",
+              "createdAt": "2025-07-07T03:58:22Z",
+              "updatedAt": "2025-07-07T04:02:30Z"
+            },
+            {
+              "originalPosition": 458,
+              "body": "```suggestion\r\nof HTTP3}}; those have to be skipped when mapping the error codes (i.e., the two\r\n```",
+              "createdAt": "2025-07-07T04:01:18Z",
+              "updatedAt": "2025-07-07T04:02:30Z"
+            },
+            {
+              "originalPosition": 480,
+              "body": "This removal is a bit outside the scope of the PR, but I think that it's a good change.",
+              "createdAt": "2025-07-07T04:02:04Z",
+              "updatedAt": "2025-07-07T04:02:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6ygU8Z",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "This was a bit tough to review. Next time can we do the reflow and random editorial changes in their own PRs?",
+          "createdAt": "2025-07-07T17:45:36Z",
+          "updatedAt": "2025-07-07T17:59:14Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "super nit: maybe `utilizes` instead of `uses` reads a little better, since `user` appears earlier ",
+              "createdAt": "2025-07-07T17:45:36Z",
+              "updatedAt": "2025-07-07T17:59:14Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "Maybe make a new sentence instead of `, which in turn`",
+              "createdAt": "2025-07-07T17:46:31Z",
+              "updatedAt": "2025-07-07T17:59:14Z"
+            },
+            {
+              "originalPosition": 71,
+              "body": "Do we need the scare quotes?\r\n\r\nIs `and` better than `or` ?",
+              "createdAt": "2025-07-07T17:48:04Z",
+              "updatedAt": "2025-07-07T17:59:14Z"
+            },
+            {
+              "originalPosition": 230,
+              "body": "Should we specify WebTransport client here or leave it ambiguous?  Or does client always mean WebTransport client?",
+              "createdAt": "2025-07-07T17:50:33Z",
+              "updatedAt": "2025-07-07T17:59:14Z"
+            },
+            {
+              "originalPosition": 480,
+              "body": "Was this referring to connection close application error codes?",
+              "createdAt": "2025-07-07T17:55:10Z",
+              "updatedAt": "2025-07-07T17:59:14Z"
+            },
+            {
+              "originalPosition": 518,
+              "body": "Are we killing all the SHALL's here?",
+              "createdAt": "2025-07-07T17:55:49Z",
+              "updatedAt": "2025-07-07T17:59:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yhKVT",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T19:19:33Z",
+          "updatedAt": "2025-07-07T19:19:33Z",
+          "comments": [
+            {
+              "originalPosition": 518,
+              "body": "Not 100% so far, but working in that direction",
+              "createdAt": "2025-07-07T19:19:33Z",
+              "updatedAt": "2025-07-07T19:19:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yhSXy",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T19:35:23Z",
+          "updatedAt": "2025-07-07T19:35:24Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "```suggestion\r\ndeveloper-provided code, often untrusted, that utilizes the interface offered by\r\n```",
+              "createdAt": "2025-07-07T19:35:24Z",
+              "updatedAt": "2025-07-07T19:35:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yhStg",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T19:36:03Z",
+          "updatedAt": "2025-07-07T19:36:03Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nthe WebTransport client to communicate with an application server. The \r\napplication server uses the interface offered by the WebTransport server \r\nto accept incoming WebTransport sessions.\r\n```",
+              "createdAt": "2025-07-07T19:36:03Z",
+              "updatedAt": "2025-07-07T19:36:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yhTJD",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T19:36:54Z",
+          "updatedAt": "2025-07-07T19:36:54Z",
+          "comments": [
+            {
+              "originalPosition": 71,
+              "body": "It's not `and`, since we're saying they're the same thing, can remove the quotes though",
+              "createdAt": "2025-07-07T19:36:54Z",
+              "updatedAt": "2025-07-07T19:36:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yhTu2",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T19:38:07Z",
+          "updatedAt": "2025-07-07T19:38:07Z",
+          "comments": [
+            {
+              "originalPosition": 230,
+              "body": "Client always means WebTransport client, application or application client always says \"application\", but anywhere it's not obvious I've been saying \"WebTransport client\" to be extra clear",
+              "createdAt": "2025-07-07T19:38:07Z",
+              "updatedAt": "2025-07-07T19:38:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yhT4K",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T19:38:25Z",
+          "updatedAt": "2025-07-07T19:38:25Z",
+          "comments": [
+            {
+              "originalPosition": 237,
+              "body": "Thank you!",
+              "createdAt": "2025-07-07T19:38:25Z",
+              "updatedAt": "2025-07-07T19:38:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yhU9f",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T19:40:34Z",
+          "updatedAt": "2025-07-07T19:40:35Z",
+          "comments": [
+            {
+              "originalPosition": 480,
+              "body": "Yeah, I ended up removing the second half here because it seemed duplicative with the part above. Happy to break that out as needed, but really what we're saying is: \r\n- If you have a WebTransport stream for which you know the session and it gets a WebTransport error, send that to the application\r\n- If you have only one session on the H3 connection, you always know the session\r\n\r\nThat second part didn't seem that useful to state, since in theory we've already made it so that you always know the session on a stream (see reset-stream-at) ",
+              "createdAt": "2025-07-07T19:40:35Z",
+              "updatedAt": "2025-07-07T19:40:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yiLuQ",
+          "commit": {
+            "abbreviatedOid": "45aba43"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T21:22:19Z",
+          "updatedAt": "2025-07-07T21:22:20Z",
+          "comments": [
+            {
+              "originalPosition": 71,
+              "body": "Updated to say \"and other WebTransport clients\" to make it clearer that this is an example of a WT client",
+              "createdAt": "2025-07-07T21:22:19Z",
+              "updatedAt": "2025-07-07T21:22:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yiL55",
+          "commit": {
+            "abbreviatedOid": "45aba43"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T21:22:46Z",
+          "updatedAt": "2025-07-07T21:23:11Z",
+          "comments": [
+            {
+              "originalPosition": 230,
+              "body": "Updated",
+              "createdAt": "2025-07-07T21:22:46Z",
+              "updatedAt": "2025-07-07T21:23:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yiMv4",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T21:24:53Z",
+          "updatedAt": "2025-07-07T21:24:53Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "Updated",
+              "createdAt": "2025-07-07T21:24:53Z",
+              "updatedAt": "2025-07-07T21:24:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yiM3M",
+          "commit": {
+            "abbreviatedOid": "e70cac8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T21:25:09Z",
+          "updatedAt": "2025-07-07T21:25:09Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Done",
+              "createdAt": "2025-07-07T21:25:09Z",
+              "updatedAt": "2025-07-07T21:25:09Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 210,
+      "id": "PR_kwDOCvK98s6dzW0M",
+      "title": "Clarify the use of final size",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/210",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Borrowed language from RFC 9000 section 4.5 and adapted to WebTransport.\r\n\r\nFixes: #179",
+      "createdAt": "2025-07-07T17:43:35Z",
+      "updatedAt": "2025-07-07T22:16:34Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "eca96c7dc33fae6e874b39ab1a989e975c5fb20d",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "afrind-final-size",
+      "headRefOid": "2c88e0c0082cbc308bfd3a4ef2d520c06888ee5b",
+      "closedAt": "2025-07-07T22:16:15Z",
+      "mergedAt": "2025-07-07T22:16:15Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "a2a862f8b3237e52a4cd879c3758a0ed2bb06af5"
+      },
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "(Fixed merge conflicts)",
+          "createdAt": "2025-07-07T21:37:11Z",
+          "updatedAt": "2025-07-07T21:37:11Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6yiQuN",
+          "commit": {
+            "abbreviatedOid": "bc1a36a"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Looks good!",
+          "createdAt": "2025-07-07T21:34:49Z",
+          "updatedAt": "2025-07-07T21:34:49Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 211,
+      "id": "PR_kwDOCvK98s6d1Aqn",
+      "title": "Add negotiation of flow control, client sends SETTINGS again",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/211",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add negotiation of flow control, client sends SETTINGS again\r\n\r\nFixes #150",
+      "createdAt": "2025-07-07T21:29:58Z",
+      "updatedAt": "2025-07-07T23:34:57Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "a2a862f8b3237e52a4cd879c3758a0ed2bb06af5",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/flow_control_settings",
+      "headRefOid": "20e380509fa9d7c4e2967814e8ac4cfaaea96fcc",
+      "closedAt": "2025-07-07T23:34:53Z",
+      "mergedAt": "2025-07-07T23:34:53Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "1a211ffd27a294eec7418740fbc13c4db5eca18d"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6yih7N",
+          "commit": {
+            "abbreviatedOid": "00713b7"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-07T22:18:58Z",
+          "updatedAt": "2025-07-07T22:22:03Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "This prevents attacks but also accidentally overuse. I'd suggest tweaking the framing to avoid the word attack:\r\n\r\n```suggestion\r\nprevents an application from consuming excessive resources on a\r\nsingle session and starving traffic for other sessions (see\r\n{{security-considerations}}).\r\n```",
+              "createdAt": "2025-07-07T22:19:20Z",
+              "updatedAt": "2025-07-07T22:22:03Z"
+            },
+            {
+              "originalPosition": 79,
+              "body": "Could lead to a timing bug:\r\n```suggestion\r\nIf an endpoint has sent and received SETTINGS and those indicate that flow control is\r\nnot enabled, that endpoint MUST treat subsequent receipt of any flow\r\n```",
+              "createdAt": "2025-07-07T22:21:11Z",
+              "updatedAt": "2025-07-07T22:22:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yilve",
+          "commit": {
+            "abbreviatedOid": "00713b7"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T22:27:14Z",
+          "updatedAt": "2025-07-07T22:27:14Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Sounds good, security considerations mentions this as a resource exhaustion attack, but that feels like the right place to have that discussion",
+              "createdAt": "2025-07-07T22:27:14Z",
+              "updatedAt": "2025-07-07T22:27:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yindW",
+          "commit": {
+            "abbreviatedOid": "00713b7"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T22:31:43Z",
+          "updatedAt": "2025-07-07T22:31:43Z",
+          "comments": [
+            {
+              "originalPosition": 79,
+              "body": "Ah good catch, technically we say that a client has to receive the server settings:\r\n```\r\nClients MUST NOT attempt to establish WebTransport sessions until they have\r\nreceived the settings indicating WebTransport support from the server.\r\n```\r\nbut it's always possible that the client sent a \"1\" and the server is going to send a \"2\" along with a bunch of flow control frames.\r\n\r\nAnd since you can't guarantee the order in which they arrive, I don't know that \r\n```\r\nan endpoint has sent and received SETTINGS\r\n```\r\nis sufficient, since they could have been reordered or crossed inflight. \r\n\r\nLet's make the requirement to just ignore the frames instead of error, then.",
+              "createdAt": "2025-07-07T22:31:43Z",
+              "updatedAt": "2025-07-07T22:34:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yirC9",
+          "commit": {
+            "abbreviatedOid": "00713b7"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T22:37:45Z",
+          "updatedAt": "2025-07-07T22:37:45Z",
+          "comments": [
+            {
+              "originalPosition": 79,
+              "body": "Silently ignoring flow control frames when flow control is disabled SGTM",
+              "createdAt": "2025-07-07T22:37:45Z",
+              "updatedAt": "2025-07-07T22:37:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yirbp",
+          "commit": {
+            "abbreviatedOid": "00713b7"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T22:38:09Z",
+          "updatedAt": "2025-07-07T22:38:09Z",
+          "comments": [
+            {
+              "originalPosition": 79,
+              "body": "Done in 793baac536581ebcc48510d71fa23073577f66aa",
+              "createdAt": "2025-07-07T22:38:09Z",
+              "updatedAt": "2025-07-07T22:38:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yirdu",
+          "commit": {
+            "abbreviatedOid": "976535f"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-07T22:38:11Z",
+          "updatedAt": "2025-07-07T22:38:11Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yirtz",
+          "commit": {
+            "abbreviatedOid": "00713b7"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T22:38:28Z",
+          "updatedAt": "2025-07-07T22:38:28Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Updated in 976535fb3768fc50fb5f986bae32cd1677a24c00",
+              "createdAt": "2025-07-07T22:38:28Z",
+              "updatedAt": "2025-07-07T22:38:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yiws0",
+          "commit": {
+            "abbreviatedOid": "976535f"
+          },
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Some comments that can be addressed, but if we're up against the clock we can fix it later.",
+          "createdAt": "2025-07-07T22:46:18Z",
+          "updatedAt": "2025-07-07T22:56:56Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "> The use of flow control is optional and can be negotiated.\r\n\r\nThis is a little soft.  It's required when > 1 session, and can't really be negotiated.",
+              "createdAt": "2025-07-07T22:46:18Z",
+              "updatedAt": "2025-07-07T22:56:56Z"
+            },
+            {
+              "originalPosition": 73,
+              "body": "Some of this feels redundant with the meaning of SETTINGS_WT_MAX_SESSIONS?  Eg: if you said max sessions 1 and you get two simultaneous sessions, that's an error which is orthogonal to the fact that flow control was off.",
+              "createdAt": "2025-07-07T22:55:22Z",
+              "updatedAt": "2025-07-07T22:56:56Z"
+            },
+            {
+              "originalPosition": 152,
+              "body": "Do we also need to mention sharing WebTransport sessions with HTTP requests?",
+              "createdAt": "2025-07-07T22:56:31Z",
+              "updatedAt": "2025-07-07T22:56:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yjCZk",
+          "commit": {
+            "abbreviatedOid": "976535f"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T23:24:40Z",
+          "updatedAt": "2025-07-07T23:24:40Z",
+          "comments": [
+            {
+              "originalPosition": 152,
+              "body": "I started by saying that you have to do flow control if you share with HTTP requests, but we don't really enforce that via the setting in the same way, so took that out for today. But yeah, I think it would be nice to say if you share with HTTP requests, you have to do flow control as well to protect those streams -- it allows the collection of streams that form a WT session to not starve the other ones.",
+              "createdAt": "2025-07-07T23:24:40Z",
+              "updatedAt": "2025-07-07T23:24:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yjEwB",
+          "commit": {
+            "abbreviatedOid": "976535f"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T23:30:05Z",
+          "updatedAt": "2025-07-07T23:30:05Z",
+          "comments": [
+            {
+              "originalPosition": 73,
+              "body": "Yeah, we have text up above where we define the setting that limits you to it, so this is duplicative, but should be consistent.",
+              "createdAt": "2025-07-07T23:30:05Z",
+              "updatedAt": "2025-07-07T23:30:05Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 212,
+      "id": "PR_kwDOCvK98s6d16jl",
+      "title": "Fix metadata",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/212",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-07-07T23:59:58Z",
+      "updatedAt": "2025-07-08T00:32:36Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "1a211ffd27a294eec7418740fbc13c4db5eca18d",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "fix_note_to_readers",
+      "headRefOid": "ee8911d9484931dd6f846d1c2756fdd939b55acb",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6yjcCw",
+          "commit": {
+            "abbreviatedOid": "ee8911d"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-08T00:32:36Z",
+          "updatedAt": "2025-07-08T00:32:36Z",
           "comments": []
         }
       ]
