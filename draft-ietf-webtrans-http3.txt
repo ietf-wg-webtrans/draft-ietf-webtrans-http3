@@ -2,13 +2,13 @@
 
 
 
-Network Working Group                                        A. Frindell
+WEBTRANS                                                     A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 8 January 2026                                       Apple Inc.
+Expires: 9 January 2026                                       Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                             7 July 2025
+                                                             8 July 2025
 
 
                         WebTransport over HTTP/3
@@ -24,16 +24,22 @@ Abstract
    unidirectional streams, bidirectional streams, and datagrams, all
    multiplexed within the same HTTP/3 connection.
 
-Note to Readers
+About This Document
 
-   Discussion of this draft takes place on the WebTransport mailing list
-   (webtransport@ietf.org), which is archived at
-   <https://mailarchive.ietf.org/arch/search/?email_list=webtransport>.
+   This note is to be removed before publishing as an RFC.
 
-   The repository tracking the issues for this draft can be found at
-   <https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/
-   issues>.  The web API draft corresponding to this document can be
-   found at <https://w3c.github.io/webtransport/>.
+   The latest revision of this draft can be found at https://ietf-wg-
+   webtrans.github.io/draft-ietf-webtrans-http3/#go.draft-ietf-webtrans-
+   http3.html.  Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-ietf-webtrans-http3/.
+
+   Discussion of this document takes place on the WebTransport Working
+   Group mailing list (mailto:webtransport@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/webtransport/.  Subscribe
+   at https://www.ietf.org/mailman/listinfo/webtransport/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3.
 
 Status of This Memo
 
@@ -50,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 January 2026.
+   This Internet-Draft will expire on 9 January 2026.
 
 Copyright Notice
 
@@ -1400,11 +1406,11 @@ Table of Contents
    [HTTP3]    Bishop, M., Ed., "HTTP/3", RFC 9114, DOI 10.17487/RFC9114,
               June 2022, <https://www.rfc-editor.org/rfc/rfc9114>.
 
-   [OVERVIEW] Vasiliev, V., "The WebTransport Protocol Framework", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-overview-
-              09, 25 February 2025,
+   [OVERVIEW] Kinnear, E. and V. Vasiliev, "The WebTransport Protocol
+              Framework", Work in Progress, Internet-Draft, draft-ietf-
+              webtrans-overview-10, 7 July 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-
-              webtrans-overview-09>.
+              webtrans-overview-10>.
 
    [QUIC-DATAGRAM]
               Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
