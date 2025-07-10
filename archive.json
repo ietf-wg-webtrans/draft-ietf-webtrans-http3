@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-08T00:56:24.860817+00:00",
+  "timestamp": "2025-07-10T00:57:10.534194+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -17690,24 +17690,26 @@
       "id": "PR_kwDOCvK98s6d16jl",
       "title": "Fix metadata",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/212",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-07-07T23:59:58Z",
-      "updatedAt": "2025-07-08T00:32:36Z",
+      "updatedAt": "2025-07-08T01:53:18Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "1a211ffd27a294eec7418740fbc13c4db5eca18d",
       "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "headRefName": "fix_note_to_readers",
       "headRefOid": "ee8911d9484931dd6f846d1c2756fdd939b55acb",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-07-08T01:52:59Z",
+      "mergedAt": "2025-07-08T01:52:59Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "89e61a7644b5f713c17808a8ec585901055d626e"
+      },
       "comments": [],
       "reviews": [
         {
@@ -17721,6 +17723,59 @@
           "body": "",
           "createdAt": "2025-07-08T00:32:36Z",
           "updatedAt": "2025-07-08T00:32:36Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 213,
+      "id": "PR_kwDOCvK98s6d-vS7",
+      "title": "clarify that WT_MAX_DATA only requires special QUIC API for reset streams",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/213",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "At least that's my understanding of how one would implement this. For streams that are closed without an error, all byte counting can happen at the WebTransport layer, and no additional QUIC API is needed.",
+      "createdAt": "2025-07-08T16:45:38Z",
+      "updatedAt": "2025-07-08T23:06:30Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "89e61a7644b5f713c17808a8ec585901055d626e",
+      "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
+      "headRefName": "wt-max-data-quic-api",
+      "headRefOid": "4b12944626de417f964fb330bc379da26fe94e31",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s6yvN1W",
+          "commit": {
+            "abbreviatedOid": "4b12944"
+          },
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-08T18:29:09Z",
+          "updatedAt": "2025-07-08T18:29:09Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s6yxZoH",
+          "commit": {
+            "abbreviatedOid": "4b12944"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-08T23:06:30Z",
+          "updatedAt": "2025-07-08T23:06:30Z",
           "comments": []
         }
       ]
