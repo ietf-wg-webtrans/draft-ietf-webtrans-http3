@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-10T00:57:10.534194+00:00",
+  "timestamp": "2025-07-13T01:03:22.409046+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5320,6 +5320,44 @@
       "updatedAt": "2025-06-24T23:54:09Z",
       "closedAt": "2025-06-24T23:54:09Z",
       "comments": []
+    },
+    {
+      "number": 214,
+      "id": "I_kwDOCvK98s7AA1XW",
+      "title": "Explicit Negotiation of Flow Control",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/214",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It is unfortunate that it's not possible to use flow control when only using a single WebTransport session (SETTINGS_WT_MAX_SESSIONS = 1). Flow control would be useful in that case as well, since the WebTransport session shares the underlying QUIC connection with HTTP/3, and one might still starve the other.\n\nMy preference would go towards explicitly enabling flow control, either using a separate HTTP/3 setting, or by requiring the server to declare at least one of the initial flow control values (SETTINGS_WT_INITIAL_MAX_STREAMS_UNI, SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI or SETTINGS_WT_INITIAL_MAX_DATA). For performance reasons, I'd expect any flow control-enabled WebTransport server to define this values anyway.",
+      "createdAt": "2025-07-11T04:09:26Z",
+      "updatedAt": "2025-07-12T10:16:46Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "(no hats) can't you accomplish this already?\n* as a client, send SETTINGS_WT_MAX_SESSIONS = 2 and then only start one WebTransport session on this connection\n* as a server, send SETTINGS_WT_MAX_SESSIONS = 2 and then when you get a second one, reply with 421",
+          "createdAt": "2025-07-11T20:45:34Z",
+          "updatedAt": "2025-07-11T20:45:34Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's a little janky to advertise 2 when you mean 1.  A client that supports pooling could get stuck in a loop no?",
+          "createdAt": "2025-07-11T21:39:50Z",
+          "updatedAt": "2025-07-11T21:39:50Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "FWIW, I would prefer to have flow control always, for the same reasons as Marten.  Having flow control disabled when there is a single session is a compromise.\n\nThat is, some people really opposed the introduction of more layers of flow control.  This is understandable: flow control is easy to get wrong.  So in the case where you have absolutely nothing else on the connection (HTTP, WebTransport, or otherwise), this compromise is somewhat understandable.\n\nStill, it's a compromise in that the protocol has a hole in it.  I'd prefer not to resort to weird hacks like David suggests and just do it properly.",
+          "createdAt": "2025-07-12T10:16:46Z",
+          "updatedAt": "2025-07-12T10:16:46Z"
+        }
+      ]
     }
   ],
   "pulls": [
