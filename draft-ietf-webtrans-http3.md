@@ -613,7 +613,7 @@ a value of "1", flow control is not enabled, and clients MUST NOT attempt to
 establish more than one simultaneous WebTransport session.  A server that
 receives more than one session on an underlying transport connection when flow
 control is not enabled MUST reset the excessive CONNECT streams with a
-`H3_REQUEST_REJECTED` status (see{{flow-control-limit-sessions}}).
+`H3_REQUEST_REJECTED` status (see {{flow-control-limit-sessions}}).
 
 If both endpoints send SETTINGS_WT_MAX_SESSIONS with a value greater than "1",
 flow control is enabled, and the limits described in the entirety of
