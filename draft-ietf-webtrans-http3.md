@@ -190,7 +190,7 @@ closed.
 
 A WebTransport-Capable HTTP/3 connection requires the client and server to both
 signal support for WebTransport over HTTP/3 using a setting. Clients also
-signal support by using the "webtransport" upgrade token in extended CONNECT
+signal support by using the "webtransport-h3" upgrade token in extended CONNECT
 requests when establishing sessions (see {{upgrade-token}}).
 
 WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
@@ -286,7 +286,7 @@ sessions, or other initial flow control values, from the values negotiated
 during the previous session; such change would be deemed incompatible, and MUST
 result in a H3_SETTINGS_ERROR connection error.
 
-The `webtransport` HTTP Upgrade Token uses the Capsule Protocol as defined in
+The `webtransport-h3` HTTP Upgrade Token uses the Capsule Protocol as defined in
 {{HTTP-DATAGRAM}}.  The Capsule Protocol is negotiated when the server sends a
 2xx response.  The `capsule-protocol` header field {{Section 3.4 of
 HTTP-DATAGRAM}} is not required by WebTransport and can safely be ignored by
@@ -1014,16 +1014,20 @@ WebTransport client SHOULD limit the number of outgoing sessions it will open.
 
 # IANA Considerations
 
+This document registers an upgrade token ({{upgrade-token}), HTTP/3 settings
+({{http3-settings}}), an HTTP/3 stream type ({{iana-stream-type}}, HTTP/3 error
+code ({{iana-error-code}}), and an HTTP header field ({{iana-http}}).
+
 ## Upgrade Token Registration {#upgrade-token}
 
 The following entry is added to the "Hypertext Transfer Protocol (HTTP) Upgrade
 Token Registry" registry established by Section 16.7 of [HTTP].
 
-The "webtransport" label identifies HTTP/3 used as a protocol for WebTransport:
+The "webtransport-h3" label identifies HTTP/3 used as a protocol for WebTransport:
 
 Value:
 
-: webtransport
+: webtransport-h3
 
 Description:
 
@@ -1031,7 +1035,7 @@ Description:
 
 Reference:
 
-: This document and {{?I-D.ietf-webtrans-http2}}
+: This document
 
 ## HTTP/3 SETTINGS Parameter Registration {#http3-settings}
 
@@ -1166,7 +1170,7 @@ Specification:
 
 : This document
 
-## Stream Type Registration
+## Stream Type Registration {#iana-stream-type}
 
 The following entry is added to the "HTTP/3 Stream Type" registry established by
 [HTTP3]:
@@ -1190,7 +1194,7 @@ Sender:
 
 : Both
 
-## HTTP/3 Error Code Registration
+## HTTP/3 Error Code Registration {#iana-error-code}
 
 The following entry is added to the "HTTP/3 Error Code" registry established by
 [HTTP3]:
