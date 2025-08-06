@@ -1015,7 +1015,7 @@ WebTransport client SHOULD limit the number of outgoing sessions it will open.
 # IANA Considerations
 
 This document registers an upgrade token ({{upgrade-token}), HTTP/3 settings
-({{http3-settings}}), an HTTP/3 stream type ({{iana-stream-type}}, HTTP/3 error
+({{http3-settings}}), an HTTP/3 stream type ({{iana-stream-type}}, an HTTP/3 error
 code ({{iana-error-code}}), and an HTTP header field ({{iana-http}}).
 
 ## Upgrade Token Registration {#upgrade-token}
