@@ -248,7 +248,7 @@ In order to create a new WebTransport session, a WebTransport client sends an
 HTTP extended CONNECT request.  In this request:
 
 * The `:protocol` pseudo-header field({{!RFC8441}}) MUST be set to
-  `webtransport`.
+  `webtransport-h3`.
 * The `:scheme` field MUST be `https`.
 * Both the `:authority` and the `:path` value MUST be set; these fields identify
   the desired WebTransport server resource.
@@ -257,7 +257,7 @@ HTTP extended CONNECT request.  In this request:
   header is OPTIONAL.
 
 Upon receiving an extended CONNECT request with a `:protocol` field set to
-`webtransport`, the HTTP/3 server can check if it has a WebTransport server
+`webtransport-h3`, the HTTP/3 server can check if it has a WebTransport server
 associated with the specified `:authority` and `:path` values.  If it does not,
 it SHOULD reply with status code 404 ({{Section 15.5.5 of !HTTP=RFC9110}}).
 When the request contains the `Origin` header, the WebTransport server MUST
