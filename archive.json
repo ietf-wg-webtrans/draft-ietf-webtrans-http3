@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-13T01:03:22.409046+00:00",
+  "timestamp": "2025-08-07T01:01:01.227688+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5329,11 +5329,13 @@
       "state": "OPEN",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [],
       "body": "It is unfortunate that it's not possible to use flow control when only using a single WebTransport session (SETTINGS_WT_MAX_SESSIONS = 1). Flow control would be useful in that case as well, since the WebTransport session shares the underlying QUIC connection with HTTP/3, and one might still starve the other.\n\nMy preference would go towards explicitly enabling flow control, either using a separate HTTP/3 setting, or by requiring the server to declare at least one of the initial flow control values (SETTINGS_WT_INITIAL_MAX_STREAMS_UNI, SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI or SETTINGS_WT_INITIAL_MAX_DATA). For performance reasons, I'd expect any flow control-enabled WebTransport server to define this values anyway.",
       "createdAt": "2025-07-11T04:09:26Z",
-      "updatedAt": "2025-07-12T10:16:46Z",
+      "updatedAt": "2025-08-05T23:28:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -5356,6 +5358,167 @@
           "body": "FWIW, I would prefer to have flow control always, for the same reasons as Marten.  Having flow control disabled when there is a single session is a compromise.\n\nThat is, some people really opposed the introduction of more layers of flow control.  This is understandable: flow control is easy to get wrong.  So in the case where you have absolutely nothing else on the connection (HTTP, WebTransport, or otherwise), this compromise is somewhat understandable.\n\nStill, it's a compromise in that the protocol has a hole in it.  I'd prefer not to resort to weird hacks like David suggests and just do it properly.",
           "createdAt": "2025-07-12T10:16:46Z",
           "updatedAt": "2025-07-12T10:16:46Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "~~[Minutes](https://datatracker.ietf.org/doc/minutes-123-webtrans-202507230930/) suggest that we'll do flow control if there are any sessions.  That is, flow control is enabled always.  Even if SETTINGS_WT_MAX_SESSIONS = 1.~~",
+          "createdAt": "2025-08-05T23:09:19Z",
+          "updatedAt": "2025-08-05T23:11:40Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Chair: discussion in room at IETF 123 was that there was consensus to\n* keep flow control optional\n* always require flow control when there are > 1 sessions\n* make it possible to enable flow control when there is 1 session\n* everyone in the room could live with option B from slide 42 of [this slidedeck](https://datatracker.ietf.org/meeting/123/materials/slides-123-webtrans-webtransport-slides-ietf-123-03)\n\nWe just discussed this in the editor's meeting: plan is to use option B but with a slight tweak to make it possible for clients to not implement flow control: flow is enabled if both endpoints have declared support for it - endpoints declare support for it by either\n* sending SETTINGS_WT_MAX_SESSIONS > 1\n* sending any SETTINGS_WT_INITIAL_MAX* > 0\n",
+          "createdAt": "2025-08-05T23:28:47Z",
+          "updatedAt": "2025-08-05T23:28:47Z"
+        }
+      ]
+    },
+    {
+      "number": 217,
+      "id": "I_kwDOCvK98s7EYW1l",
+      "title": "Protocol properties",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/217",
+      "state": "OPEN",
+      "author": "Acconut",
+      "authorAssociation": "NONE",
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "editorial"
+      ],
+      "body": "The document contains a dedicated section about the protocol's properties (https://www.ietf.org/archive/id/draft-ietf-webtrans-http2-12.html#name-transport-properties). While the text itself reads well, I would have expected a similar section to be found in draft-ietf-webtrans-http3 and draft-ietf-webtrans-overview to provide an overview of these properties. For example, _connection mobility_ is not mentioned elsewhere, AFAIK.",
+      "createdAt": "2025-07-23T09:18:37Z",
+      "updatedAt": "2025-08-05T23:42:17Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Those should be corresponding to the properties outlined in the overview itself, but agreed that HTTP/3 should probably have a similar section.\n\nWe should double check to make sure it's consistent across documents, as well.",
+          "createdAt": "2025-07-23T09:34:38Z",
+          "updatedAt": "2025-07-23T09:34:38Z"
+        }
+      ]
+    },
+    {
+      "number": 218,
+      "id": "I_kwDOCvK98s7EYYR_",
+      "title": "Separate Upgrade Token from WT-H3",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/218",
+      "state": "OPEN",
+      "author": "bemasc",
+      "authorAssociation": "NONE",
+      "assignees": [
+        "martinthomson"
+      ],
+      "labels": [],
+      "body": "Using the same Upgrade Token for two seemingly quite different protocols (depending on HTTP version) seems like a mistake.  Giving WT-H2 and WT-H3 separate Upgrade Tokens would avoid ambiguity and simplify the use of WebTransport inside backend infrastructure.",
+      "createdAt": "2025-07-23T10:34:33Z",
+      "updatedAt": "2025-08-06T14:51:58Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed in editor's meeting. There was support to:\n* leave the h2 upgrade token as `webtransport`\n* change the h3 upgrade token to `webtransport-h3`\n\nIf anyone disagrees, please say so here",
+          "createdAt": "2025-08-05T23:48:32Z",
+          "updatedAt": "2025-08-05T23:48:32Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Not necessarily disagreeing, but I'm curious to learn the reasons for leaving the h2 token as `webtransport`. To me, this suggests that the H2 variant is the \"original version\", and the h3 variant a variation of that. I haven't thought about this deeply, but my slight preference would be to use `webtransport-h2`for H2.",
+          "createdAt": "2025-08-06T00:18:53Z",
+          "updatedAt": "2025-08-06T00:18:53Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Adding a different token for WebTransport over HTTP/3 seems fine to me.\n\nAs a curveball alternative to https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/220 you could define, per the upgrade token rules in https://www.rfc-editor.org/rfc/rfc9110.html#section-16.7-4.6, a token that includes a `protocol-version` component (i.e. the bit after the slash) that uses a named value (of type `token`). For example  `webtransport/h3`. Just throwing it out there, I think I hate the idea.",
+          "createdAt": "2025-08-06T00:19:08Z",
+          "updatedAt": "2025-08-06T00:19:37Z"
+        },
+        {
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I would prefer to change the H/2 token, and keep the H/3 token as-is, given that the latter is actually deployed.",
+          "createdAt": "2025-08-06T13:39:25Z",
+          "updatedAt": "2025-08-06T13:39:25Z"
+        },
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "I like the words \"stream\" and \"mux\".",
+          "createdAt": "2025-08-06T14:51:58Z",
+          "updatedAt": "2025-08-06T14:51:58Z"
+        }
+      ]
+    },
+    {
+      "number": 219,
+      "id": "I_kwDOCvK98s7EYYSS",
+      "title": "Separate Upgrade Token from WT-H3",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/219",
+      "state": "CLOSED",
+      "author": "bemasc",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Using the same Upgrade Token for two seemingly quite different protocols (depending on HTTP version) seems like a mistake.  Giving WT-H2 and WT-H3 separate Upgrade Tokens would avoid ambiguity and simplify the use of WebTransport inside backend infrastructure.",
+      "createdAt": "2025-07-23T10:34:33Z",
+      "updatedAt": "2025-08-05T23:47:38Z",
+      "closedAt": "2025-08-05T23:47:38Z",
+      "comments": []
+    },
+    {
+      "number": 221,
+      "id": "I_kwDOCvK98s7EY9VA",
+      "title": "Does the server need to wait for SETTINGS?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/221",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed in https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/216#discussion_r2255607562\r\n\r\n> Any WebTransport requests sent by the client without enabling QUIC and HTTP datagrams MUST be treated as malformed by the server, as described in [Section 4.1.2](https://rfc-editor.org/rfc/rfc9114#section-4.1.2) of [[HTTP3](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#HTTP3)].\r\n\r\n> For draft versions of WebTransport only, the server MUST NOT process any incoming WebTransport requests until the client settings have been received, as the client may be using a version of the WebTransport extension that is different from the one used by the server.\r\n\r\nA MUST implies that the server needs to wait for the client's SETTINGS. In practice, this is not a problem, since the SETTINGS are sent in the same flight (and if done right, in the same QUIC packets) as the WebTransport request).\r\n\r\nWe could also relax the requirement to a SHOULD (with a MUST kill existing WebTransport sessions if SETTINGS are received that don't enable HTTP DATAGRAMs).",
+      "createdAt": "2025-08-06T01:26:31Z",
+      "updatedAt": "2025-08-06T01:26:31Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 222,
+      "id": "I_kwDOCvK98s7EZUbp",
+      "title": "Additional DoS considerations",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/222",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "LPardue"
+      ],
+      "labels": [],
+      "body": "The security considerations in this doc reference the Overview security considerations but that doesn't really talk about DoS. The security considerations in HTTP/3 still apply to WebTransport and stating that explicitly doesn't really hurt, so maybe think about doing that as a mininimum\n\nIn the context of this issue though, I wonder if the DoS considerations in https://datatracker.ietf.org/doc/html/rfc9114#section-10.5 need some augmentation to make implementers defensive to the new interaction modes. This doc starts on that path by stating:\n\n> An application could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the application is untrusted, the WebTransport client SHOULD limit the number of outgoing sessions it will open.\n\nHowever, I think there are more cases that need highlighting - its now possible for either side to bombard each other with streams and datagrams related to a session. This is somewhat novel for the client, who previously had some limits on server push as described in https://datatracker.ietf.org/doc/html/rfc9114#section-10.5-2\n\nWe probably also want the \"catch all statement\" to make it clear to implementers that the buck stops with them, both HTTP/2 and HTTP/3 include a statement along the lines of \"webtransport features have legitimate uses but they can become a burden when they are used unnecessarily or to excess. An endpoint that doesn't monitor use of these features exposes itself to a risk of denial of service. Implementations SHOULD track the use of these features and set limits on their use. An endpoint MAY treat activity that is suspicious as a connection erro of type [ENHANCE_YOUR_CALM/H3_EXCESSIVE_LOAD].\"",
+      "createdAt": "2025-08-06T02:31:55Z",
+      "updatedAt": "2025-08-06T03:37:43Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "It sounds like you have most of what you would need for a PR.  Want to write one?",
+          "createdAt": "2025-08-06T02:40:31Z",
+          "updatedAt": "2025-08-06T02:40:31Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "sure assign to me, we can wordsmith on here and once we have something we like, do the same for the H2 doc",
+          "createdAt": "2025-08-06T02:41:35Z",
+          "updatedAt": "2025-08-06T02:41:35Z"
         }
       ]
     }
@@ -17815,6 +17978,160 @@
           "createdAt": "2025-07-08T23:06:30Z",
           "updatedAt": "2025-07-08T23:06:30Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 216,
+      "id": "PR_kwDOCvK98s6iSD0q",
+      "title": "In case we decide to enable flow control always",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/216",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is the easiest solution.\r\n\r\nI've added a note here that more than doubles the added text.  That covers the question of how to resolve the rate condition between settings and session establishment.\r\n\r\nCloses #214 in a way that is contrary to the conclusion at IETF 123.",
+      "createdAt": "2025-08-05T23:30:33Z",
+      "updatedAt": "2025-08-06T01:21:22Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "1869a3aa8fc3182b8adf76479b6f2512af3d7ef7",
+      "headRepository": "martinthomson/draft-ietf-webtrans-http3",
+      "headRefName": "mandatory-fc",
+      "headRefOid": "9e6965b50be2dc283e78cf1514244d5fe02f7ad0",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s64Lb6r",
+          "commit": {
+            "abbreviatedOid": "9e6965b"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "I like making flow-control non-optional. Always enabling flow control simplifies the protocol quite a bit.",
+          "createdAt": "2025-08-05T23:54:46Z",
+          "updatedAt": "2025-08-05T23:56:37Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "It's even simpler: Before handling a WebTransport request, the server MUST check that it's not malformed (see section 3.1). Among others, this is the case if the client didn't enable HTTP/3 datagrams. This means that the server has to wait for the HTTP/3 SETTINGS before processing a WebTransport request.",
+              "createdAt": "2025-08-05T23:54:46Z",
+              "updatedAt": "2025-08-05T23:56:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s64LqG6",
+          "commit": {
+            "abbreviatedOid": "9e6965b"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-06T00:35:39Z",
+          "updatedAt": "2025-08-06T00:35:39Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "I don't think that's right.  There's a paragraph that applies to [draft versions only](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#section-3.1-7):\r\n\r\n> For draft versions of WebTransport only, the server MUST NOT process any incoming WebTransport requests until the client settings have been received\r\n\r\nIn a full version, the receipt of a request to start a session is sufficient for a server to know that the client supports webtransport.  What it lacks is the ability to know what settings are in place, which might be essential for operation.  This text merely notes that these will eventually arrive and that it is OK.\r\n\r\n(Text like this is necessary, in my view, no matter what we decide on the flow control issue.)\r\n",
+              "createdAt": "2025-08-06T00:35:39Z",
+              "updatedAt": "2025-08-06T00:35:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s64Ls8c",
+          "commit": {
+            "abbreviatedOid": "9e6965b"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-06T00:43:59Z",
+          "updatedAt": "2025-08-06T00:43:59Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "That's inconsistent with the requirement to check for HTTP/3 datagram support:\r\n> Any WebTransport requests sent by the client without enabling QUIC and HTTP datagrams MUST be treated as malformed by the server, as described in [Section 4.1.2](https://rfc-editor.org/rfc/rfc9114#section-4.1.2) of [[HTTP3](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#HTTP3)].\r\n\r\nShould we open a new issue to clarify? I'd be ok with converting this to a SHOULD, or having the server wait for SETTINGS (in the common case, SETTINGS will arrive in the same flight as the WebTransport request).",
+              "createdAt": "2025-08-06T00:43:59Z",
+              "updatedAt": "2025-08-06T00:43:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s64L9b8",
+          "commit": {
+            "abbreviatedOid": "9e6965b"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-06T01:21:21Z",
+          "updatedAt": "2025-08-06T01:21:22Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Hmm, yes.  I think that there are two outcomes:\r\n\r\n1. Making a request for a webtransport session indicates that you support datagrams, so a server might assume that the forthcoming SETTINGS will include the necessary settings.  Therefore, the server can proceed on the assumption that this is OK.\r\n2. The server needs to block, so that it can check the settings.\r\n\r\nAs you say, this is pretty unlikely to be a problem in practice, but we'd need tests either way.",
+              "createdAt": "2025-08-06T01:21:21Z",
+              "updatedAt": "2025-08-06T01:21:22Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 220,
+      "id": "PR_kwDOCvK98s6iSL3u",
+      "title": "Split the upgrade token out for h3",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/220",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is the one that is \"special\", so it is the one that gets a suffix.\r\n\r\nCloses #218, but will require a fix on the h2 repo.",
+      "createdAt": "2025-08-05T23:59:56Z",
+      "updatedAt": "2025-08-06T00:37:32Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "1869a3aa8fc3182b8adf76479b6f2512af3d7ef7",
+      "headRepository": "martinthomson/draft-ietf-webtrans-http3",
+      "headRefName": "upgrade-token-split",
+      "headRefOid": "dce3232d26c426f86346fc6ea0d9cff98ddfadff",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s64Ld3i",
+          "commit": {
+            "abbreviatedOid": "eac7163"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "There's a few more places like: \n\n> * The `:protocol` pseudo-header field({{!RFC8441}}) MUST be set to\n  `webtransport`.\n\nWe probably need to update those as well",
+          "createdAt": "2025-08-06T00:00:37Z",
+          "updatedAt": "2025-08-06T00:20:45Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\n({{http3-settings}}), an HTTP/3 stream type ({{iana-stream-type}}, an HTTP/3 error\n```",
+              "createdAt": "2025-08-06T00:00:37Z",
+              "updatedAt": "2025-08-06T00:20:45Z"
+            }
+          ]
         }
       ]
     }
