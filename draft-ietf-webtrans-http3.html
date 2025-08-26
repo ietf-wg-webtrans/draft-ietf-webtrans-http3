@@ -1052,11 +1052,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">WebTransport-H3</td>
-<td class="right">July 2025</td>
+<td class="right">August 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 23 January 2026</td>
+<td class="center">Expires 27 February 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-07-22" class="published">22 July 2025</time>
+<time datetime="2025-08-26" class="published">26 August 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-01-23">23 January 2026</time></dd>
+<dd class="expires"><time datetime="2026-02-27">27 February 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1138,7 +1138,7 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 January 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 27 February 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2064,10 +2064,11 @@ that is sent on streams of the corresponding type, excluding the stream header
 header is excluded from this limit so that this limit does not prevent the
 sending of information that is essential in linking new streams to a specific
 WebTransport session.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
-<p id="section-5.4-2">Implementing <span id="iref-wt_max_data-4" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC stack provide the WebTransport
-implementation with information about the final size of streams; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.  This guarantees that both endpoints agree on how much
-WebTransport session flow control credit was consumed by the sender on that
-stream, after subtracting the number of bytes used by the stream header.<a href="#section-5.4-2" class="pilcrow">¶</a></p>
+<p id="section-5.4-2">For streams that were reset, implementing <span id="iref-wt_max_data-4" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC
+stack provide the WebTransport implementation with information about the final
+size of streams; see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.  This guarantees that both
+endpoints agree on how much WebTransport session flow control credit was
+consumed by the sender on that stream.<a href="#section-5.4-2" class="pilcrow">¶</a></p>
 <p id="section-5.4-3">The <span id="iref-wt_data_blocked-5" class="iref"></span><a href="#WT_DATA_BLOCKED" class="internal xref">WT_DATA_BLOCKED</a> capsule (<a href="#WT_DATA_BLOCKED" class="auto internal xref">Section 5.6.5</a>) can be sent to indicate that
 an endpoint was unable to send data due to a limit set by the <span id="iref-wt_max_data-6" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
 capsule.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
@@ -2238,9 +2239,9 @@ introduced to inform the peer of the maximum amount of data that can be sent on
 the WebTransport session as a whole.<a href="#section-5.6.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.6.4-2">This limit counts all data that is sent on streams of the corresponding type,
 excluding the stream header (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a> and
-<a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  Implementing <span id="iref-wt_max_data-32" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC
-stack provide the WebTransport implementation with information about the final
-size of streams (see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-5.6.4-2" class="pilcrow">¶</a></p>
+<a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  For streams that were reset, implementing
+<span id="iref-wt_max_data-32" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC stack provide the WebTransport implementation
+with information about the final size of streams (see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-5.6.4-2" class="pilcrow">¶</a></p>
 <span id="name-wt_max_data-capsule-format"></span><div id="fig-wt_max_data">
 <figure id="figure-9">
             <div class="alignLeft art-text artwork" id="section-5.6.4-3.1">
