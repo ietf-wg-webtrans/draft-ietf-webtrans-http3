@@ -598,31 +598,16 @@ streams.  A QUIC stream's data limit controls the amount of data that can be
 sent on that stream, WebTransport or otherwise (see {{Section 4
 of !RFC9000}}).
 
-## Negotiating the Use of Flow Control {#flow-control-negotiate}
+A WebTransport session MUST enable flow control.  This prevents an application
+from consuming excessive resources on a single session and starving traffic for
+other sessions (see {{security-considerations}}).
 
-A WebTransport endpoint that allows a WebTransport session to share an
-underlying transport connection with other WebTransport sessions MUST enable
-flow control.  This prevents an application from consuming excessive resources
-on a single session and starving traffic for other sessions
-(see {{security-considerations}}).
-
-An endpoint indicates that it is willing to support more than one WebTransport
-session, and thus flow control, by sending the SETTINGS_WT_MAX_SESSIONS with a
-value greater than "1".  If either endpoint sends SETTINGS_WT_MAX_SESSIONS with
-a value of "1", flow control is not enabled, and clients MUST NOT attempt to
-establish more than one simultaneous WebTransport session.  A server that
-receives more than one session on an underlying transport connection when flow
-control is not enabled MUST reset the excessive CONNECT streams with a
-`H3_REQUEST_REJECTED` status (see {{flow-control-limit-sessions}}).
-
-If both endpoints send SETTINGS_WT_MAX_SESSIONS with a value greater than "1",
-flow control is enabled, and the limits described in the entirety of
-{{flow-control}} apply.
-
-If flow control is not enabled, an endpoint MUST ignore receipt of any flow
-control capsules (see {{flow-control-capsules}}), since the peer might not have
-received SETTINGS at the time they were sent or packets might have been
-reordered.
+Note that the flow control limits set by a client might not be received by a
+server before it receives a request to start a WebTransport session.  In that
+case, the newly arrived settings might establish non-zero limits for sessions
+({{flow-control-limit-sessions}}) or streams ({{flow-control-limit-streams}}).
+These can be treated as equivalent to the receipt of a WT_MAX_SESSIONS or
+WT_MAX_STREAMS frame, respectively.
 
 ## Limiting the Number of Simultaneous Sessions {#flow-control-limit-sessions}
 
