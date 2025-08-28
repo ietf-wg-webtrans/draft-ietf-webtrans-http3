@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-07T01:01:01.227688+00:00",
+  "timestamp": "2025-08-28T00:51:26.331527+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5391,7 +5391,7 @@
       ],
       "body": "The document contains a dedicated section about the protocol's properties (https://www.ietf.org/archive/id/draft-ietf-webtrans-http2-12.html#name-transport-properties). While the text itself reads well, I would have expected a similar section to be found in draft-ietf-webtrans-http3 and draft-ietf-webtrans-overview to provide an overview of these properties. For example, _connection mobility_ is not mentioned elsewhere, AFAIK.",
       "createdAt": "2025-07-23T09:18:37Z",
-      "updatedAt": "2025-08-05T23:42:17Z",
+      "updatedAt": "2025-08-27T00:00:06Z",
       "closedAt": null,
       "comments": [
         {
@@ -5400,6 +5400,20 @@
           "body": "Those should be corresponding to the properties outlined in the overview itself, but agreed that HTTP/3 should probably have a similar section.\n\nWe should double check to make sure it's consistent across documents, as well.",
           "createdAt": "2025-07-23T09:34:38Z",
           "updatedAt": "2025-07-23T09:34:38Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We took out many of these properties from the overview document here: https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-overview/commit/b053591d313c9de33ba0f37a9bb6c75ac1e85540",
+          "createdAt": "2025-08-26T06:02:33Z",
+          "updatedAt": "2025-08-26T06:02:33Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Editor's meeting: \n\n- Rework overview if needed to make fewer assumptions about knowing everything that exists\n- Bring to H3 if it makes sense, not required",
+          "createdAt": "2025-08-27T00:00:06Z",
+          "updatedAt": "2025-08-27T00:00:06Z"
         }
       ]
     },
@@ -5417,7 +5431,7 @@
       "labels": [],
       "body": "Using the same Upgrade Token for two seemingly quite different protocols (depending on HTTP version) seems like a mistake.  Giving WT-H2 and WT-H3 separate Upgrade Tokens would avoid ambiguity and simplify the use of WebTransport inside backend infrastructure.",
       "createdAt": "2025-07-23T10:34:33Z",
-      "updatedAt": "2025-08-06T14:51:58Z",
+      "updatedAt": "2025-08-27T15:57:24Z",
       "closedAt": null,
       "comments": [
         {
@@ -5454,6 +5468,27 @@
           "body": "I like the words \"stream\" and \"mux\".",
           "createdAt": "2025-08-06T14:51:58Z",
           "updatedAt": "2025-08-06T14:51:58Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> the h3 variant a variation of that\n\nI think some of the thinking here is that the `webtransport` token would be the generic thing that can run over essentially any bidirectional bytestream, whereas `webtransport-h3` would be the one that is a HTTP/3 specific mapping of WebTransport to just that substrate and is thus more specific.",
+          "createdAt": "2025-08-26T23:20:27Z",
+          "updatedAt": "2025-08-26T23:20:27Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Editor's meeting: \n\n- Existing deployments will have a different transport parameter anyway. Extensions should not see this yet today (per @vasilvv)\n- Keep PRs as is, wait to merge until confirming that we really want them separate.\n\nNew issues for: \n- Do we remove WT_MAX_SESSIONS from HTTP/2. Issue: That setting would apply to both modes of WT on an H3 connection which might surprise people.\n- Do we have text that says that you must not use both modes on an HTTP/3 connection (even if we know that some people will)",
+          "createdAt": "2025-08-26T23:23:21Z",
+          "updatedAt": "2025-08-26T23:42:31Z"
+        },
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "If we remove WT_MAX_SESSIONS (https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/143, https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/223) and allow the use of the WT-H2 capsules in HTTP/3 (https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/224) *without requiring any HTTP/3 extensions*, then a dumb gateway with no knowledge of WebTransport could simply pipe the capsule bytestreams back and forth.  At that point, it very much seems like we have a single protocol (with optional extensions for datagrams and parallel streams in H3), and a single upgrade token would be best.\n\nThe more a minimal gateway needs to understand about WebTransport to convert between H2 and H3, the less it seems like a single protocol, and the more I would lean toward separate upgrade tokens.",
+          "createdAt": "2025-08-27T15:57:24Z",
+          "updatedAt": "2025-08-27T15:57:24Z"
         }
       ]
     },
@@ -5521,6 +5556,38 @@
           "updatedAt": "2025-08-06T02:41:35Z"
         }
       ]
+    },
+    {
+      "number": 223,
+      "id": "I_kwDOCvK98s7IHrCX",
+      "title": "Running the stream version of webtransport over HTTP/3?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/223",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This seems to be a thing that people are considering doing at intermediaries.  Translating from the HTTP/2 version to the HTTP/3 version might be complicated and the HTTP/2 protocol doesn't really *need* to be translated to operate correctly.  With a different protocol token, the two could even co-exist.\n\nThere's a complication with how WT_MAX_SESSIONS is interpreted; it would be awkward if the setting in HTTP/3 applied to the HTTP/2 version of the protocol.  See also #224.",
+      "createdAt": "2025-08-26T23:41:11Z",
+      "updatedAt": "2025-08-26T23:42:57Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 224,
+      "id": "I_kwDOCvK98s7IHrqw",
+      "title": "WT_MAX_SESSIONS setting",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/224",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
+      "createdAt": "2025-08-26T23:42:29Z",
+      "updatedAt": "2025-08-26T23:42:29Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -17933,24 +18000,26 @@
       "id": "PR_kwDOCvK98s6d-vS7",
       "title": "clarify that WT_MAX_DATA only requires special QUIC API for reset streams",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/213",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "At least that's my understanding of how one would implement this. For streams that are closed without an error, all byte counting can happen at the WebTransport layer, and no additional QUIC API is needed.",
       "createdAt": "2025-07-08T16:45:38Z",
-      "updatedAt": "2025-07-08T23:06:30Z",
+      "updatedAt": "2025-08-26T23:17:08Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "89e61a7644b5f713c17808a8ec585901055d626e",
       "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
       "headRefName": "wt-max-data-quic-api",
-      "headRefOid": "4b12944626de417f964fb330bc379da26fe94e31",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "4327d27a770804a30490ef15a7cfb7a8e4fe9fd7",
+      "closedAt": "2025-08-26T23:17:08Z",
+      "mergedAt": "2025-08-26T23:17:08Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "17721dc3ccfd41903292e9d40d1fca19a207fbe4"
+      },
       "comments": [],
       "reviews": [
         {
@@ -17978,6 +18047,26 @@
           "createdAt": "2025-07-08T23:06:30Z",
           "updatedAt": "2025-07-08T23:06:30Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s68NRRx",
+          "commit": {
+            "abbreviatedOid": "4b12944"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-26T23:15:02Z",
+          "updatedAt": "2025-08-26T23:15:45Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "```suggestion\nconsumed by the sender on that stream.\n```",
+              "createdAt": "2025-08-26T23:15:02Z",
+              "updatedAt": "2025-08-26T23:15:45Z"
+            }
+          ]
         }
       ]
     },
@@ -18100,7 +18189,7 @@
       "labels": [],
       "body": "This is the one that is \"special\", so it is the one that gets a suffix.\r\n\r\nCloses #218, but will require a fix on the h2 repo.",
       "createdAt": "2025-08-05T23:59:56Z",
-      "updatedAt": "2025-08-06T00:37:32Z",
+      "updatedAt": "2025-08-26T23:23:39Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "1869a3aa8fc3182b8adf76479b6f2512af3d7ef7",
@@ -18132,6 +18221,19 @@
               "updatedAt": "2025-08-06T00:20:45Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s68NV3L",
+          "commit": {
+            "abbreviatedOid": "dce3232"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-08-26T23:23:39Z",
+          "updatedAt": "2025-08-26T23:23:39Z",
+          "comments": []
         }
       ]
     }
