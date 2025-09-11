@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-28T00:51:26.331527+00:00",
+  "timestamp": "2025-09-11T00:50:43.658305+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5431,7 +5431,7 @@
       "labels": [],
       "body": "Using the same Upgrade Token for two seemingly quite different protocols (depending on HTTP version) seems like a mistake.  Giving WT-H2 and WT-H3 separate Upgrade Tokens would avoid ambiguity and simplify the use of WebTransport inside backend infrastructure.",
       "createdAt": "2025-07-23T10:34:33Z",
-      "updatedAt": "2025-08-27T15:57:24Z",
+      "updatedAt": "2025-09-09T22:10:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -5489,6 +5489,13 @@
           "body": "If we remove WT_MAX_SESSIONS (https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/143, https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/223) and allow the use of the WT-H2 capsules in HTTP/3 (https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/224) *without requiring any HTTP/3 extensions*, then a dumb gateway with no knowledge of WebTransport could simply pipe the capsule bytestreams back and forth.  At that point, it very much seems like we have a single protocol (with optional extensions for datagrams and parallel streams in H3), and a single upgrade token would be best.\n\nThe more a minimal gateway needs to understand about WebTransport to convert between H2 and H3, the less it seems like a single protocol, and the more I would lean toward separate upgrade tokens.",
           "createdAt": "2025-08-27T15:57:24Z",
           "updatedAt": "2025-08-27T15:57:24Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Will we allow or forbid the use of the \"h2\" webtransport version on h3 streams?",
+          "createdAt": "2025-09-09T22:10:44Z",
+          "updatedAt": "2025-09-09T22:10:44Z"
         }
       ]
     },
