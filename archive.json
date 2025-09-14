@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-11T00:50:43.658305+00:00",
+  "timestamp": "2025-09-14T00:53:50.423354+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -18089,7 +18089,7 @@
       "labels": [],
       "body": "This is the easiest solution.\r\n\r\nI've added a note here that more than doubles the added text.  That covers the question of how to resolve the rate condition between settings and session establishment.\r\n\r\nCloses #214 in a way that is contrary to the conclusion at IETF 123.",
       "createdAt": "2025-08-05T23:30:33Z",
-      "updatedAt": "2025-08-06T01:21:22Z",
+      "updatedAt": "2025-09-11T05:38:00Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "1869a3aa8fc3182b8adf76479b6f2512af3d7ef7",
@@ -18100,7 +18100,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "As the author of `pywebtransport`, a new asyncio-native WebTransport implementation for Python, I strongly support this change to make session-level flow control mandatory.\r\n\r\nFrom an implementer's perspective, this simplification is highly valuable. It removes a significant source of state-tracking complexity and potential interoperability issues. It provides a clear, unambiguous target for our implementation and aligns with the best practice of ensuring all sessions have baseline resource protection.\r\n\r\nWe believe this change leads to a more robust protocol for everyone, and we are happy to align our development roadmap with this direction. Thank you for proposing it.",
+          "createdAt": "2025-09-11T05:38:00Z",
+          "updatedAt": "2025-09-11T05:38:00Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOCvK98s64Lb6r",
