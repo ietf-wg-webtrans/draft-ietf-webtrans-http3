@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-16T00:49:05.480348+00:00",
+  "timestamp": "2025-09-30T00:51:18.209913+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5593,6 +5593,22 @@
       "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
       "createdAt": "2025-08-26T23:42:29Z",
       "updatedAt": "2025-08-26T23:42:29Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 225,
+      "id": "I_kwDOCvK98s7OpTXo",
+      "title": "Should we prohibit illegal values in flow control capsules?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/225",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Because all flow control capsules are serialized on a QUIC stream, it should not be possible to receive a smaller value for MAX_DATA/MAX_STREAM_DATA/MAX_STREAMS as can happen with QUIC frames.  Should we make this a protocol error?",
+      "createdAt": "2025-09-29T23:04:32Z",
+      "updatedAt": "2025-09-29T23:04:32Z",
       "closedAt": null,
       "comments": []
     }
