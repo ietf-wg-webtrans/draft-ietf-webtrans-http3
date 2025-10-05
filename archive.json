@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-30T00:51:18.209913+00:00",
+  "timestamp": "2025-10-05T00:55:27.098482+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5608,9 +5608,55 @@
       "labels": [],
       "body": "Because all flow control capsules are serialized on a QUIC stream, it should not be possible to receive a smaller value for MAX_DATA/MAX_STREAM_DATA/MAX_STREAMS as can happen with QUIC frames.  Should we make this a protocol error?",
       "createdAt": "2025-09-29T23:04:32Z",
-      "updatedAt": "2025-09-29T23:04:32Z",
+      "updatedAt": "2025-10-04T08:23:15Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I would say \"MAY error\", rather than \"MUST error\" for this.  There's no reason to send these, but there's also no much point in policing that, especially if you are feeding into common frame-handling logic.",
+          "createdAt": "2025-10-04T08:20:30Z",
+          "updatedAt": "2025-10-04T08:20:30Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "My preference is using a MUST, but at the very least, it should be SHOULD. The only reason why an implement wouldn't do this is because it's exceedingly hard to track the state (e.g. when using common frame-handling logic).",
+          "createdAt": "2025-10-04T08:23:15Z",
+          "updatedAt": "2025-10-04T08:23:15Z"
+        }
+      ]
+    },
+    {
+      "number": 226,
+      "id": "I_kwDOCvK98s7PKn-n",
+      "title": "Should WT_CLOSE_SESSION capsule match QUIC CONNECTION_CLOSE frame?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/226",
+      "state": "OPEN",
+      "author": "AnkshitJain",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Most WebTransport capsules [mirror](https://www.ietf.org/archive/id/draft-ietf-webtrans-http2-12.html#name-webtransport-capsules) QUIC frames. \n```\nWebTransport capsules mirror their QUIC frame counterparts as closely as possible to enable maximal reuse of any applicable QUIC infrastructure by implementors.\n```\n\n`WT_CLOSE_SESSION` defines a 32 bit error code and 8192 bit error message, deviating from the `CONNECTION_CLOSE` frame, which allows a variable length integer error code and a variable length integer length error message. \n```\nWT_CLOSE_SESSION Capsule {\n     Type (i) = WT_CLOSE_SESSION,\n     Length (i),\n     Application Error Code (32),\n     Application Error Message (..8192),\n}\n```\n\n```\nCONNECTION_CLOSE Frame {\n  Type (i) = 0x1c..0x1d,\n  Error Code (i),\n  [Frame Type (i)],\n  Reason Phrase Length (i),\n  Reason Phrase (..),\n}\n```\n\nShould `WT_CLOSE_SESSION` capsule match `CONNECTION_CLOSE` frame?",
+      "createdAt": "2025-10-02T01:26:31Z",
+      "updatedAt": "2025-10-04T08:19:11Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The QUIC CONNECTION_CLOSE frame is restricted to the maximum datagram size on the path, so I doubt many implementations are sending reason phrases longer then 1024 bytes.\n\nI don't think I remember why we restricted the error code space, but possibly to match other places in where we didn't want application errors to collide with HTTP error codes.",
+          "createdAt": "2025-10-02T16:00:35Z",
+          "updatedAt": "2025-10-02T16:00:35Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Yeah, the reason for the smaller space of codes was that we are stealing space from the space of QUIC application error codes.\n\nI don't see much cause to change anything here, other than to note the reasons for divergence.",
+          "createdAt": "2025-10-04T08:19:11Z",
+          "updatedAt": "2025-10-04T08:19:11Z"
+        }
+      ]
     }
   ],
   "pulls": [
