@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-05T00:55:27.098482+00:00",
+  "timestamp": "2025-10-12T00:53:20.293332+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5657,6 +5657,22 @@
           "updatedAt": "2025-10-04T08:19:11Z"
         }
       ]
+    },
+    {
+      "number": 227,
+      "id": "I_kwDOCvK98s7QqfvR",
+      "title": "Handling of bidirectional streams for unknown sessions",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/227",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There _is_ text in section 4 that says\n\n> If at any point a session ID is received that cannot be a valid ID for a client-initiated bidirectional stream, the recipient MUST close the connection with an H3_ID_ERROR error code.\n\nWhat precisely is the definition of valid here? I suppose if the session ID is larger than the max session ID, that's invalid. But what if endpoint receives a bidirectional stream related to a closed session. Due to reordering, it is possible something gets delivered to a webtransport application early or late. Treating that as invalid seems error prone or fragile.\n\nAlso, I suppose the requirements needs to apply to server initiated streams too?\n\n",
+      "createdAt": "2025-10-09T22:30:13Z",
+      "updatedAt": "2025-10-09T22:31:04Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
