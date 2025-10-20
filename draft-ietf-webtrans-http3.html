@@ -1533,44 +1533,79 @@ closed.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-establishing-a-webtransport" class="section-name selfRef">Establishing a WebTransport-Capable HTTP/3 Connection</a>
         </h3>
 <p id="section-3.1-1">A WebTransport-Capable HTTP/3 connection requires the client and server to both
-signal support for WebTransport over HTTP/3 using a setting. Clients also
-signal support by using the "webtransport" upgrade token in extended CONNECT
-requests when establishing sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
-<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.  This
-document defines a SETTINGS_WT_MAX_SESSIONS setting for indicating the number
-of WebTransport sessions a connection supports.  The default value for the
-SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint is not
-willing to receive any WebTransport sessions.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
-<p id="section-3.1-3">A server supporting WebTransport over HTTP/3 MUST send both the
-SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0" and the
-SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1".<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">A client supporting WebTransport over HTTP/3 MUST send the
-SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0".<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">Clients MUST NOT attempt to establish WebTransport sessions until they have
-received the settings indicating WebTransport support from the server.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-6" class="pilcrow">¶</a></p>
-<p id="section-3.1-7">For draft versions of WebTransport only, the server MUST NOT process any
-incoming WebTransport requests until the client settings have been received, as
-the client may be using a version of the WebTransport extension that is
-different from the one used by the server.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
-<p id="section-3.1-8">Because WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the
-Capsule Protocol, both the client and the server MUST indicate support for
-HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM setting value set to 1 in
-their SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>).  Servers should
-also note that CONNECT requests to establish new WebTransport sessions, in
-addition to other messages, may arrive before this SETTING is received (see
-<a href="#buffering-incoming" class="auto internal xref">Section 4.6</a>).<a href="#section-3.1-8" class="pilcrow">¶</a></p>
-<p id="section-3.1-9">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
-support, both the client and the server MUST send a max_datagram_frame_size
-transport parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-9" class="pilcrow">¶</a></p>
-<p id="section-3.1-10">Any WebTransport requests sent by the client without enabling QUIC and HTTP
-datagrams MUST be treated as malformed by the server, as described in
-<span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-10" class="pilcrow">¶</a></p>
-<p id="section-3.1-11">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
+signal support for WebTransport over HTTP/3 using a setting.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">This document defines a SETTINGS_WT_MAX_SESSIONS setting for indicating the
+number of WebTransport sessions a connection supports.  The default value for
+the SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint is not
+willing to receive any WebTransport sessions.  Both clients and servers
+supporting WebTransport over HTTP/3 MUST send the SETTINGS_WT_MAX_SESSIONS
+setting with a value greater than "0".  Clients MUST NOT attempt to establish
+WebTransport sessions until they have received the setting indicating
+WebTransport support from the server.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
+<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.
+Clients also signal support for WebTransport by using the "webtransport" upgrade
+token in extended CONNECT requests when establishing sessions (see
+<a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-4">WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the Capsule
+Protocol, and both the client and the server indicate support for HTTP/3
+datagrams by sending a SETTINGS_H3_DATAGRAM setting value set to 1 in their
+SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>).<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-5">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
+support, both the client and the server send a max_datagram_frame_size transport
+parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.  To indicate support,
-both the client and the server MUST enable the extension as described
-in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-11" class="pilcrow">¶</a></p>
+both the client and the server enable the extension by sending an empty
+reset_stream_at transport parameter as described in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+<p id="section-3.1-7">In summary, servers supporting WebTransport over HTTP/3 send:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.1-8.1">
+            <p id="section-3.1-8.1.1">A SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0"<a href="#section-3.1-8.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-8.2">
+            <p id="section-3.1-8.2.1">A SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1"<a href="#section-3.1-8.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-8.3">
+            <p id="section-3.1-8.3.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-8.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-8.4">
+            <p id="section-3.1-8.4.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-8.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-8.5">
+            <p id="section-3.1-8.5.1">An empty reset_stream_at transport parameter<a href="#section-3.1-8.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.1-9">Clients supporting WebTransport over HTTP/3 send:<a href="#section-3.1-9" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.1-10.1">
+            <p id="section-3.1-10.1.1">A SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0"<a href="#section-3.1-10.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-10.2">
+            <p id="section-3.1-10.2.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-10.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-10.3">
+            <p id="section-3.1-10.3.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-10.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-10.4">
+            <p id="section-3.1-10.4.1">An empty reset_stream_at transport parameter<a href="#section-3.1-10.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.1-11">Servers should note that CONNECT requests to establish new WebTransport
+sessions, in addition to other messages, can arrive before the client's SETTINGS
+are received (see <a href="#buffering-incoming" class="auto internal xref">Section 4.6</a>).  If the server receives SETTINGS that
+do not have correct values for every required setting, or transport parameters
+that do not have correct values for every required transport parameter, the
+server MUST treat all established and newly incoming WebTransport sessions as
+malformed, as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-11" class="pilcrow">¶</a></p>
+<p id="section-3.1-12">A client MUST NOT establish WebTransport sessions if the server's SETTINGS do
+not have correct values for every required setting or if the server's transport
+parameters do not have correct values for every required transport parameter.<a href="#section-3.1-12" class="pilcrow">¶</a></p>
+<p id="section-3.1-13">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-13" class="pilcrow">¶</a></p>
+<p id="section-3.1-14">For draft versions of WebTransport only, the server MUST NOT process any
+incoming WebTransport requests until the client settings have been received, as
+the client might be using a version of the WebTransport extension that is
+different from the one used by the server.<a href="#section-3.1-14" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="creating-a-new-session">
