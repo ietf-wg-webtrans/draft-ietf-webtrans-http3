@@ -894,6 +894,14 @@ Table of Contents
    Note that this limit includes streams that have been closed as well
    as those that are open.
 
+   Unlike in QUIC, where MAX_STREAMS frames can be delivered in any
+   order, WT_MAX_STREAMS capsules are sent on the WebTransport session's
+   connect stream and are delivered in order.  If an endpoint receives a
+   WT_MAX_STREAMS capsule with a Maximum Streams value less than a
+   previously received value, it MUST close the WebTransport session by
+   resetting the connect stream with the WT_FLOW_CONTROL_ERROR error
+   code.
+
    The WT_MAX_STREAMS capsule defines special intermediary handling, as
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
    consume WT_MAX_STREAMS capsules for flow control purposes and MUST
@@ -968,6 +976,13 @@ Table of Contents
    All data sent in WT_STREAM capsules counts toward this limit.  The
    sum of the lengths of Stream Data fields in WT_STREAM capsules MUST
    NOT exceed the value advertised by a receiver.
+
+   Unlike in QUIC, where MAX_DATA frames can be delivered in any order,
+   WT_MAX_DATA capsules are sent on the WebTransport session's connect
+   stream and are delivered in order.  If an endpoint receives a
+   WT_MAX_DATA capsule with a Maximum Data value less than a previously
+   received value, it MUST close the WebTransport session by resetting
+   the connect stream with the WT_FLOW_CONTROL_ERROR error code.
 
    The WT_MAX_DATA capsule defines special intermediary handling, as
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
@@ -1259,7 +1274,7 @@ Table of Contents
 
 9.5.  HTTP/3 Error Code Registration
 
-   The following entry is added to the "HTTP/3 Error Code" registry
+   The following entries are added to the "HTTP/3 Error Code" registry
    established by [HTTP3]:
 
    Name:  WT_BUFFERED_STREAM_REJECTED
@@ -1278,6 +1293,15 @@ Table of Contents
    Description:  WebTransport data stream aborted because the associated
       WebTransport session has been closed.  Also used to indicate that
       the endpoint is no longer reading from the CONNECT stream.
+
+   Specification:  This document.
+
+   Name:  WT_FLOW_CONTROL_ERROR
+
+   Value:  0x045d4487
+
+   Description:  WebTransport session aborted because a flow control
+      error was encountered.
 
    Specification:  This document.
 
@@ -1538,14 +1562,14 @@ Index
       S
 
          SETTINGS_WT_INITIAL_MAX_DATA  Section 5.5, Paragraph 2.2.1;
-            Section 5.6.4, Paragraph 8; Section 9.2, Paragraph 10;
+            Section 5.6.4, Paragraph 9; Section 9.2, Paragraph 10;
             Section 9.2, Paragraph 12.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI  Section 5.5, Paragraph
-            2.1.1; Section 5.6.2, Paragraph 9; Section 9.2, Paragraph 7;
-            Section 9.2, Paragraph 9.2.1
+            2.1.1; Section 5.6.2, Paragraph 10; Section 9.2, Paragraph
+            7; Section 9.2, Paragraph 9.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_UNI  Section 5.5, Paragraph
-            2.1.1; Section 5.6.2, Paragraph 9; Section 9.2, Paragraph 4;
-            Section 9.2, Paragraph 6.2.1
+            2.1.1; Section 5.6.2, Paragraph 10; Section 9.2, Paragraph
+            4; Section 9.2, Paragraph 6.2.1
 
       W
 
@@ -1557,14 +1581,14 @@ Index
             2; Section 5.4, Paragraph 3; Section 5.5, Paragraph 2.2.1;
             Section 5.6, Paragraph 1; Section 5.6.4, Paragraph 1;
             Section 5.6.4, Paragraph 2; Section 5.6.4, Paragraph 4;
-            Section 5.6.4, Paragraph 7; Section 9.2, Paragraph 10;
-            Section 9.6, Paragraph 11.4.1
+            Section 5.6.4, Paragraph 7; Section 5.6.4, Paragraph 8;
+            Section 9.2, Paragraph 10; Section 9.6, Paragraph 11.4.1
          WT_MAX_STREAMS  Section 5.3, Paragraph 1; Section 5.5,
             Paragraph 2.1.1; Section 5.6, Paragraph 1; Section 5.6.2,
             Paragraph 1; Section 5.6.2, Paragraph 2; Section 5.6.2,
-            Paragraph 4; Section 5.6.2, Paragraph 8; Section 9.2,
-            Paragraph 4; Section 9.2, Paragraph 7; Section 9.6,
-            Paragraph 7.4.1
+            Paragraph 4; Section 5.6.2, Paragraph 8; Section 5.6.2,
+            Paragraph 9; Section 9.2, Paragraph 4; Section 9.2,
+            Paragraph 7; Section 9.6, Paragraph 7.4.1
          WT_STREAMS_BLOCKED  Section 5.3, Paragraph 5; Section 5.6,
             Paragraph 1; Section 5.6.3, Paragraph 1; Section 5.6.3,
             Paragraph 2; Section 5.6.3, Paragraph 4; Section 5.6.3,
