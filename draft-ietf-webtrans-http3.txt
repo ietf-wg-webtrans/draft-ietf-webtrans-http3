@@ -5,10 +5,10 @@
 WEBTRANS                                                     A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 27 February 2026                                     Apple Inc.
+Expires: 23 April 2026                                        Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                          26 August 2025
+                                                         20 October 2025
 
 
                         WebTransport over HTTP/3
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 February 2026.
+   This Internet-Draft will expire on 23 April 2026.
 
 Copyright Notice
 
