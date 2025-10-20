@@ -1211,25 +1211,28 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-webtransport-features" class="internal xref">WebTransport Features</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-unidirectional-streams" class="internal xref">Unidirectional streams</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-transport-properties" class="internal xref">Transport Properties</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-bidirectional-streams" class="internal xref">Bidirectional Streams</a></p>
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-unidirectional-streams" class="internal xref">Unidirectional streams</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
-                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-resetting-data-streams" class="internal xref">Resetting Data Streams</a></p>
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-bidirectional-streams" class="internal xref">Bidirectional Streams</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
-                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-datagrams" class="internal xref">Datagrams</a></p>
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-resetting-data-streams" class="internal xref">Resetting Data Streams</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.5">
-                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-buffering-incoming-streams-" class="internal xref">Buffering Incoming Streams and Datagrams</a></p>
+                <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="auto internal xref">4.5</a>.  <a href="#name-datagrams" class="internal xref">Datagrams</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.6">
-                <p id="section-toc.1-1.4.2.6.1"><a href="#section-4.6" class="auto internal xref">4.6</a>.  <a href="#name-interaction-with-the-http-3" class="internal xref">Interaction with the HTTP/3 GOAWAY frame</a></p>
+                <p id="section-toc.1-1.4.2.6.1"><a href="#section-4.6" class="auto internal xref">4.6</a>.  <a href="#name-buffering-incoming-streams-" class="internal xref">Buffering Incoming Streams and Datagrams</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.7">
-                <p id="section-toc.1-1.4.2.7.1"><a href="#section-4.7" class="auto internal xref">4.7</a>.  <a href="#name-use-of-keying-material-expo" class="internal xref">Use of Keying Material Exporters</a></p>
+                <p id="section-toc.1-1.4.2.7.1"><a href="#section-4.7" class="auto internal xref">4.7</a>.  <a href="#name-interaction-with-the-http-3" class="internal xref">Interaction with the HTTP/3 GOAWAY frame</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.8">
+                <p id="section-toc.1-1.4.2.8.1"><a href="#section-4.8" class="auto internal xref">4.8</a>.  <a href="#name-use-of-keying-material-expo" class="internal xref">Use of Keying Material Exporters</a></p>
 </li>
             </ul>
 </li>
@@ -1557,7 +1560,7 @@ HTTP/3 datagrams by sending a SETTINGS_H3_DATAGRAM setting value set to 1 in
 their SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>).  Servers should
 also note that CONNECT requests to establish new WebTransport sessions, in
 addition to other messages, may arrive before this SETTING is received (see
-<a href="#buffering-incoming" class="auto internal xref">Section 4.5</a>).<a href="#section-3.1-8" class="pilcrow">¶</a></p>
+<a href="#buffering-incoming" class="auto internal xref">Section 4.6</a>).<a href="#section-3.1-8" class="pilcrow">¶</a></p>
 <p id="section-3.1-9">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
 support, both the client and the server MUST send a max_datagram_frame_size
 transport parameter with a value greater than 0 (see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-9" class="pilcrow">¶</a></p>
@@ -1710,18 +1713,47 @@ CONNECT request has been received.<a href="#section-4-3" class="pilcrow">¶</a><
 <p id="section-4-4">If at any point a session ID is received that cannot be a valid ID for a
 client-initiated bidirectional stream, the recipient MUST close the connection
 with an H3_ID_ERROR error code.<a href="#section-4-4" class="pilcrow">¶</a></p>
-<div id="unidirectional-streams">
+<div id="transport-properties">
 <section id="section-4.1">
-        <h3 id="name-unidirectional-streams">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-unidirectional-streams" class="section-name selfRef">Unidirectional streams</a>
+        <h3 id="name-transport-properties">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-transport-properties" class="section-name selfRef">Transport Properties</a>
         </h3>
-<p id="section-4.1-1">WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
+<p id="section-4.1-1">The WebTransport framework <span>[<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span> defines a set of optional transport
+properties that clients can use to determine the presence of features which
+might allow additional optimizations beyond the common set of properties
+available via all WebTransport protocols.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">Below are details about support in WebTransport over HTTP/3 for the properties
+defined by the WebTransport framework.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.1-3">
+          <dt id="section-4.1-3.1">Unreliable Delivery:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-3.2">
+            <p id="section-4.1-3.2.1">WebTransport over HTTP/3 supports unreliable delivery.  Resetting a stream
+results in lost stream data no longer being retransmitted.  WebTransport over
+HTTP/3 also supports datagrams, which are not retransmitted.<a href="#section-4.1-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-3.3">Pooling:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-3.4">
+            <p id="section-4.1-3.4.1">WebTransport over HTTP/3 provides optional support for pooling.  Endpoints can
+use the SETTINGS_WT_MAX_SESSIONS setting to indicate if pooling is supported on
+a particular HTTP/3 connection (<a href="#establishing" class="auto internal xref">Section 3.1</a>).<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="unidirectional-streams">
+<section id="section-4.2">
+        <h3 id="name-unidirectional-streams">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-unidirectional-streams" class="section-name selfRef">Unidirectional streams</a>
+        </h3>
+<p id="section-4.2-1">WebTransport endpoints can initiate unidirectional streams.  The HTTP/3
 unidirectional stream type SHALL be 0x54.  The body of the stream SHALL be the
 stream type, followed by the session ID, encoded as a variable-length integer,
-followed by the user-specified stream data (<a href="#fig-unidi" class="auto internal xref">Figure 2</a>).<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+followed by the user-specified stream data (<a href="#fig-unidi" class="auto internal xref">Figure 2</a>).<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <span id="name-unidirectional-webtransport"></span><div id="fig-unidi">
 <figure id="figure-2">
-          <div class="lang-drawing sourcecode" id="section-4.1-2.1">
+          <div class="lang-drawing sourcecode" id="section-4.2-2.1">
 <pre>
 Unidirectional Stream {
     Stream Type (i) = 0x54,
@@ -1737,32 +1769,32 @@ Unidirectional Stream {
 </section>
 </div>
 <div id="bidirectional-streams">
-<section id="section-4.2">
+<section id="section-4.3">
         <h3 id="name-bidirectional-streams">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-bidirectional-streams" class="section-name selfRef">Bidirectional Streams</a>
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-bidirectional-streams" class="section-name selfRef">Bidirectional Streams</a>
         </h3>
-<p id="section-4.2-1">All client-initiated bidirectional streams are reserved by HTTP/3 as request
+<p id="section-4.3-1">All client-initiated bidirectional streams are reserved by HTTP/3 as request
 streams, which are a sequence of HTTP/3 frames with a variety of rules (see
-Sections <a href="https://rfc-editor.org/rfc/rfc9114#section-4.1" class="relref">4.1</a> and <a href="https://rfc-editor.org/rfc/rfc9114#section-6.1" class="relref">6.1</a> of <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>).<a href="#section-4.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2-2">WebTransport extends HTTP/3 to allow clients to declare and to use alternative
+Sections <a href="https://rfc-editor.org/rfc/rfc9114#section-4.1" class="relref">4.1</a> and <a href="https://rfc-editor.org/rfc/rfc9114#section-6.1" class="relref">6.1</a> of <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>).<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-2">WebTransport extends HTTP/3 to allow clients to declare and to use alternative
 request stream rules.  Once a client receives settings indicating WebTransport
 support (<a href="#establishing" class="auto internal xref">Section 3.1</a>), it MUST send a special signal value, encoded as a
 variable-length integer, as the first bytes of each bidirectional WebTransport
 stream it initiates to indicate how the remaining bytes on the stream are
-used.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.2-3">WebTransport extends HTTP/3 by defining rules for all server-initiated
+used.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.3-3">WebTransport extends HTTP/3 by defining rules for all server-initiated
 bidirectional streams.  Once a server receives an incoming CONNECT request
 establishing a WebTransport session (<a href="#establishing" class="auto internal xref">Section 3.1</a>), it can open a
 bidirectional stream for use with that session and MUST send a special signal
 value, encoded as a variable-length integer, as the first bytes of the stream
-in order to indicate how the remaining bytes on the stream are used.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
-<p id="section-4.2-4">Clients and servers use the signal value 0x41 to open a bidirectional
+in order to indicate how the remaining bytes on the stream are used.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+<p id="section-4.3-4">Clients and servers use the signal value 0x41 to open a bidirectional
 WebTransport stream.  Following this is the associated session ID, encoded as a
 variable-length integer; the rest of the stream is the application payload of
-the WebTransport stream (<a href="#fig-bidi-client" class="auto internal xref">Figure 3</a>).<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+the WebTransport stream (<a href="#fig-bidi-client" class="auto internal xref">Figure 3</a>).<a href="#section-4.3-4" class="pilcrow">¶</a></p>
 <span id="name-bidirectional-webtransport-"></span><div id="fig-bidi-client">
 <figure id="figure-3">
-          <div class="lang-drawing sourcecode" id="section-4.2-5.1">
+          <div class="lang-drawing sourcecode" id="section-4.3-5.1">
 <pre>
 Bidirectional Stream {
     Signal Value (i) = 0x41,
@@ -1775,7 +1807,7 @@ Bidirectional Stream {
 <a href="#name-bidirectional-webtransport-" class="selfRef">Bidirectional WebTransport stream format</a>
           </figcaption></figure>
 </div>
-<p id="section-4.2-6">This document reserves the special signal value 0x41 as a WT_STREAM frame
+<p id="section-4.3-6">This document reserves the special signal value 0x41 as a WT_STREAM frame
 type.  While it is registered as an HTTP/3 frame type to avoid collisions,
 WT_STREAM lacks length and is not a proper HTTP/3 frame; it is an extension of
 HTTP/3 frame syntax that MUST be supported by any peer negotiating
@@ -1783,18 +1815,18 @@ WebTransport.  Endpoints that implement this extension are also subject to
 additional frame handling requirements.  Endpoints MUST NOT send WT_STREAM as a
 frame type on HTTP/3 streams other than the very first bytes of a request
 stream.  Receiving this frame type in any other circumstances MUST be treated
-as a connection error of type H3_FRAME_ERROR.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+as a connection error of type H3_FRAME_ERROR.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="resetting-data-streams">
-<section id="section-4.3">
+<section id="section-4.4">
         <h3 id="name-resetting-data-streams">
-<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-resetting-data-streams" class="section-name selfRef">Resetting Data Streams</a>
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-resetting-data-streams" class="section-name selfRef">Resetting Data Streams</a>
         </h3>
-<p id="section-4.3-1">A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING frame for a
+<p id="section-4.4-1">A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING frame for a
 WebTransport data stream.  Those signals are propagated by the WebTransport
-implementation to the application.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3-2">A WebTransport application MUST provide an error code for those operations.
+implementation to the application.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">A WebTransport application MUST provide an error code for those operations.
 Since WebTransport shares the error code space with HTTP/3, WebTransport
 application errors for streams are limited to an unsigned 32-bit integer,
 assuming values between 0x00000000 and 0xffffffff.  WebTransport
@@ -1804,10 +1836,10 @@ WT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db, and
 inside that range of form "0x1f * N + 0x21" that are reserved by <span><a href="https://rfc-editor.org/rfc/rfc9114#section-8.1" class="relref">Section 8.1</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>; those have to be skipped when mapping the error codes (i.e., the two
 HTTP/3 error codepoints adjacent to a reserved codepoint would map to two
 adjacent WebTransport application error codepoints). An example pseudocode can
-be seen in <a href="#fig-remap-errors" class="auto internal xref">Figure 4</a>.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
+be seen in <a href="#fig-remap-errors" class="auto internal xref">Figure 4</a>.<a href="#section-4.4-2" class="pilcrow">¶</a></p>
 <span id="name-pseudocode-for-converting-b"></span><div id="fig-remap-errors">
 <figure id="figure-4">
-          <div class="alignLeft art-text artwork" id="section-4.3-3.1">
+          <div class="alignLeft art-text artwork" id="section-4.4-3.1">
 <pre>
     first = 0x52e4a40fa8db
     last = 0x52e5ac983162
@@ -1826,76 +1858,76 @@ be seen in <a href="#fig-remap-errors" class="auto internal xref">Figure 4</a>.<
 <a href="#name-pseudocode-for-converting-b" class="selfRef">Pseudocode for converting between WebTransport application errors and HTTP/3 error codes</a>
           </figcaption></figure>
 </div>
-<p id="section-4.3-4">WebTransport data streams are associated with sessions through a header at the
+<p id="section-4.4-4">WebTransport data streams are associated with sessions through a header at the
 beginning of the stream; resetting a stream might result in that data being
 discarded when using a RESET_STREAM frame.  To prevent this, WebTransport
 implementations MUST use the RESET_STREAM_AT frame <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span> with a
 Reliable Size set to at least the size of the WebTransport header when
 resetting a WebTransport data stream.  This ensures reliable delivery of the ID
-field associating the data stream with a WebTransport session.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
-<p id="section-4.3-5">WebTransport endpoints MUST forward the error code for a stream associated with
+field associating the data stream with a WebTransport session.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+<p id="section-4.4-5">WebTransport endpoints MUST forward the error code for a stream associated with
 a known session to the application that owns that session; similarly,
 intermediaries MUST reset such streams with a corresponding error code when
-receiving a reset from their peer.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
+receiving a reset from their peer.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="datagrams">
-<section id="section-4.4">
+<section id="section-4.5">
         <h3 id="name-datagrams">
-<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-datagrams" class="section-name selfRef">Datagrams</a>
+<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-datagrams" class="section-name selfRef">Datagrams</a>
         </h3>
-<p id="section-4.4-1">Datagrams can be sent using HTTP Datagrams.  The WebTransport datagram payload
+<p id="section-4.5-1">Datagrams can be sent using HTTP Datagrams.  The WebTransport datagram payload
 is sent unmodified in the "HTTP Datagram Payload" field of an HTTP Datagram
 (<span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1" class="relref">Section 2.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>).  Note that the payload field directly
 follows the Quarter Stream ID field, which is at the start of the QUIC DATAGRAM
 frame payload and refers to the CONNECT stream that established the
-WebTransport session.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+WebTransport session.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="buffering-incoming">
-<section id="section-4.5">
+<section id="section-4.6">
         <h3 id="name-buffering-incoming-streams-">
-<a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-buffering-incoming-streams-" class="section-name selfRef">Buffering Incoming Streams and Datagrams</a>
+<a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-buffering-incoming-streams-" class="section-name selfRef">Buffering Incoming Streams and Datagrams</a>
         </h3>
-<p id="section-4.5-1">In WebTransport over HTTP/3, the client MUST wait for receipt of the server's
+<p id="section-4.6-1">In WebTransport over HTTP/3, the client MUST wait for receipt of the server's
 SETTINGS frame before establishing any WebTransport sessions by sending CONNECT
 requests using the WebTransport upgrade token (see <a href="#establishing" class="auto internal xref">Section 3.1</a>).  This
 ensures that the client will always know what versions of WebTransport can be
-used on a given HTTP/3 connection.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
-<p id="section-4.5-2">Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT
+used on a given HTTP/3 connection.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
+<p id="section-4.6-2">Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT
 requests, WebTransport data streams, and WebTransport datagrams all within a
 single flight.  As those can arrive out of order, a WebTransport server could
 be put into a situation where it receives a stream or a datagram without a
 corresponding session.  Similarly, a client may receive a server-initiated
 stream or a datagram before receiving the CONNECT response headers from the
-server.<a href="#section-4.5-2" class="pilcrow">¶</a></p>
-<p id="section-4.5-3">To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
+server.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
+<p id="section-4.6-3">To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
 until they can be associated with an established session.  To avoid resource
 exhaustion, endpoints MUST limit the number of buffered streams and datagrams.
 When the number of buffered streams is exceeded, a stream SHALL be closed by
 sending a RESET_STREAM and/or STOP_SENDING with the
 <code>WT_BUFFERED_STREAM_REJECTED</code> error code.  When the number of buffered
 datagrams is exceeded, a datagram SHALL be dropped.  It is up to an
-implementation to choose what stream or datagram to discard.<a href="#section-4.5-3" class="pilcrow">¶</a></p>
+implementation to choose what stream or datagram to discard.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="interaction-with-the-http3-goaway-frame">
-<section id="section-4.6">
+<section id="section-4.7">
         <h3 id="name-interaction-with-the-http-3">
-<a href="#section-4.6" class="section-number selfRef">4.6. </a><a href="#name-interaction-with-the-http-3" class="section-name selfRef">Interaction with the HTTP/3 GOAWAY frame</a>
+<a href="#section-4.7" class="section-number selfRef">4.7. </a><a href="#name-interaction-with-the-http-3" class="section-name selfRef">Interaction with the HTTP/3 GOAWAY frame</a>
         </h3>
-<p id="section-4.6-1">HTTP/3 defines a graceful shutdown mechanism (<span><a href="https://rfc-editor.org/rfc/rfc9114#section-5.2" class="relref">Section 5.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>) that
+<p id="section-4.7-1">HTTP/3 defines a graceful shutdown mechanism (<span><a href="https://rfc-editor.org/rfc/rfc9114#section-5.2" class="relref">Section 5.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>) that
 allows a peer to send a GOAWAY frame indicating that it will no longer accept
-any new incoming requests or pushes.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
-<p id="section-4.6-2">A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
+any new incoming requests or pushes.<a href="#section-4.7-1" class="pilcrow">¶</a></p>
+<p id="section-4.7-2">A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
 sessions on that HTTP/3 connection; it must open a new HTTP/3 connection to
-initiate new WebTransport sessions with the same peer.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
-<p id="section-4.6-3">An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
+initiate new WebTransport sessions with the same peer.<a href="#section-4.7-2" class="pilcrow">¶</a></p>
+<p id="section-4.7-3">An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
 all WebTransport sessions.  To shut down a single WebTransport session, either
-endpoint can send a WT_DRAIN_SESSION (0x78ae) capsule.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
+endpoint can send a WT_DRAIN_SESSION (0x78ae) capsule.<a href="#section-4.7-3" class="pilcrow">¶</a></p>
 <span id="name-wt_drain_session-capsule-fo"></span><div id="fig-wt_drain_session">
 <figure id="figure-5">
-          <div class="alignLeft art-text artwork" id="section-4.6-4.1">
+          <div class="alignLeft art-text artwork" id="section-4.7-4.1">
 <pre>
 WT_DRAIN_SESSION Capsule {
   Type (i) = WT_DRAIN_SESSION,
@@ -1907,24 +1939,24 @@ WT_DRAIN_SESSION Capsule {
 <a href="#name-wt_drain_session-capsule-fo" class="selfRef">WT_DRAIN_SESSION Capsule Format</a>
           </figcaption></figure>
 </div>
-<p id="section-4.6-5">After sending or receiving either a WT_DRAIN_SESSION capsule or a HTTP/3 GOAWAY
+<p id="section-4.7-5">After sending or receiving either a WT_DRAIN_SESSION capsule or a HTTP/3 GOAWAY
 frame, an endpoint MAY continue using the session and MAY open new WebTransport
 streams.  The signal is intended for the application using WebTransport, which
 is expected to attempt to gracefully terminate the session as soon as
-possible.<a href="#section-4.6-5" class="pilcrow">¶</a></p>
-<p id="section-4.6-6">The WT_DRAIN_SESSION capsule is useful when an end-to-end WebTransport session
+possible.<a href="#section-4.7-5" class="pilcrow">¶</a></p>
+<p id="section-4.7-6">The WT_DRAIN_SESSION capsule is useful when an end-to-end WebTransport session
 passes through an intermediary.  For example, when the backend shuts down, it
 sends a GOAWAY to the intermediary.  The intermediary can convert this signal
 to a WT_DRAIN_SESSION capsule on the client-facing session, without impacting
-other requests or sessions carried on that connection.<a href="#section-4.6-6" class="pilcrow">¶</a></p>
+other requests or sessions carried on that connection.<a href="#section-4.7-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="use-of-keying-material-exporters">
-<section id="section-4.7">
+<section id="section-4.8">
         <h3 id="name-use-of-keying-material-expo">
-<a href="#section-4.7" class="section-number selfRef">4.7. </a><a href="#name-use-of-keying-material-expo" class="section-name selfRef">Use of Keying Material Exporters</a>
+<a href="#section-4.8" class="section-number selfRef">4.8. </a><a href="#name-use-of-keying-material-expo" class="section-name selfRef">Use of Keying Material Exporters</a>
         </h3>
-<p id="section-4.7-1">WebTransport over HTTP/3 supports the use of TLS keying material exporters
+<p id="section-4.8-1">WebTransport over HTTP/3 supports the use of TLS keying material exporters
 <span><a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>.  Since the underlying QUIC connection may be shared by
 multiple WebTransport sessions, WebTransport defines a mechanism for deriving a
 TLS exporter that separates keying material for different sessions.  If the
@@ -1932,10 +1964,10 @@ application requests an exporter for a given WebTransport session with a
 specified label and context, the resulting exporter SHALL be a TLS exporter as
 defined in <span><a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span> with the label set
 to "EXPORTER-WebTransport" and the context set to the serialization of
-the "WebTransport Exporter Context" struct as defined below.<a href="#section-4.7-1" class="pilcrow">¶</a></p>
+the "WebTransport Exporter Context" struct as defined below.<a href="#section-4.8-1" class="pilcrow">¶</a></p>
 <span id="name-webtransport-exporter-conte"></span><div id="fig-wt-exporter-context">
 <figure id="figure-6">
-          <div class="alignLeft art-text artwork" id="section-4.7-2.1">
+          <div class="alignLeft art-text artwork" id="section-4.8-2.1">
 <pre>
 WebTransport Exporter Context {
   WebTransport Session ID (64),
@@ -1950,9 +1982,9 @@ WebTransport Exporter Context {
 <a href="#name-webtransport-exporter-conte" class="selfRef">WebTransport Exporter Context struct</a>
           </figcaption></figure>
 </div>
-<p id="section-4.7-3">A TLS exporter API might permit the context field to be omitted.  In this case,
+<p id="section-4.8-3">A TLS exporter API might permit the context field to be omitted.  In this case,
 as with TLS 1.3, the WebTransport Application-Supplied Exporter Context
-becomes zero-length if omitted.<a href="#section-4.7-3" class="pilcrow">¶</a></p>
+becomes zero-length if omitted.<a href="#section-4.8-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2076,7 +2108,7 @@ that both endpoints can agree on the number of streams that are open.<a href="#s
 <p id="section-5.4-1">The <span id="iref-wt_max_data-6" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule (<a href="#WT_MAX_DATA" class="auto internal xref">Section 5.6.4</a>) establishes a limit on the amount of
 data that can be sent within a WebTransport session.  This limit counts all data
 that is sent on streams of the corresponding type, excluding the stream header
-(see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a> and <a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  The stream
+(see <a href="#unidirectional-streams" class="auto internal xref">Section 4.2</a> and <a href="#bidirectional-streams" class="auto internal xref">Section 4.3</a>).  The stream
 header is excluded from this limit so that this limit does not prevent the
 sending of information that is essential in linking new streams to a specific
 WebTransport session.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
@@ -2260,8 +2292,8 @@ send appropriate flow control signals for their limits.<a href="#section-5.6.3-6
 introduced to inform the peer of the maximum amount of data that can be sent on
 the WebTransport session as a whole.<a href="#section-5.6.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.6.4-2">This limit counts all data that is sent on streams of the corresponding type,
-excluding the stream header (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a> and
-<a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>).  For streams that were reset, implementing
+excluding the stream header (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.2</a> and
+<a href="#bidirectional-streams" class="auto internal xref">Section 4.3</a>).  For streams that were reset, implementing
 <span id="iref-wt_max_data-37" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> requires that the QUIC stack provide the WebTransport implementation
 with information about the final size of streams (see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).<a href="#section-5.6.4-2" class="pilcrow">¶</a></p>
 <span id="name-wt_max_data-capsule-format"></span><div id="fig-wt_max_data">
@@ -2406,7 +2438,7 @@ length MUST NOT exceed 1024 bytes.<a href="#section-6-7.4.1" class="pilcrow">¶<
 <p id="section-6-8">Note that the Application Error Code field does not mirror the Error Code field
 in QUIC's CONNECTION_CLOSE frame (<span><a href="https://rfc-editor.org/rfc/rfc9000#section-19.19" class="relref">Section 19.19</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>) because
 WebTransport application errors use a subset of the HTTP/3 Error Code space and
-need to fit within those bounds, see <a href="#resetting-data-streams" class="auto internal xref">Section 4.3</a>.<a href="#section-6-8" class="pilcrow">¶</a></p>
+need to fit within those bounds, see <a href="#resetting-data-streams" class="auto internal xref">Section 4.4</a>.<a href="#section-6-8" class="pilcrow">¶</a></p>
 <p id="section-6-9">An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
 the CONNECT Stream.  The endpoint MAY also send a STOP_SENDING with error code
 WT_SESSION_GONE to indicate it is no longer reading from the CONNECT stream.
@@ -2442,8 +2474,8 @@ setting (see <a href="#http3-settings" class="auto internal xref">Section 9.2</a
 token, if applicable, to use when establishing a new session, ensuring that
 servers will always know the syntax in use for every incoming request.<a href="#section-7-2" class="pilcrow">¶</a></p>
 <p id="section-7-3">Changes to future stream formats require changes to the Unidirectional Stream
-type (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.1</a>) and Bidirectional Stream signal value
-(see <a href="#bidirectional-streams" class="auto internal xref">Section 4.2</a>) to allow recipients of incoming frames to
+type (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.2</a>) and Bidirectional Stream signal value
+(see <a href="#bidirectional-streams" class="auto internal xref">Section 4.3</a>) to allow recipients of incoming frames to
 determine the WebTransport version, and corresponding wire format, used for the
 session associated with that stream.<a href="#section-7-3" class="pilcrow">¶</a></p>
 <div id="negotiating-the-draft-version">
@@ -3151,7 +3183,7 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
 <dd class="break"></dd>
 <dt id="OVERVIEW">[OVERVIEW]</dt>
         <dd>
-<span class="refAuthor">Kinnear, E.</span> and <span class="refAuthor">V. Vasiliev</span>, <span class="refTitle">"The WebTransport Protocol Framework"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-overview-10</span>, <time datetime="2025-07-07" class="refDate">7 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-10">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-10</a>&gt;</span>. </dd>
+<span class="refAuthor">Kinnear, E.</span> and <span class="refAuthor">V. Vasiliev</span>, <span class="refTitle">"The WebTransport Protocol Framework"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-overview-11</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-11">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-11</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="QUIC-DATAGRAM">[QUIC-DATAGRAM]</dt>
         <dd>

@@ -86,13 +86,14 @@ Table of Contents
      3.3.  Application Protocol Negotiation
      3.4.  Prioritization
    4.  WebTransport Features
-     4.1.  Unidirectional streams
-     4.2.  Bidirectional Streams
-     4.3.  Resetting Data Streams
-     4.4.  Datagrams
-     4.5.  Buffering Incoming Streams and Datagrams
-     4.6.  Interaction with the HTTP/3 GOAWAY frame
-     4.7.  Use of Keying Material Exporters
+     4.1.  Transport Properties
+     4.2.  Unidirectional streams
+     4.3.  Bidirectional Streams
+     4.4.  Resetting Data Streams
+     4.5.  Datagrams
+     4.6.  Buffering Incoming Streams and Datagrams
+     4.7.  Interaction with the HTTP/3 GOAWAY frame
+     4.8.  Use of Keying Material Exporters
    5.  Flow Control
      5.1.  Negotiating the Use of Flow Control
      5.2.  Limiting the Number of Simultaneous Sessions
@@ -320,7 +321,7 @@ Table of Contents
    (see Section 2.1.1 of [HTTP-DATAGRAM]).  Servers should also note
    that CONNECT requests to establish new WebTransport sessions, in
    addition to other messages, may arrive before this SETTING is
-   received (see Section 4.5).
+   received (see Section 4.6).
 
    WebTransport over HTTP/3 also requires support for QUIC datagrams.
    To indicate support, both the client and the server MUST send a
@@ -484,7 +485,27 @@ Table of Contents
    for a client-initiated bidirectional stream, the recipient MUST close
    the connection with an H3_ID_ERROR error code.
 
-4.1.  Unidirectional streams
+4.1.  Transport Properties
+
+   The WebTransport framework [OVERVIEW] defines a set of optional
+   transport properties that clients can use to determine the presence
+   of features which might allow additional optimizations beyond the
+   common set of properties available via all WebTransport protocols.
+
+   Below are details about support in WebTransport over HTTP/3 for the
+   properties defined by the WebTransport framework.
+
+   Unreliable Delivery:  WebTransport over HTTP/3 supports unreliable
+      delivery.  Resetting a stream results in lost stream data no
+      longer being retransmitted.  WebTransport over HTTP/3 also
+      supports datagrams, which are not retransmitted.
+
+   Pooling:  WebTransport over HTTP/3 provides optional support for
+      pooling.  Endpoints can use the SETTINGS_WT_MAX_SESSIONS setting
+      to indicate if pooling is supported on a particular HTTP/3
+      connection (Section 3.1).
+
+4.2.  Unidirectional streams
 
    WebTransport endpoints can initiate unidirectional streams.  The
    HTTP/3 unidirectional stream type SHALL be 0x54.  The body of the
@@ -500,7 +521,7 @@ Table of Contents
 
             Figure 2: Unidirectional WebTransport stream format
 
-4.2.  Bidirectional Streams
+4.3.  Bidirectional Streams
 
    All client-initiated bidirectional streams are reserved by HTTP/3 as
    request streams, which are a sequence of HTTP/3 frames with a variety
@@ -545,7 +566,7 @@ Table of Contents
    frame type in any other circumstances MUST be treated as a connection
    error of type H3_FRAME_ERROR.
 
-4.3.  Resetting Data Streams
+4.4.  Resetting Data Streams
 
    A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING
    frame for a WebTransport data stream.  Those signals are propagated
@@ -594,7 +615,7 @@ Table of Contents
    session; similarly, intermediaries MUST reset such streams with a
    corresponding error code when receiving a reset from their peer.
 
-4.4.  Datagrams
+4.5.  Datagrams
 
    Datagrams can be sent using HTTP Datagrams.  The WebTransport
    datagram payload is sent unmodified in the "HTTP Datagram Payload"
@@ -603,7 +624,7 @@ Table of Contents
    which is at the start of the QUIC DATAGRAM frame payload and refers
    to the CONNECT stream that established the WebTransport session.
 
-4.5.  Buffering Incoming Streams and Datagrams
+4.6.  Buffering Incoming Streams and Datagrams
 
    In WebTransport over HTTP/3, the client MUST wait for receipt of the
    server's SETTINGS frame before establishing any WebTransport sessions
@@ -630,7 +651,7 @@ Table of Contents
    be dropped.  It is up to an implementation to choose what stream or
    datagram to discard.
 
-4.6.  Interaction with the HTTP/3 GOAWAY frame
+4.7.  Interaction with the HTTP/3 GOAWAY frame
 
    HTTP/3 defines a graceful shutdown mechanism (Section 5.2 of [HTTP3])
    that allows a peer to send a GOAWAY frame indicating that it will no
@@ -666,7 +687,7 @@ Table of Contents
    capsule on the client-facing session, without impacting other
    requests or sessions carried on that connection.
 
-4.7.  Use of Keying Material Exporters
+4.8.  Use of Keying Material Exporters
 
    WebTransport over HTTP/3 supports the use of TLS keying material
    exporters Section 7.5 of [RFC8446].  Since the underlying QUIC
@@ -810,7 +831,7 @@ Table of Contents
    The WT_MAX_DATA capsule (Section 5.6.4) establishes a limit on the
    amount of data that can be sent within a WebTransport session.  This
    limit counts all data that is sent on streams of the corresponding
-   type, excluding the stream header (see Section 4.1 and Section 4.2).
+   type, excluding the stream header (see Section 4.2 and Section 4.3).
    The stream header is excluded from this limit so that this limit does
    not prevent the sending of information that is essential in linking
    new streams to a specific WebTransport session.
@@ -968,8 +989,8 @@ Table of Contents
    can be sent on the WebTransport session as a whole.
 
    This limit counts all data that is sent on streams of the
-   corresponding type, excluding the stream header (see Section 4.1 and
-   Section 4.2).  For streams that were reset, implementing WT_MAX_DATA
+   corresponding type, excluding the stream header (see Section 4.2 and
+   Section 4.3).  For streams that were reset, implementing WT_MAX_DATA
    requires that the QUIC stack provide the WebTransport implementation
    with information about the final size of streams (see Section 4.5 of
    [RFC9000]).
@@ -1078,7 +1099,7 @@ Table of Contents
    Code field in QUIC's CONNECTION_CLOSE frame (Section 19.19 of
    [RFC9000]) because WebTransport application errors use a subset of
    the HTTP/3 Error Code space and need to fit within those bounds, see
-   Section 4.3.
+   Section 4.4.
 
    An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately
    send a FIN on the CONNECT Stream.  The endpoint MAY also send a
@@ -1120,8 +1141,8 @@ Table of Contents
    the syntax in use for every incoming request.
 
    Changes to future stream formats require changes to the
-   Unidirectional Stream type (see Section 4.1) and Bidirectional Stream
-   signal value (see Section 4.2) to allow recipients of incoming frames
+   Unidirectional Stream type (see Section 4.2) and Bidirectional Stream
+   signal value (see Section 4.3) to allow recipients of incoming frames
    to determine the WebTransport version, and corresponding wire format,
    used for the session associated with that stream.
 
@@ -1454,9 +1475,9 @@ Table of Contents
 
    [OVERVIEW] Kinnear, E. and V. Vasiliev, "The WebTransport Protocol
               Framework", Work in Progress, Internet-Draft, draft-ietf-
-              webtrans-overview-10, 7 July 2025,
+              webtrans-overview-11, 20 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-
-              webtrans-overview-10>.
+              webtrans-overview-11>.
 
    [QUIC-DATAGRAM]
               Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
