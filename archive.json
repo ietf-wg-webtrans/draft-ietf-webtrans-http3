@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-12T00:53:20.293332+00:00",
+  "timestamp": "2025-10-21T00:52:56.088742+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5326,7 +5326,7 @@
       "id": "I_kwDOCvK98s7AA1XW",
       "title": "Explicit Negotiation of Flow Control",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/214",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5335,8 +5335,8 @@
       "labels": [],
       "body": "It is unfortunate that it's not possible to use flow control when only using a single WebTransport session (SETTINGS_WT_MAX_SESSIONS = 1). Flow control would be useful in that case as well, since the WebTransport session shares the underlying QUIC connection with HTTP/3, and one might still starve the other.\n\nMy preference would go towards explicitly enabling flow control, either using a separate HTTP/3 setting, or by requiring the server to declare at least one of the initial flow control values (SETTINGS_WT_INITIAL_MAX_STREAMS_UNI, SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI or SETTINGS_WT_INITIAL_MAX_DATA). For performance reasons, I'd expect any flow control-enabled WebTransport server to define this values anyway.",
       "createdAt": "2025-07-11T04:09:26Z",
-      "updatedAt": "2025-08-05T23:28:47Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T23:19:52Z",
+      "closedAt": "2025-10-20T23:19:52Z",
       "comments": [
         {
           "author": "DavidSchinazi",
@@ -5380,7 +5380,7 @@
       "id": "I_kwDOCvK98s7EYW1l",
       "title": "Protocol properties",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/217",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "Acconut",
       "authorAssociation": "NONE",
       "assignees": [
@@ -5391,8 +5391,8 @@
       ],
       "body": "The document contains a dedicated section about the protocol's properties (https://www.ietf.org/archive/id/draft-ietf-webtrans-http2-12.html#name-transport-properties). While the text itself reads well, I would have expected a similar section to be found in draft-ietf-webtrans-http3 and draft-ietf-webtrans-overview to provide an overview of these properties. For example, _connection mobility_ is not mentioned elsewhere, AFAIK.",
       "createdAt": "2025-07-23T09:18:37Z",
-      "updatedAt": "2025-08-27T00:00:06Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T23:34:07Z",
+      "closedAt": "2025-10-20T23:34:07Z",
       "comments": [
         {
           "author": "ekinnear",
@@ -5414,6 +5414,13 @@
           "body": "Editor's meeting: \n\n- Rework overview if needed to make fewer assumptions about knowing everything that exists\n- Bring to H3 if it makes sense, not required",
           "createdAt": "2025-08-27T00:00:06Z",
           "updatedAt": "2025-08-27T00:00:06Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Bringing the two properties that we still define in the overview to H3 for now.",
+          "createdAt": "2025-10-20T09:29:41Z",
+          "updatedAt": "2025-10-20T09:29:41Z"
         }
       ]
     },
@@ -5431,7 +5438,7 @@
       "labels": [],
       "body": "Using the same Upgrade Token for two seemingly quite different protocols (depending on HTTP version) seems like a mistake.  Giving WT-H2 and WT-H3 separate Upgrade Tokens would avoid ambiguity and simplify the use of WebTransport inside backend infrastructure.",
       "createdAt": "2025-07-23T10:34:33Z",
-      "updatedAt": "2025-09-09T22:10:44Z",
+      "updatedAt": "2025-10-20T06:41:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -5496,6 +5503,13 @@
           "body": "Will we allow or forbid the use of the \"h2\" webtransport version on h3 streams?",
           "createdAt": "2025-09-09T22:10:44Z",
           "updatedAt": "2025-09-09T22:10:44Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Will we allow or forbid the use of the \"h2\" webtransport version on h3 streams?\n\nI thought we were trying to say that you MUST use the more specific version that splits traffic out into individual H3 streams and datagrams.\n\nThat's part of the reasoning to use `webtransport` for the capsule-based version. If you don't follow that MUST and just start talking WT via capsules on a single H3 stream, it'll work okay, and other than missing out on the benefits of breaking it out into H3 streams/datagrams, you don't care. However, you definitely cannot do the inverse with WT-H3 on top of a single H2 stream.",
+          "createdAt": "2025-10-20T06:41:30Z",
+          "updatedAt": "2025-10-20T06:41:30Z"
         }
       ]
     },
@@ -5520,16 +5534,26 @@
       "id": "I_kwDOCvK98s7EY9VA",
       "title": "Does the server need to wait for SETTINGS?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/221",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [],
       "body": "As discussed in https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/216#discussion_r2255607562\r\n\r\n> Any WebTransport requests sent by the client without enabling QUIC and HTTP datagrams MUST be treated as malformed by the server, as described in [Section 4.1.2](https://rfc-editor.org/rfc/rfc9114#section-4.1.2) of [[HTTP3](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#HTTP3)].\r\n\r\n> For draft versions of WebTransport only, the server MUST NOT process any incoming WebTransport requests until the client settings have been received, as the client may be using a version of the WebTransport extension that is different from the one used by the server.\r\n\r\nA MUST implies that the server needs to wait for the client's SETTINGS. In practice, this is not a problem, since the SETTINGS are sent in the same flight (and if done right, in the same QUIC packets) as the WebTransport request).\r\n\r\nWe could also relax the requirement to a SHOULD (with a MUST kill existing WebTransport sessions if SETTINGS are received that don't enable HTTP DATAGRAMs).",
       "createdAt": "2025-08-06T01:26:31Z",
-      "updatedAt": "2025-08-06T01:26:31Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-10-20T23:48:42Z",
+      "closedAt": "2025-10-20T23:48:42Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Good point. \n\nRecapping some of the who-waits-for-what: \n\n- We said that we wanted to use the upgrade token to distinguish how a server should interpret everything else, and not a settings codepoint.\n\n- Servers will need to pend incoming WT streams until the corresponding extended CONNECT stream has come in, since they don't know how to process that stream. \n\n- Clients have to wait for settings because they need to see the extended CONNECT support SETTING, and thus it's convenient to have another SETTING that indicates WT support specifically, which means the client doesn't have to burn a roundtrip probing to see if the server is likely (but not required) to accept a CONNECT request with the WT-H3 upgrade token.\n\nFor this issue, you already know about QUIC datagram support, since that comes in via transport parameters. That said, the HTTP datagrams spec [says](https://www.rfc-editor.org/rfc/rfc9297.html#section-2.1.1-3): \n\n> QUIC DATAGRAM frames MUST NOT be sent until the SETTINGS_H3_DATAGRAM setting has been both sent and received with a value of 1.\n\n\nFor HTTP Datagrams:\n\nHTTP/3 [says](https://www.rfc-editor.org/rfc/rfc9114.html#name-initialization):\n\n> An HTTP implementation MUST NOT send frames or requests that would be invalid based on its current understanding of the peer's settings.\n>\n> All settings begin at an initial value. Each endpoint SHOULD use these initial values to send messages before the peer's SETTINGS frame has arrived, as packets carrying the settings can be lost or delayed. When the SETTINGS frame arrives, any settings are changed to their new values.\n\nI like the approach of just allowing it and then closing existing sessions if incorrect SETTINGS come in, especially since SETTINGS are required to be the first thing sent on each control stream. Otherwise, we'd have to put a lot more effort into delaying any datagrams on those sessions, but that's already required by the HTTP datagram spec.\n",
+          "createdAt": "2025-10-20T09:51:30Z",
+          "updatedAt": "2025-10-20T09:51:30Z"
+        }
+      ]
     },
     {
       "number": 222,
@@ -5573,12 +5597,22 @@
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "next meeting"
+      ],
       "body": "This seems to be a thing that people are considering doing at intermediaries.  Translating from the HTTP/2 version to the HTTP/3 version might be complicated and the HTTP/2 protocol doesn't really *need* to be translated to operate correctly.  With a different protocol token, the two could even co-exist.\n\nThere's a complication with how WT_MAX_SESSIONS is interpreted; it would be awkward if the setting in HTTP/3 applied to the HTTP/2 version of the protocol.  See also #224.",
       "createdAt": "2025-08-26T23:41:11Z",
-      "updatedAt": "2025-08-26T23:42:57Z",
+      "updatedAt": "2025-10-20T23:39:44Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We'd previously said that we wanted to require using the most protocol-specific version of WebTransport. \n\nMy (probably flawed) recollection of the reasoning was: \n- Reduces complexity during negotiation (no longer an issue with the upgrade token separation)\n- Provides the consistent and the \"best\" benefits for each hop\n\nHowever, if you've got a hop that's already running the HTTP/2 version, you may not (or still might, depending on your topology) be getting a lot of benefit from just one hop that doesn't have head-of-line blocking, for example.\n\nSplitting out the upgrade token makes this pretty easy to do, and it seems fine to me.\n \nMight be some editorial bits to detangle the HTTP/2 specific language, but that's doable and would also address https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/80.",
+          "createdAt": "2025-10-20T10:05:31Z",
+          "updatedAt": "2025-10-20T10:05:31Z"
+        }
+      ]
     },
     {
       "number": 224,
@@ -5589,27 +5623,46 @@
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "next meeting"
+      ],
       "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
       "createdAt": "2025-08-26T23:42:29Z",
-      "updatedAt": "2025-08-26T23:42:29Z",
+      "updatedAt": "2025-10-20T23:39:17Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Given the more flexible relationship between HTTP/3 streams and WebTransport sessions, it seems like the utility for this setting in WT-H3 is slightly different than WT-H2, where there's no complex logic required to combine the stream limits within a session and the overall stream limit to reserve some space for regular HTTP streams. \n\nExample:\nH2:\n- Set the concurrent streams limit to 100\n- On incoming WT CONNECT request, reject if current WT session count > 90\n\nH3: \n- Set initial value for QUIC MAX_STREAMS to 100, keep advertising more space as required via MAX_STREAMS\n- For each WT session, make sure WT_MAX_STREAMS(_BIDI) isn't too big, since you can't reduce it later\n- Sum across each session to figure out how many streams each can potentially use/have already used\n- On incoming WT CONNECT request, reject if total stream count is >90\n\nUltimately, declaring the session limit to the peer isn't making a meaningful difference in that process. You can either tell them upfront, or just reject incoming sessions that exceed your secret limit.\nThat might make a difference to a remote endpoint who would give up/error out if you didn't give them enough, rather than finding that out once they let you get further into using their app/site, but otherwise it's not huge.\n\nThe remaining utility here seems to be as noted above, in being a tri-state to opt you into flow control, which you must enable if you're going to use more than one session.\n\n",
+          "createdAt": "2025-10-20T10:18:33Z",
+          "updatedAt": "2025-10-20T10:18:33Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I'm starting to come around to not having the session limit.  As you say, indicating support for the feature might be enough because you can reject any given session when it is initiated.\n\nIf nothing else, it avoids us creating another thing that is like the h2 stream limit, which turned out to be a poor design.\n\nThe problem about flow control is the only sticking point: if we want to allow people not to do session-level limits, we'll need a way to manage that.",
+          "createdAt": "2025-10-20T20:53:32Z",
+          "updatedAt": "2025-10-20T20:53:32Z"
+        }
+      ]
     },
     {
       "number": 225,
       "id": "I_kwDOCvK98s7OpTXo",
       "title": "Should we prohibit illegal values in flow control capsules?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/225",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "afrind",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [],
       "body": "Because all flow control capsules are serialized on a QUIC stream, it should not be possible to receive a smaller value for MAX_DATA/MAX_STREAM_DATA/MAX_STREAMS as can happen with QUIC frames.  Should we make this a protocol error?",
       "createdAt": "2025-09-29T23:04:32Z",
-      "updatedAt": "2025-10-04T08:23:15Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T22:14:30Z",
+      "closedAt": "2025-10-20T22:14:30Z",
       "comments": [
         {
           "author": "martinthomson",
@@ -5624,6 +5677,13 @@
           "body": "My preference is using a MUST, but at the very least, it should be SHOULD. The only reason why an implement wouldn't do this is because it's exceedingly hard to track the state (e.g. when using common frame-handling logic).",
           "createdAt": "2025-10-04T08:23:15Z",
           "updatedAt": "2025-10-04T08:23:15Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Started with a MUST, but if we think it's unduly onerous, it's pretty easy to back off to a SHOULD/MAY.",
+          "createdAt": "2025-10-20T10:41:44Z",
+          "updatedAt": "2025-10-20T10:41:44Z"
         }
       ]
     },
@@ -5632,15 +5692,19 @@
       "id": "I_kwDOCvK98s7PKn-n",
       "title": "Should WT_CLOSE_SESSION capsule match QUIC CONNECTION_CLOSE frame?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/226",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "AnkshitJain",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "editorial"
+      ],
       "body": "Most WebTransport capsules [mirror](https://www.ietf.org/archive/id/draft-ietf-webtrans-http2-12.html#name-webtransport-capsules) QUIC frames. \n```\nWebTransport capsules mirror their QUIC frame counterparts as closely as possible to enable maximal reuse of any applicable QUIC infrastructure by implementors.\n```\n\n`WT_CLOSE_SESSION` defines a 32 bit error code and 8192 bit error message, deviating from the `CONNECTION_CLOSE` frame, which allows a variable length integer error code and a variable length integer length error message. \n```\nWT_CLOSE_SESSION Capsule {\n     Type (i) = WT_CLOSE_SESSION,\n     Length (i),\n     Application Error Code (32),\n     Application Error Message (..8192),\n}\n```\n\n```\nCONNECTION_CLOSE Frame {\n  Type (i) = 0x1c..0x1d,\n  Error Code (i),\n  [Frame Type (i)],\n  Reason Phrase Length (i),\n  Reason Phrase (..),\n}\n```\n\nShould `WT_CLOSE_SESSION` capsule match `CONNECTION_CLOSE` frame?",
       "createdAt": "2025-10-02T01:26:31Z",
-      "updatedAt": "2025-10-04T08:19:11Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T23:22:23Z",
+      "closedAt": "2025-10-20T23:22:23Z",
       "comments": [
         {
           "author": "afrind",
@@ -5655,6 +5719,13 @@
           "body": "Yeah, the reason for the smaller space of codes was that we are stealing space from the space of QUIC application error codes.\n\nI don't see much cause to change anything here, other than to note the reasons for divergence.",
           "createdAt": "2025-10-04T08:19:11Z",
           "updatedAt": "2025-10-04T08:19:11Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Writing down the reason it diverges sounds good. \n\nIn putting together a PR for that, I encountered somewhat confusing text about whether this error code should be the same as the mapped error code (that fits into WT_APPLICATION_ERROR) we used to reset actual H3/QUIC streams, or if it's okay to have it be a separate value.",
+          "createdAt": "2025-10-20T10:42:49Z",
+          "updatedAt": "2025-10-20T10:53:18Z"
         }
       ]
     },
@@ -5667,10 +5738,12 @@
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "editorial"
+      ],
       "body": "There _is_ text in section 4 that says\n\n> If at any point a session ID is received that cannot be a valid ID for a client-initiated bidirectional stream, the recipient MUST close the connection with an H3_ID_ERROR error code.\n\nWhat precisely is the definition of valid here? I suppose if the session ID is larger than the max session ID, that's invalid. But what if endpoint receives a bidirectional stream related to a closed session. Due to reordering, it is possible something gets delivered to a webtransport application early or late. Treating that as invalid seems error prone or fragile.\n\nAlso, I suppose the requirements needs to apply to server initiated streams too?\n\n",
       "createdAt": "2025-10-09T22:30:13Z",
-      "updatedAt": "2025-10-09T22:31:04Z",
+      "updatedAt": "2025-10-20T10:55:00Z",
       "closedAt": null,
       "comments": []
     }
@@ -18341,6 +18414,395 @@
           "createdAt": "2025-08-26T23:23:39Z",
           "updatedAt": "2025-08-26T23:23:39Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 228,
+      "id": "PR_kwDOCvK98s6ul3-H",
+      "title": "Allow explicitly asking for flow control and clarify the negotiation process",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/228",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Allow explicitly asking for flow control and clarify the negotiation process\r\n\r\nUpdate flow control negotiation to allow for both endpoints to agree to use flow control even if they're only supporting a single WebTransport session on a given HTTP/3 connection.\r\n\r\nEndpoints declare support by: \r\n- Sending SETTINGS_WT_MAX_SESSIONS > 1\r\n- Sending any SETTINGS_WT_INITIAL_MAX* != 0\r\n\r\nCloses #214",
+      "createdAt": "2025-10-20T09:20:50Z",
+      "updatedAt": "2025-10-20T23:19:54Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "cbb88b5e86cf123363b727278cf156c83ad7ba5a",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/allow_explicitly_asking_for_flow_control",
+      "headRefOid": "6afa7e0d83b2c180e8947624ed39acda89bb7a6c",
+      "closedAt": "2025-10-20T23:19:52Z",
+      "mergedAt": "2025-10-20T23:19:51Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "fb28de6067db6bb7f99c43cce2430a41c2ab902a"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7IJuE8",
+          "commit": {
+            "abbreviatedOid": "6afa7e0"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T21:29:24Z",
+          "updatedAt": "2025-10-20T21:29:24Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 229,
+      "id": "PR_kwDOCvK98s6ul-jk",
+      "title": "Add transport properties from the overview",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/229",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #217",
+      "createdAt": "2025-10-20T09:30:21Z",
+      "updatedAt": "2025-10-20T23:34:09Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "cbb88b5e86cf123363b727278cf156c83ad7ba5a",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/transport_properties",
+      "headRefOid": "9d7b3c683a1477853c9725ffc453bcf928599b68",
+      "closedAt": "2025-10-20T23:34:06Z",
+      "mergedAt": "2025-10-20T23:34:06Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "b5dcf75132dc9260e5be4171520ac00e1f1429d0"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 231,
+      "id": "PR_kwDOCvK98s6umWpS",
+      "title": "Require server to close existing sessions if HTTP datagrams are not enabled",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/231",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Require server to close existing sessions if HTTP datagrams are not enabled\r\n\r\nAlso be more helpful about the reset_stream_at transport parameter.\r\n\r\nCloses #221 ",
+      "createdAt": "2025-10-20T10:00:44Z",
+      "updatedAt": "2025-10-20T23:49:02Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "cbb88b5e86cf123363b727278cf156c83ad7ba5a",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/datagram_requirements",
+      "headRefOid": "b68eb0ce7aa8db5a1645d91edb6cbfb8c3d89c10",
+      "closedAt": "2025-10-20T23:48:41Z",
+      "mergedAt": "2025-10-20T23:48:41Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "1917c4126d7cfa7151bb7285c4d145469d5246f9"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7IBt9Q",
+          "commit": {
+            "abbreviatedOid": "a9fcfc3"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T10:10:15Z",
+          "updatedAt": "2025-10-20T10:10:42Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "I'm not sure if this change is helpful. Why does it matter how this is encoded at the QUIC layer?",
+              "createdAt": "2025-10-20T10:10:15Z",
+              "updatedAt": "2025-10-20T10:10:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7ICoKt",
+          "commit": {
+            "abbreviatedOid": "a9fcfc3"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T11:27:52Z",
+          "updatedAt": "2025-10-20T11:27:53Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "In the paragraphs above we did some of the bare minimum \"here's the TP or SETTING that you should be looking for\" and then referenced the actual spec that defines it. \r\n\r\nIf we want to avoid that for this one for some reason, I'm game, this is just trying to help aid in the reader's understanding of what's going on in an otherwise fairly long checklist of things to do to enable WebTransport.",
+              "createdAt": "2025-10-20T11:27:53Z",
+              "updatedAt": "2025-10-20T11:27:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IJbeB",
+          "commit": {
+            "abbreviatedOid": "a9fcfc3"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T20:59:39Z",
+          "updatedAt": "2025-10-20T21:00:19Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "I'm with Marten here: it's enough to say that you need to enable the feature.  Pointing at the transport parameter with a MUST starts to edge too much into repeating normative text.",
+              "createdAt": "2025-10-20T20:59:39Z",
+              "updatedAt": "2025-10-20T21:00:19Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nBecause the server could receive and accept an extended CONNECT request prior to\r\n```",
+              "createdAt": "2025-10-20T21:00:02Z",
+              "updatedAt": "2025-10-20T21:00:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IJttc",
+          "commit": {
+            "abbreviatedOid": "a9fcfc3"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T21:28:59Z",
+          "updatedAt": "2025-10-20T21:28:59Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "You're not at all wrong, I can also clean up the other places we do this, e.g.:\r\n> WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate\r\nsupport, both the client and the server MUST send a max_datagram_frame_size\r\ntransport parameter with a value greater than 0 (see {{Section 3\r\nof !QUIC-DATAGRAM=RFC9221}}).",
+              "createdAt": "2025-10-20T21:28:59Z",
+              "updatedAt": "2025-10-20T21:28:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IJuDu",
+          "commit": {
+            "abbreviatedOid": "a9fcfc3"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T21:29:22Z",
+          "updatedAt": "2025-10-20T21:29:22Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "Ooh good catch, thank you!",
+              "createdAt": "2025-10-20T21:29:22Z",
+              "updatedAt": "2025-10-20T21:29:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IKC7D",
+          "commit": {
+            "abbreviatedOid": "a9fcfc3"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T22:03:06Z",
+          "updatedAt": "2025-10-20T22:03:07Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "Removing the normative language that duplicates what's in the other documents here, but keeping a requirement for all of these features to be enabled, since that's required to use WebTransport.",
+              "createdAt": "2025-10-20T22:03:06Z",
+              "updatedAt": "2025-10-20T22:03:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IKDH8",
+          "commit": {
+            "abbreviatedOid": "a9fcfc3"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T22:03:31Z",
+          "updatedAt": "2025-10-20T22:03:31Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "Ended up as basically a rewrite of this section, changed in [ea4960b](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/231/commits/ea4960bf55ea84e02178db3b70bf0df2ca538c30)",
+              "createdAt": "2025-10-20T22:03:31Z",
+              "updatedAt": "2025-10-20T22:03:31Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 232,
+      "id": "PR_kwDOCvK98s6umz64",
+      "title": "Require valid values for flow control updates",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/232",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Require valid values for flow control updates\r\n\r\nCloses #225",
+      "createdAt": "2025-10-20T10:41:06Z",
+      "updatedAt": "2025-10-20T22:14:35Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "cbb88b5e86cf123363b727278cf156c83ad7ba5a",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/flow_control_cant_go_backwards",
+      "headRefOid": "ee3f6a754cfd99455d9455bda4c11a481088ea31",
+      "closedAt": "2025-10-20T22:14:29Z",
+      "mergedAt": "2025-10-20T22:14:29Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "f5a9b660a873117d404cf66b9cc00085926ffb66"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7IFvcJ",
+          "commit": {
+            "abbreviatedOid": "ee3f6a7"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T15:35:00Z",
+          "updatedAt": "2025-10-20T15:35:00Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IGBpc",
+          "commit": {
+            "abbreviatedOid": "ee3f6a7"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T15:54:42Z",
+          "updatedAt": "2025-10-20T15:54:42Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 233,
+      "id": "PR_kwDOCvK98s6um7k3",
+      "title": "Add note about why error codes in WT_CLOSE_SESSION aren't the same as QUIC's CONNECTION_CLOSE",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/233",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add note about why error codes in WT_CLOSE_SESSION aren't the same as QUIC's CONNECTION_CLOSE\r\n\r\nCloses #226 ",
+      "createdAt": "2025-10-20T10:54:29Z",
+      "updatedAt": "2025-10-20T23:22:25Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "cbb88b5e86cf123363b727278cf156c83ad7ba5a",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/error_space_divergence",
+      "headRefOid": "3559610cc37a2054fcd0ee50774147645ded2856",
+      "closedAt": "2025-10-20T23:22:22Z",
+      "mergedAt": "2025-10-20T23:22:22Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "6598d0423467db206bb2f7f67522d01c0fb7ae3f"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7IJYSp",
+          "commit": {
+            "abbreviatedOid": "24d552b"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T20:55:06Z",
+          "updatedAt": "2025-10-20T20:55:09Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "Why mention the message/reason phrase?",
+              "createdAt": "2025-10-20T20:55:07Z",
+              "updatedAt": "2025-10-20T20:55:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IKJm_",
+          "commit": {
+            "abbreviatedOid": "24d552b"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T22:17:22Z",
+          "updatedAt": "2025-10-20T22:17:23Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "Eh, good point, it's not really the same reasoning for the reason phrase. Will remove.",
+              "createdAt": "2025-10-20T22:17:22Z",
+              "updatedAt": "2025-10-20T22:17:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7IKLIK",
+          "commit": {
+            "abbreviatedOid": "24d552b"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T22:21:17Z",
+          "updatedAt": "2025-10-20T22:21:17Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "Removed in [3559610](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/233/commits/3559610cc37a2054fcd0ee50774147645ded2856)",
+              "createdAt": "2025-10-20T22:21:17Z",
+              "updatedAt": "2025-10-20T22:21:17Z"
+            }
+          ]
         }
       ]
     }
