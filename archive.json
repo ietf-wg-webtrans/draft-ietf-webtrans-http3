@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-21T00:52:56.088742+00:00",
+  "timestamp": "2025-10-23T00:52:40.357546+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -18369,13 +18369,13 @@
       "labels": [],
       "body": "This is the one that is \"special\", so it is the one that gets a suffix.\r\n\r\nCloses #218, but will require a fix on the h2 repo.",
       "createdAt": "2025-08-05T23:59:56Z",
-      "updatedAt": "2025-08-26T23:23:39Z",
+      "updatedAt": "2025-10-21T01:39:52Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "1869a3aa8fc3182b8adf76479b6f2512af3d7ef7",
+      "baseRefOid": "1917c4126d7cfa7151bb7285c4d145469d5246f9",
       "headRepository": "martinthomson/draft-ietf-webtrans-http3",
       "headRefName": "upgrade-token-split",
-      "headRefOid": "dce3232d26c426f86346fc6ea0d9cff98ddfadff",
+      "headRefOid": "de547621c0e186265aa6165f41832f2a3bfef138",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
