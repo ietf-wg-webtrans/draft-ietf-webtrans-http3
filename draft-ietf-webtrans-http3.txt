@@ -5,10 +5,10 @@
 WEBTRANS                                                     A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 23 April 2026                                        Apple Inc.
+Expires: 26 April 2026                                        Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                         20 October 2025
+                                                         23 October 2025
 
 
                         WebTransport over HTTP/3
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 April 2026.
+   This Internet-Draft will expire on 26 April 2026.
 
 Copyright Notice
 
@@ -956,13 +956,16 @@ Table of Contents
    Note that this limit includes streams that have been closed as well
    as those that are open.
 
+   If an endpoint receives an incoming stream for a session that would
+   exceed the advertised Maximum Streams value, it MUST close the
+   WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
+
    Unlike in QUIC, where MAX_STREAMS frames can be delivered in any
    order, WT_MAX_STREAMS capsules are sent on the WebTransport session's
    connect stream and are delivered in order.  If an endpoint receives a
    WT_MAX_STREAMS capsule with a Maximum Streams value less than a
-   previously received value, it MUST close the WebTransport session by
-   resetting the connect stream with the WT_FLOW_CONTROL_ERROR error
-   code.
+   previously received value, it MUST close the WebTransport session
+   with a WT_FLOW_CONTROL_ERROR error code.
 
    The WT_MAX_STREAMS capsule defines special intermediary handling, as
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
@@ -1035,16 +1038,20 @@ Table of Contents
       amount of data that can be sent on the entire session, in units of
       bytes.
 
-   All data sent in WT_STREAM capsules counts toward this limit.  The
-   sum of the lengths of Stream Data fields in WT_STREAM capsules MUST
-   NOT exceed the value advertised by a receiver.
+   The sum of the lengths of Stream Body data sent on all streams
+   associated with this session MUST NOT exceed the Maximum Data value
+   advertised by a receiver.  Note that capsules sent on the CONNECT
+   stream, and the Signal Value, Stream Type, and Session ID fields, are
+   not included in this limit.  If an endpoint receives Stream Body data
+   in excess of this limit, it MUST close the WebTransport session with
+   a WT_FLOW_CONTROL_ERROR error code.
 
    Unlike in QUIC, where MAX_DATA frames can be delivered in any order,
    WT_MAX_DATA capsules are sent on the WebTransport session's connect
    stream and are delivered in order.  If an endpoint receives a
    WT_MAX_DATA capsule with a Maximum Data value less than a previously
-   received value, it MUST close the WebTransport session by resetting
-   the connect stream with the WT_FLOW_CONTROL_ERROR error code.
+   received value, it MUST close the WebTransport session with a
+   WT_FLOW_CONTROL_ERROR error code.
 
    The WT_MAX_DATA capsule defines special intermediary handling, as
    described in Section 3.2 of [HTTP-DATAGRAM].  Intermediaries MUST
@@ -1570,9 +1577,9 @@ Table of Contents
    [I-D.ietf-webtrans-http2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
               Vasiliev, V., and G. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-12,
-              7 July 2025, <https://datatracker.ietf.org/doc/html/draft-
-              ietf-webtrans-http2-12>.
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-13,
+              20 October 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-webtrans-http2-13>.
 
    [ORIGIN]   Fette, I. and A. Melnikov, "The WebSocket Protocol",
               RFC 6455, DOI 10.17487/RFC6455, December 2011,
@@ -1634,11 +1641,11 @@ Index
             Section 9.2, Paragraph 10; Section 9.2, Paragraph 12.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI  Section 5.1, Paragraph
             3.3.1; Section 5.5, Paragraph 2.1.1; Section 5.6.2,
-            Paragraph 10; Section 9.2, Paragraph 7; Section 9.2,
+            Paragraph 11; Section 9.2, Paragraph 7; Section 9.2,
             Paragraph 9.2.1
          SETTINGS_WT_INITIAL_MAX_STREAMS_UNI  Section 5.1, Paragraph
             3.2.1; Section 5.5, Paragraph 2.1.1; Section 5.6.2,
-            Paragraph 10; Section 9.2, Paragraph 4; Section 9.2,
+            Paragraph 11; Section 9.2, Paragraph 4; Section 9.2,
             Paragraph 6.2.1
 
       W
@@ -1656,8 +1663,8 @@ Index
          WT_MAX_STREAMS  Section 5.3, Paragraph 1; Section 5.5,
             Paragraph 2.1.1; Section 5.6, Paragraph 1; Section 5.6.2,
             Paragraph 1; Section 5.6.2, Paragraph 2; Section 5.6.2,
-            Paragraph 4; Section 5.6.2, Paragraph 8; Section 5.6.2,
-            Paragraph 9; Section 9.2, Paragraph 4; Section 9.2,
+            Paragraph 4; Section 5.6.2, Paragraph 9; Section 5.6.2,
+            Paragraph 10; Section 9.2, Paragraph 4; Section 9.2,
             Paragraph 7; Section 9.6, Paragraph 7.4.1
          WT_STREAMS_BLOCKED  Section 5.3, Paragraph 5; Section 5.6,
             Paragraph 1; Section 5.6.3, Paragraph 1; Section 5.6.3,
