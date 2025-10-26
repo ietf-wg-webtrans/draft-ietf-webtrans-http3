@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-23T00:52:40.357546+00:00",
+  "timestamp": "2025-10-26T00:55:55.440136+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5745,6 +5745,24 @@
       "createdAt": "2025-10-09T22:30:13Z",
       "updatedAt": "2025-10-20T10:55:00Z",
       "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 234,
+      "id": "I_kwDOCvK98s7TKpc5",
+      "title": "Add error handling for flow control violations",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/234",
+      "state": "CLOSED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [],
+      "body": "Add error handling for flow control violations",
+      "createdAt": "2025-10-23T00:58:15Z",
+      "updatedAt": "2025-10-23T01:36:48Z",
+      "closedAt": "2025-10-23T01:36:48Z",
       "comments": []
     }
   ],
@@ -18803,6 +18821,48 @@
               "updatedAt": "2025-10-20T22:21:17Z"
             }
           ]
+        }
+      ]
+    },
+    {
+      "number": 235,
+      "id": "PR_kwDOCvK98s6vK3eu",
+      "title": "Add error handling for when flow control is violated",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/235",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add error handling for when flow control is violated\r\n\r\nFixes #234 ",
+      "createdAt": "2025-10-23T01:00:32Z",
+      "updatedAt": "2025-10-23T01:36:49Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "1917c4126d7cfa7151bb7285c4d145469d5246f9",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/flow_control_violations",
+      "headRefOid": "bd8f231998293af2e62faa924822f908dfe313d2",
+      "closedAt": "2025-10-23T01:36:47Z",
+      "mergedAt": "2025-10-23T01:36:47Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "70d161d9f683531a3eba4326afa8c57d4ff4508d"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7IvvA8",
+          "commit": {
+            "abbreviatedOid": "3063cfd"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-23T01:03:45Z",
+          "updatedAt": "2025-10-23T01:03:45Z",
+          "comments": []
         }
       ]
     }
