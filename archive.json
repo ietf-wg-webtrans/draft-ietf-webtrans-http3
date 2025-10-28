@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-26T00:55:55.440136+00:00",
+  "timestamp": "2025-10-28T00:51:27.933980+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5628,7 +5628,7 @@
       ],
       "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
       "createdAt": "2025-08-26T23:42:29Z",
-      "updatedAt": "2025-10-20T23:39:17Z",
+      "updatedAt": "2025-10-27T21:09:48Z",
       "closedAt": null,
       "comments": [
         {
@@ -5644,6 +5644,20 @@
           "body": "I'm starting to come around to not having the session limit.  As you say, indicating support for the feature might be enough because you can reject any given session when it is initiated.\n\nIf nothing else, it avoids us creating another thing that is like the h2 stream limit, which turned out to be a poor design.\n\nThe problem about flow control is the only sticking point: if we want to allow people not to do session-level limits, we'll need a way to manage that.",
           "createdAt": "2025-10-20T20:53:32Z",
           "updatedAt": "2025-10-20T20:53:32Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I've lost track of what people want or what the requirements are.  At one time I thought people wanted the tri state:\n\n0 - I don't support WT\n1 - I support WT but not pooling\n\\> 1 - I support WT pooling up to N\n\nIs limiting WT_SESSIONS to 1, but allowing concurrent non-WT HTTP requests still a thing anyone wants?  ",
+          "createdAt": "2025-10-27T19:10:11Z",
+          "updatedAt": "2025-10-27T19:10:30Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "COLLABORATOR",
+          "body": "One more thought, an application protocol running over WebTransport may require very large numbers of bidirectional streams.  Once granted via QUIC, there's no way to ensure these won't be used to make HTTP requests, or more WebTransport sessions.  The former may not really be solvable without an HTTP extension, but WT_MAX_SESSIONS does help with the latter.  I'm not sure that's meaningful though.",
+          "createdAt": "2025-10-27T21:09:48Z",
+          "updatedAt": "2025-10-27T21:09:48Z"
         }
       ]
     },
