@@ -1130,7 +1130,7 @@ Default:
 
 : 0
 
-Specification:
+Reference:
 
 : This document
 
@@ -1159,7 +1159,7 @@ Default:
 
 : 0
 
-Specification:
+Reference:
 
 : This document
 
@@ -1188,7 +1188,7 @@ Default:
 
 : 0
 
-Specification:
+Reference:
 
 : This document
 
@@ -1216,7 +1216,7 @@ Default:
 
 : 0
 
-Specification:
+Reference:
 
 : This document
 
@@ -1228,7 +1228,7 @@ The following entry is added to the "HTTP/3 Frame Type" registry established by
 The `WT_STREAM` frame is reserved for the purpose of avoiding
 collision with WebTransport HTTP/3 extensions:
 
-Code:
+Value:
 
 : 0x41
 
@@ -1236,9 +1236,17 @@ Frame Type:
 
 : WT_STREAM
 
-Specification:
+Reference:
 
 : This document
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
 
 ## Stream Type Registration
 
@@ -1248,7 +1256,7 @@ The following entry is added to the "HTTP/3 Stream Type" registry established by
 The "WebTransport stream" type allows unidirectional streams to be used by
 WebTransport:
 
-Code:
+Value:
 
 : 0x54
 
@@ -1256,13 +1264,21 @@ Stream Type:
 
 : WebTransport stream
 
-Specification:
+Reference:
 
 : This document
 
 Sender:
 
 : Both
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
 
 ## HTTP/3 Error Code Registration
 
@@ -1281,9 +1297,17 @@ Description:
 
 : WebTransport data stream rejected due to lack of associated session.
 
-Specification:
+Reference:
 
 : This document.
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
 
 Name:
 
@@ -1315,9 +1339,17 @@ Description:
 
 : WebTransport session aborted because a flow control error was encountered.
 
-Specification:
+Reference:
 
 : This document.
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
 
 In addition, the following range of entries is registered:
 
@@ -1334,9 +1366,17 @@ Description:
 
 : WebTransport application error codes.
 
-Specification:
+Reference:
 
 : This document.
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
 
 ## Capsule Types
 
@@ -1354,7 +1394,7 @@ Capsule Type:
 Status:
 : permanent
 
-Specification:
+Reference:
 : This document
 
 Change Controller:
@@ -1378,7 +1418,7 @@ Capsule Type:
 Status:
 : provisional (when this document is approved this will become permanent)
 
-Specification:
+Reference:
 : This document
 
 Change Controller:
@@ -1402,7 +1442,7 @@ Capsule Type:
 Status:
 : permanent
 
-Specification:
+Reference:
 : This document
 
 Change Controller:
@@ -1426,7 +1466,7 @@ Capsule Type:
 Status:
 : permanent
 
-Specification:
+Reference:
 : This document
 
 Change Controller:
@@ -1450,7 +1490,7 @@ Capsule Type:
 Status:
 : permanent
 
-Specification:
+Reference:
 : This document
 
 Change Controller:
@@ -1474,7 +1514,7 @@ Capsule Type:
 Status:
 : permanent
 
-Specification:
+Reference:
 : This document
 
 Change Controller:
