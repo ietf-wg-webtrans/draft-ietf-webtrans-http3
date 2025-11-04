@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-28T00:51:27.933980+00:00",
+  "timestamp": "2025-11-04T00:53:48.107688+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5628,7 +5628,7 @@
       ],
       "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
       "createdAt": "2025-08-26T23:42:29Z",
-      "updatedAt": "2025-10-27T21:09:48Z",
+      "updatedAt": "2025-11-03T17:49:12Z",
       "closedAt": null,
       "comments": [
         {
@@ -5658,6 +5658,20 @@
           "body": "One more thought, an application protocol running over WebTransport may require very large numbers of bidirectional streams.  Once granted via QUIC, there's no way to ensure these won't be used to make HTTP requests, or more WebTransport sessions.  The former may not really be solvable without an HTTP extension, but WT_MAX_SESSIONS does help with the latter.  I'm not sure that's meaningful though.",
           "createdAt": "2025-10-27T21:09:48Z",
           "updatedAt": "2025-10-27T21:09:48Z"
+        },
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "Hello all,\n\nAs an implementer (**maintainer of PyWebTransport**), I strongly support the concerns raised by @martinthomson and @ekinnear regarding the necessity of the `SETTINGS_WT_MAX_SESSIONS` setting.\n\nFrom our implementation perspective, this setting feels redundant for both of its potential functions:\n\n### 1. As a Session Limit\nWe agree with @ekinnear's analysis.  \nA server doesn't need to declare this limit via a protocol setting.  \nAn implementation can (and, in our implementation, does) simply reject new incoming session requests (e.g., with an HTTP `429` status code) when its internal limit is reached.  \nThis application-level rejection is far more flexible.\n\n### 2. As a Flow Control Switch\nThis seems to be the main sticking point in the discussion.  \nHowever, we believe **draft-ietf-webtrans-http3-14** has already solved this problem by introducing a better, explicit mechanism.\n\nIn draft-14, Section 5.1 (*\"Negotiating the Use of Flow Control\"*) now defines that flow control is enabled if either endpoint shows \"intent\" by sending any of the new parameters:\n\n- `SETTINGS_WT_INITIAL_MAX_DATA`\n- `SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI`\n- `SETTINGS_WT_INITIAL_MAX_STREAMS_UNI`\n\nThis new explicit negotiation (via `SETTINGS_WT_INITIAL_...`) completely supersedes the old, implicit \"tri-state switch\" function of `SETTINGS_WT_MAX_SESSIONS`.\n\n---\n\nGiven that draft-14 provides a superior mechanism for negotiating flow control (solving the \"only sticking point\"),  \n`SETTINGS_WT_MAX_SESSIONS` now appears to be entirely redundant.\n\nRemoving it would simplify the specification, aligning with the goal of avoiding the \"poor design\" of the HTTP/2 stream limit, as @martinthomson noted.\n",
+          "createdAt": "2025-11-02T15:12:43Z",
+          "updatedAt": "2025-11-02T15:12:43Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Did we resolve this?\n\nOne thing we did resolve was that if you don't have the flow control settings, you aren't allowed to make more than one session.  I don't *quite* know what that means, because both endpoints have settings, but that was a thing that was said that seemed to need recording.",
+          "createdAt": "2025-11-03T17:49:12Z",
+          "updatedAt": "2025-11-03T17:49:12Z"
         }
       ]
     },
@@ -5777,6 +5791,104 @@
       "createdAt": "2025-10-23T00:58:15Z",
       "updatedAt": "2025-10-23T01:36:48Z",
       "closedAt": "2025-10-23T01:36:48Z",
+      "comments": []
+    },
+    {
+      "number": 236,
+      "id": "I_kwDOCvK98s7VXHpw",
+      "title": "Flow Control Liveness: Missing normative guidance for \\_BLOCKED capsule handling can cause deadlocks",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/236",
+      "state": "OPEN",
+      "author": "lemonsterfy",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Hello WebTransport WG,\n\nThank you for the excellent work on draft-ietf-webtrans-http3-14. The changes to flow control negotiation in Section 5.1, particularly the more flexible conditions for enabling flow control, represent a significant improvement for real-world deployments.\n\nAs maintainers of PyWebTransport [1], a Python asyncio-native implementation, we are actively developing support for the latest protocol drafts. We strongly support the changes in draft-ietf-webtrans-http3-14. Our implementation experience based on this model has revealed a potential protocol liveness issue that we believe warrants attention from the WG.\n\n[1] https://github.com/lemonsterfy/pywebtransport\n\n## Problem Statement\n\nThe current draft defines \\_BLOCKED capsules (WT_DATA_BLOCKED, WT_STREAMS_BLOCKED) as signals that a sender has exhausted its flow control credit. Section 5.6.3 states that a sender \"SHOULD\" send WT_STREAMS_BLOCKED when blocked, and Section 5.6.5 notes that these capsules \"can be used as input to tuning of flow control algorithms.\"\n\nHowever, the draft does not specify what action, if any, the receiver of a \\_BLOCKED capsule should take. This creates a potential deadlock scenario:\n\n1. Endpoint A (Sender) exhausts its flow control credit.\n2. Endpoint A sends WT_DATA_BLOCKED (per Section 5.6.5).\n3. Endpoint B (Receiver) receives the capsule.\n4. Endpoint B never sends WT_MAX_DATA (which is currently permitted).\n5. Endpoint A remains permanently blocked.\n\nThis represents a protocol liveness failure. The draft requires the sender to signal when blocked but provides no mechanism to ensure the receiver acts on that signal.\n\n## Impact\n\nThis issue affects interoperability: implementations that follow the specification literally may fail to send credit updates in response to \\_BLOCKED capsules, causing peer deadlocks. This is a protocol-level deadlock that cannot be distinguished from a non-responsive peer.\n\n## Precedent in Related Protocols\n\nThis gap is inconsistent with similar flow control mechanisms in protocols that WebTransport builds upon:\n\n### QUIC (RFC 9000)\n\nQUIC's BLOCKED family of frames (DATA_BLOCKED in Section 19.12, STREAM_DATA_BLOCKED in Section 19.13, and STREAMS_BLOCKED in Section 19.14) serve the same purpose as WebTransport's \\_BLOCKED capsules.\n\nWhile RFC 9000 does not explicitly mandate a response, the protocol's design relies on an implicit contract that receivers will provide credit. Section 4.1 states: \"a receiver MUST NOT wait for a... BLOCKED frame before sending a MAX\\_... frame; doing so could result in the sender being blocked... indefinitely.\" This establishes a clear, albeit implicit, contract: senders signal when blocked, receivers must provide credit to prevent indefinite blocking.\n\n### HTTP/2 (RFC 9113)\n\nHTTP/2's WINDOW_UPDATE frame (Section 6.9) has a similar pattern. The protocol's liveness depends on receivers sending WINDOW_UPDATE when they consume data. Implementations that fail to do so are widely considered non-conformant.\n\n### Observation\n\nBoth protocols rely on a strong, if sometimes implicit, receiver obligation to provide credit. We believe WebTransport should make this obligation explicit to avoid the interoperability issues these protocols experienced during early deployment.\n\n## Proposed Solution\n\nWe propose adding normative guidance for receivers of \\_BLOCKED capsules to ensure protocol liveness. We present two complementary approaches for the WG's consideration:\n\n### Option 1: Reactive Credit Management (Minimal Normative Change)\n\nAdd explicit guidance that receivers should respond to \\_BLOCKED signals.\n\n**Suggested text for Section 5.6.1:**\n\n> \"Flow control \\_BLOCKED capsules are intended to signal a peer that it should provide more credit. Upon receiving a WT_DATA_BLOCKED or WT_STREAMS_BLOCKED capsule, an endpoint SHOULD send a corresponding WT_MAX_DATA or WT_MAX_STREAMS capsule as soon as internal resources permit an increased limit. This establishes a reactive mechanism to prevent deadlocks.\"\n\n**Rationale:**\n\n- Aligns with the (implicit) contracts in QUIC and HTTP/2.\n- Represents a minimal specification change to fix the liveness gap.\n- Allows delay when resources are genuinely unavailable.\n- Makes ignoring \\_BLOCKED signals a clear protocol violation.\n\n### Option 2: Proactive Credit Management (Best Practice Guidance)\n\nThe WG might also consider adding non-normative guidance encouraging proactive credit updates, which avoid the round-trip penalty of the reactive mechanism.\n\n**Suggested non-normative text (NOTE in Section 5.6.1):**\n\n> \"NOTE: Implementations can improve performance by sending credit updates proactively, before the peer reaches the limit, rather than waiting for \\_BLOCKED capsules. A common strategy is to send updates when approximately 50% of the available credit has been consumed. This maintains pipeline efficiency and provides time for the update to reach the peer.\"\n\n**Rationale:**\n\n- Eliminates the stall-signal-wait cycle, improving throughput.\n- Represents a documented implementer best practice.\n- Is non-normative and does not mandate specific thresholds.\n\n## Recommendation and Implementation Experience\n\nWe strongly recommend adopting Option 1 as a normative requirement to guarantee protocol liveness.\n\nOur implementation (PyWebTransport) currently focuses on Option 2 (Proactive). We send WT_MAX_DATA and WT_MAX_STREAMS updates when the peer has consumed approximately 50% of the available credit. This threshold-based approach has proven highly robust and effective at maintaining throughput.\n\nWhile our proactive implementation avoids blocking entirely, we believe a standardized Reactive (Option 1) mechanism is critical for baseline interoperability, ensuring that even minimal implementations (or those that disable proactive updates) do not cause deadlocks.\n\nWe are happy to provide additional implementation details if the WG finds them useful.\n\n## Conclusion\n\nWe believe adding normative guidance for \\_BLOCKED capsule handling (Option 1) is critical for:\n\n1. **Protocol completeness**: Closing a liveness gap.\n2. **Interoperability**: Preventing ambiguous implementation behavior.\n3. **Alignment**: Following the established precedent from QUIC and HTTP/2.\n\nThank you for considering this issue. We look forward to the WG's feedback.\n\nBest regards,\n\nThe PyWebTransport maintainers\n",
+      "createdAt": "2025-11-02T14:37:05Z",
+      "updatedAt": "2025-11-02T14:37:05Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 237,
+      "id": "I_kwDOCvK98s7Via5A",
+      "title": "Handling invalid values for max streams",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/237",
+      "state": "OPEN",
+      "author": "AnkshitJain",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "[Max streams](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#name-wt_max_streams-capsule) has a maximum allowed value that is lower than the maximum value allowed in the capsule or the SETTINGS.\n```\nMaximum Streams:  A count of the cumulative number of streams of the corresponding type that can be opened over the lifetime of the session.  This value cannot exceed 2^60, as it is not possible to encode stream IDs larger than 2^62-1.\n```\nCan we add text suggesting what needs to be done if the value exceeds 2^60 in the capsule or the HTTP/3 SETTINGS? \n",
+      "createdAt": "2025-11-03T15:29:30Z",
+      "updatedAt": "2025-11-03T18:28:22Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "Thank you for raising this, @AnkshitJain. This is a critical clarification for implementers.\n\nThis is a subtle boundary condition that is very easy to overlook during implementation. This is exactly why it's so important for the specification to provide **explicit, normative guidance** on how to handle this violation, rather than leaving it to interpretation (which could lead to interoperability issues).\n\nTo ensure all implementations handle this error consistently, we would appreciate guidance on the expected behavior.\n\nOur assumption would be to align with the precedent set by QUIC (RFC 9000, Sec 19.11) for its own `MAX_STREAMS` frame, which states:\n\n> \"Receipt of a frame that permits opening of a stream larger than this limit MUST be treated as a connection error of type FRAME_ENCODING_ERROR.\"\n\nHaving this requirement explicitly stated in the WebTransport draft would be very helpful.",
+          "createdAt": "2025-11-03T18:28:22Z",
+          "updatedAt": "2025-11-03T18:28:22Z"
+        }
+      ]
+    },
+    {
+      "number": 238,
+      "id": "I_kwDOCvK98s7VkFn4",
+      "title": "Early IANA review summary",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/238",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "IANA performed an early review of the draft, to summarize some of the points\n\n1. Section 9.2 - Please use the field names used in the HTTP/3 settings registry. \"Code\" instead of \"Value\", \"Initial Value\" instead of \"Default\". _CHAIR NOTE: this seems incorrect based on https://www.iana.org/assignments/http3-parameters/http3-parameters.xhtml#http3-parameters-settings and RFC 9114_\n2. Section 9.3, 9.4 - The HTTP/3 frame tyypes and stream types use \"Value\" instead of \"Code\". We also need \"Status, Change Controller\" and \"Contact\" fields\n3. Section 9.5 - The HTTP/3 error codes need \"Status, Change Controller\" and \"Contact\" fields",
+      "createdAt": "2025-11-03T17:17:46Z",
+      "updatedAt": "2025-11-03T17:17:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 239,
+      "id": "I_kwDOCvK98s7VkQKk",
+      "title": "consider renaming WT_MAX_STREAMS",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/239",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "An unsuspecting reader of the document might assume that WT_MAX_STREAMS works analogously to the MAX_STREAMS frame in QUIC. This is not the case: WT_MAX_STREAMS contains a stream count (including closed streams), whereas MAX_STREAMS contains a stream ID.\n\nTo avoid this confusion, we could consider renaming it to something like WT_MAX_STREAM_COUNT.",
+      "createdAt": "2025-11-03T17:30:05Z",
+      "updatedAt": "2025-11-03T18:27:16Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "This is a valuable clarification, and we agree with this proposal.\n\nAs implementers, we can confirm that the **WT_MAX_STREAMS** name caused initial confusion during our development, as we had to explicitly differentiate its **\"pure count\"** semantic from QUIC's **\"Stream ID limit\"** semantic (RFC 9000, Sec 19.11).\n\nRenaming this to **WT_MAX_STREAM_COUNT** makes the specification clearer and reduces ambiguity for future implementers.",
+          "createdAt": "2025-11-03T18:27:16Z",
+          "updatedAt": "2025-11-03T18:27:16Z"
+        }
+      ]
+    },
+    {
+      "number": 241,
+      "id": "I_kwDOCvK98s7VmSKX",
+      "title": "Definition of new settings is messy",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/241",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [
+        "editorial"
+      ],
+      "body": "Section 9 is our IANA considerations section. In section [9.2](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#section-9.2), we define several HTTP/3 settings. The format is messy, it intermixes definition of the setting itself with the instructions for IANA to register the setting. A cleaner approach would be to define the settings elsewhere and keep section 9.2 focused solely on the simple registration aspects.",
+      "createdAt": "2025-11-03T20:11:53Z",
+      "updatedAt": "2025-11-03T20:11:53Z",
+      "closedAt": null,
       "comments": []
     }
   ],
@@ -18879,6 +18991,58 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 240,
+      "id": "PR_kwDOCvK98s6xRA8y",
+      "title": "Address some early IANA feedback",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/240",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This partly address some feedback in #238. It doesn't touch on the \"Status\" fields, which are inconsisently absent or present with permanent or provisional. I'll make a separate PR for that.\r\n",
+      "createdAt": "2025-11-03T20:06:25Z",
+      "updatedAt": "2025-11-03T20:12:29Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "address-some-early-iana-feedback",
+      "headRefOid": "d209ad9f93e237ad460a470b2b38d7fc4586a17a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 242,
+      "id": "PR_kwDOCvK98s6xRXwe",
+      "title": "Separate out settings prose and registration",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/242",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "SETTINGS_WT_MAX_SESSIONS already had prose in section 3.1 that was not consistently\r\nduplicated in 9.2, so I just deleted it.\r\n\r\nProse about SETTINGS for flow control is moved to section 5.5 which was already\r\ncalled \"Flow Control SETTINGS\".\r\n\r\nThe first version of this PR nukes some of the anchor magic because it seemed a bit pointless to me. But if people feel strongly then it can be added back.",
+      "createdAt": "2025-11-03T20:38:58Z",
+      "updatedAt": "2025-11-03T20:38:59Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
+      "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "headRefName": "separate-settings-def-and-reg",
+      "headRefOid": "7526c671ac0bf8b82df96596925ced1b5f4ab98c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
