@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-04T00:53:48.107688+00:00",
+  "timestamp": "2025-11-06T00:54:19.168332+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -19004,7 +19004,7 @@
       "labels": [],
       "body": "This partly address some feedback in #238. It doesn't touch on the \"Status\" fields, which are inconsisently absent or present with permanent or provisional. I'll make a separate PR for that.\r\n",
       "createdAt": "2025-11-03T20:06:25Z",
-      "updatedAt": "2025-11-03T20:12:29Z",
+      "updatedAt": "2025-11-04T17:21:08Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
@@ -19016,7 +19016,34 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7Ltq3i",
+          "commit": {
+            "abbreviatedOid": "d209ad9"
+          },
+          "author": "nidhijaju",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "lgtm, thank you!",
+          "createdAt": "2025-11-04T17:20:06Z",
+          "updatedAt": "2025-11-04T17:20:06Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s7LtsgU",
+          "commit": {
+            "abbreviatedOid": "d209ad9"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thank you!",
+          "createdAt": "2025-11-04T17:21:08Z",
+          "updatedAt": "2025-11-04T17:21:08Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 242,
@@ -19030,7 +19057,7 @@
       "labels": [],
       "body": "SETTINGS_WT_MAX_SESSIONS already had prose in section 3.1 that was not consistently\r\nduplicated in 9.2, so I just deleted it.\r\n\r\nProse about SETTINGS for flow control is moved to section 5.5 which was already\r\ncalled \"Flow Control SETTINGS\".\r\n\r\nThe first version of this PR nukes some of the anchor magic because it seemed a bit pointless to me. But if people feel strongly then it can be added back.",
       "createdAt": "2025-11-03T20:38:58Z",
-      "updatedAt": "2025-11-03T20:38:59Z",
+      "updatedAt": "2025-11-04T17:15:32Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
@@ -19042,7 +19069,48 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7Ltd7V",
+          "commit": {
+            "abbreviatedOid": "7526c67"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-11-04T17:10:41Z",
+          "updatedAt": "2025-11-04T17:10:41Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "Don't we need `_local` and `_remote` versions of this?",
+              "createdAt": "2025-11-04T17:10:41Z",
+              "updatedAt": "2025-11-04T17:10:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7Ltkk6",
+          "commit": {
+            "abbreviatedOid": "7526c67"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-11-04T17:15:32Z",
+          "updatedAt": "2025-11-04T17:15:32Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "I recall that discussed during the meeting, however this PR is simply an editorial refactoring. I'd suggest doing design changes separately before or after",
+              "createdAt": "2025-11-04T17:15:32Z",
+              "updatedAt": "2025-11-04T17:15:32Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
