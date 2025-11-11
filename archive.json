@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-06T00:54:19.168332+00:00",
+  "timestamp": "2025-11-11T00:55:11.131922+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5628,7 +5628,7 @@
       ],
       "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
       "createdAt": "2025-08-26T23:42:29Z",
-      "updatedAt": "2025-11-03T17:49:12Z",
+      "updatedAt": "2025-11-10T09:38:06Z",
       "closedAt": null,
       "comments": [
         {
@@ -5672,6 +5672,27 @@
           "body": "Did we resolve this?\n\nOne thing we did resolve was that if you don't have the flow control settings, you aren't allowed to make more than one session.  I don't *quite* know what that means, because both endpoints have settings, but that was a thing that was said that seemed to need recording.",
           "createdAt": "2025-11-03T17:49:12Z",
           "updatedAt": "2025-11-03T17:49:12Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "From IETF 124: \n\n- Remove WT_MAX_SESSIONS. Use WT_ENABLED from the server only to indicate support for WebTransport.\n    - Needed because we extend how H3 works\n    - This saves you a round trip when sending the extended CONNECT request\n- Servers can use rate-limit headers [draft-ietf-httpapi-ratelimit-headers](https://www.ietf.org/archive/id/draft-ietf-httpapi-ratelimit-headers-10.html) to indicate limits to clients about how many more sessions they should expect to be able to open. Reinforces that this is just a hint.\n- Servers reject incoming CONNECT requests as they can already do today.\n\nRemaining open question: Do we have a way for a server to say \"hey, if you came back in a different connection, I'd accept this request\" in response to a CONNECT request, or do all rejections look the same?",
+          "createdAt": "2025-11-10T07:43:48Z",
+          "updatedAt": "2025-11-10T07:45:23Z"
+        },
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "Happy to see the WG's resolution to remove `SETTINGS_WT_MAX_SESSIONS` and rely on application-level rejection. This simplifies the protocol and correctly places session limiting as an application-layer concern, which aligns with our implementation approach.\n\nRegarding the \"Remaining open question\", we believe this distinction is **critical** for protocol liveness.\n\n### The Problem: Ambiguous Rejection Leads to Liveness Failure\n\nA client receiving a generic `4xx`/`5xx` rejection cannot distinguish between two fundamentally different server states:\n\n- **Case A (Connection Limit):** The server is rejecting the `CONNECT` request because this specific H3 connection has reached its self-imposed limit for concurrent sessions.\n- **Case B (Server Overload):** The server is rejecting the `CONNECT` request because of a global resource limit (CPU, memory, etc.) and is temporarily unavailable.\n\nThis ambiguity is critical because the correct client retry strategy is completely different:\n\n- In **Case A**, the client **MUST** close the current H3 connection and retry on a **new H3 connection**. Retrying on the _same_ connection will lead to a **permanent liveness failure (deadlock)**, as the connection is full and will never accept the new session request.\n- In **Case B**, the client **SHOULD** respect the `Retry-After` header and retry on the **existing H3 connection** (or a new one). Churning to a new connection is wasteful and may exacerbate the server's overload.\n\n### Analysis of Existing Mechanisms (Why they are insufficient)\n\nWe analyzed why existing HTTP and WebTransport signals cannot solve this ambiguity:\n\n1.  **HTTP Status Codes (e.g., `429` vs. `503`):** These are insufficient. While different status codes could theoretically be used, there is no standard semantic mapping in HTTP that clearly communicates \"this specific connection is at capacity\" versus \"the server is globally overloaded.\" Moreover, both scenarios could legitimately be described as \"too many requests,\" making status code selection ambiguous for implementers.\n\n2.  **H3 `GOAWAY` Frame:** This signal is too coarse-grained and has the wrong semantic. `GOAWAY` is designed for connection-level shutdown (e.g., server maintenance), not for rejecting individual requests due to per-connection limits. Using it for Case A would violate the semantic intent of `GOAWAY` and disrupt all other healthy streams on the connection.\n\n3.  **`WT_DRAIN_SESSION` Capsule :** This signal has the wrong timing. As defined in `draft-14` Section 4.7, it is used to gracefully terminate an _already-established_ session, not to reject a new `CONNECT` request during its handshake.\n\nThis analysis shows that the ambiguity is not a generic application-layer problem, but rather a specific **protocol-level liveness problem** **caused by the multiplexing of a new resource type (WebTransport sessions) over a shared H3 connection.** Because the ambiguity is _caused_ by the protocol's design, it **must** be resolved by the protocol.\n\n### Proposed Solution\n\nTherefore, the signal must be at the HTTP application layer, as part of the `4xx` response, to convey this specific protocol-level semantic.\n\nWe propose a simple, boolean-style header to explicitly signal Case A:\n\n```\nWebTransport-Connection-Full: true\n```\n\n(or similar naming)\n\nWhen this header is present in a `4xx` response, it signals to the client: \"this specific connection cannot accept more sessions; retry on a new connection.\" When the header is absent, clients fall back to standard HTTP retry logic (respecting `Retry-After`, etc.).\n\n### Compatibility Consideration\n\nThis approach has a clear compatibility trade-off:\n\n- Clients unaware of the new header would see only the status code and apply generic retry logic (typically: back off and retry). This may be suboptimal (e.g., retrying into a deadlock on a full connection), but is **no worse than the current state of ambiguity**.\n- New clients gain the ability to make an informed decision and implement the correct (1-RTT recovery) retry strategy, avoiding the liveness failure.\n\nThis seems like the cleanest path forward to resolve the ambiguity.\n",
+          "createdAt": "2025-11-10T09:24:36Z",
+          "updatedAt": "2025-11-10T09:24:36Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "To my mind, the simplest thing is to spell out a rate limit quoata policy that speaks to the per-connection limits. \n\nI have a task to review the rate limit draft as part of my HTTP directorate duties. I hope to be able to post some findings here in the next couple of weeks.",
+          "createdAt": "2025-11-10T09:38:06Z",
+          "updatedAt": "2025-11-10T09:38:06Z"
         }
       ]
     },
