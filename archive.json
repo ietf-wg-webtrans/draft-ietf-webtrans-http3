@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-16T00:58:16.723352+00:00",
+  "timestamp": "2025-11-20T00:53:04.845817+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5924,7 +5924,7 @@
       "labels": [],
       "body": "The server ignores errors:\n> Both WT-Available-Protocols and WT-Protocol are Structured Fields [[FIELDS](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#FIELDS)]. WT-Available-Protocols is a List. WT-Protocol is defined as an Item. In both cases, the only valid value type is a String. Any value type other than String MUST be treated as an error that causes the entire field to be ignored. No semantics are defined for parameters on either field; parameters MUST be ignored.\n\nAnd the client as well:\n> The value in the WT-Protocol response header field MUST be one of the values listed in WT-Available-Protocols of the request. Otherwise, the WT-Protocol field MUST be ignored.\n\nWhy is that? Does this enable future extensibility? Is this the right place to enable extensibility? If so, we should probably make that intention clear in the draft.\n\nIf not, we should tighten the validation logic (reject requests / responses that contain invalid values).",
       "createdAt": "2025-11-15T03:29:12Z",
-      "updatedAt": "2025-11-15T09:11:24Z",
+      "updatedAt": "2025-11-19T07:55:35Z",
       "closedAt": null,
       "comments": [
         {
@@ -5933,6 +5933,20 @@
           "body": "To do that, we would have to make application protocol negotiation mandatory to use.  Structured Fields (RFC 9651) recommends that invalid fields be treated as though they were absent.",
           "createdAt": "2025-11-15T09:11:24Z",
           "updatedAt": "2025-11-15T09:11:24Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "It might be helpful to mention this reason in the draft.\n\nThis doesn't explain though why the client needs to tolerate misbehavior from the server if the field is not invalid:\n> The value in the WT-Protocol response header field MUST be one of the values listed in WT-Available-Protocols of the request. Otherwise, the WT-Protocol field MUST be ignored.\n\nShould we make this an error that kills the session?",
+          "createdAt": "2025-11-19T04:36:56Z",
+          "updatedAt": "2025-11-19T04:36:56Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Given the myriad other paths to ignoring, I'm not sure that an error in that specific case helps much.  Applications can note the failure of protocol negotiation and make their own decisions.",
+          "createdAt": "2025-11-19T07:55:35Z",
+          "updatedAt": "2025-11-19T07:55:35Z"
         }
       ]
     }
