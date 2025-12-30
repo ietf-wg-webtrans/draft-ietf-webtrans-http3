@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-27T00:53:44.846512+00:00",
+  "timestamp": "2025-12-30T00:57:56.945700+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5965,6 +5965,30 @@
       "updatedAt": "2025-11-26T21:12:44Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 245,
+      "id": "I_kwDOCvK98s7ghOzj",
+      "title": "Error to use when the QUIC connection is not suitable for WebTransport",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/245",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A client has to perform a number of checks to see if a QUIC connection is suitable for WebTransport, e.g.: \n* Are DATAGRAMs enabled on the QUIC layer?\n* Are DATAGRAMs enabled on the HTTP/3 layer?\n* Is the RESET_STREAM_AT extension enabled?\n \nIf these conditions are not fulfilled, a client might wish to close the connection, if it doesn't wish to use the connection for regular HTTP/3.\n\nI'm wondering if it would make sense to mint a HTTP/3 for this, maybe H3_UNUSABLE_FOR_WEBTRANSPORT, in order to aid debugging.",
+      "createdAt": "2025-12-29T08:47:24Z",
+      "updatedAt": "2025-12-29T09:03:31Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Speaking as a server operator, I see a lot of clients opening HTTP/3 connections and not using them. There can be various reason for that, ranging from the benign to the ridiculous. \n\nI see WebTransport at risk of falling into the quagmire of multi CDN issues , where the discovery mechanism (e.g. a webpage with a URL) might not be in lockstep with server config. That's just one example why a server might not allow a client to do what it needs. If it happened to production services, its quite an observability gap for both providers and the people running services over them.\n\nWhile it's also possible to put such information in the reason phrase of CONNECTION_CLOSE, I tend to treat that as toxic data and wouldn't build any observability around it.\n\nAn error code would provide a decent middle ground ",
+          "createdAt": "2025-12-29T09:03:31Z",
+          "updatedAt": "2025-12-29T09:03:31Z"
+        }
+      ]
     }
   ],
   "pulls": [
