@@ -849,7 +849,9 @@ WT_MAX_STREAMS capsules contain the following field:
    : A count of the cumulative number of streams of the corresponding type that
      can be opened over the lifetime of the session. This value cannot
      exceed 2<sup>60</sup>, as it is not possible to encode stream IDs larger
-     than 2<sup>62</sup>-1.
+     than 2<sup>62</sup>-1. Receipt of a capsule with a Maximum Streams value
+     larger than this limit MUST be treated as an HTTP/3 error of type
+     H3_DATAGRAM_ERROR.
 
 An endpoint MUST NOT open more streams than permitted by the current stream
 limit set by its peer.  For instance, a server that receives a unidirectional
