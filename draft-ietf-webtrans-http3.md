@@ -387,9 +387,15 @@ even if it has not yet received the server's response to the request. On the
 server side, opening streams and sending datagrams is possible as soon as the
 CONNECT request has been received.
 
-If at any point a session ID is received that cannot be a valid ID for a
-client-initiated bidirectional stream, the recipient MUST close the connection
-with an H3_ID_ERROR error code.
+Session IDs are derived from the stream ID of the CONNECT stream that
+established the session and therefore MUST always correspond to a
+client-initiated bidirectional stream, as defined in {{Section 2.1 of RFC9000}}.
+If an endpoint receives a session ID on a unidirectional stream, bidirectional
+stream, or datagram that does not correspond to a client-initiated bidirectional
+stream ID, the endpoint MUST close the connection with an H3_ID_ERROR error
+code.  Session IDs that correspond to closed sessions are not considered invalid
+for the purposes of this check; endpoints handle data for closed sessions as
+described in {{session-termination}}.
 
 ## Transport Properties
 
@@ -995,7 +1001,7 @@ WT_DATA_BLOCKED capsules for flow control purposes and MUST generate and
 send appropriate flow control signals for their limits (see
 {{flow-control-intermediaries}}).
 
-# Session Termination
+# Session Termination {#session-termination}
 
 A WebTransport session over HTTP/3 is considered terminated when either of the
 following conditions is met:
@@ -1124,7 +1130,7 @@ WebTransport client SHOULD limit the number of outgoing sessions it will open.
 
 # IANA Considerations
 
-This document registers an upgrade token ({{upgrade-token}), HTTP/3 settings
+This document registers an upgrade token ({{upgrade-token}}), HTTP/3 settings
 ({{http3-settings}}), an HTTP/3 stream type ({{iana-stream-type}}, an HTTP/3 error
 code ({{iana-error-code}}), and an HTTP header field ({{iana-http}}).
 
