@@ -746,16 +746,50 @@ capsule as a session error.
 
 ## Flow Control SETTINGS
 
-*[SETTINGS_WT_INITIAL_MAX_STREAMS_UNI]: #
-*[SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI]: #
-*[SETTINGS_WT_INITIAL_MAX_DATA]: #
-
 Initial flow control limits can be exchanged via HTTP/3 SETTINGS
 ({{http3-settings}}) by providing non-zero values for
 
 * WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
   SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
 * WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
+
+### SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
+
+The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial value for
+the unidirectional max stream limit, otherwise communicated by the
+WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}).  The default value for the
+SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is "0", indicating that the
+endpoint needs to send WT_MAX_STREAMS capsules on each individual WebTransport
+session before its peer is allowed to create any unidirectional streams within
+that session.
+
+Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.
+
+### SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+
+The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the initial value for
+the bidirectional max stream limit, otherwise communicated by the
+WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}).  The default value for the
+SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting is "0", indicating that the
+endpoint needs to send WT_MAX_STREAMS capsules on each individual WebTransport
+session before its peer is allowed to create any bidirectional streams within
+that session.
+
+Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.
+
+### SETTINGS_WT_INITIAL_MAX_DATA
+
+The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value for the
+session data limit, otherwise communicated by the WT_MAX_DATA capsule (see
+{{WT_MAX_DATA}}).  The default value for the SETTINGS_WT_INITIAL_MAX_DATA
+setting is "0", indicating that the endpoint needs to send a WT_MAX_DATA
+capsule within each session before its peer is allowed to send any stream data
+within that session.
+
+Note that this limit applies to all WebTransport sessions that use the HTTP/3
+connection on which this SETTING is sent.
 
 ## Flow Control Capsules
 
@@ -1118,15 +1152,9 @@ Reference:
 The following entry is added to the "HTTP/3 Settings" registry established by
 [HTTP3]:
 
-The `SETTINGS_WT_MAX_SESSIONS` setting indicates that the specified HTTP/3
-endpoint is WebTransport-capable and the number of concurrent sessions it is
-willing to receive.  The default value for the SETTINGS_WT_MAX_SESSIONS setting
-is "0", meaning that the endpoint is not willing to receive any WebTransport
-sessions.
-
 Setting Name:
 
-: WT_MAX_SESSIONS
+: SETTINGS_WT_MAX_SESSIONS
 
 Value:
 
@@ -1140,18 +1168,11 @@ Reference:
 
 : This document
 
-{: anchor="SETTINGS_WT_INITIAL_MAX_STREAMS_UNI"}
+Change Controller:
+: IETF
 
-The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial value for
-the unidirectional max stream limit, otherwise communicated by the
-WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}).  The default value for the
-SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is "0", indicating that the
-endpoint needs to send WT_MAX_STREAMS capsules on each individual WebTransport
-session before its peer is allowed to create any unidirectional streams within
-that session.
-
-Note that this limit applies to all WebTransport sessions that use the HTTP/3
-connection on which this SETTING is sent.
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
 
 Setting Name:
 
@@ -1169,18 +1190,11 @@ Reference:
 
 : This document
 
-{: anchor="SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI"}
+Change Controller:
+: IETF
 
-The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the initial value for
-the bidirectional max stream limit, otherwise communicated by the
-WT_MAX_STREAMS capsule (see {{WT_MAX_STREAMS}}).  The default value for the
-SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting is "0", indicating that the
-endpoint needs to send WT_MAX_STREAMS capsules on each individual WebTransport
-session before its peer is allowed to create any bidirectional streams within
-that session.
-
-Note that this limit applies to all WebTransport sessions that use the HTTP/3
-connection on which this SETTING is sent.
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
 
 Setting Name:
 
@@ -1198,17 +1212,11 @@ Reference:
 
 : This document
 
-{: anchor="SETTINGS_WT_INITIAL_MAX_DATA"}
+Change Controller:
+: IETF
 
-The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value for the
-session data limit, otherwise communicated by the WT_MAX_DATA capsule (see
-{{WT_MAX_DATA}}).  The default value for the SETTINGS_WT_INITIAL_MAX_DATA
-setting is "0", indicating that the endpoint needs to send a WT_MAX_DATA
-capsule within each session before its peer is allowed to send any stream data
-within that session.
-
-Note that this limit applies to all WebTransport sessions that use the HTTP/3
-connection on which this SETTING is sent.
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
 
 Setting Name:
 
@@ -1225,6 +1233,12 @@ Default:
 Reference:
 
 : This document
+
+Change Controller:
+: IETF
+
+Contact:
+: WebTransport Working Group <webtransport@ietf.org>
 
 ## Frame Type Registration
 
