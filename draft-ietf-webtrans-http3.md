@@ -245,11 +245,17 @@ are received (see {{buffering-incoming}}).  If the server receives SETTINGS that
 do not have correct values for every required setting, or transport parameters
 that do not have correct values for every required transport parameter, the
 server MUST treat all established and newly incoming WebTransport sessions as
-malformed, as described in {{Section 4.1.2 of HTTP3}}.
+malformed, as described in {{Section 4.1.2 of HTTP3}}.  Additionally, the server
+MAY close the HTTP/3 connection with a `WT_REQUIREMENTS_NOT_MET` error code to
+aid in debugging.
 
 A client MUST NOT establish WebTransport sessions if the server's SETTINGS do
 not have correct values for every required setting or if the server's transport
 parameters do not have correct values for every required transport parameter.
+If a client does not wish to use the connection for purposes other than
+WebTransport when the requirements for WebTransport are not met, the client MAY
+close the HTTP/3 connection with a `WT_REQUIREMENTS_NOT_MET` error code to aid
+in debugging.
 
 \[\[RFC editor: please remove the following paragraph before publication.]]
 
@@ -1358,6 +1364,32 @@ Value:
 Description:
 
 : WebTransport session aborted because a flow control error was encountered.
+
+Reference:
+
+: This document.
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
+
+Name:
+
+: WT_REQUIREMENTS_NOT_MET
+
+Value:
+
+: 0x212c0d48
+
+Description:
+
+: HTTP/3 connection closed because the features required for WebTransport are
+  not supported.  Either the client or server is missing required SETTINGS or
+  transport parameters needed for WebTransport.
 
 Reference:
 
