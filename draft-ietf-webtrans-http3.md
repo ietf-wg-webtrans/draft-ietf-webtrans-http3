@@ -313,8 +313,8 @@ WebTransport endpoints.
 
 ## Application Protocol Negotiation {#protocol-negotiation}
 
-WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to TLS
-Application-Layer Protocol Negotiation Extension (ALPN) {{?RFC7301}}; the
+WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to the
+TLS Application-Layer Protocol Negotiation (ALPN) extension {{?RFC7301}}; the
 intent is to simplify porting existing protocols that use QUIC and rely on this
 functionality.
 
@@ -330,12 +330,16 @@ Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
 {{!FIELDS=RFC9651}}.  `WT-Available-Protocols` is a List.  `WT-Protocol` is
 defined as an Item.  In both cases, the only valid value type is a String.  Any
 value type other than String MUST be treated as an error that causes the entire
-field to be ignored.  No semantics are defined for parameters on either field;
-parameters MUST be ignored.
+field to be ignored as recommended in {{FIELDS}}, allowing application protocol
+negotiation to remain optional.  No semantics are defined for parameters on
+either field; parameters MUST be ignored.
 
-The value in the `WT-Protocol` response header field MUST be one of the values
-listed in `WT-Available-Protocols` of the request.  Otherwise, the `WT-Protocol`
-field MUST be ignored.
+If the client sends a `WT-Available-Protocols` header field and the server
+responds with a `WT-Protocol` header field, the value in the `WT-Protocol`
+response header field MUST be one of the values listed in
+`WT-Available-Protocols` of the request.  If the client receives a `WT-Protocol`
+value that was not included in its `WT-Available-Protocols` list, the client
+MUST close the WebTransport session with a `WT_ALPN_ERROR` error code.
 
 The semantics of individual values used in `WT-Available-Protocols` and
 `WT-Protocol` are determined by the WebTransport resource in question and are
@@ -1358,6 +1362,30 @@ Value:
 Description:
 
 : WebTransport session aborted because a flow control error was encountered.
+
+Reference:
+
+: This document.
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
+
+Name:
+
+: WT_ALPN_ERROR
+
+Value:
+
+: 0x0817b3dd
+
+Description:
+
+: WebTransport session aborted because application protocol negotiation failed.
 
 Reference:
 
