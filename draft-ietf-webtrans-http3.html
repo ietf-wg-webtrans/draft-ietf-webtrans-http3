@@ -25,14 +25,14 @@ connection.
     Python 3.12.12
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
-    intervaltree 3.1.0
+    intervaltree 3.2.1
     Jinja2 3.1.6
-    lxml 5.3.1
-    platformdirs 4.5.0
+    lxml 6.0.2
+    platformdirs 4.5.1
     pycountry 24.6.1
-    PyYAML 6.0.2
+    PyYAML 6.0.3
     requests 2.32.5
-    wcwidth 0.2.14
+    wcwidth 0.3.0
 -->
 <link href="draft-ietf-webtrans-http3.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -573,6 +573,7 @@ aside, blockquote {
 }
 blockquote {
   margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
 }
 cite {
   display: block;
@@ -643,7 +644,7 @@ a.pilcrow {
   }
 }
 @media not print {
-  :hover > a.pilcrow {
+  :hover > a.pilcrow, a.pilcrow:focus {
     opacity: 1;
   }
   a.pilcrow[href]:hover {
@@ -1051,11 +1052,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">WebTransport-H3</td>
-<td class="right">October 2025</td>
+<td class="right">January 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 26 April 2026</td>
+<td class="center">Expires 29 July 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-10-23" class="published">23 October 2025</time>
+<time datetime="2026-01-25" class="published">25 January 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-04-26">26 April 2026</time></dd>
+<dd class="expires"><time datetime="2026-07-29">29 July 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1138,7 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 26 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 29 July 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1146,7 +1147,7 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
         </h2>
 <p id="section-boilerplate.2-1">
-            Copyright (c) 2025 IETF Trust and the persons identified as the
+            Copyright (c) 2026 IETF Trust and the persons identified as the
             document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.2-2">
             This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1533,7 +1534,9 @@ closed.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-establishing-a-webtransport" class="section-name selfRef">Establishing a WebTransport-Capable HTTP/3 Connection</a>
         </h3>
 <p id="section-3.1-1">A WebTransport-Capable HTTP/3 connection requires the client and server to both
-signal support for WebTransport over HTTP/3 using a setting.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+signal support for WebTransport over HTTP/3 using a setting. Clients also
+signal support by using the "webtransport-h3" upgrade token in extended CONNECT
+requests when establishing sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.1-2">This document defines a SETTINGS_WT_MAX_SESSIONS setting for indicating the
 number of WebTransport sessions a connection supports.  The default value for
 the SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint is not
@@ -1620,7 +1623,7 @@ HTTP extended CONNECT request.  In this request:<a href="#section-3.2-2" class="
 <ul class="normal">
 <li class="normal" id="section-3.2-3.1">
             <p id="section-3.2-3.1.1">The <code>:protocol</code> pseudo-header field(<span>[<a href="#RFC8441" class="cite xref">RFC8441</a>]</span>) MUST be set to
-<code>webtransport</code>.<a href="#section-3.2-3.1.1" class="pilcrow">¶</a></p>
+<code>webtransport-h3</code>.<a href="#section-3.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.2-3.2">
             <p id="section-3.2-3.2.1">The <code>:scheme</code> field MUST be <code>https</code>.<a href="#section-3.2-3.2.1" class="pilcrow">¶</a></p>
@@ -1636,7 +1639,7 @@ header is OPTIONAL.<a href="#section-3.2-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-3.2-4">Upon receiving an extended CONNECT request with a <code>:protocol</code> field set to
-<code>webtransport</code>, the HTTP/3 server can check if it has a WebTransport server
+<code>webtransport-h3</code>, the HTTP/3 server can check if it has a WebTransport server
 associated with the specified <code>:authority</code> and <code>:path</code> values.  If it does not,
 it SHOULD reply with status code 404 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.5" class="relref">Section 15.5.5</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).
 When the request contains the <code>Origin</code> header, the WebTransport server MUST
@@ -1661,7 +1664,7 @@ session as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#sectio
 sessions, or other initial flow control values, from the values negotiated
 during the previous session; such change would be deemed incompatible, and MUST
 result in a H3_SETTINGS_ERROR connection error.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
-<p id="section-3.2-8">The <code>webtransport</code> HTTP Upgrade Token uses the Capsule Protocol as defined in
+<p id="section-3.2-8">The <code>webtransport-h3</code> HTTP Upgrade Token uses the Capsule Protocol as defined in
 <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  The Capsule Protocol is negotiated when the server sends a
 2xx response.  The <code>capsule-protocol</code> header field <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.4" class="relref">Section 3.4</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> is not required by WebTransport and can safely be ignored by
 WebTransport endpoints.<a href="#section-3.2-8" class="pilcrow">¶</a></p>
@@ -2569,6 +2572,9 @@ WebTransport client SHOULD limit the number of outgoing sessions it will open.<a
       <h2 id="name-iana-considerations">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
+<p id="section-9-1">This document registers an upgrade token (<a href="#upgrade-token" class="auto internal xref">Section 9.1</a>), HTTP/3 settings
+(<a href="#http3-settings" class="auto internal xref">Section 9.2</a>), an HTTP/3 stream type (<a href="#iana-stream-type" class="auto internal xref">Section 9.4</a>, an HTTP/3 error
+code (<a href="#iana-error-code" class="auto internal xref">Section 9.5</a>), and an HTTP header field (<a href="#iana-http" class="auto internal xref">Section 9.7</a>).<a href="#section-9-1" class="pilcrow">¶</a></p>
 <div id="upgrade-token">
 <section id="section-9.1">
         <h3 id="name-upgrade-token-registration">
@@ -2576,11 +2582,11 @@ WebTransport client SHOULD limit the number of outgoing sessions it will open.<a
         </h3>
 <p id="section-9.1-1">The following entry is added to the "Hypertext Transfer Protocol (HTTP) Upgrade
 Token Registry" registry established by Section 16.7 of <span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.1-2">The "webtransport" label identifies HTTP/3 used as a protocol for WebTransport:<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.1-2">The "webtransport-h3" label identifies HTTP/3 used as a protocol for WebTransport:<a href="#section-9.1-2" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-9.1-3">
           <dt id="section-9.1-3.1">Value:</dt>
           <dd style="margin-left: 1.5em" id="section-9.1-3.2">
-            <p id="section-9.1-3.2.1">webtransport<a href="#section-9.1-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-9.1-3.2.1">webtransport-h3<a href="#section-9.1-3.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.1-3.3">Description:</dt>
@@ -2590,7 +2596,7 @@ Token Registry" registry established by Section 16.7 of <span>[<a href="#HTTP" c
           <dd class="break"></dd>
 <dt id="section-9.1-3.5">Reference:</dt>
           <dd style="margin-left: 1.5em" id="section-9.1-3.6">
-            <p id="section-9.1-3.6.1">This document and <span>[<a href="#I-D.ietf-webtrans-http2" class="cite xref">I-D.ietf-webtrans-http2</a>]</span><a href="#section-9.1-3.6.1" class="pilcrow">¶</a></p>
+            <p id="section-9.1-3.6.1">This document<a href="#section-9.1-3.6.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -2758,7 +2764,7 @@ collision with WebTransport HTTP/3 extensions:<a href="#section-9.3-2" class="pi
 </dl>
 </section>
 </div>
-<div id="stream-type-registration">
+<div id="iana-stream-type">
 <section id="section-9.4">
         <h3 id="name-stream-type-registration">
 <a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-stream-type-registration" class="section-name selfRef">Stream Type Registration</a>
@@ -2791,7 +2797,7 @@ WebTransport:<a href="#section-9.4-2" class="pilcrow">¶</a></p>
 </dl>
 </section>
 </div>
-<div id="http3-error-code-registration">
+<div id="iana-error-code">
 <section id="section-9.5">
         <h3 id="name-http-3-error-code-registrat">
 <a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-http-3-error-code-registrat" class="section-name selfRef">HTTP/3 Error Code Registration</a>
