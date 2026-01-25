@@ -1083,8 +1083,24 @@ reasonable share of controlled resources; this applies both to sending data and
 to opening new streams.
 
 An application could attempt to exhaust resources by opening too many
-WebTransport sessions at once.  In cases when the application is untrusted, the
+WebTransport sessions at once.  In cases when the application is untrusted, a
 WebTransport client SHOULD limit the number of outgoing sessions it will open.
+
+Note that the security considerations of HTTP/3 {{HTTP3}} apply to WebTransport
+over HTTP/3.  In particular, the denial-of-service considerations in
+{{Section 10.5 of HTTP3}} are relevant.  WebTransport extends HTTP/3 with
+additional features that have legitimate uses but can become a burden when they
+are used unnecessarily or to excess.
+
+WebTransport introduces new interaction modes that permit either endpoint to
+send streams and datagrams to its peer.  This is particularly novel for clients,
+which previously had limited exposure to unsolicited server-initiated traffic
+beyond server push (see {{Section 4.6 of HTTP3}}).  An endpoint that does not
+monitor use of these features exposes itself to a risk of denial-of-service
+attack.  Implementations SHOULD track the use of WebTransport features, such as
+the number of incoming streams and datagrams, and set limits on their
+use.  An endpoint MAY treat activity that is suspicious as a connection error of
+type H3_EXCESSIVE_LOAD.
 
 # IANA Considerations
 
