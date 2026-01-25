@@ -100,6 +100,9 @@ Table of Contents
      5.3.  Limiting the Number of Streams Within a Session
      5.4.  Data Limits
      5.5.  Flow Control SETTINGS
+       5.5.1.  SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
+       5.5.2.  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+       5.5.3.  SETTINGS_WT_INITIAL_MAX_DATA
      5.6.  Flow Control Capsules
        5.6.1.  Flow Control and Intermediaries
        5.6.2.  WT_MAX_STREAMS Capsule
@@ -893,6 +896,45 @@ Table of Contents
 
    *  WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
 
+5.5.1.  SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
+
+   The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial
+   value for the unidirectional max stream limit, otherwise communicated
+   by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The default value
+   for the SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is "0",
+   indicating that the endpoint needs to send WT_MAX_STREAMS capsules on
+   each individual WebTransport session before its peer is allowed to
+   create any unidirectional streams within that session.
+
+   Note that this limit applies to all WebTransport sessions that use
+   the HTTP/3 connection on which this SETTING is sent.
+
+5.5.2.  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+
+   The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the
+   initial value for the bidirectional max stream limit, otherwise
+   communicated by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The
+   default value for the SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting is
+   "0", indicating that the endpoint needs to send WT_MAX_STREAMS
+   capsules on each individual WebTransport session before its peer is
+   allowed to create any bidirectional streams within that session.
+
+   Note that this limit applies to all WebTransport sessions that use
+   the HTTP/3 connection on which this SETTING is sent.
+
+5.5.3.  SETTINGS_WT_INITIAL_MAX_DATA
+
+   The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value
+   for the session data limit, otherwise communicated by the WT_MAX_DATA
+   capsule (see Section 5.6.4).  The default value for the
+   SETTINGS_WT_INITIAL_MAX_DATA setting is "0", indicating that the
+   endpoint needs to send a WT_MAX_DATA capsule within each session
+   before its peer is allowed to send any stream data within that
+   session.
+
+   Note that this limit applies to all WebTransport sessions that use
+   the HTTP/3 connection on which this SETTING is sent.
+
 5.6.  Flow Control Capsules
 
    WebTransport over HTTP/3 uses several capsules for flow control, and
@@ -1252,13 +1294,7 @@ Table of Contents
    The following entry is added to the "HTTP/3 Settings" registry
    established by [HTTP3]:
 
-   The SETTINGS_WT_MAX_SESSIONS setting indicates that the specified
-   HTTP/3 endpoint is WebTransport-capable and the number of concurrent
-   sessions it is willing to receive.  The default value for the
-   SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint is
-   not willing to receive any WebTransport sessions.
-
-   Setting Name:  WT_MAX_SESSIONS
+   Setting Name:  SETTINGS_WT_MAX_SESSIONS
 
    Value:  0x14e9cd29
 
@@ -1266,16 +1302,10 @@ Table of Contents
 
    Reference:  This document
 
-   The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial
-   value for the unidirectional max stream limit, otherwise communicated
-   by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The default value
-   for the SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is "0",
-   indicating that the endpoint needs to send WT_MAX_STREAMS capsules on
-   each individual WebTransport session before its peer is allowed to
-   create any unidirectional streams within that session.
+   Change Controller:  IETF
 
-   Note that this limit applies to all WebTransport sessions that use
-   the HTTP/3 connection on which this SETTING is sent.
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
    Setting Name:  SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
 
@@ -1285,16 +1315,10 @@ Table of Contents
 
    Reference:  This document
 
-   The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the
-   initial value for the bidirectional max stream limit, otherwise
-   communicated by the WT_MAX_STREAMS capsule (see Section 5.6.2).  The
-   default value for the SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting is
-   "0", indicating that the endpoint needs to send WT_MAX_STREAMS
-   capsules on each individual WebTransport session before its peer is
-   allowed to create any bidirectional streams within that session.
+   Change Controller:  IETF
 
-   Note that this limit applies to all WebTransport sessions that use
-   the HTTP/3 connection on which this SETTING is sent.
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
    Setting Name:  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
 
@@ -1304,16 +1328,10 @@ Table of Contents
 
    Reference:  This document
 
-   The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value
-   for the session data limit, otherwise communicated by the WT_MAX_DATA
-   capsule (see Section 5.6.4).  The default value for the
-   SETTINGS_WT_INITIAL_MAX_DATA setting is "0", indicating that the
-   endpoint needs to send a WT_MAX_DATA capsule within each session
-   before its peer is allowed to send any stream data within that
-   session.
+   Change Controller:  IETF
 
-   Note that this limit applies to all WebTransport sessions that use
-   the HTTP/3 connection on which this SETTING is sent.
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
    Setting Name:  SETTINGS_WT_INITIAL_MAX_DATA
 
@@ -1322,6 +1340,11 @@ Table of Contents
    Default:  0
 
    Reference:  This document
+
+   Change Controller:  IETF
+
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
 9.3.  Frame Type Registration
 
@@ -1663,21 +1686,7 @@ A.1.  Changes between draft versions 02 and 07
 
 Index
 
-   S W
-
-      S
-
-         SETTINGS_WT_INITIAL_MAX_DATA  Section 5.1, Paragraph 3.4.1;
-            Section 5.5, Paragraph 2.2.1; Section 5.6.4, Paragraph 9;
-            Section 9.2, Paragraph 10; Section 9.2, Paragraph 12.2.1
-         SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI  Section 5.1, Paragraph
-            3.3.1; Section 5.5, Paragraph 2.1.1; Section 5.6.2,
-            Paragraph 11; Section 9.2, Paragraph 7; Section 9.2,
-            Paragraph 9.2.1
-         SETTINGS_WT_INITIAL_MAX_STREAMS_UNI  Section 5.1, Paragraph
-            3.2.1; Section 5.5, Paragraph 2.1.1; Section 5.6.2,
-            Paragraph 11; Section 9.2, Paragraph 4; Section 9.2,
-            Paragraph 6.2.1
+   W
 
       W
 
@@ -1687,16 +1696,16 @@ Index
             Paragraph 13.4.1
          WT_MAX_DATA  Section 5.4, Paragraph 1; Section 5.4, Paragraph
             2; Section 5.4, Paragraph 3; Section 5.5, Paragraph 2.2.1;
-            Section 5.6, Paragraph 1; Section 5.6.4, Paragraph 1;
-            Section 5.6.4, Paragraph 2; Section 5.6.4, Paragraph 4;
-            Section 5.6.4, Paragraph 7; Section 5.6.4, Paragraph 8;
-            Section 9.2, Paragraph 10; Section 9.6, Paragraph 11.4.1
+            Section 5.5.3, Paragraph 1; Section 5.6, Paragraph 1;
+            Section 5.6.4, Paragraph 1; Section 5.6.4, Paragraph 2;
+            Section 5.6.4, Paragraph 4; Section 5.6.4, Paragraph 7;
+            Section 5.6.4, Paragraph 8; Section 9.6, Paragraph 11.4.1
          WT_MAX_STREAMS  Section 5.3, Paragraph 1; Section 5.5,
-            Paragraph 2.1.1; Section 5.6, Paragraph 1; Section 5.6.2,
+            Paragraph 2.1.1; Section 5.5.1, Paragraph 1; Section 5.5.2,
+            Paragraph 1; Section 5.6, Paragraph 1; Section 5.6.2,
             Paragraph 1; Section 5.6.2, Paragraph 2; Section 5.6.2,
             Paragraph 4; Section 5.6.2, Paragraph 9; Section 5.6.2,
-            Paragraph 10; Section 9.2, Paragraph 4; Section 9.2,
-            Paragraph 7; Section 9.6, Paragraph 7.4.1
+            Paragraph 10; Section 9.6, Paragraph 7.4.1
          WT_STREAMS_BLOCKED  Section 5.3, Paragraph 5; Section 5.6,
             Paragraph 1; Section 5.6.3, Paragraph 1; Section 5.6.3,
             Paragraph 2; Section 5.6.3, Paragraph 4; Section 5.6.3,
