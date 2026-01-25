@@ -1264,7 +1264,7 @@ Table of Contents
 
    Default:  0
 
-   Specification:  This document
+   Reference:  This document
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial
    value for the unidirectional max stream limit, otherwise communicated
@@ -1283,7 +1283,7 @@ Table of Contents
 
    Default:  0
 
-   Specification:  This document
+   Reference:  This document
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the
    initial value for the bidirectional max stream limit, otherwise
@@ -1302,7 +1302,7 @@ Table of Contents
 
    Default:  0
 
-   Specification:  This document
+   Reference:  This document
 
    The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value
    for the session data limit, otherwise communicated by the WT_MAX_DATA
@@ -1321,7 +1321,7 @@ Table of Contents
 
    Default:  0
 
-   Specification:  This document
+   Reference:  This document
 
 9.3.  Frame Type Registration
 
@@ -1331,11 +1331,16 @@ Table of Contents
    The WT_STREAM frame is reserved for the purpose of avoiding collision
    with WebTransport HTTP/3 extensions:
 
-   Code:  0x41
+   Value:  0x41
 
    Frame Type:  WT_STREAM
 
-   Specification:  This document
+   Reference:  This document
+
+   Change Controller:  IETF
+
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
 9.4.  Stream Type Registration
 
@@ -1345,13 +1350,18 @@ Table of Contents
    The "WebTransport stream" type allows unidirectional streams to be
    used by WebTransport:
 
-   Code:  0x54
+   Value:  0x54
 
    Stream Type:  WebTransport stream
 
-   Specification:  This document
+   Reference:  This document
 
    Sender:  Both
+
+   Change Controller:  IETF
+
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
 9.5.  HTTP/3 Error Code Registration
 
@@ -1365,7 +1375,12 @@ Table of Contents
    Description:  WebTransport data stream rejected due to lack of
       associated session.
 
-   Specification:  This document.
+   Reference:  This document.
+
+   Change Controller:  IETF
+
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
    Name:  WT_SESSION_GONE
 
@@ -1384,7 +1399,12 @@ Table of Contents
    Description:  WebTransport session aborted because a flow control
       error was encountered.
 
-   Specification:  This document.
+   Reference:  This document.
+
+   Change Controller:  IETF
+
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
    In addition, the following range of entries is registered:
 
@@ -1395,7 +1415,12 @@ Table of Contents
 
    Description:  WebTransport application error codes.
 
-   Specification:  This document.
+   Reference:  This document.
+
+   Change Controller:  IETF
+
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
 9.6.  Capsule Types
 
@@ -1407,7 +1432,7 @@ Table of Contents
    Value:  0x2843
    Capsule Type:  WT_CLOSE_SESSION
    Status:  permanent
-   Specification:  This document
+   Reference:  This document
    Change Controller:  IETF
    Contact:  WebTransport Working Group webtransport@ietf.org
       (mailto:webtransport@ietf.org)
@@ -1419,7 +1444,7 @@ Table of Contents
    Capsule Type:  WT_DRAIN_SESSION
    Status:  provisional (when this document is approved this will become
       permanent)
-   Specification:  This document
+   Reference:  This document
    Change Controller:  IETF
    Contact:  WebTransport Working Group webtransport@ietf.org
       (mailto:webtransport@ietf.org)
@@ -1430,7 +1455,7 @@ Table of Contents
    Value:  0x190B4D3F..0x190B4D40
    Capsule Type:  WT_MAX_STREAMS
    Status:  permanent
-   Specification:  This document
+   Reference:  This document
    Change Controller:  IETF
    Contact:  WebTransport Working Group webtransport@ietf.org
       (mailto:webtransport@ietf.org)
@@ -1441,7 +1466,7 @@ Table of Contents
    Value:  0x190B4D43..0x190B4D44
    Capsule Type:  WT_STREAMS_BLOCKED
    Status:  permanent
-   Specification:  This document
+   Reference:  This document
    Change Controller:  IETF
    Contact:  WebTransport Working Group webtransport@ietf.org
       (mailto:webtransport@ietf.org)
@@ -1452,7 +1477,7 @@ Table of Contents
    Value:  0x190B4D3D
    Capsule Type:  WT_MAX_DATA
    Status:  permanent
-   Specification:  This document
+   Reference:  This document
    Change Controller:  IETF
    Contact:  WebTransport Working Group webtransport@ietf.org
       (mailto:webtransport@ietf.org)
@@ -1463,7 +1488,7 @@ Table of Contents
    Value:  0x190B4D41
    Capsule Type:  WT_DATA_BLOCKED
    Status:  permanent
-   Specification:  This document
+   Reference:  This document
    Change Controller:  IETF
    Contact:  WebTransport Working Group webtransport@ietf.org
       (mailto:webtransport@ietf.org)
