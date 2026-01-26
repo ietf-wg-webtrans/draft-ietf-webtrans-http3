@@ -245,9 +245,7 @@ are received (see {{buffering-incoming}}).  If the server receives SETTINGS that
 do not have correct values for every required setting, or transport parameters
 that do not have correct values for every required transport parameter, the
 server MUST treat all established and newly incoming WebTransport sessions as
-malformed, as described in {{Section 4.1.2 of HTTP3}}.  Additionally, the server
-MAY close the HTTP/3 connection with a `WT_REQUIREMENTS_NOT_MET` error code to
-aid in debugging.
+malformed, as described in {{Section 4.1.2 of HTTP3}}.
 
 A client MUST NOT establish WebTransport sessions if the server's SETTINGS do
 not have correct values for every required setting or if the server's transport
