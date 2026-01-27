@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-01T01:04:50.360780+00:00",
+  "timestamp": "2026-01-27T01:03:21.810354+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5429,7 +5429,7 @@
       "id": "I_kwDOCvK98s7EYYR_",
       "title": "Separate Upgrade Token from WT-H3",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/218",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bemasc",
       "authorAssociation": "NONE",
       "assignees": [
@@ -5438,8 +5438,8 @@
       "labels": [],
       "body": "Using the same Upgrade Token for two seemingly quite different protocols (depending on HTTP version) seems like a mistake.  Giving WT-H2 and WT-H3 separate Upgrade Tokens would avoid ambiguity and simplify the use of WebTransport inside backend infrastructure.",
       "createdAt": "2025-07-23T10:34:33Z",
-      "updatedAt": "2025-10-20T06:41:30Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-25T09:05:57Z",
+      "closedAt": "2026-01-25T09:05:57Z",
       "comments": [
         {
           "author": "DavidSchinazi",
@@ -5564,12 +5564,14 @@
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
-        "LPardue"
+        "ekinnear"
       ],
-      "labels": [],
+      "labels": [
+        "has pull request"
+      ],
       "body": "The security considerations in this doc reference the Overview security considerations but that doesn't really talk about DoS. The security considerations in HTTP/3 still apply to WebTransport and stating that explicitly doesn't really hurt, so maybe think about doing that as a mininimum\n\nIn the context of this issue though, I wonder if the DoS considerations in https://datatracker.ietf.org/doc/html/rfc9114#section-10.5 need some augmentation to make implementers defensive to the new interaction modes. This doc starts on that path by stating:\n\n> An application could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the application is untrusted, the WebTransport client SHOULD limit the number of outgoing sessions it will open.\n\nHowever, I think there are more cases that need highlighting - its now possible for either side to bombard each other with streams and datagrams related to a session. This is somewhat novel for the client, who previously had some limits on server push as described in https://datatracker.ietf.org/doc/html/rfc9114#section-10.5-2\n\nWe probably also want the \"catch all statement\" to make it clear to implementers that the buck stops with them, both HTTP/2 and HTTP/3 include a statement along the lines of \"webtransport features have legitimate uses but they can become a burden when they are used unnecessarily or to excess. An endpoint that doesn't monitor use of these features exposes itself to a risk of denial of service. Implementations SHOULD track the use of these features and set limits on their use. An endpoint MAY treat activity that is suspicious as a connection erro of type [ENHANCE_YOUR_CALM/H3_EXCESSIVE_LOAD].\"",
       "createdAt": "2025-08-06T02:31:55Z",
-      "updatedAt": "2025-08-06T03:37:43Z",
+      "updatedAt": "2026-01-25T11:27:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -5622,13 +5624,15 @@
       "state": "OPEN",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [
-        "next meeting"
+        "has pull request"
       ],
       "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
       "createdAt": "2025-08-26T23:42:29Z",
-      "updatedAt": "2025-11-10T09:38:06Z",
+      "updatedAt": "2026-01-25T11:27:39Z",
       "closedAt": null,
       "comments": [
         {
@@ -5693,6 +5697,13 @@
           "body": "To my mind, the simplest thing is to spell out a rate limit quoata policy that speaks to the per-connection limits. \n\nI have a task to review the rate limit draft as part of my HTTP directorate duties. I hope to be able to post some findings here in the next couple of weeks.",
           "createdAt": "2025-11-10T09:38:06Z",
           "updatedAt": "2025-11-10T09:38:06Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sounds good, it looks like the RateLimit draft already has a set of [problem types](https://www.ietf.org/archive/id/draft-ietf-httpapi-ratelimit-headers-10.html#section-5) that can be used to indicate what happened.",
+          "createdAt": "2026-01-25T09:56:00Z",
+          "updatedAt": "2026-01-25T09:56:19Z"
         }
       ]
     },
@@ -5786,15 +5797,26 @@
       "state": "OPEN",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [
-        "editorial"
+        "editorial",
+        "has pull request"
       ],
       "body": "There _is_ text in section 4 that says\n\n> If at any point a session ID is received that cannot be a valid ID for a client-initiated bidirectional stream, the recipient MUST close the connection with an H3_ID_ERROR error code.\n\nWhat precisely is the definition of valid here? I suppose if the session ID is larger than the max session ID, that's invalid. But what if endpoint receives a bidirectional stream related to a closed session. Due to reordering, it is possible something gets delivered to a webtransport application early or late. Treating that as invalid seems error prone or fragile.\n\nAlso, I suppose the requirements needs to apply to server initiated streams too?\n\n",
       "createdAt": "2025-10-09T22:30:13Z",
-      "updatedAt": "2025-10-20T10:55:00Z",
+      "updatedAt": "2026-01-25T11:27:55Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I would assume that this more refers to IDs showing up on a server that would correspond to a server-initiated stream, since clients must always initiate the WT session itself, that ID cannot have been used for a CONNECT stream. Would be great to make this more clear.",
+          "createdAt": "2026-01-25T10:54:42Z",
+          "updatedAt": "2026-01-25T10:54:42Z"
+        }
+      ]
     },
     {
       "number": 234,
@@ -5838,11 +5860,15 @@
       "state": "OPEN",
       "author": "AnkshitJain",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "[Max streams](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#name-wt_max_streams-capsule) has a maximum allowed value that is lower than the maximum value allowed in the capsule or the SETTINGS.\n```\nMaximum Streams:  A count of the cumulative number of streams of the corresponding type that can be opened over the lifetime of the session.  This value cannot exceed 2^60, as it is not possible to encode stream IDs larger than 2^62-1.\n```\nCan we add text suggesting what needs to be done if the value exceeds 2^60 in the capsule or the HTTP/3 SETTINGS? \n",
       "createdAt": "2025-11-03T15:29:30Z",
-      "updatedAt": "2025-11-03T18:28:22Z",
+      "updatedAt": "2026-01-25T11:54:03Z",
       "closedAt": null,
       "comments": [
         {
@@ -5859,15 +5885,15 @@
       "id": "I_kwDOCvK98s7VkFn4",
       "title": "Early IANA review summary",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/238",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "IANA performed an early review of the draft, to summarize some of the points\n\n1. Section 9.2 - Please use the field names used in the HTTP/3 settings registry. \"Code\" instead of \"Value\", \"Initial Value\" instead of \"Default\". _CHAIR NOTE: this seems incorrect based on https://www.iana.org/assignments/http3-parameters/http3-parameters.xhtml#http3-parameters-settings and RFC 9114_\n2. Section 9.3, 9.4 - The HTTP/3 frame tyypes and stream types use \"Value\" instead of \"Code\". We also need \"Status, Change Controller\" and \"Contact\" fields\n3. Section 9.5 - The HTTP/3 error codes need \"Status, Change Controller\" and \"Contact\" fields",
       "createdAt": "2025-11-03T17:17:46Z",
-      "updatedAt": "2025-11-03T17:17:46Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-25T09:08:07Z",
+      "closedAt": "2026-01-25T09:08:07Z",
       "comments": []
     },
     {
@@ -5878,11 +5904,15 @@
       "state": "OPEN",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "question"
+      ],
       "body": "An unsuspecting reader of the document might assume that WT_MAX_STREAMS works analogously to the MAX_STREAMS frame in QUIC. This is not the case: WT_MAX_STREAMS contains a stream count (including closed streams), whereas MAX_STREAMS contains a stream ID.\n\nTo avoid this confusion, we could consider renaming it to something like WT_MAX_STREAM_COUNT.",
       "createdAt": "2025-11-03T17:30:05Z",
-      "updatedAt": "2025-11-03T18:27:16Z",
+      "updatedAt": "2026-01-25T12:27:16Z",
       "closedAt": null,
       "comments": [
         {
@@ -5891,6 +5921,34 @@
           "body": "This is a valuable clarification, and we agree with this proposal.\n\nAs implementers, we can confirm that the **WT_MAX_STREAMS** name caused initial confusion during our development, as we had to explicitly differentiate its **\"pure count\"** semantic from QUIC's **\"Stream ID limit\"** semantic (RFC 9000, Sec 19.11).\n\nRenaming this to **WT_MAX_STREAM_COUNT** makes the specification clearer and reduces ambiguity for future implementers.",
           "createdAt": "2025-11-03T18:27:16Z",
           "updatedAt": "2025-11-03T18:27:16Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is that the case? From RFC9000:\n\n> [19.11. ](https://www.rfc-editor.org/rfc/rfc9000.html#section-19.11)[MAX_STREAMS Frames](https://www.rfc-editor.org/rfc/rfc9000.html#name-max_streams-frames)\n> \n> A MAX_STREAMS frame (type=0x12 or 0x13) informs the peer of the cumulative number of streams of a given type it is permitted to open. A MAX_STREAMS frame with a type of 0x12 applies to bidirectional streams, and a MAX_STREAMS frame with a type of 0x13 applies to unidirectional streams.\n> ...\n> MAX_STREAMS frames contain the following field:\n> \n> Maximum Streams:\n> A count of the cumulative number of streams of the corresponding type that can be opened over the lifetime of the connection. This value cannot exceed 260, as it is not possible to encode stream IDs larger than 262-1. Receipt of a frame that permits opening of a stream larger than this limit MUST be treated as a connection error of type FRAME_ENCODING_ERROR.\n> ...\n> An endpoint MUST NOT open more streams than permitted by the current stream limit set by its peer. For instance, a server that receives a unidirectional stream limit of 3 is permitted to open streams 3, 7, and 11, but not stream 15. \n> ...\n> Note that these frames (and the corresponding transport parameters) do not describe the number of streams that can be opened concurrently. The limit includes streams that have been closed as well as those that are open.\n\nWT_MAX_STREAMS contains a stream limit (including closed streams) and MAX_STREAMS also contains a stream limit (including closed streams). ",
+          "createdAt": "2026-01-25T11:25:00Z",
+          "updatedAt": "2026-01-25T11:25:00Z"
+        },
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "@ekinnear\n\nThanks for the correction. You are right; strictly speaking, both protocols utilize a cumulative count on the wire.\n\nHowever, in practice, the term `MAX_STREAMS` is susceptible to misinterpretation as a concurrency limit rather than a cumulative lifetime counter. While the initial \"ID vs. Count\" distinction was inexact, the proposed `WT_MAX_STREAM_COUNT` offers explicit semantic clarity.\n\nWe view this as a trade-off between terminological consistency with QUIC and self-explanatory naming, and we defer to the WG's preference.",
+          "createdAt": "2026-01-25T11:49:10Z",
+          "updatedAt": "2026-01-25T11:49:10Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Given that the semantics are exactly the same as the equivalent QUIC frame, it seems like keeping the name consistent would help here. \n\nThere's a pretty good chunk of text that makes it clear that it's not a concurrency limit:\n> Note that, because Maximum Streams is a cumulative value representing the total allowed number of streams, including previously closed streams, endpoints repeatedly send new [WT_MAX_STREAMS](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#WT_MAX_STREAMS) capsules with increasing Maximum Streams values as streams are opened.",
+          "createdAt": "2026-01-25T12:14:50Z",
+          "updatedAt": "2026-01-25T12:14:50Z"
+        },
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "Agreed. Consistency with QUIC is the pragmatic choice here.",
+          "createdAt": "2026-01-25T12:27:16Z",
+          "updatedAt": "2026-01-25T12:27:16Z"
         }
       ]
     },
@@ -5899,7 +5957,7 @@
       "id": "I_kwDOCvK98s7VmSKX",
       "title": "Definition of new settings is messy",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/241",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
@@ -5908,9 +5966,17 @@
       ],
       "body": "Section 9 is our IANA considerations section. In section [9.2](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#section-9.2), we define several HTTP/3 settings. The format is messy, it intermixes definition of the setting itself with the instructions for IANA to register the setting. A cleaner approach would be to define the settings elsewhere and keep section 9.2 focused solely on the simple registration aspects.",
       "createdAt": "2025-11-03T20:11:53Z",
-      "updatedAt": "2025-11-03T20:11:53Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-01-25T11:26:27Z",
+      "closedAt": "2026-01-25T11:26:27Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed in #242 ",
+          "createdAt": "2026-01-25T11:26:27Z",
+          "updatedAt": "2026-01-25T11:26:27Z"
+        }
+      ]
     },
     {
       "number": 243,
@@ -5920,11 +5986,15 @@
       "state": "OPEN",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "The server ignores errors:\n> Both WT-Available-Protocols and WT-Protocol are Structured Fields [[FIELDS](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#FIELDS)]. WT-Available-Protocols is a List. WT-Protocol is defined as an Item. In both cases, the only valid value type is a String. Any value type other than String MUST be treated as an error that causes the entire field to be ignored. No semantics are defined for parameters on either field; parameters MUST be ignored.\n\nAnd the client as well:\n> The value in the WT-Protocol response header field MUST be one of the values listed in WT-Available-Protocols of the request. Otherwise, the WT-Protocol field MUST be ignored.\n\nWhy is that? Does this enable future extensibility? Is this the right place to enable extensibility? If so, we should probably make that intention clear in the draft.\n\nIf not, we should tighten the validation logic (reject requests / responses that contain invalid values).",
       "createdAt": "2025-11-15T03:29:12Z",
-      "updatedAt": "2025-11-19T07:55:35Z",
+      "updatedAt": "2026-01-25T11:53:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -5947,6 +6017,13 @@
           "body": "Given the myriad other paths to ignoring, I'm not sure that an error in that specific case helps much.  Applications can note the failure of protocol negotiation and make their own decisions.",
           "createdAt": "2025-11-19T07:55:35Z",
           "updatedAt": "2025-11-19T07:55:35Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We do currently say: \n> If it does, the server MUST include a single choice\nfrom the client's list in that field.  Servers MAY reject the request if the\nclient did not include a suitable protocol.\n\nI agree that it doesn't help a lot since we're already pretty happy to just ignore, but if we're going to require it, we probably ought to explain what to do when we don't see a valid protocol in the WT-Protocol field.",
+          "createdAt": "2026-01-25T11:44:50Z",
+          "updatedAt": "2026-01-25T11:44:50Z"
         }
       ]
     },
@@ -5974,11 +6051,15 @@
       "state": "OPEN",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "A client has to perform a number of checks to see if a QUIC connection is suitable for WebTransport, e.g.: \n* Are DATAGRAMs enabled on the QUIC layer?\n* Are DATAGRAMs enabled on the HTTP/3 layer?\n* Is the RESET_STREAM_AT extension enabled?\n \nIf these conditions are not fulfilled, a client might wish to close the connection, if it doesn't wish to use the connection for regular HTTP/3.\n\nI'm wondering if it would make sense to mint a HTTP/3 for this, maybe H3_UNUSABLE_FOR_WEBTRANSPORT, in order to aid debugging.",
       "createdAt": "2025-12-29T08:47:24Z",
-      "updatedAt": "2025-12-29T09:03:31Z",
+      "updatedAt": "2026-01-25T11:53:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -5987,6 +6068,30 @@
           "body": "Speaking as a server operator, I see a lot of clients opening HTTP/3 connections and not using them. There can be various reason for that, ranging from the benign to the ridiculous. \n\nI see WebTransport at risk of falling into the quagmire of multi CDN issues , where the discovery mechanism (e.g. a webpage with a URL) might not be in lockstep with server config. That's just one example why a server might not allow a client to do what it needs. If it happened to production services, its quite an observability gap for both providers and the people running services over them.\n\nWhile it's also possible to put such information in the reason phrase of CONNECTION_CLOSE, I tend to treat that as toxic data and wouldn't build any observability around it.\n\nAn error code would provide a decent middle ground ",
           "createdAt": "2025-12-29T09:03:31Z",
           "updatedAt": "2025-12-29T09:03:31Z"
+        }
+      ]
+    },
+    {
+      "number": 250,
+      "id": "I_kwDOCvK98s7lqZGA",
+      "title": "Create `_local` and `_remote` versions of the `INITIAL_*` SETTINGS?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/250",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Don't we need `_local` and `_remote` versions of this?\r\n\r\n_Originally posted by @martinthomson in https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/242#discussion_r2491370756_\r\n            ",
+      "createdAt": "2026-01-25T11:27:05Z",
+      "updatedAt": "2026-01-25T12:10:49Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "See also https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/155 ",
+          "createdAt": "2026-01-25T12:10:49Z",
+          "updatedAt": "2026-01-25T12:10:49Z"
         }
       ]
     }
@@ -18605,24 +18710,26 @@
       "id": "PR_kwDOCvK98s6iSL3u",
       "title": "Split the upgrade token out for h3",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/220",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This is the one that is \"special\", so it is the one that gets a suffix.\r\n\r\nCloses #218, but will require a fix on the h2 repo.",
       "createdAt": "2025-08-05T23:59:56Z",
-      "updatedAt": "2025-10-21T01:39:52Z",
+      "updatedAt": "2026-01-25T09:05:56Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "1917c4126d7cfa7151bb7285c4d145469d5246f9",
       "headRepository": "martinthomson/draft-ietf-webtrans-http3",
       "headRefName": "upgrade-token-split",
       "headRefOid": "de547621c0e186265aa6165f41832f2a3bfef138",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-01-25T09:05:56Z",
+      "mergedAt": "2026-01-25T09:05:56Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "40eadb4efa9d3a54fc31daf62b9c46ac0d986aeb"
+      },
       "comments": [],
       "reviews": [
         {
@@ -19096,24 +19203,26 @@
       "id": "PR_kwDOCvK98s6xRA8y",
       "title": "Address some early IANA feedback",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/240",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "This partly address some feedback in #238. It doesn't touch on the \"Status\" fields, which are inconsisently absent or present with permanent or provisional. I'll make a separate PR for that.\r\n",
       "createdAt": "2025-11-03T20:06:25Z",
-      "updatedAt": "2025-11-04T17:21:08Z",
+      "updatedAt": "2026-01-25T09:08:06Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
+      "baseRefOid": "40eadb4efa9d3a54fc31daf62b9c46ac0d986aeb",
       "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "headRefName": "address-some-early-iana-feedback",
-      "headRefOid": "d209ad9f93e237ad460a470b2b38d7fc4586a17a",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "dfb6415913dc3490e046f024a9ffef4cdf4ec730",
+      "closedAt": "2026-01-25T09:08:06Z",
+      "mergedAt": "2026-01-25T09:08:06Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "eec9065088b7f0c272d3588c4dddb4ec92eaa57a"
+      },
       "comments": [],
       "reviews": [
         {
@@ -19141,6 +19250,19 @@
           "createdAt": "2025-11-04T17:21:08Z",
           "updatedAt": "2025-11-04T17:21:08Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s7cvvY9",
+          "commit": {
+            "abbreviatedOid": "d209ad9"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Fixed conflicts, merging",
+          "createdAt": "2026-01-25T09:06:29Z",
+          "updatedAt": "2026-01-25T09:07:30Z",
+          "comments": []
         }
       ]
     },
@@ -19149,24 +19271,28 @@
       "id": "PR_kwDOCvK98s6xRXwe",
       "title": "Separate out settings prose and registration",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/242",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "editorial"
+      ],
       "body": "SETTINGS_WT_MAX_SESSIONS already had prose in section 3.1 that was not consistently\r\nduplicated in 9.2, so I just deleted it.\r\n\r\nProse about SETTINGS for flow control is moved to section 5.5 which was already\r\ncalled \"Flow Control SETTINGS\".\r\n\r\nThe first version of this PR nukes some of the anchor magic because it seemed a bit pointless to me. But if people feel strongly then it can be added back.",
       "createdAt": "2025-11-03T20:38:58Z",
-      "updatedAt": "2025-11-04T17:15:32Z",
+      "updatedAt": "2026-01-25T09:09:45Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
       "headRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "headRefName": "separate-settings-def-and-reg",
       "headRefOid": "7526c671ac0bf8b82df96596925ced1b5f4ab98c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-01-25T09:09:45Z",
+      "mergedAt": "2026-01-25T09:09:45Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "3a10b9366ab05f71a706f4b08976ee5a761215c2"
+      },
       "comments": [],
       "reviews": [
         {
@@ -19208,6 +19334,288 @@
               "updatedAt": "2025-11-04T17:15:32Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7cvvvn",
+          "commit": {
+            "abbreviatedOid": "7526c67"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-01-25T09:09:36Z",
+          "updatedAt": "2026-01-25T09:09:36Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 246,
+      "id": "PR_kwDOCvK98s6_NvvP",
+      "title": "Update security considerations",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/246",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Update security considerations using the text suggested by Lucas in #222.\r\nFixes #222",
+      "createdAt": "2026-01-25T09:01:40Z",
+      "updatedAt": "2026-01-25T09:01:41Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/update_security_considerations",
+      "headRefOid": "bbf750d95884c0fcf762eedfe47085dd866bd79b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 247,
+      "id": "PR_kwDOCvK98s6_OQK8",
+      "title": "Remove WT_MAX_SESSIONS, replace with WT_ENABLED for server only",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/247",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Remove WT_MAX_SESSIONS, replace with WT_ENABLED for server only\r\n\r\nFixes #224",
+      "createdAt": "2026-01-25T10:52:01Z",
+      "updatedAt": "2026-01-25T10:52:02Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/update_max_sessions",
+      "headRefOid": "e3d43fae5f4f9225efce26907b10be59f55f90ae",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 248,
+      "id": "PR_kwDOCvK98s6_OUOc",
+      "title": "Update text about invalid session IDs",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/248",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Update text about invalid session IDs\r\nFixes #227",
+      "createdAt": "2026-01-25T11:07:48Z",
+      "updatedAt": "2026-01-25T11:07:49Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/session_id_editorial",
+      "headRefOid": "625b522518db48dba3f6e231300dc1f80b424b56",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 249,
+      "id": "PR_kwDOCvK98s6_OVkp",
+      "title": "Attempting to send an invalid value is an error",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/249",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Pick an error, capsule parse error is apparently called H3_DATAGRAM_ERROR: https://www.rfc-editor.org/rfc/rfc9297.html#section-5.2\r\n\r\nFixes #237",
+      "createdAt": "2026-01-25T11:13:59Z",
+      "updatedAt": "2026-01-25T13:19:04Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/too_large",
+      "headRefOid": "0d325e4d48dd9f449478c8fa59a857065e73720d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Not defining a general error code for capsule parsing was an oversight that @DavidSchinazi and I made in 9297. We discussed trying to fix that somehow but I can't recall where we landed.\r\n\r\nTimelines are awkward here but it would be lovely if this document could use such an error code. Perhaps we can try to get a registration spun up and run through quickly.",
+          "createdAt": "2026-01-25T13:18:40Z",
+          "updatedAt": "2026-01-25T13:19:04Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 251,
+      "id": "PR_kwDOCvK98s6_OdS6",
+      "title": "Add error code for invalid alpn",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/251",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add error code for invalid alpn\r\nFixes #243",
+      "createdAt": "2026-01-25T11:45:29Z",
+      "updatedAt": "2026-01-26T18:39:21Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/alpn",
+      "headRefOid": "c81d313ae89e6a5570cc2a99699c4126171e7940",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I thought that we intentionally agreed to ignore those? Not sure why change now.",
+          "createdAt": "2026-01-26T17:05:26Z",
+          "updatedAt": "2026-01-26T17:05:26Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I thought that we intentionally agreed to ignore those? Not sure why change now.\r\n\r\nSee the discussion in https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/243, given that we have a MUST for the server not doing it wrong, it didn't seem to buy us very much to ignore it. \r\n\r\nI understand ignoring it if the client sends the header and then the server ignores it, but if the server goes out of its way to respond with a selected protocol that isn't something you offered, we said you weren't allowed to do that, is it bad to have us enforce it?  ",
+          "createdAt": "2026-01-26T18:33:15Z",
+          "updatedAt": "2026-01-26T18:33:15Z"
+        },
+        {
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I believe the motivation is RFC 8941, which says:\r\n> When parsing fails, the entire field is ignored (see [Section 4.2](https://datatracker.ietf.org/doc/html/rfc8941#text-parse)); in most situations, violating field-specific constraints should have the same effect.",
+          "createdAt": "2026-01-26T18:39:21Z",
+          "updatedAt": "2026-01-26T18:39:21Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7cxEE9",
+          "commit": {
+            "abbreviatedOid": "c81d313"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-25T13:10:51Z",
+          "updatedAt": "2026-01-25T13:10:52Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "Strictly, did the webtransport session ever get created?\n\nMaybe here ypu need to say close the stream or something.",
+              "createdAt": "2026-01-25T13:10:52Z",
+              "updatedAt": "2026-01-25T13:10:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7c-qEu",
+          "commit": {
+            "abbreviatedOid": "c81d313"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-26T18:31:33Z",
+          "updatedAt": "2026-01-26T18:31:33Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "The client got back a 200 and it would have happily been a WT session up until this change, and the server thinks that the session is going, so it seemed okay to send everything with the error and then close the stream. Not attached to this shape, though, would happily change to other text.",
+              "createdAt": "2026-01-26T18:31:33Z",
+              "updatedAt": "2026-01-26T18:31:33Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 252,
+      "id": "PR_kwDOCvK98s6_Oe-p",
+      "title": "Add WT_REQUIREMENTS_NOT_MET error code",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/252",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add WT_REQUIREMENTS_NOT_MET error code\r\nFixes #245",
+      "createdAt": "2026-01-25T11:53:17Z",
+      "updatedAt": "2026-01-26T17:05:56Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/unsuitable_error",
+      "headRefOid": "4181ad9cf0f78cdf5dc81c22dba5dbb12e9ddc34",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "There also an edge case. If the server wants to close the connection during the handshake (say, because it observes lack of required TPs), then the requirements in https://datatracker.ietf.org/doc/html/rfc9000#section-10.2.3 mean the CONNECTION_CLOSE _MUST_ be converted to a type of 0x1c with APPLICATION_ERROR.\r\n\r\nIt might be preferential to reject a connection attemot in this phase with TRANSPORT_PARAMETER_ERROR or PROTOCOL_VIOLATION in such a case. Not really sure. ",
+          "createdAt": "2026-01-25T13:06:50Z",
+          "updatedAt": "2026-01-25T13:06:50Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I\u2019d prefer if it was the client who makes the decision to give up on a connection attempt (or alternatively to reuse the connection for HTTP traffic).\r\n\r\nI mean, me too, perhaps we stick with having the server reject all incoming CONNECT requests:\r\n> the server MUST treat all established and newly incoming WebTransport sessions as malformed, as described in {{Section 4.1.2 of HTTP3}}.\r\n\r\n> the requirements in https://datatracker.ietf.org/doc/html/rfc9000#section-10.2.3 mean the CONNECTION_CLOSE MUST be converted to a type of 0x1c with APPLICATION_ERROR\r\n\r\nVery good point! Let's get rid of the server side of this.",
+          "createdAt": "2026-01-26T00:14:02Z",
+          "updatedAt": "2026-01-26T00:15:06Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7cw83r",
+          "commit": {
+            "abbreviatedOid": "dd5c1e8"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Do we really want to encourage the server to close the connection? I\u2019d prefer if it was the client who makes the decision to give up on a connection attempt (or alternatively to reuse the connection for HTTP traffic). ",
+          "createdAt": "2026-01-25T12:41:19Z",
+          "updatedAt": "2026-01-25T12:41:19Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s7c9Q35",
+          "commit": {
+            "abbreviatedOid": "4181ad9"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-01-26T17:05:56Z",
+          "updatedAt": "2026-01-26T17:05:56Z",
+          "comments": []
         }
       ]
     }
