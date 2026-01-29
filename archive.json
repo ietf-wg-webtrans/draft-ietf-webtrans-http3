@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-27T01:03:21.810354+00:00",
+  "timestamp": "2026-01-29T01:08:58.638243+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -19563,7 +19563,7 @@
       "labels": [],
       "body": "Add WT_REQUIREMENTS_NOT_MET error code\r\nFixes #245",
       "createdAt": "2026-01-25T11:53:17Z",
-      "updatedAt": "2026-01-26T17:05:56Z",
+      "updatedAt": "2026-01-27T05:40:12Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
@@ -19615,6 +19615,19 @@
           "body": "",
           "createdAt": "2026-01-26T17:05:56Z",
           "updatedAt": "2026-01-26T17:05:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s7dFh42",
+          "commit": {
+            "abbreviatedOid": "4181ad9"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-01-27T05:40:12Z",
+          "updatedAt": "2026-01-27T05:40:12Z",
           "comments": []
         }
       ]
