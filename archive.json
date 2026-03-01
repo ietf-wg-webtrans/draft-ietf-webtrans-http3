@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-29T01:08:58.638243+00:00",
+  "timestamp": "2026-03-01T01:19:13.337721+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -19388,7 +19388,7 @@
       "labels": [],
       "body": "Remove WT_MAX_SESSIONS, replace with WT_ENABLED for server only\r\n\r\nFixes #224",
       "createdAt": "2026-01-25T10:52:01Z",
-      "updatedAt": "2026-01-25T10:52:02Z",
+      "updatedAt": "2026-02-28T14:13:17Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
@@ -19400,7 +19400,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7msq1T",
+          "commit": {
+            "abbreviatedOid": "e3d43fa"
+          },
+          "author": "mxinden",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "In favor. Appreciate the simplicity. Thank you.",
+          "createdAt": "2026-02-28T14:13:17Z",
+          "updatedAt": "2026-02-28T14:13:17Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 248,
