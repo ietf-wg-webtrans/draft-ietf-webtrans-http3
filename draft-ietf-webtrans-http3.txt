@@ -948,6 +948,13 @@ Table of Contents
    referred to as the "flow control capsules", are WT_MAX_DATA,
    WT_MAX_STREAMS, WT_DATA_BLOCKED, and WT_STREAMS_BLOCKED.
 
+   An endpoint MUST NOT wait for a WT_DATA_BLOCKED or WT_STREAMS_BLOCKED
+   capsule before sending a WT_MAX_DATA or WT_MAX_STREAMS capsule; doing
+   so could result in the sender being blocked for at least an entire
+   round trip.  Endpoints SHOULD send WT_MAX_DATA and WT_MAX_STREAMS
+   capsules as they consume data or close streams (similar to the
+   mechanism used in QUIC, see Section 4.2 of [RFC9000]).
+
 5.6.1.  Flow Control and Intermediaries
 
    Because flow control in WebTransport is hop-by-hop and does not
@@ -1039,7 +1046,10 @@ Table of Contents
 
    A WT_STREAMS_BLOCKED capsule does not open the stream, but informs
    the peer that a new stream was needed and the stream limit prevented
-   the creation of the stream.
+   the creation of the stream.  A sender is not required to send
+   WT_STREAMS_BLOCKED capsules, however WT_STREAMS_BLOCKED capsules can
+   be used as input to tuning of flow control algorithms and for
+   debugging purposes.
 
    WT_STREAMS_BLOCKED Capsule {
      Type (i) = 0x190B4D43..0x190B4D44,
@@ -1117,8 +1127,10 @@ Table of Contents
 
    A sender SHOULD send a WT_DATA_BLOCKED capsule (type=0x190B4D41) when
    it wishes to send data but is unable to do so due to WebTransport
-   session-level flow control.  WT_DATA_BLOCKED capsules can be used as
-   input to tuning of flow control algorithms.
+   session-level flow control.  A sender is not required to send
+   WT_DATA_BLOCKED capsules, however WT_DATA_BLOCKED capsules can be
+   used as input to tuning of flow control algorithms and for debugging
+   purposes.
 
    WT_DATA_BLOCKED Capsule {
      Type (i) = 0x190B4D41,
@@ -1706,25 +1718,28 @@ Index
       W
 
          WT_DATA_BLOCKED  Section 5.4, Paragraph 3; Section 5.6,
-            Paragraph 1; Section 5.6.5, Paragraph 1; Section 5.6.5,
-            Paragraph 3; Section 5.6.5, Paragraph 5; Section 9.6,
-            Paragraph 13.4.1
+            Paragraph 1; Section 5.6, Paragraph 2; Section 5.6.5,
+            Paragraph 1; Section 5.6.5, Paragraph 3; Section 5.6.5,
+            Paragraph 5; Section 9.6, Paragraph 13.4.1
          WT_MAX_DATA  Section 5.4, Paragraph 1; Section 5.4, Paragraph
             2; Section 5.4, Paragraph 3; Section 5.5, Paragraph 2.2.1;
             Section 5.5.3, Paragraph 1; Section 5.6, Paragraph 1;
-            Section 5.6.4, Paragraph 1; Section 5.6.4, Paragraph 2;
-            Section 5.6.4, Paragraph 4; Section 5.6.4, Paragraph 7;
-            Section 5.6.4, Paragraph 8; Section 9.6, Paragraph 11.4.1
+            Section 5.6, Paragraph 2; Section 5.6.4, Paragraph 1;
+            Section 5.6.4, Paragraph 2; Section 5.6.4, Paragraph 4;
+            Section 5.6.4, Paragraph 7; Section 5.6.4, Paragraph 8;
+            Section 9.6, Paragraph 11.4.1
          WT_MAX_STREAMS  Section 5.3, Paragraph 1; Section 5.5,
             Paragraph 2.1.1; Section 5.5.1, Paragraph 1; Section 5.5.2,
-            Paragraph 1; Section 5.6, Paragraph 1; Section 5.6.2,
-            Paragraph 1; Section 5.6.2, Paragraph 2; Section 5.6.2,
-            Paragraph 4; Section 5.6.2, Paragraph 9; Section 5.6.2,
-            Paragraph 10; Section 9.6, Paragraph 7.4.1
+            Paragraph 1; Section 5.6, Paragraph 1; Section 5.6,
+            Paragraph 2; Section 5.6.2, Paragraph 1; Section 5.6.2,
+            Paragraph 2; Section 5.6.2, Paragraph 4; Section 5.6.2,
+            Paragraph 9; Section 5.6.2, Paragraph 10; Section 9.6,
+            Paragraph 7.4.1
          WT_STREAMS_BLOCKED  Section 5.3, Paragraph 5; Section 5.6,
-            Paragraph 1; Section 5.6.3, Paragraph 1; Section 5.6.3,
-            Paragraph 2; Section 5.6.3, Paragraph 4; Section 5.6.3,
-            Paragraph 6; Section 9.6, Paragraph 9.4.1
+            Paragraph 1; Section 5.6, Paragraph 2; Section 5.6.3,
+            Paragraph 1; Section 5.6.3, Paragraph 2; Section 5.6.3,
+            Paragraph 4; Section 5.6.3, Paragraph 6; Section 9.6,
+            Paragraph 9.4.1
 
 Authors' Addresses
 
