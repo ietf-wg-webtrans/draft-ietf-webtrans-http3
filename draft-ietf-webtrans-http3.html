@@ -1606,7 +1606,11 @@ server MUST treat all established and newly incoming WebTransport sessions as
 malformed, as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-11" class="pilcrow">¶</a></p>
 <p id="section-3.1-12">A client MUST NOT establish WebTransport sessions if the server's SETTINGS do
 not have correct values for every required setting or if the server's transport
-parameters do not have correct values for every required transport parameter.<a href="#section-3.1-12" class="pilcrow">¶</a></p>
+parameters do not have correct values for every required transport parameter.
+If a client does not wish to use the connection for purposes other than
+WebTransport when the requirements for WebTransport are not met, the client MAY
+close the HTTP/3 connection with a <code>WT_REQUIREMENTS_NOT_MET</code> error code to aid
+in debugging.<a href="#section-3.1-12" class="pilcrow">¶</a></p>
 <p id="section-3.1-13">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-13" class="pilcrow">¶</a></p>
 <p id="section-3.1-14">For draft versions of WebTransport only, the server MUST NOT process any
 incoming WebTransport requests until the client settings have been received, as
@@ -2980,6 +2984,38 @@ reading from the CONNECT stream.<a href="#section-9.5-2.18.1" class="pilcrow">¶
 <dt id="section-9.5-2.31">Contact:</dt>
           <dd style="margin-left: 1.5em" id="section-9.5-2.32">
             <p id="section-9.5-2.32.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.5-2.32.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.33">Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.34">
+            <p id="section-9.5-2.34.1">WT_REQUIREMENTS_NOT_MET<a href="#section-9.5-2.34.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.35">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.36">
+            <p id="section-9.5-2.36.1">0x212c0d48<a href="#section-9.5-2.36.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.37">Description:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.38">
+            <p id="section-9.5-2.38.1">HTTP/3 connection closed because the features required for WebTransport are
+not supported.  Either the client or server is missing required SETTINGS or
+transport parameters needed for WebTransport.<a href="#section-9.5-2.38.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.39">Reference:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.40">
+            <p id="section-9.5-2.40.1">This document.<a href="#section-9.5-2.40.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.41">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.42">
+            <p id="section-9.5-2.42.1">IETF<a href="#section-9.5-2.42.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.43">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.44">
+            <p id="section-9.5-2.44.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.5-2.44.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
