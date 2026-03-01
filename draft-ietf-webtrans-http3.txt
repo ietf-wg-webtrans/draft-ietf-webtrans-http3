@@ -124,8 +124,6 @@ Table of Contents
    10. References
      10.1.  Normative References
      10.2.  Informative References
-   Appendix A.  Changelog
-     A.1.  Changes between draft versions 02 and 07
    Index
    Authors' Addresses
 
@@ -172,7 +170,7 @@ Table of Contents
    described by section 4 of [RFC9308].
 
    HTTP is an application-layer protocol, defined by "HTTP Semantics"
-   [RFC9110].  HTTP/3 is the application mapping for QUIC, defined in
+   [HTTP].  HTTP/3 is the application mapping for QUIC, defined in
    [RFC9114].  It describes how QUIC streams are used to carry control
    data or HTTP request and response message sequences in the form of
    frames and describes details of stream and connection lifecycle
@@ -242,7 +240,7 @@ Table of Contents
 
    WebTransport servers in general are identified by a pair of authority
    value and path value (defined in [RFC3986] Sections 3.2 and 3.3
-   correspondingly).
+   respectively).
 
    When an HTTP/3 connection is established, the server sends a
    SETTINGS_WT_ENABLED setting to indicate support for WebTransport over
@@ -372,7 +370,7 @@ Table of Contents
    In order to create a new WebTransport session, a WebTransport client
    sends an HTTP extended CONNECT request.  In this request:
 
-   *  The :protocol pseudo-header field([RFC8441]) MUST be set to
+   *  The :protocol pseudo-header field ([RFC8441]) MUST be set to
       webtransport-h3.
 
    *  The :scheme field MUST be https.
@@ -851,10 +849,10 @@ Table of Contents
    stream- and the connection-level limit permit, see Section 4.6 of
    [RFC9000] for details on how QUIC stream limits are applied.
 
-   Unlike the the QUIC MAX_STREAMS frame, there is no simple
-   relationship between the value in this frame and stream IDs in QUIC
-   STREAM frames.  This especially applies if there are other users of
-   streams on the connection.
+   Unlike the QUIC MAX_STREAMS frame, there is no simple relationship
+   between the value in this frame and stream IDs in QUIC STREAM frames.
+   This especially applies if there are other users of streams on the
+   connection.
 
    The WT_STREAMS_BLOCKED capsule (Section 5.6.3) can be sent to
    indicate that an endpoint was unable to create a stream due to the
@@ -888,7 +886,7 @@ Table of Contents
    Because WebTransport over HTTP/3 uses a native QUIC stream for each
    WebTransport stream, per-stream data limits are provided by QUIC
    natively (see Section 4.1 of [RFC9000]).  The WT_MAX_STREAM_DATA and
-   WT_STREAM_DATA_BLOCKED capsules (Part XX of
+   WT_STREAM_DATA_BLOCKED capsules (Sections 6.6 and 6.9 of
    [I-D.ietf-webtrans-http2]) are not used and so are prohibited.
    Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
    WT_STREAM_DATA_BLOCKED capsule as a session error.
@@ -1035,7 +1033,7 @@ Table of Contents
    0x190B4D44) when it wishes to open a stream but is unable to do so
    due to the maximum stream limit set by its peer.  A
    WT_STREAMS_BLOCKED capsule of type 0x190B4D43 is used to indicate
-   reaching the bidirectional stream limit, and a STREAMS_BLOCKED
+   reaching the bidirectional stream limit, and a WT_STREAMS_BLOCKED
    capsule of type 0x190B4D44 is used to indicate reaching the
    unidirectional stream limit.
 
@@ -1297,8 +1295,9 @@ Table of Contents
 9.  IANA Considerations
 
    This document registers an upgrade token (Section 9.1), HTTP/3
-   settings (Section 9.2), an HTTP/3 stream type (Section 9.4, an HTTP/3
-   error code (Section 9.5), and an HTTP header field (Section 9.7).
+   settings (Section 9.2), an HTTP/3 stream type (Section 9.4), an
+   HTTP/3 error code (Section 9.5), and an HTTP header field
+   (Section 9.7).
 
 9.1.  Upgrade Token Registration
 
@@ -1562,7 +1561,7 @@ Table of Contents
 9.7.  Protocol Negotiation HTTP Header Fields
 
    The following HTTP header fields are used for negotiating a protocol
-   (Section 3.3.  These are added to the "HTTP Field Name" registry
+   (Section 3.3).  These are added to the "HTTP Field Name" registry
    established in Section 18.4 of [HTTP]:
 
    The WT-Available-Protocols field:
@@ -1656,11 +1655,6 @@ Table of Contents
               DOI 10.17487/RFC9000, May 2021,
               <https://www.rfc-editor.org/rfc/rfc9000>.
 
-   [RFC9110]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
-              Ed., "HTTP Semantics", STD 97, RFC 9110,
-              DOI 10.17487/RFC9110, June 2022,
-              <https://www.rfc-editor.org/rfc/rfc9110>.
-
    [RFC9114]  Bishop, M., Ed., "HTTP/3", RFC 9114, DOI 10.17487/RFC9114,
               June 2022, <https://www.rfc-editor.org/rfc/rfc9114>.
 
@@ -1704,38 +1698,6 @@ Table of Contents
    [RFC9308]  Kühlewind, M. and B. Trammell, "Applicability of the QUIC
               Transport Protocol", RFC 9308, DOI 10.17487/RFC9308,
               September 2022, <https://www.rfc-editor.org/rfc/rfc9308>.
-
-Appendix A.  Changelog
-
-A.1.  Changes between draft versions 02 and 07
-
-   The following changes make the draft-02 and draft-07 versions of this
-   protocol incompatible:
-
-   *  draft-07 requires SETTINGS_WEBTRANSPORT_MAX_SESSIONS (#86) and
-      uses it for version negotiation (#129)
-
-   *  draft-07 explicitly requires SETTINGS_ENABLE_CONNECT_PROTOCOL to
-      be enabled (#93)
-
-   *  draft-07 explicitly requires SETTINGS_H3_DATAGRAM to be enabled
-      (#106)
-
-   *  draft-07 only allows WEBTRANSPORT_STREAM at the beginning of the
-      stream
-
-   The following changes that are present in draft-07 can be also
-   implemented by a draft-02 implementation safely:
-
-   *  Expanding stream reset error code space from 8 to 32 bits (#115)
-
-   *  WEBTRANSPORT_SESSION_GONE error code (#75)
-
-   *  Handling for HTTP GOAWAY (#76)
-
-   *  DRAIN_WEBTRANSPORT_SESSION capsule (#79)
-
-   *  Disallowing following redirects automatically (#113)
 
 Index
 
