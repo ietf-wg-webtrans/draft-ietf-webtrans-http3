@@ -89,7 +89,7 @@ can mitigate head-of-line blocking.  While QUIC provides streams as a transport
 service, it is unopinionated about their usage.  The applicability of streams is
 described by section 4 of {{?RFC9308}}.
 
-HTTP is an application-layer protocol, defined by "HTTP Semantics" {{!RFC9110}}.
+HTTP is an application-layer protocol, defined by "HTTP Semantics" {{HTTP}}.
 HTTP/3 is the application mapping for QUIC, defined in {{!RFC9114}}.  It
 describes how QUIC streams are used to carry control data or HTTP request and
 response message sequences in the form of frames and describes details
@@ -154,7 +154,7 @@ static compression, or Huffman encoding.
 ## Protocol Overview
 
 WebTransport servers in general are identified by a pair of authority value and
-path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
+path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 respectively).
 
 When an HTTP/3 connection is established, the server sends a SETTINGS_WT_ENABLED
 setting to indicate support for WebTransport over HTTP/3.  This process also
@@ -263,7 +263,7 @@ the `https` URI scheme ({{Section 4.2.2 of HTTP}}).
 In order to create a new WebTransport session, a WebTransport client sends an
 HTTP extended CONNECT request.  In this request:
 
-* The `:protocol` pseudo-header field({{!RFC8441}}) MUST be set to
+* The `:protocol` pseudo-header field ({{!RFC8441}}) MUST be set to
   `webtransport-h3`.
 * The `:scheme` field MUST be `https`.
 * Both the `:authority` and the `:path` value MUST be set; these fields identify
@@ -713,7 +713,7 @@ created within the session if both the stream- and the connection-level limit
 permit, see {{Section 4.6 of !RFC9000}} for details on how QUIC stream limits
 are applied.
 
-Unlike the the QUIC MAX_STREAMS frame, there is no simple relationship between
+Unlike the QUIC MAX_STREAMS frame, there is no simple relationship between
 the value in this frame and stream IDs in QUIC STREAM frames.  This especially
 applies if there are other users of streams on the connection.
 
@@ -747,7 +747,8 @@ capsule.
 Because WebTransport over HTTP/3 uses a native QUIC stream for each WebTransport
 stream, per-stream data limits are provided by QUIC natively (see {{Section 4.1
 of !RFC9000}}).  The WT_MAX_STREAM_DATA and WT_STREAM_DATA_BLOCKED capsules
-({{Section XX of ?I-D.ietf-webtrans-http2}}) are not used and so are prohibited.
+({{Sections 6.6 and 6.9 of ?I-D.ietf-webtrans-http2}}) are not used and so are
+prohibited.
 Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a WT_STREAM_DATA_BLOCKED
 capsule as a session error.
 
@@ -895,7 +896,7 @@ A sender SHOULD send a WT_STREAMS_BLOCKED capsule (type=0x190B4D43 or
 0x190B4D44) when it wishes to open a stream but is unable to do so due to the
 maximum stream limit set by its peer.  A WT_STREAMS_BLOCKED capsule of type
 0x190B4D43 is used to indicate reaching the bidirectional stream limit, and a
-STREAMS_BLOCKED capsule of type 0x190B4D44 is used to indicate reaching the
+WT_STREAMS_BLOCKED capsule of type 0x190B4D44 is used to indicate reaching the
 unidirectional stream limit.
 
 A WT_STREAMS_BLOCKED capsule does not open the stream, but informs the peer that
@@ -1150,7 +1151,7 @@ type H3_EXCESSIVE_LOAD.
 # IANA Considerations
 
 This document registers an upgrade token ({{upgrade-token}}), HTTP/3 settings
-({{http3-settings}}), an HTTP/3 stream type ({{iana-stream-type}}, an HTTP/3 error
+({{http3-settings}}), an HTTP/3 stream type ({{iana-stream-type}}), an HTTP/3 error
 code ({{iana-error-code}}), and an HTTP header field ({{iana-http}}).
 
 ## Upgrade Token Registration {#upgrade-token}
@@ -1602,7 +1603,7 @@ Notes:
 ## Protocol Negotiation HTTP Header Fields {#iana-http}
 
 The following HTTP header fields are used for negotiating a protocol
-({{protocol-negotiation}}.  These are added to the "HTTP Field Name" registry
+({{protocol-negotiation}}).  These are added to the "HTTP Field Name" registry
 established in {{Section 18.4 of HTTP}}:
 
 The `WT-Available-Protocols` field:
