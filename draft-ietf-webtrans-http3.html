@@ -2313,7 +2313,9 @@ WT_MAX_STREAMS Capsule {
               <p id="section-5.6.2-5.2.1">A count of the cumulative number of streams of the corresponding type that
 can be opened over the lifetime of the session. This value cannot
 exceed 2<sup>60</sup>, as it is not possible to encode stream IDs larger
-than 2<sup>62</sup>-1.<a href="#section-5.6.2-5.2.1" class="pilcrow">¶</a></p>
+than 2<sup>62</sup>-1. Receipt of a capsule with a Maximum Streams value
+larger than this limit MUST be treated as an HTTP/3 error of type
+H3_DATAGRAM_ERROR.<a href="#section-5.6.2-5.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 </dl>
