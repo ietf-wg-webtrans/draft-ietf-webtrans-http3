@@ -156,10 +156,10 @@ static compression, or Huffman encoding.
 WebTransport servers in general are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 correspondingly).
 
-When an HTTP/3 connection is established, both the client and the server send a
-SETTINGS_WT_MAX_SESSIONS setting to indicate support for WebTransport over
-HTTP/3.  This process also negotiates the use of additional HTTP/3 extensions
-to enable both endpoints to open WebTransport streams.
+When an HTTP/3 connection is established, the server sends a SETTINGS_WT_ENABLED
+setting to indicate support for WebTransport over HTTP/3.  This process also
+negotiates the use of additional HTTP/3 extensions to enable both endpoints to
+open WebTransport streams.
 
 WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request {{!RFC9220}}.  If the server
@@ -188,25 +188,19 @@ closed.
 
 ## Establishing a WebTransport-Capable HTTP/3 Connection {#establishing}
 
-A WebTransport-Capable HTTP/3 connection requires the client and server to both
-signal support for WebTransport over HTTP/3 using a setting. Clients also
-signal support by using the "webtransport-h3" upgrade token in extended CONNECT
-requests when establishing sessions (see {{upgrade-token}}).
+A WebTransport-Capable HTTP/3 connection requires the server to signal support
+for WebTransport over HTTP/3 using a setting.  Clients also signal support by
+using the "webtransport-h3" upgrade token in extended CONNECT requests when
+establishing sessions (see {{upgrade-token}}).
 
-This document defines a SETTINGS_WT_MAX_SESSIONS setting for indicating the
-number of WebTransport sessions a connection supports.  The default value for
-the SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint is not
-willing to receive any WebTransport sessions.  Both clients and servers
-supporting WebTransport over HTTP/3 MUST send the SETTINGS_WT_MAX_SESSIONS
-setting with a value greater than "0".  Clients MUST NOT attempt to establish
-WebTransport sessions until they have received the setting indicating
-WebTransport support from the server.
+This document defines a SETTINGS_WT_ENABLED setting that WebTransport servers
+use to indicate their support for WebTransport.  The default value for the
+SETTINGS_WT_ENABLED setting is "0", meaning that the server does not support
+WebTransport.  Clients MUST NOT attempt to establish WebTransport sessions until
+they have received the setting indicating WebTransport support from the server.
 
 WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 {{!RFC9220}}, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.
-Clients also signal support for WebTransport by using the "webtransport" upgrade
-token in extended CONNECT requests when establishing sessions (see
-{{upgrade-token}}).
 
 WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the Capsule
 Protocol, and both the client and the server indicate support for HTTP/3
@@ -226,7 +220,7 @@ RESET-STREAM-AT}}.
 
 In summary, servers supporting WebTransport over HTTP/3 send:
 
-- A SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0"
+- A SETTINGS_WT_ENABLED setting with a value greater than "0"
 - A SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1"
 - A SETTINGS_H3_DATAGRAM setting with a value of 1
 - A max_datagram_frame_size transport parameter with a value greater than 0
@@ -234,7 +228,6 @@ In summary, servers supporting WebTransport over HTTP/3 send:
 
 Clients supporting WebTransport over HTTP/3 send:
 
-- A SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0"
 - A SETTINGS_H3_DATAGRAM setting with a value of 1
 - A max_datagram_frame_size transport parameter with a value greater than 0
 - An empty reset_stream_at transport parameter
@@ -409,9 +402,9 @@ HTTP/3 also supports datagrams, which are not retransmitted.
 
 Pooling:
 
-: WebTransport over HTTP/3 provides optional support for pooling.  Endpoints can
-use the SETTINGS_WT_MAX_SESSIONS setting to indicate if pooling is supported on
-a particular HTTP/3 connection ({{establishing}}).
+: WebTransport over HTTP/3 provides optional support for pooling.  Endpoints
+that do not support pooling can reply to CONNECT requests with a header
+indicating a rate limit policy with a quota of "1" ({{?I-D.ietf-httpapi-ratelimit-headers}}).
 
 ## Unidirectional streams {#unidirectional-streams}
 
@@ -648,11 +641,8 @@ on a single session and starving traffic for other sessions
 (see {{security-considerations}}).
 
 Flow control is enabled when both endpoints declare their intent to use flow
-control, even if SETTINGS_WT_MAX_SESSIONS is sent with a value of "1".
-Endpoints declare their intent to use flow control by taking any of the
-following actions:
+control by taking any of the following actions:
 
-- Sending SETTINGS_WT_MAX_SESSIONS with a value greater than "1".
 - Sending SETTINGS_WT_INITIAL_MAX_STREAMS_UNI with any value other than "0".
 - Sending SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI with any value other than "0".
 - Sending SETTINGS_WT_INITIAL_MAX_DATA with any value other than "0".
@@ -660,9 +650,8 @@ following actions:
 If both endpoints take at least one of these actions, flow control is enabled,
 and the limits described in the entirety of {{flow-control}} apply.
 
-The inclusion of the flow control SETTINGS in these criteria allows endpoints to
-agree to explicitly enable flow control, even if only a single WebTransport
-session is supported.
+Flow control can be enabled regardless of the number of WebTransport sessions a
+server supports.
 
 If flow control is not enabled, clients MUST NOT attempt to establish more than
 one simultaneous WebTransport session.  A server that receives more than one
@@ -677,15 +666,23 @@ reordered.
 
 ## Limiting the Number of Simultaneous Sessions {#flow-control-limit-sessions}
 
-This document defines a SETTINGS_WT_MAX_SESSIONS setting that allows
-the server to limit the maximum number of concurrent WebTransport sessions on a
-single HTTP/3 connection.  The client MUST NOT open more simultaneous sessions
-than indicated in the server SETTINGS parameter.  The server MUST NOT close
-the connection if the client opens sessions exceeding this limit, as the client
-and the server do not have a consistent view of how many sessions are open due
-to the asynchronous nature of the protocol; instead, it MUST reset all of the
-CONNECT streams it is not willing to process with the `H3_REQUEST_REJECTED`
-status defined in {{Section 8.1 of HTTP3}}.
+Servers SHOULD limit the rate of incoming WebTransport sessions on HTTP/3
+connections to prevent excessive consumption of resources.  To do so, they have
+multiple mechanisms available:
+
+* The `H3_REQUEST_REJECTED` error code defined in {{Section 8.1 of HTTP3}}
+  indicates to the receiving HTTP/3 stack that the request was not processed in
+  any way.
+* HTTP status code 429 indicates that the request was rejected due to rate
+  limiting {{!RFC6585}}.  Unlike the previous method, this signal is directly
+  propagated to the application.
+
+WebTransport servers can use rate limit header fields in responses to CONNECT
+requests to signal quota policies and service limits to WebTransport clients
+(see {{?I-D.ietf-httpapi-ratelimit-headers}}).  This provides hints to clients
+about how many sessions they can reasonably expect to be able to open.  An
+endpoint that does not support pooling and flow control MUST NOT accept more
+than one incoming WebTransport session at a time.
 
 ## Limiting the Number of Streams Within a Session {#flow-control-limit-streams}
 
@@ -697,8 +694,8 @@ initiates.
 
 Note that the CONNECT stream for the session is not included in either the
 bidirectional or the unidirectional stream limits; the number of CONNECT
-streams a client can open is limited by the SETTINGS_WT_MAX_SESSIONS
-setting and QUIC flow control's stream limits.
+streams a client can open is limited by QUIC flow control's stream limits and
+any rate limit that a WebTransport server enforces.
 
 The session-level stream limit applies in addition to the QUIC MAX_STREAMS
 frame, which provides a connection-level stream limit.  New streams can only be
@@ -1070,10 +1067,10 @@ used to identify WebTransport, allowing servers to offer multiple
 versions simultaneously (see {{upgrade-token}}).
 
 Servers that support future incompatible versions of WebTransport signal that
-support by changing the codepoint used for the SETTINGS_WT_MAX_SESSIONS
-setting (see {{http3-settings}}).  Clients can select the associated upgrade
-token, if applicable, to use when establishing a new session, ensuring that
-servers will always know the syntax in use for every incoming request.
+support by changing the codepoint used for the SETTINGS_WT_ENABLED setting (see
+{{http3-settings}}).  Clients can select the associated upgrade token, if
+applicable, to use when establishing a new session, ensuring that servers will
+always know the syntax in use for every incoming request.
 
 Changes to future stream formats require changes to the Unidirectional Stream
 type (see {{unidirectional-streams}}) and Bidirectional Stream signal value
@@ -1086,10 +1083,10 @@ session associated with that stream.
 \[\[RFC editor: please remove this section before publication.]]
 
 The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WT_MAX_SESSIONS setting.  Because of that, any
-WebTransport endpoint MUST wait for the peer's SETTINGS frame before sending or
-processing any WebTransport traffic.  When multiple versions are supported by
-both of the peers, the most recent version supported by both is selected.
+used for the SETTINGS_WT_ENABLED setting.  Because of that, any WebTransport
+endpoint MUST wait for the peer's SETTINGS frame before sending or processing
+any WebTransport traffic.  When multiple versions are supported by both of the
+peers, the most recent version supported by both is selected.
 
 # Security Considerations
 
@@ -1170,11 +1167,11 @@ The following entry is added to the "HTTP/3 Settings" registry established by
 
 Setting Name:
 
-: SETTINGS_WT_MAX_SESSIONS
+: SETTINGS_WT_ENABLED
 
 Value:
 
-: 0x14e9cd29
+: 0x2c7cf000
 
 Default:
 
