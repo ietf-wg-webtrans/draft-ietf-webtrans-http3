@@ -805,6 +805,13 @@ these capsules define special intermediary handling as described in
 control capsules", are WT_MAX_DATA, WT_MAX_STREAMS, WT_DATA_BLOCKED, and
 WT_STREAMS_BLOCKED.
 
+An endpoint MUST NOT wait for a WT_DATA_BLOCKED or WT_STREAMS_BLOCKED capsule
+before sending a WT_MAX_DATA or WT_MAX_STREAMS capsule; doing so could result
+in the sender being blocked for at least an entire round trip.  Endpoints
+SHOULD send WT_MAX_DATA and WT_MAX_STREAMS capsules as they consume data or
+close streams (similar to the mechanism used in QUIC, see
+{{Section 4.2 of !RFC9000}}).
+
 ### Flow Control and Intermediaries {#flow-control-intermediaries}
 
 Because flow control in WebTransport is hop-by-hop and does not provide an
@@ -898,7 +905,9 @@ unidirectional stream limit.
 
 A WT_STREAMS_BLOCKED capsule does not open the stream, but informs the peer that
 a new stream was needed and the stream limit prevented the creation of the
-stream.
+stream.  A sender is not required to send WT_STREAMS_BLOCKED capsules, however
+WT_STREAMS_BLOCKED capsules can be used as input to tuning of flow control
+algorithms and for debugging purposes.
 
 ~~~
 WT_STREAMS_BLOCKED Capsule {
@@ -978,8 +987,9 @@ for SETTINGS_WT_INITIAL_MAX_DATA.
 
 A sender SHOULD send a WT_DATA_BLOCKED capsule (type=0x190B4D41) when it wishes
 to send data but is unable to do so due to WebTransport session-level flow
-control.  WT_DATA_BLOCKED capsules can be used as input to tuning of flow
-control algorithms.
+control.  A sender is not required to send WT_DATA_BLOCKED capsules, however
+WT_DATA_BLOCKED capsules can be used as input to tuning of flow control
+algorithms and for debugging purposes.
 
 ~~~
 WT_DATA_BLOCKED Capsule {
