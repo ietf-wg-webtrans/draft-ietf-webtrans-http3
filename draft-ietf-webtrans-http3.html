@@ -1498,10 +1498,10 @@ static compression, or Huffman encoding.<a href="#section-2.1.1-4" class="pilcro
         </h3>
 <p id="section-2.2-1">WebTransport servers in general are identified by a pair of authority value and
 path value (defined in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Sections 3.2 and 3.3 correspondingly).<a href="#section-2.2-1" class="pilcrow">¶</a></p>
-<p id="section-2.2-2">When an HTTP/3 connection is established, both the client and the server send a
-SETTINGS_WT_MAX_SESSIONS setting to indicate support for WebTransport over
-HTTP/3.  This process also negotiates the use of additional HTTP/3 extensions
-to enable both endpoints to open WebTransport streams.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
+<p id="section-2.2-2">When an HTTP/3 connection is established, the server sends a SETTINGS_WT_ENABLED
+setting to indicate support for WebTransport over HTTP/3.  This process also
+negotiates the use of additional HTTP/3 extensions to enable both endpoints to
+open WebTransport streams.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
 <p id="section-2.2-3">WebTransport sessions are initiated inside a given HTTP/3 connection by the
 client, who sends an extended CONNECT request <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>.  If the server
 accepts the request, a WebTransport session is established.  The resulting
@@ -1545,23 +1545,17 @@ closed.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
         <h3 id="name-establishing-a-webtransport">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-establishing-a-webtransport" class="section-name selfRef">Establishing a WebTransport-Capable HTTP/3 Connection</a>
         </h3>
-<p id="section-3.1-1">A WebTransport-Capable HTTP/3 connection requires the client and server to both
-signal support for WebTransport over HTTP/3 using a setting. Clients also
-signal support by using the "webtransport-h3" upgrade token in extended CONNECT
-requests when establishing sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">This document defines a SETTINGS_WT_MAX_SESSIONS setting for indicating the
-number of WebTransport sessions a connection supports.  The default value for
-the SETTINGS_WT_MAX_SESSIONS setting is "0", meaning that the endpoint is not
-willing to receive any WebTransport sessions.  Both clients and servers
-supporting WebTransport over HTTP/3 MUST send the SETTINGS_WT_MAX_SESSIONS
-setting with a value greater than "0".  Clients MUST NOT attempt to establish
-WebTransport sessions until they have received the setting indicating
-WebTransport support from the server.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-1">A WebTransport-Capable HTTP/3 connection requires the server to signal support
+for WebTransport over HTTP/3 using a setting.  Clients also signal support by
+using the "webtransport-h3" upgrade token in extended CONNECT requests when
+establishing sessions (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">This document defines a SETTINGS_WT_ENABLED setting that WebTransport servers
+use to indicate their support for WebTransport.  The default value for the
+SETTINGS_WT_ENABLED setting is "0", meaning that the server does not support
+WebTransport.  Clients MUST NOT attempt to establish WebTransport sessions until
+they have received the setting indicating WebTransport support from the server.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <p id="section-3.1-3">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
-<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.
-Clients also signal support for WebTransport by using the "webtransport" upgrade
-token in extended CONNECT requests when establishing sessions (see
-<a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 <p id="section-3.1-4">WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the Capsule
 Protocol, and both the client and the server indicate support for HTTP/3
 datagrams by sending a SETTINGS_H3_DATAGRAM setting value set to 1 in their
@@ -1576,7 +1570,7 @@ reset_stream_at transport parameter as described in <span><a href="https://datat
 <p id="section-3.1-7">In summary, servers supporting WebTransport over HTTP/3 send:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.1-8.1">
-            <p id="section-3.1-8.1.1">A SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0"<a href="#section-3.1-8.1.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-8.1.1">A SETTINGS_WT_ENABLED setting with a value greater than "0"<a href="#section-3.1-8.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-8.2">
             <p id="section-3.1-8.2.1">A SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1"<a href="#section-3.1-8.2.1" class="pilcrow">¶</a></p>
@@ -1594,16 +1588,13 @@ reset_stream_at transport parameter as described in <span><a href="https://datat
 <p id="section-3.1-9">Clients supporting WebTransport over HTTP/3 send:<a href="#section-3.1-9" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.1-10.1">
-            <p id="section-3.1-10.1.1">A SETTINGS_WT_MAX_SESSIONS setting with a value greater than "0"<a href="#section-3.1-10.1.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-10.1.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-10.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-10.2">
-            <p id="section-3.1-10.2.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-10.2.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-10.2.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-10.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-10.3">
-            <p id="section-3.1-10.3.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-10.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.1-10.4">
-            <p id="section-3.1-10.4.1">An empty reset_stream_at transport parameter<a href="#section-3.1-10.4.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-10.3.1">An empty reset_stream_at transport parameter<a href="#section-3.1-10.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-3.1-11">Servers should note that CONNECT requests to establish new WebTransport
@@ -1784,9 +1775,9 @@ HTTP/3 also supports datagrams, which are not retransmitted.<a href="#section-4.
           <dd class="break"></dd>
 <dt id="section-4.1-3.3">Pooling:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-3.4">
-            <p id="section-4.1-3.4.1">WebTransport over HTTP/3 provides optional support for pooling.  Endpoints can
-use the SETTINGS_WT_MAX_SESSIONS setting to indicate if pooling is supported on
-a particular HTTP/3 connection (<a href="#establishing" class="auto internal xref">Section 3.1</a>).<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-3.4.1">WebTransport over HTTP/3 provides optional support for pooling.  Endpoints
+that do not support pooling can reply to CONNECT requests with a header
+indicating a rate limit policy with a quota of "1" (<span>[<a href="#I-D.ietf-httpapi-ratelimit-headers" class="cite xref">I-D.ietf-httpapi-ratelimit-headers</a>]</span>).<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -2072,28 +2063,22 @@ flow control.  This prevents an application from consuming excessive resources
 on a single session and starving traffic for other sessions
 (see <a href="#security-considerations" class="auto internal xref">Section 8</a>).<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.1-2">Flow control is enabled when both endpoints declare their intent to use flow
-control, even if SETTINGS_WT_MAX_SESSIONS is sent with a value of "1".
-Endpoints declare their intent to use flow control by taking any of the
-following actions:<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+control by taking any of the following actions:<a href="#section-5.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-3.1">
-            <p id="section-5.1-3.1.1">Sending SETTINGS_WT_MAX_SESSIONS with a value greater than "1".<a href="#section-5.1-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-3.1.1">Sending SETTINGS_WT_INITIAL_MAX_STREAMS_UNI with any value other than "0".<a href="#section-5.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-3.2">
-            <p id="section-5.1-3.2.1">Sending SETTINGS_WT_INITIAL_MAX_STREAMS_UNI with any value other than "0".<a href="#section-5.1-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-3.2.1">Sending SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI with any value other than "0".<a href="#section-5.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-3.3">
-            <p id="section-5.1-3.3.1">Sending SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI with any value other than "0".<a href="#section-5.1-3.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.1-3.4">
-            <p id="section-5.1-3.4.1">Sending SETTINGS_WT_INITIAL_MAX_DATA with any value other than "0".<a href="#section-5.1-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-3.3.1">Sending SETTINGS_WT_INITIAL_MAX_DATA with any value other than "0".<a href="#section-5.1-3.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-5.1-4">If both endpoints take at least one of these actions, flow control is enabled,
 and the limits described in the entirety of <a href="#flow-control" class="auto internal xref">Section 5</a> apply.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
-<p id="section-5.1-5">The inclusion of the flow control SETTINGS in these criteria allows endpoints to
-agree to explicitly enable flow control, even if only a single WebTransport
-session is supported.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.1-5">Flow control can be enabled regardless of the number of WebTransport sessions a
+server supports.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
 <p id="section-5.1-6">If flow control is not enabled, clients MUST NOT attempt to establish more than
 one simultaneous WebTransport session.  A server that receives more than one
 session on an underlying transport connection when flow control is not enabled
@@ -2110,15 +2095,27 @@ reordered.<a href="#section-5.1-7" class="pilcrow">¶</a></p>
         <h3 id="name-limiting-the-number-of-simu">
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-limiting-the-number-of-simu" class="section-name selfRef">Limiting the Number of Simultaneous Sessions</a>
         </h3>
-<p id="section-5.2-1">This document defines a SETTINGS_WT_MAX_SESSIONS setting that allows
-the server to limit the maximum number of concurrent WebTransport sessions on a
-single HTTP/3 connection.  The client MUST NOT open more simultaneous sessions
-than indicated in the server SETTINGS parameter.  The server MUST NOT close
-the connection if the client opens sessions exceeding this limit, as the client
-and the server do not have a consistent view of how many sessions are open due
-to the asynchronous nature of the protocol; instead, it MUST reset all of the
-CONNECT streams it is not willing to process with the <code>H3_REQUEST_REJECTED</code>
-status defined in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-8.1" class="relref">Section 8.1</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">Servers SHOULD limit the rate of incoming WebTransport sessions on HTTP/3
+connections to prevent excessive consumption of resources.  To do so, they have
+multiple mechanisms available:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.2-2.1">
+            <p id="section-5.2-2.1.1">The <code>H3_REQUEST_REJECTED</code> error code defined in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-8.1" class="relref">Section 8.1</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>
+indicates to the receiving HTTP/3 stack that the request was not processed in
+any way.<a href="#section-5.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.2-2.2">
+            <p id="section-5.2-2.2.1">HTTP status code 429 indicates that the request was rejected due to rate
+limiting <span>[<a href="#RFC6585" class="cite xref">RFC6585</a>]</span>.  Unlike the previous method, this signal is directly
+propagated to the application.<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.2-3">WebTransport servers can use rate limit header fields in responses to CONNECT
+requests to signal quota policies and service limits to WebTransport clients
+(see <span>[<a href="#I-D.ietf-httpapi-ratelimit-headers" class="cite xref">I-D.ietf-httpapi-ratelimit-headers</a>]</span>).  This provides hints to clients
+about how many sessions they can reasonably expect to be able to open.  An
+endpoint that does not support pooling and flow control MUST NOT accept more
+than one incoming WebTransport session at a time.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="flow-control-limit-streams">
@@ -2133,8 +2130,8 @@ separate limits for unidirectional and bidirectional streams that a peer
 initiates.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.3-2">Note that the CONNECT stream for the session is not included in either the
 bidirectional or the unidirectional stream limits; the number of CONNECT
-streams a client can open is limited by the SETTINGS_WT_MAX_SESSIONS
-setting and QUIC flow control's stream limits.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+streams a client can open is limited by QUIC flow control's stream limits and
+any rate limit that a WebTransport server enforces.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
 <p id="section-5.3-3">The session-level stream limit applies in addition to the QUIC MAX_STREAMS
 frame, which provides a connection-level stream limit.  New streams can only be
 created within the session if both the stream- and the connection-level limit
@@ -2570,10 +2567,10 @@ used to establish WebTransport sessions will need to modify the upgrade token
 used to identify WebTransport, allowing servers to offer multiple
 versions simultaneously (see <a href="#upgrade-token" class="auto internal xref">Section 9.1</a>).<a href="#section-7-1" class="pilcrow">¶</a></p>
 <p id="section-7-2">Servers that support future incompatible versions of WebTransport signal that
-support by changing the codepoint used for the SETTINGS_WT_MAX_SESSIONS
-setting (see <a href="#http3-settings" class="auto internal xref">Section 9.2</a>).  Clients can select the associated upgrade
-token, if applicable, to use when establishing a new session, ensuring that
-servers will always know the syntax in use for every incoming request.<a href="#section-7-2" class="pilcrow">¶</a></p>
+support by changing the codepoint used for the SETTINGS_WT_ENABLED setting (see
+<a href="#http3-settings" class="auto internal xref">Section 9.2</a>).  Clients can select the associated upgrade token, if
+applicable, to use when establishing a new session, ensuring that servers will
+always know the syntax in use for every incoming request.<a href="#section-7-2" class="pilcrow">¶</a></p>
 <p id="section-7-3">Changes to future stream formats require changes to the Unidirectional Stream
 type (see <a href="#unidirectional-streams" class="auto internal xref">Section 4.2</a>) and Bidirectional Stream signal value
 (see <a href="#bidirectional-streams" class="auto internal xref">Section 4.3</a>) to allow recipients of incoming frames to
@@ -2586,10 +2583,10 @@ session associated with that stream.<a href="#section-7-3" class="pilcrow">¶</a
         </h3>
 <p id="section-7.1-1">[[RFC editor: please remove this section before publication.]]<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 <p id="section-7.1-2">The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WT_MAX_SESSIONS setting.  Because of that, any
-WebTransport endpoint MUST wait for the peer's SETTINGS frame before sending or
-processing any WebTransport traffic.  When multiple versions are supported by
-both of the peers, the most recent version supported by both is selected.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+used for the SETTINGS_WT_ENABLED setting.  Because of that, any WebTransport
+endpoint MUST wait for the peer's SETTINGS frame before sending or processing
+any WebTransport traffic.  When multiple versions are supported by both of the
+peers, the most recent version supported by both is selected.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2685,12 +2682,12 @@ Token Registry" registry established by Section 16.7 of <span>[<a href="#HTTP" c
 <span class="break"></span><dl class="dlParallel" id="section-9.2-2">
           <dt id="section-9.2-2.1">Setting Name:</dt>
           <dd style="margin-left: 1.5em" id="section-9.2-2.2">
-            <p id="section-9.2-2.2.1">SETTINGS_WT_MAX_SESSIONS<a href="#section-9.2-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-9.2-2.2.1">SETTINGS_WT_ENABLED<a href="#section-9.2-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.2-2.3">Value:</dt>
           <dd style="margin-left: 1.5em" id="section-9.2-2.4">
-            <p id="section-9.2-2.4.1">0x14e9cd29<a href="#section-9.2-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-9.2-2.4.1">0x2c7cf000<a href="#section-9.2-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.2-2.5">Default:</dt>
@@ -3370,6 +3367,10 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
         <dd>
 <span class="refAuthor">Barth, A.</span>, <span class="refTitle">"The Web Origin Concept"</span>, <span class="seriesInfo">RFC 6454</span>, <span class="seriesInfo">DOI 10.17487/RFC6454</span>, <time datetime="2011-12" class="refDate">December 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6454">https://www.rfc-editor.org/rfc/rfc6454</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC6585">[RFC6585]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">R. Fielding</span>, <span class="refTitle">"Additional HTTP Status Codes"</span>, <span class="seriesInfo">RFC 6585</span>, <span class="seriesInfo">DOI 10.17487/RFC6585</span>, <time datetime="2012-04" class="refDate">April 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6585">https://www.rfc-editor.org/rfc/rfc6585</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
         <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
@@ -3411,6 +3412,10 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
 <a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
+<dt id="I-D.ietf-httpapi-ratelimit-headers">[I-D.ietf-httpapi-ratelimit-headers]</dt>
+        <dd>
+<span class="refAuthor">Polli, R.</span>, <span class="refAuthor">Ruiz, A. M.</span>, and <span class="refAuthor">D. Miller</span>, <span class="refTitle">"RateLimit header fields for HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpapi-ratelimit-headers-10</span>, <time datetime="2025-09-27" class="refDate">27 September 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-ratelimit-headers-10">https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-ratelimit-headers-10</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="I-D.ietf-webtrans-http2">[I-D.ietf-webtrans-http2]</dt>
         <dd>
 <span class="refAuthor">Frindell, A.</span>, <span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Vasiliev, V.</span>, and <span class="refAuthor">G. Xie</span>, <span class="refTitle">"WebTransport over HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-http2-13</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-13">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-13</a>&gt;</span>. </dd>
