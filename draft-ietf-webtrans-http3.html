@@ -1751,9 +1751,15 @@ well as send datagrams, on a session for which it has sent the CONNECT request,
 even if it has not yet received the server's response to the request. On the
 server side, opening streams and sending datagrams is possible as soon as the
 CONNECT request has been received.<a href="#section-4-3" class="pilcrow">¶</a></p>
-<p id="section-4-4">If at any point a session ID is received that cannot be a valid ID for a
-client-initiated bidirectional stream, the recipient MUST close the connection
-with an H3_ID_ERROR error code.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-4">Session IDs are derived from the stream ID of the CONNECT stream that
+established the session and therefore MUST always correspond to a
+client-initiated bidirectional stream, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9000#section-2.1" class="relref">Section 2.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>.
+If an endpoint receives a session ID on a unidirectional stream, bidirectional
+stream, or datagram that does not correspond to a client-initiated bidirectional
+stream ID, the endpoint MUST close the connection with an H3_ID_ERROR error
+code.  Session IDs that correspond to closed sessions are not considered invalid
+for the purposes of this check; endpoints handle data for closed sessions as
+described in <a href="#session-termination" class="auto internal xref">Section 6</a>.<a href="#section-4-4" class="pilcrow">¶</a></p>
 <div id="transport-properties">
 <section id="section-4.1">
         <h3 id="name-transport-properties">
