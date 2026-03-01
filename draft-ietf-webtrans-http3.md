@@ -151,6 +151,31 @@ decompression entirely but must always support static decompression and Huffman
 decoding.  When sending, endpoints can opt to never use dynamic compression,
 static compression, or Huffman encoding.
 
+### Capsule-Based WebTransport over HTTP/3
+
+WebTransport over HTTP/3 as defined in this document provides the best
+performance by using native QUIC streams and datagrams. Endpoints SHOULD always
+use this protocol when using WebTransport over an HTTP/3 connection.
+
+However, it is also possible to use WebTransport over a single HTTP/3 stream
+using the capsule-based protocol defined in
+{{?WEBTRANS-H2=I-D.ietf-webtrans-http2}}.  The two protocols are distinguished
+by their upgrade tokens: this document uses the "webtransport-h3" token
+({{upgrade-token}}), while {{WEBTRANS-H2}} uses the "webtransport" token.
+
+The capsule-based protocol can be useful for intermediaries that proxy
+WebTransport sessions between HTTP/2 and HTTP/3 connections, as it avoids the
+need to translate between the two wire formats.  It can also be useful in
+deployment environments such as data centers where existing routing
+infrastructure supports forwarding streams but does not support the HTTP/3
+extensions required by this document.
+
+Endpoints that use the capsule-based protocol over HTTP/3 lose the benefits of
+stream independence, as all WebTransport streams within a session share a single
+QUIC stream and are subject to head-of-line blocking.  Datagrams sent using the
+capsule-based protocol are also retransmitted by QUIC, and therefore do not
+provide unreliable delivery.
+
 ## Protocol Overview
 
 WebTransport servers in general are identified by a pair of authority value and
@@ -302,7 +327,7 @@ sessions, or other initial flow control values, from the values negotiated
 during the previous session; such change would be deemed incompatible, and MUST
 result in a H3_SETTINGS_ERROR connection error.
 
-The `webtransport-h3` HTTP Upgrade Token uses the Capsule Protocol as defined in
+The "webtransport-h3" HTTP Upgrade Token uses the Capsule Protocol as defined in
 {{HTTP-DATAGRAM}}.  The Capsule Protocol is negotiated when the server sends a
 2xx response.  The `capsule-protocol` header field {{Section 3.4 of
 HTTP-DATAGRAM}} is not required by WebTransport and can safely be ignored by
@@ -1158,7 +1183,8 @@ code ({{iana-error-code}}), and an HTTP header field ({{iana-http}}).
 The following entry is added to the "Hypertext Transfer Protocol (HTTP) Upgrade
 Token Registry" registry established by Section 16.7 of [HTTP].
 
-The "webtransport-h3" label identifies HTTP/3 used as a protocol for WebTransport:
+The "webtransport-h3" label identifies HTTP/3 used as a protocol for
+WebTransport:
 
 Value:
 
