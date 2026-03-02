@@ -334,16 +334,16 @@ A server that requires application protocol negotiation MAY reject the session
 if the `WT-Available-Protocols` header field is absent or if it is malformed and
 therefore ignored.
 
+A client that requires application protocol negotiation MUST close the
+WebTransport session with a `WT_ALPN_ERROR` error code if the server does not
+include a `WT-Protocol` header field in a successful response.
+
 If the client sends a `WT-Available-Protocols` header field and the server
 responds with a `WT-Protocol` header field, the value in the `WT-Protocol`
 response header field MUST be one of the values listed in
 `WT-Available-Protocols` of the request.  If the client receives a `WT-Protocol`
 value that was not included in its `WT-Available-Protocols` list, the client
 MUST close the WebTransport session with a `WT_ALPN_ERROR` error code.
-
-A client that requires application protocol negotiation MUST close the
-WebTransport session with a `WT_ALPN_ERROR` error code if the server does not
-include a `WT-Protocol` header field in a successful response.
 
 The semantics of individual values used in `WT-Available-Protocols` and
 `WT-Protocol` are determined by the WebTransport resource in question and are
