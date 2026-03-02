@@ -336,7 +336,8 @@ therefore ignored.
 
 A client that requires application protocol negotiation MUST close the
 WebTransport session with a `WT_ALPN_ERROR` error code if the server does not
-include a `WT-Protocol` header field in a successful response.
+include a `WT-Protocol` header field, or if it is malformed and therefore
+ignored, in a successful response.
 
 If the client sends a `WT-Available-Protocols` header field and the server
 responds with a `WT-Protocol` header field, the value in the `WT-Protocol`
