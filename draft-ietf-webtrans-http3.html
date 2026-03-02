@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 2 September 2026</td>
+<td class="center">Expires 3 September 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-03-01" class="published">1 March 2026</time>
+<time datetime="2026-03-02" class="published">2 March 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-09-02">2 September 2026</time></dd>
+<dd class="expires"><time datetime="2026-09-03">3 September 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1139,7 +1139,7 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 2 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 3 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1184,6 +1184,9 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.1">
                     <p id="section-toc.1-1.2.2.1.2.1.1" class="keepWithNext"><a href="#section-2.1.1" class="auto internal xref">2.1.1</a>.  <a href="#name-minimizing-implementation-c" class="internal xref">Minimizing Implementation Complexity</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.2">
+                    <p id="section-toc.1-1.2.2.1.2.2.1"><a href="#section-2.1.2" class="auto internal xref">2.1.2</a>.  <a href="#name-capsule-based-webtransport-" class="internal xref">Capsule-Based WebTransport over HTTP/3</a></p>
 </li>
                 </ul>
 </li>
@@ -1480,6 +1483,32 @@ decoding.  When sending, endpoints can opt to never use dynamic compression,
 static compression, or Huffman encoding.<a href="#section-2.1.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="capsule-based-webtransport-over-http3">
+<section id="section-2.1.2">
+          <h4 id="name-capsule-based-webtransport-">
+<a href="#section-2.1.2" class="section-number selfRef">2.1.2. </a><a href="#name-capsule-based-webtransport-" class="section-name selfRef">Capsule-Based WebTransport over HTTP/3</a>
+          </h4>
+<p id="section-2.1.2-1">WebTransport over HTTP/3 as defined in this document provides the best
+performance by using native QUIC streams and datagrams. Endpoints SHOULD always
+use this protocol when using WebTransport over an HTTP/3 connection.<a href="#section-2.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.1.2-2">However, it is also possible to use WebTransport over a single HTTP/3 stream
+using the capsule-based protocol defined in
+<span>[<a href="#WEBTRANS-H2" class="cite xref">WEBTRANS-H2</a>]</span>.  The two protocols are distinguished
+by their upgrade tokens: this document uses the "webtransport-h3" token
+(<a href="#upgrade-token" class="auto internal xref">Section 9.1</a>), while <span>[<a href="#WEBTRANS-H2" class="cite xref">WEBTRANS-H2</a>]</span> uses the "webtransport" token.<a href="#section-2.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-2.1.2-3">The capsule-based protocol can be useful for intermediaries that proxy
+WebTransport sessions between HTTP/2 and HTTP/3 connections, as it avoids the
+need to translate between the two wire formats.  It can also be useful in
+deployment environments such as data centers where existing routing
+infrastructure supports forwarding streams but does not support the HTTP/3
+extensions required by this document.<a href="#section-2.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.1.2-4">Endpoints that use the capsule-based protocol over HTTP/3 lose the benefits of
+stream independence, as all WebTransport streams within a session share a single
+QUIC stream and are subject to head-of-line blocking.  Datagrams sent using the
+capsule-based protocol are also retransmitted by QUIC, and therefore do not
+provide unreliable delivery.<a href="#section-2.1.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="protocol-overview">
@@ -1664,7 +1693,7 @@ session as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#sectio
 sessions, or other initial flow control values, from the values negotiated
 during the previous session; such change would be deemed incompatible, and MUST
 result in a H3_SETTINGS_ERROR connection error.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
-<p id="section-3.2-8">The <code>webtransport-h3</code> HTTP Upgrade Token uses the Capsule Protocol as defined in
+<p id="section-3.2-8">The "webtransport-h3" HTTP Upgrade Token uses the Capsule Protocol as defined in
 <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  The Capsule Protocol is negotiated when the server sends a
 2xx response.  The <code>capsule-protocol</code> header field
 <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.4" class="relref">Section 3.4</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> is not required by WebTransport and can safely
@@ -3483,8 +3512,12 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
 <span class="refAuthor">Melnikov, A.</span>, <span class="refTitle">"IMAP QUOTA Extension"</span>, <span class="seriesInfo">RFC 9208</span>, <span class="seriesInfo">DOI 10.17487/RFC9208</span>, <time datetime="2022-03" class="refDate">March 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9208">https://www.rfc-editor.org/rfc/rfc9208</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9308">[RFC9308]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Kühlewind, M.</span> and <span class="refAuthor">B. Trammell</span>, <span class="refTitle">"Applicability of the QUIC Transport Protocol"</span>, <span class="seriesInfo">RFC 9308</span>, <span class="seriesInfo">DOI 10.17487/RFC9308</span>, <time datetime="2022-09" class="refDate">September 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9308">https://www.rfc-editor.org/rfc/rfc9308</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="WEBTRANS-H2">[WEBTRANS-H2]</dt>
+      <dd>
+<span class="refAuthor">Frindell, A.</span>, <span class="refAuthor">Kinnear, E.</span>, <span class="refAuthor">Pauly, T.</span>, <span class="refAuthor">Thomson, M.</span>, <span class="refAuthor">Vasiliev, V.</span>, and <span class="refAuthor">G. Xie</span>, <span class="refTitle">"WebTransport over HTTP/2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-http2-13</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-13">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-13</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
