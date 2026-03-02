@@ -526,8 +526,8 @@ receiving a reset from their peer.  If a RESET_STREAM or STOP_SENDING frame is
 received with an error code outside the range reserved for WT_APPLICATION_ERROR,
 the stream is still considered reset, but the error code is not mapped to a
 WebTransport application error code.  The WebTransport implementation SHOULD
-deliver this to the application as a stream reset without a meaningful
-application error code.
+deliver this to the application as a stream reset with no application error
+code.
 
 ## Datagrams
 
