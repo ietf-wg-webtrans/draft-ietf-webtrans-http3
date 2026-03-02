@@ -1705,9 +1705,9 @@ be ignored by WebTransport endpoints.<a href="#section-3.2-8" class="pilcrow">¶
         <h3 id="name-application-protocol-negoti">
 <a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-application-protocol-negoti" class="section-name selfRef">Application Protocol Negotiation</a>
         </h3>
-<p id="section-3.3-1">WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to TLS
-Application-Layer Protocol Negotiation Extension (ALPN) <span>[<a href="#RFC7301" class="cite xref">RFC7301</a>]</span>; the intent
-is to simplify porting existing protocols that use QUIC and rely on this
+<p id="section-3.3-1">WebTransport over HTTP/3 offers a protocol negotiation mechanism, similar to the
+TLS Application-Layer Protocol Negotiation (ALPN) extension <span>[<a href="#RFC7301" class="cite xref">RFC7301</a>]</span>; the
+intent is to simplify porting existing protocols that use QUIC and rely on this
 functionality.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
 <p id="section-3.3-2">The client MAY include a <code>WT-Available-Protocols</code> header field in the CONNECT
 request.  The <code>WT-Available-Protocols</code> field enumerates the possible protocols
@@ -1720,14 +1720,25 @@ client did not include a suitable protocol.<a href="#section-3.3-2" class="pilcr
 <span>[<a href="#FIELDS" class="cite xref">FIELDS</a>]</span>.  <code>WT-Available-Protocols</code> is a List.  <code>WT-Protocol</code> is
 defined as an Item.  In both cases, the only valid value type is a String.  Any
 value type other than String MUST be treated as an error that causes the entire
-field to be ignored.  No semantics are defined for parameters on either field;
-parameters MUST be ignored.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
-<p id="section-3.3-4">The value in the <code>WT-Protocol</code> response header field MUST be one of the values
-listed in <code>WT-Available-Protocols</code> of the request.  Otherwise, the <code>WT-Protocol</code>
-field MUST be ignored.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
-<p id="section-3.3-5">The semantics of individual values used in <code>WT-Available-Protocols</code> and
+field to be ignored as recommended in <span>[<a href="#FIELDS" class="cite xref">FIELDS</a>]</span>, allowing application protocol
+negotiation to remain optional.  No semantics are defined for parameters on
+either field; parameters MUST be ignored.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<p id="section-3.3-4">A server that requires application protocol negotiation MAY reject the session
+if the <code>WT-Available-Protocols</code> header field is absent or if it is malformed and
+therefore ignored.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+<p id="section-3.3-5">A client that requires application protocol negotiation MUST close the
+WebTransport session with a <code>WT_ALPN_ERROR</code> error code if the server does not
+include a <code>WT-Protocol</code> header field, or if it is malformed and therefore
+ignored, in a successful response.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+<p id="section-3.3-6">If the client sends a <code>WT-Available-Protocols</code> header field and the server
+responds with a <code>WT-Protocol</code> header field, the value in the <code>WT-Protocol</code>
+response header field MUST be one of the values listed in
+<code>WT-Available-Protocols</code> of the request.  If the client receives a <code>WT-Protocol</code>
+value that was not included in its <code>WT-Available-Protocols</code> list, the client
+MUST close the WebTransport session with a <code>WT_ALPN_ERROR</code> error code.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
+<p id="section-3.3-7">The semantics of individual values used in <code>WT-Available-Protocols</code> and
 <code>WT-Protocol</code> are determined by the WebTransport resource in question and are
-not required to be registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+not required to be registered in IANA's "ALPN Protocol IDs" registry.<a href="#section-3.3-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="prioritization">
@@ -3032,19 +3043,17 @@ reading from the CONNECT stream.<a href="#section-9.5-2.18.1" class="pilcrow">¶
           <dd class="break"></dd>
 <dt id="section-9.5-2.33">Name:</dt>
           <dd style="margin-left: 1.5em" id="section-9.5-2.34">
-            <p id="section-9.5-2.34.1">WT_REQUIREMENTS_NOT_MET<a href="#section-9.5-2.34.1" class="pilcrow">¶</a></p>
+            <p id="section-9.5-2.34.1">WT_ALPN_ERROR<a href="#section-9.5-2.34.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.5-2.35">Value:</dt>
           <dd style="margin-left: 1.5em" id="section-9.5-2.36">
-            <p id="section-9.5-2.36.1">0x212c0d48<a href="#section-9.5-2.36.1" class="pilcrow">¶</a></p>
+            <p id="section-9.5-2.36.1">0x0817b3dd<a href="#section-9.5-2.36.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.5-2.37">Description:</dt>
           <dd style="margin-left: 1.5em" id="section-9.5-2.38">
-            <p id="section-9.5-2.38.1">HTTP/3 connection closed because the features required for WebTransport are
-not supported.  Either the client or server is missing required SETTINGS or
-transport parameters needed for WebTransport.<a href="#section-9.5-2.38.1" class="pilcrow">¶</a></p>
+            <p id="section-9.5-2.38.1">WebTransport session aborted because application protocol negotiation failed.<a href="#section-9.5-2.38.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.5-2.39">Reference:</dt>
@@ -3060,6 +3069,38 @@ transport parameters needed for WebTransport.<a href="#section-9.5-2.38.1" class
 <dt id="section-9.5-2.43">Contact:</dt>
           <dd style="margin-left: 1.5em" id="section-9.5-2.44">
             <p id="section-9.5-2.44.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.5-2.44.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.45">Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.46">
+            <p id="section-9.5-2.46.1">WT_REQUIREMENTS_NOT_MET<a href="#section-9.5-2.46.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.47">Value:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.48">
+            <p id="section-9.5-2.48.1">0x212c0d48<a href="#section-9.5-2.48.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.49">Description:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.50">
+            <p id="section-9.5-2.50.1">HTTP/3 connection closed because the features required for WebTransport are
+not supported.  Either the client or server is missing required SETTINGS or
+transport parameters needed for WebTransport.<a href="#section-9.5-2.50.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.51">Reference:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.52">
+            <p id="section-9.5-2.52.1">This document.<a href="#section-9.5-2.52.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.53">Change Controller:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.54">
+            <p id="section-9.5-2.54.1">IETF<a href="#section-9.5-2.54.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-9.5-2.55">Contact:</dt>
+          <dd style="margin-left: 1.5em" id="section-9.5-2.56">
+            <p id="section-9.5-2.56.1">WebTransport Working Group <a href="mailto:webtransport@ietf.org">webtransport@ietf.org</a><a href="#section-9.5-2.56.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
