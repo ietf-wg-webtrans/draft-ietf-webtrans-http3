@@ -256,6 +256,12 @@ Clients supporting WebTransport over HTTP/3 send:
 - A max_datagram_frame_size transport parameter with a value greater than 0
 - An empty reset_stream_at transport parameter
 
+\[\[RFC editor: please remove the following paragraph before publication.]]
+
+For draft versions of WebTransport only, clients MUST also send
+SETTINGS_WT_ENABLED with the draft-specific codepoint to allow the server to
+identify the client's supported version; see {{negotiating-draft-version}}.
+
 Servers should note that CONNECT requests to establish new WebTransport
 sessions, in addition to other messages, can arrive before the client's SETTINGS
 are received (see {{buffering-incoming}}).  If the server receives SETTINGS that
@@ -275,9 +281,8 @@ in debugging.
 \[\[RFC editor: please remove the following paragraph before publication.]]
 
 For draft versions of WebTransport only, the server MUST NOT process any
-incoming WebTransport requests until the client settings have been received, as
-the client might be using a version of the WebTransport extension that is
-different from the one used by the server.
+incoming WebTransport requests until the client's SETTINGS have been received;
+see {{negotiating-draft-version}}.
 
 ## Creating a New Session
 
@@ -1141,15 +1146,25 @@ type (see {{unidirectional-streams}}) and Bidirectional Stream signal value
 determine the WebTransport version, and corresponding wire format, used for the
 session associated with that stream.
 
-## Negotiating the Draft Version
+## Negotiating the Draft Version {#negotiating-draft-version}
 
 \[\[RFC editor: please remove this section before publication.]]
 
 The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WT_ENABLED setting.  Because of that, any WebTransport
-endpoint MUST wait for the peer's SETTINGS frame before sending or processing
-any WebTransport traffic.  When multiple versions are supported by both of the
-peers, the most recent version supported by both is selected.
+used for the SETTINGS_WT_ENABLED setting.  Each draft version defines a distinct
+codepoint for SETTINGS_WT_ENABLED.  Both the client and the server MUST send
+SETTINGS_WT_ENABLED with the codepoint corresponding to their supported draft
+version.  An endpoint that supports multiple draft versions sends a
+SETTINGS_WT_ENABLED value for each supported version, as each version uses a
+different setting identifier.  The highest version supported by both endpoints
+is selected.
+
+Because data streams can arrive at the server before the CONNECT request that
+establishes the associated session, and the wire format of the stream header
+depends on the negotiated version, the server needs to know the client's version
+before processing any incoming WebTransport streams.  For this reason, the
+server MUST NOT process any incoming WebTransport requests until the client's
+SETTINGS have been received.
 
 # Security Considerations
 
