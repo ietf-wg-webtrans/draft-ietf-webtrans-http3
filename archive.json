@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-03-01T01:19:13.337721+00:00",
+  "timestamp": "2026-03-03T01:13:42.638081+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -5560,7 +5560,7 @@
       "id": "I_kwDOCvK98s7EZUbp",
       "title": "Additional DoS considerations",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/222",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5571,8 +5571,8 @@
       ],
       "body": "The security considerations in this doc reference the Overview security considerations but that doesn't really talk about DoS. The security considerations in HTTP/3 still apply to WebTransport and stating that explicitly doesn't really hurt, so maybe think about doing that as a mininimum\n\nIn the context of this issue though, I wonder if the DoS considerations in https://datatracker.ietf.org/doc/html/rfc9114#section-10.5 need some augmentation to make implementers defensive to the new interaction modes. This doc starts on that path by stating:\n\n> An application could attempt to exhaust resources by opening too many WebTransport sessions at once. In cases when the application is untrusted, the WebTransport client SHOULD limit the number of outgoing sessions it will open.\n\nHowever, I think there are more cases that need highlighting - its now possible for either side to bombard each other with streams and datagrams related to a session. This is somewhat novel for the client, who previously had some limits on server push as described in https://datatracker.ietf.org/doc/html/rfc9114#section-10.5-2\n\nWe probably also want the \"catch all statement\" to make it clear to implementers that the buck stops with them, both HTTP/2 and HTTP/3 include a statement along the lines of \"webtransport features have legitimate uses but they can become a burden when they are used unnecessarily or to excess. An endpoint that doesn't monitor use of these features exposes itself to a risk of denial of service. Implementations SHOULD track the use of these features and set limits on their use. An endpoint MAY treat activity that is suspicious as a connection erro of type [ENHANCE_YOUR_CALM/H3_EXCESSIVE_LOAD].\"",
       "createdAt": "2025-08-06T02:31:55Z",
-      "updatedAt": "2026-01-25T11:27:54Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-01T07:26:01Z",
+      "closedAt": "2026-03-01T07:26:01Z",
       "comments": [
         {
           "author": "martinthomson",
@@ -5595,17 +5595,19 @@
       "id": "I_kwDOCvK98s7IHrCX",
       "title": "Running the stream version of webtransport over HTTP/3?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/223",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "ekinnear"
+      ],
       "labels": [
-        "next meeting"
+        "has pull request"
       ],
       "body": "This seems to be a thing that people are considering doing at intermediaries.  Translating from the HTTP/2 version to the HTTP/3 version might be complicated and the HTTP/2 protocol doesn't really *need* to be translated to operate correctly.  With a different protocol token, the two could even co-exist.\n\nThere's a complication with how WT_MAX_SESSIONS is interpreted; it would be awkward if the setting in HTTP/3 applied to the HTTP/2 version of the protocol.  See also #224.",
       "createdAt": "2025-08-26T23:41:11Z",
-      "updatedAt": "2025-10-20T23:39:44Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-02T20:23:15Z",
+      "closedAt": "2026-03-02T20:23:14Z",
       "comments": [
         {
           "author": "ekinnear",
@@ -5621,7 +5623,7 @@
       "id": "I_kwDOCvK98s7IHrqw",
       "title": "WT_MAX_SESSIONS setting",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/224",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5632,8 +5634,8 @@
       ],
       "body": "Do we even really need this?\n\nThis is similar to the HTTP/2 setting, but it has the value of being tri-state: allowing 0, 1, or more sessions each have different effects on the protocol operation.\n\nHowever, this setting might be more reasonable to have than the HTTP/2 setting.  Sessions are not the same as streams in this protocol.  Especially if the HTTP/2 protocol operates over HTTP/3; see #223.",
       "createdAt": "2025-08-26T23:42:29Z",
-      "updatedAt": "2026-01-25T11:27:39Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-01T07:26:51Z",
+      "closedAt": "2026-03-01T07:26:51Z",
       "comments": [
         {
           "author": "ekinnear",
@@ -5794,7 +5796,7 @@
       "id": "I_kwDOCvK98s7QqfvR",
       "title": "Handling of bidirectional streams for unknown sessions",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/227",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "LPardue",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5806,8 +5808,8 @@
       ],
       "body": "There _is_ text in section 4 that says\n\n> If at any point a session ID is received that cannot be a valid ID for a client-initiated bidirectional stream, the recipient MUST close the connection with an H3_ID_ERROR error code.\n\nWhat precisely is the definition of valid here? I suppose if the session ID is larger than the max session ID, that's invalid. But what if endpoint receives a bidirectional stream related to a closed session. Due to reordering, it is possible something gets delivered to a webtransport application early or late. Treating that as invalid seems error prone or fragile.\n\nAlso, I suppose the requirements needs to apply to server initiated streams too?\n\n",
       "createdAt": "2025-10-09T22:30:13Z",
-      "updatedAt": "2026-01-25T11:27:55Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-01T07:27:32Z",
+      "closedAt": "2026-03-01T07:27:32Z",
       "comments": [
         {
           "author": "ekinnear",
@@ -5841,23 +5843,36 @@
       "id": "I_kwDOCvK98s7VXHpw",
       "title": "Flow Control Liveness: Missing normative guidance for \\_BLOCKED capsule handling can cause deadlocks",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/236",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "lemonsterfy",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "editorial",
+        "has pull request"
+      ],
       "body": "Hello WebTransport WG,\n\nThank you for the excellent work on draft-ietf-webtrans-http3-14. The changes to flow control negotiation in Section 5.1, particularly the more flexible conditions for enabling flow control, represent a significant improvement for real-world deployments.\n\nAs maintainers of PyWebTransport [1], a Python asyncio-native implementation, we are actively developing support for the latest protocol drafts. We strongly support the changes in draft-ietf-webtrans-http3-14. Our implementation experience based on this model has revealed a potential protocol liveness issue that we believe warrants attention from the WG.\n\n[1] https://github.com/wtransport/pywebtransport\n\n## Problem Statement\n\nThe current draft defines \\_BLOCKED capsules (WT_DATA_BLOCKED, WT_STREAMS_BLOCKED) as signals that a sender has exhausted its flow control credit. Section 5.6.3 states that a sender \"SHOULD\" send WT_STREAMS_BLOCKED when blocked, and Section 5.6.5 notes that these capsules \"can be used as input to tuning of flow control algorithms.\"\n\nHowever, the draft does not specify what action, if any, the receiver of a \\_BLOCKED capsule should take. This creates a potential deadlock scenario:\n\n1. Endpoint A (Sender) exhausts its flow control credit.\n2. Endpoint A sends WT_DATA_BLOCKED (per Section 5.6.5).\n3. Endpoint B (Receiver) receives the capsule.\n4. Endpoint B never sends WT_MAX_DATA (which is currently permitted).\n5. Endpoint A remains permanently blocked.\n\nThis represents a protocol liveness failure. The draft requires the sender to signal when blocked but provides no mechanism to ensure the receiver acts on that signal.\n\n## Impact\n\nThis issue affects interoperability: implementations that follow the specification literally may fail to send credit updates in response to \\_BLOCKED capsules, causing peer deadlocks. This is a protocol-level deadlock that cannot be distinguished from a non-responsive peer.\n\n## Precedent in Related Protocols\n\nThis gap is inconsistent with similar flow control mechanisms in protocols that WebTransport builds upon:\n\n### QUIC (RFC 9000)\n\nQUIC's BLOCKED family of frames (DATA_BLOCKED in Section 19.12, STREAM_DATA_BLOCKED in Section 19.13, and STREAMS_BLOCKED in Section 19.14) serve the same purpose as WebTransport's \\_BLOCKED capsules.\n\nWhile RFC 9000 does not explicitly mandate a response, the protocol's design relies on an implicit contract that receivers will provide credit. Section 4.1 states: \"a receiver MUST NOT wait for a... BLOCKED frame before sending a MAX\\_... frame; doing so could result in the sender being blocked... indefinitely.\" This establishes a clear, albeit implicit, contract: senders signal when blocked, receivers must provide credit to prevent indefinite blocking.\n\n### HTTP/2 (RFC 9113)\n\nHTTP/2's WINDOW_UPDATE frame (Section 6.9) has a similar pattern. The protocol's liveness depends on receivers sending WINDOW_UPDATE when they consume data. Implementations that fail to do so are widely considered non-conformant.\n\n### Observation\n\nBoth protocols rely on a strong, if sometimes implicit, receiver obligation to provide credit. We believe WebTransport should make this obligation explicit to avoid the interoperability issues these protocols experienced during early deployment.\n\n## Proposed Solution\n\nWe propose adding normative guidance for receivers of \\_BLOCKED capsules to ensure protocol liveness. We present two complementary approaches for the WG's consideration:\n\n### Option 1: Reactive Credit Management (Minimal Normative Change)\n\nAdd explicit guidance that receivers should respond to \\_BLOCKED signals.\n\n**Suggested text for Section 5.6.1:**\n\n> \"Flow control \\_BLOCKED capsules are intended to signal a peer that it should provide more credit. Upon receiving a WT_DATA_BLOCKED or WT_STREAMS_BLOCKED capsule, an endpoint SHOULD send a corresponding WT_MAX_DATA or WT_MAX_STREAMS capsule as soon as internal resources permit an increased limit. This establishes a reactive mechanism to prevent deadlocks.\"\n\n**Rationale:**\n\n- Aligns with the (implicit) contracts in QUIC and HTTP/2.\n- Represents a minimal specification change to fix the liveness gap.\n- Allows delay when resources are genuinely unavailable.\n- Makes ignoring \\_BLOCKED signals a clear protocol violation.\n\n### Option 2: Proactive Credit Management (Best Practice Guidance)\n\nThe WG might also consider adding non-normative guidance encouraging proactive credit updates, which avoid the round-trip penalty of the reactive mechanism.\n\n**Suggested non-normative text (NOTE in Section 5.6.1):**\n\n> \"NOTE: Implementations can improve performance by sending credit updates proactively, before the peer reaches the limit, rather than waiting for \\_BLOCKED capsules. A common strategy is to send updates when approximately 50% of the available credit has been consumed. This maintains pipeline efficiency and provides time for the update to reach the peer.\"\n\n**Rationale:**\n\n- Eliminates the stall-signal-wait cycle, improving throughput.\n- Represents a documented implementer best practice.\n- Is non-normative and does not mandate specific thresholds.\n\n## Recommendation and Implementation Experience\n\nWe strongly recommend adopting Option 1 as a normative requirement to guarantee protocol liveness.\n\nOur implementation (PyWebTransport) currently focuses on Option 2 (Proactive). We send WT_MAX_DATA and WT_MAX_STREAMS updates when the peer has consumed approximately 50% of the available credit. This threshold-based approach has proven highly robust and effective at maintaining throughput.\n\nWhile our proactive implementation avoids blocking entirely, we believe a standardized Reactive (Option 1) mechanism is critical for baseline interoperability, ensuring that even minimal implementations (or those that disable proactive updates) do not cause deadlocks.\n\nWe are happy to provide additional implementation details if the WG finds them useful.\n\n## Conclusion\n\nWe believe adding normative guidance for \\_BLOCKED capsule handling (Option 1) is critical for:\n\n1. **Protocol completeness**: Closing a liveness gap.\n2. **Interoperability**: Preventing ambiguous implementation behavior.\n3. **Alignment**: Following the established precedent from QUIC and HTTP/2.\n\nThank you for considering this issue. We look forward to the WG's feedback.\n\nBest regards,\n\nThe WTransport Team",
       "createdAt": "2025-11-02T14:37:05Z",
-      "updatedAt": "2025-12-30T18:17:46Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-03-01T12:20:14Z",
+      "closedAt": "2026-03-01T12:20:14Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you for your work on pywebtransport! It's super cool to see it coming along. \n\nI'm not sure this reference to RFC 9000 matches my understanding of the design: \n> This establishes a clear, albeit implicit, contract: senders signal when blocked, receivers must provide credit to prevent indefinite blocking.\n\nReceivers do not have to provide credit to prevent indefinite blocking, even if they get an incoming _BLOCKED frame. That's quite intentional, if a receiver is already holding onto as much incoming data as they possibly can, and it hasn't yet been drained, they're perfectly able to just sit there leaving the other side blocked. The incoming _BLOCKED frames are intended to help raise a signal that the peer isn't sending to you on purpose -- because they think they're blocked. If the receiver _doesn't_ think they're blocked, then that's a great moment for these frames to aid in debugging the resulting protocol stalls. \n\n> The protocol's liveness depends on receivers sending WINDOW_UPDATE when they consume data. Implementations that fail to do so are widely considered non-conformant.\n\nThe same is true here: _when they consume data_ is key. An implementation that does not consume data should not be sending WINDOW_UPDATES that increase the amount of data the peer can send.\n\n> Our implementation (PyWebTransport) currently focuses on Option 2 (Proactive). We send WT_MAX_DATA and WT_MAX_STREAMS updates when the peer has consumed approximately 50% of the available credit. This threshold-based approach has proven highly robust and effective at maintaining throughput.\n\nThis is good, you should be sending updates when you consume data just like in HTTP/2 and QUIC, 50% is a reasonable threshold that has been widely used by various implementations. You should definitely not wait for the peer to send you _BLOCKED frames.\n\n> we believe a standardized Reactive (Option 1) mechanism is critical for baseline interoperability, ensuring that even minimal implementations (or those that disable proactive updates) do not cause deadlocks.\n\nThis feels like a footgun, and the text above even highlights why that's a problem -- if you wait for the peer to discover that they're blocked, you end up latency-paced while you send the \"hey, I'd like to send more\" message and wait to hear \"okay, sure, here's some more credit\" response.\n\nI think the strategy used by both HTTP/2 and QUIC applies here as well. Let me see if we can make the text more consistent and clear.\n\n\n",
+          "createdAt": "2026-03-01T08:06:28Z",
+          "updatedAt": "2026-03-01T08:06:28Z"
+        }
+      ]
     },
     {
       "number": 237,
       "id": "I_kwDOCvK98s7Via5A",
       "title": "Handling invalid values for max streams",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/237",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "AnkshitJain",
       "authorAssociation": "NONE",
       "assignees": [
@@ -5868,8 +5883,8 @@
       ],
       "body": "[Max streams](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#name-wt_max_streams-capsule) has a maximum allowed value that is lower than the maximum value allowed in the capsule or the SETTINGS.\n```\nMaximum Streams:  A count of the cumulative number of streams of the corresponding type that can be opened over the lifetime of the session.  This value cannot exceed 2^60, as it is not possible to encode stream IDs larger than 2^62-1.\n```\nCan we add text suggesting what needs to be done if the value exceeds 2^60 in the capsule or the HTTP/3 SETTINGS? \n",
       "createdAt": "2025-11-03T15:29:30Z",
-      "updatedAt": "2026-01-25T11:54:03Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-01T07:28:57Z",
+      "closedAt": "2026-03-01T07:28:57Z",
       "comments": [
         {
           "author": "lemonsterfy",
@@ -5901,7 +5916,7 @@
       "id": "I_kwDOCvK98s7VkQKk",
       "title": "consider renaming WT_MAX_STREAMS",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/239",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5912,8 +5927,8 @@
       ],
       "body": "An unsuspecting reader of the document might assume that WT_MAX_STREAMS works analogously to the MAX_STREAMS frame in QUIC. This is not the case: WT_MAX_STREAMS contains a stream count (including closed streams), whereas MAX_STREAMS contains a stream ID.\n\nTo avoid this confusion, we could consider renaming it to something like WT_MAX_STREAM_COUNT.",
       "createdAt": "2025-11-03T17:30:05Z",
-      "updatedAt": "2026-01-25T12:27:16Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-01T08:12:36Z",
+      "closedAt": "2026-03-01T08:12:36Z",
       "comments": [
         {
           "author": "lemonsterfy",
@@ -5983,7 +5998,7 @@
       "id": "I_kwDOCvK98s7YPciS",
       "title": "Why are errors ignored during application protocol negotiation?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/243",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5994,8 +6009,8 @@
       ],
       "body": "The server ignores errors:\n> Both WT-Available-Protocols and WT-Protocol are Structured Fields [[FIELDS](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#FIELDS)]. WT-Available-Protocols is a List. WT-Protocol is defined as an Item. In both cases, the only valid value type is a String. Any value type other than String MUST be treated as an error that causes the entire field to be ignored. No semantics are defined for parameters on either field; parameters MUST be ignored.\n\nAnd the client as well:\n> The value in the WT-Protocol response header field MUST be one of the values listed in WT-Available-Protocols of the request. Otherwise, the WT-Protocol field MUST be ignored.\n\nWhy is that? Does this enable future extensibility? Is this the right place to enable extensibility? If so, we should probably make that intention clear in the draft.\n\nIf not, we should tighten the validation logic (reject requests / responses that contain invalid values).",
       "createdAt": "2025-11-15T03:29:12Z",
-      "updatedAt": "2026-01-25T11:53:54Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-02T23:48:08Z",
+      "closedAt": "2026-03-02T23:48:08Z",
       "comments": [
         {
           "author": "martinthomson",
@@ -6032,23 +6047,36 @@
       "id": "I_kwDOCvK98s7asVdI",
       "title": "Handling invalid error codes",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/244",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "AnkshitJain",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "editorial",
+        "has pull request"
+      ],
       "body": "What happens if a client/server receives an error code that doesn't fall in the [valid range](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-14.html#section-4.4) of `[0x52e4a40fa8db, 0x52e5ac983162]`?\n\nShould the session terminate with an error code?",
       "createdAt": "2025-11-26T21:12:44Z",
-      "updatedAt": "2025-11-26T21:12:44Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-03-02T23:15:01Z",
+      "closedAt": "2026-03-02T23:15:01Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It seems possible that a stream will be closed with an H3 error codes, or similar, that isn't mapped to the application error code space. \n\n> WebTransport endpoints MUST forward the error code for a stream associated with a known session to the application that owns that session; similarly, intermediaries MUST reset such streams with a corresponding error code when receiving a reset from their peer.\n\nSeems to somewhat contradict that, though, @vasilvv do you recall the original intent here?\n\nUnless we have some strong reason to destroy the session when someone's H3 implementation closes a stream with am otherwise perfectly acceptable error code that isn't a WT application error code, it seems like we should just note that this might happen and that implementations shouldn't pass it up as if it's an application error code.",
+          "createdAt": "2026-03-01T10:16:39Z",
+          "updatedAt": "2026-03-01T10:16:39Z"
+        }
+      ]
     },
     {
       "number": 245,
       "id": "I_kwDOCvK98s7ghOzj",
       "title": "Error to use when the QUIC connection is not suitable for WebTransport",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/245",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -6059,8 +6087,8 @@
       ],
       "body": "A client has to perform a number of checks to see if a QUIC connection is suitable for WebTransport, e.g.: \n* Are DATAGRAMs enabled on the QUIC layer?\n* Are DATAGRAMs enabled on the HTTP/3 layer?\n* Is the RESET_STREAM_AT extension enabled?\n \nIf these conditions are not fulfilled, a client might wish to close the connection, if it doesn't wish to use the connection for regular HTTP/3.\n\nI'm wondering if it would make sense to mint a HTTP/3 for this, maybe H3_UNUSABLE_FOR_WEBTRANSPORT, in order to aid debugging.",
       "createdAt": "2025-12-29T08:47:24Z",
-      "updatedAt": "2026-01-25T11:53:44Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-01T07:35:13Z",
+      "closedAt": "2026-03-01T07:35:13Z",
       "comments": [
         {
           "author": "LPardue",
@@ -6076,15 +6104,15 @@
       "id": "I_kwDOCvK98s7lqZGA",
       "title": "Create `_local` and `_remote` versions of the `INITIAL_*` SETTINGS?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/250",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Don't we need `_local` and `_remote` versions of this?\r\n\r\n_Originally posted by @martinthomson in https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/242#discussion_r2491370756_\r\n            ",
       "createdAt": "2026-01-25T11:27:05Z",
-      "updatedAt": "2026-01-25T12:10:49Z",
-      "closedAt": null,
+      "updatedAt": "2026-03-01T08:26:31Z",
+      "closedAt": "2026-03-01T08:26:31Z",
       "comments": [
         {
           "author": "ekinnear",
@@ -6092,6 +6120,76 @@
           "body": "See also https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/155 ",
           "createdAt": "2026-01-25T12:10:49Z",
           "updatedAt": "2026-01-25T12:10:49Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing the loop on this, we don't need `_local` and `_remote` versions because the stream _count_ limits always are about what the remote peer may do. \n\nThere's no need to say something like \"I want a different data limit for a bidi stream that I opened vs. the remote peer opened\" because the actual _act_ of opening a stream is always unidirectional: one endpoint opens the stream, the other endpoint provided the limit on how many the first endpoint was allowed to open and counts the new stream against that limit. Either endpoint can hold either role, but the resulting action doesn't need two directions.",
+          "createdAt": "2026-03-01T08:26:31Z",
+          "updatedAt": "2026-03-01T08:26:31Z"
+        }
+      ]
+    },
+    {
+      "number": 256,
+      "id": "I_kwDOCvK98s7u1ZCO",
+      "title": "Update status code to be used when rejecting an incoming session because it doesn't support WebTransport",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/256",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
+      "body": "Servers already know what to do when the resource doesn't exist, we don't need more text to say \"use 404\". However, if the resource does exist, but doesn't support WebTransport, we should align with H2 and use 406.",
+      "createdAt": "2026-03-01T11:28:52Z",
+      "updatedAt": "2026-03-02T15:07:37Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I don't think 406 is an acceptable status code (pun intended). I appreciate that this change is emulating the h2 doc https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/61 but it looks like there's wasn't really much WG discussion about it at the time. \n\nWearing my httpdir hat, I'm not sure the 406 will fly. It relates to proactive negotiation (https://www.rfc-editor.org/rfc/rfc9110#section-12.1), which doesn't seem like a good match. We're not negotiating content encoding or content language. Rfc 8441 describes the extended CONNECT as creating a tunnel to another service. A server generating the response cannot do the following from https://www.rfc-editor.org/rfc/rfc9110#section-15.5.7\n\n> The server SHOULD generate content containing a list of available representation characteristics and corresponding resource identifiers from which the user or user agent can choose the one most appropriate. A user agent MAY automatically select the most appropriate choice from that list\n\nLooking for inspiration, in connect-udp there's some language about how to deal issue with the request format, but not about the concept of attempting to open a tunnel to a non-existent service. https://www.rfc-editor.org/rfc/rfc9298.html#section-3.4. Rfc 9110 is similarly quiet about plain old CONNECT.\n\nI'm not really sure why 404 was deemed unsuitable, even a 410 Gone could be appropriate if a server has knowledge that a past webtransport service had been permanently retired\n",
+          "createdAt": "2026-03-01T14:04:28Z",
+          "updatedAt": "2026-03-01T14:04:28Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I agree with @LPardue.  Did you mean 405?",
+          "createdAt": "2026-03-02T15:07:37Z",
+          "updatedAt": "2026-03-02T15:07:37Z"
+        }
+      ]
+    },
+    {
+      "number": 259,
+      "id": "I_kwDOCvK98s7vPpS6",
+      "title": "Disambiguate draft versions from the client",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/259",
+      "state": "CLOSED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
+      "body": "With the removal of the client-sent SETTINGS_WT_ENABLED setting, draft versions of WebTransport over HTTP/3 can no longer be disambiguated by the server based on the client's SETTINGS codepoint.\n\nIf a client opens data streams concurrently with the CONNECT request that establishes the session, those data streams can arrive at the server before the corresponding CONNECT request. Without knowing the client's draft version, the server cannot determine the correct format to parse the stream header and associate the stream with a session.\n\nNote that we currently (at the end of Section 3.1, only for draft versions) require the server to delay processing any incoming WebTransport traffic until the client's SETTINGS are received.\n\nA few options: \n\n1. Client still sends SETTINGS_WT_ENABLED (only for draft versions)\n\nBoth sides send SETTINGS_WT_ENABLED with potentially multiple draft-specific codepoints, and the highest version supported by both endpoints is selected.\n\nThis is potentially easier for implementations, since prior draft versions have required this behavior already. Also means that the server knows the wire format before any data streams are processed, because it waits for the client's SETTINGS.\n\nHowever, it does re-introduce a client-sent setting that we deliberately removed, in part because it was confusing.\n\n2. Draft-versioned upgrade token\n\nPostfix the upgrade token with the draft number for draft versions (e.g., `webtransport-h3-14`). The published version of the doc uses `webtransport-h3` with no suffix. Both sides can advertise support for multiple versions: the server via multiple SETTINGS_WT_ENABLED codepoints, and the client by selecting the appropriate upgrade token for the CONNECT request.\n\nThis is nice because there's no timing dependency on the client's settings, since the version shows up in the CONNECT request itself.\n\nHowever,  it introduces the opportunity to have different WT versions in use on the same H3 connection and still doesn't let servers tell what format is in use for incoming data streams. Having multiple versions of WT in use on the same H3 connection seems to be extraordinarily complicated if you're pending incoming data streams for use with different WT sessions.\n\nFuture versions of WT, if they change the wire format, should consider helping to disambiguate between different pending stream formats.",
+      "createdAt": "2026-03-02T23:26:32Z",
+      "updatedAt": "2026-03-02T23:57:55Z",
+      "closedAt": "2026-03-02T23:49:45Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Writing up a PR for option 1 after some discussion with @vasilvv. Victor also indicated that implementation-wise that was easier on his end, which I think it is likely to be for others as well, given that most have that code from prior draft versions.",
+          "createdAt": "2026-03-02T23:28:36Z",
+          "updatedAt": "2026-03-02T23:28:36Z"
         }
       ]
     }
@@ -19355,24 +19453,26 @@
       "id": "PR_kwDOCvK98s6_NvvP",
       "title": "Update security considerations",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/246",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Update security considerations using the text suggested by Lucas in #222.\r\nFixes #222",
       "createdAt": "2026-01-25T09:01:40Z",
-      "updatedAt": "2026-01-25T09:01:41Z",
+      "updatedAt": "2026-03-01T07:26:04Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "70d161d9f683531a3eba4326afa8c57d4ff4508d",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/update_security_considerations",
       "headRefOid": "bbf750d95884c0fcf762eedfe47085dd866bd79b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-03-01T07:26:00Z",
+      "mergedAt": "2026-03-01T07:26:00Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "1fcf1f30ec83940aa51bec734a2da1c7d943dead"
+      },
       "comments": [],
       "reviews": []
     },
@@ -19381,24 +19481,26 @@
       "id": "PR_kwDOCvK98s6_OQK8",
       "title": "Remove WT_MAX_SESSIONS, replace with WT_ENABLED for server only",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/247",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Remove WT_MAX_SESSIONS, replace with WT_ENABLED for server only\r\n\r\nFixes #224",
       "createdAt": "2026-01-25T10:52:01Z",
-      "updatedAt": "2026-02-28T14:13:17Z",
+      "updatedAt": "2026-03-01T07:26:54Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/update_max_sessions",
       "headRefOid": "e3d43fae5f4f9225efce26907b10be59f55f90ae",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-03-01T07:26:50Z",
+      "mergedAt": "2026-03-01T07:26:50Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "8a34bdef24aebd41d2114b49f9db337673c8ee2d"
+      },
       "comments": [],
       "reviews": [
         {
@@ -19421,24 +19523,26 @@
       "id": "PR_kwDOCvK98s6_OUOc",
       "title": "Update text about invalid session IDs",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/248",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Update text about invalid session IDs\r\nFixes #227",
       "createdAt": "2026-01-25T11:07:48Z",
-      "updatedAt": "2026-01-25T11:07:49Z",
+      "updatedAt": "2026-03-01T07:27:35Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/session_id_editorial",
       "headRefOid": "625b522518db48dba3f6e231300dc1f80b424b56",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-03-01T07:27:31Z",
+      "mergedAt": "2026-03-01T07:27:31Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "d92f7bd249f3984d841c3ef1a1eceaf6648d1e2f"
+      },
       "comments": [],
       "reviews": []
     },
@@ -19447,24 +19551,26 @@
       "id": "PR_kwDOCvK98s6_OVkp",
       "title": "Attempting to send an invalid value is an error",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/249",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Pick an error, capsule parse error is apparently called H3_DATAGRAM_ERROR: https://www.rfc-editor.org/rfc/rfc9297.html#section-5.2\r\n\r\nFixes #237",
       "createdAt": "2026-01-25T11:13:59Z",
-      "updatedAt": "2026-01-25T13:19:04Z",
+      "updatedAt": "2026-03-01T09:35:26Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/too_large",
       "headRefOid": "0d325e4d48dd9f449478c8fa59a857065e73720d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-03-01T07:28:56Z",
+      "mergedAt": "2026-03-01T07:28:56Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "fe70b4b1af71a45a9167038e0b63c76d1390f7b0"
+      },
       "comments": [
         {
           "author": "LPardue",
@@ -19472,33 +19578,63 @@
           "body": "Not defining a general error code for capsule parsing was an oversight that @DavidSchinazi and I made in 9297. We discussed trying to fix that somehow but I can't recall where we landed.\r\n\r\nTimelines are awkward here but it would be lovely if this document could use such an error code. Perhaps we can try to get a registration spun up and run through quickly.",
           "createdAt": "2026-01-25T13:18:40Z",
           "updatedAt": "2026-01-25T13:19:04Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Timelines are awkward here but it would be lovely if this document could use such an error code. \r\n\r\nTotally happy to do that, this change seems okay in the meantime, but can switch should such a thing come into existence.",
+          "createdAt": "2026-03-01T07:28:51Z",
+          "updatedAt": "2026-03-01T07:28:51Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7mxteg",
+          "commit": {
+            "abbreviatedOid": "0d325e4"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-01T09:35:26Z",
+          "updatedAt": "2026-03-01T09:35:26Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "This is a weirdly named error, but it's the correct one to use according to RFC 9297.",
+              "createdAt": "2026-03-01T09:35:26Z",
+              "updatedAt": "2026-03-01T09:35:26Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 251,
       "id": "PR_kwDOCvK98s6_OdS6",
       "title": "Add error code for invalid alpn",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/251",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Add error code for invalid alpn\r\nFixes #243",
       "createdAt": "2026-01-25T11:45:29Z",
-      "updatedAt": "2026-01-26T18:39:21Z",
+      "updatedAt": "2026-03-02T23:48:09Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
+      "baseRefOid": "7d237ef83fbfd7769fc6d3555552624cbc13cfde",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/alpn",
-      "headRefOid": "c81d313ae89e6a5570cc2a99699c4126171e7940",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6efe85cde1191e763818257e77ef4ac20b1708c9",
+      "closedAt": "2026-03-02T23:48:07Z",
+      "mergedAt": "2026-03-02T23:48:07Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "c4b1b4d68ac7be0e48091ea4656f6c6b07b5d825"
+      },
       "comments": [
         {
           "author": "vasilvv",
@@ -19520,6 +19656,27 @@
           "body": "I believe the motivation is RFC 8941, which says:\r\n> When parsing fails, the entire field is ignored (see [Section 4.2](https://datatracker.ietf.org/doc/html/rfc8941#text-parse)); in most situations, violating field-specific constraints should have the same effect.",
           "createdAt": "2026-01-26T18:39:21Z",
           "updatedAt": "2026-01-26T18:39:21Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> violating field-specific constraints should have the same effect.\r\n\r\nThis seems (to me, but not super attached to it) like a place where that's a good moment for it to be a \"should\". \r\nIn other words, sure, if you're just sending a random field and we don't like what's in it, great -- ignore it. \r\n\r\nIn this case, we're defining an interaction between the two endpoints that has an impact on everything sent afterwards. It seems quite reasonable to require that you either: \r\n\r\n1. Don't participate in this negotiation. Ignore the incoming header field, no problem.\r\n2. Choose _to_ participate. Then, you have to do it right, we don't just let you think that you participated and that the other endpoint accepted your response, and then do something completely different. \r\n\r\nOtherwise, there's no way to have both sides have a consistent view of what is actually happening.",
+          "createdAt": "2026-03-01T07:33:08Z",
+          "updatedAt": "2026-03-01T07:33:28Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "So RFC 9651 is clear in its recommendation to ignore fields if they are badly formed.  That's easy.\r\n\r\nStill, there are error conditions worthy of mention:\r\n\r\n1. The server/resource needs ALPN.  If it doesn't get it (including when it is badly-formed, which manifests in the same way) it can reject the session.\r\n2. The client needs ALPN.  As the proposed text notes, this is where the session needs to be closed, because otherwise the server has accepted the session.\r\n3. Where the field is well-formed, but the values are garbage is the final case.  This only happens at the client when it gets a protocol that it didn't offer.\r\n\r\nThis PR addresses (3), but not the others.",
+          "createdAt": "2026-03-02T14:53:50Z",
+          "updatedAt": "2026-03-02T14:53:50Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Good point, added a note in [1313e53](https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/251/commits/1313e53910482b4bfd7a8fc72b97be38ca1d6e25) about what to do if the field is missing (or malformed)",
+          "createdAt": "2026-03-02T23:45:07Z",
+          "updatedAt": "2026-03-02T23:45:07Z"
         }
       ],
       "reviews": [
@@ -19570,24 +19727,26 @@
       "id": "PR_kwDOCvK98s6_Oe-p",
       "title": "Add WT_REQUIREMENTS_NOT_MET error code",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/252",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Add WT_REQUIREMENTS_NOT_MET error code\r\nFixes #245",
       "createdAt": "2026-01-25T11:53:17Z",
-      "updatedAt": "2026-01-27T05:40:12Z",
+      "updatedAt": "2026-03-01T07:35:15Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3a10b9366ab05f71a706f4b08976ee5a761215c2",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/unsuitable_error",
       "headRefOid": "4181ad9cf0f78cdf5dc81c22dba5dbb12e9ddc34",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-03-01T07:35:12Z",
+      "mergedAt": "2026-03-01T07:35:12Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "b4998472bcb8bcb407bd4d17a23c6f32f0305d4f"
+      },
       "comments": [
         {
           "author": "LPardue",
@@ -19645,6 +19804,340 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 253,
+      "id": "PR_kwDOCvK98s7HGSXP",
+      "title": "Add guidance for flow control updates",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/253",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add guidance for flow control updates to aid in clarity\r\nFixes #236",
+      "createdAt": "2026-03-01T08:11:25Z",
+      "updatedAt": "2026-03-01T12:20:16Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "b4998472bcb8bcb407bd4d17a23c6f32f0305d4f",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/flow_control_guidance",
+      "headRefOid": "69bc9d809ecf6a301659bf7ddbe6a75919e1f925",
+      "closedAt": "2026-03-01T12:20:13Z",
+      "mergedAt": "2026-03-01T12:20:13Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "7b9b6a89f5dfb8ecb6df51d937eaba611b9581c2"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7mxsuk",
+          "commit": {
+            "abbreviatedOid": "69bc9d8"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-03-01T09:31:40Z",
+          "updatedAt": "2026-03-01T09:31:40Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 254,
+      "id": "PR_kwDOCvK98s7HG-mY",
+      "title": "Add note about lower level error codes",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/254",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "editorial"
+      ],
+      "body": "Add note about lower level error codes\r\nFixes #244\r\n\r\n\r\nSee discussion in the issue, happy to adjust.",
+      "createdAt": "2026-03-01T10:18:51Z",
+      "updatedAt": "2026-03-02T23:15:03Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "b4998472bcb8bcb407bd4d17a23c6f32f0305d4f",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/invalid_error",
+      "headRefOid": "15dd755eb1110fd2c68ffa7236168ee8523f1230",
+      "closedAt": "2026-03-02T23:15:00Z",
+      "mergedAt": "2026-03-02T23:15:00Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "9f7dab90e0ad70581e3253166f2ac8b9a19abfd7"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7nEJMp",
+          "commit": {
+            "abbreviatedOid": "2be8353"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T14:37:39Z",
+          "updatedAt": "2026-03-02T14:37:45Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "What does \"without a meaningful ... error code\" mean?  I think that you mean \"null\" when it comes to the WT API, but you could just say \"no error code\" if that is the case.",
+              "createdAt": "2026-03-02T14:37:39Z",
+              "updatedAt": "2026-03-02T14:37:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7nOPmJ",
+          "commit": {
+            "abbreviatedOid": "2be8353"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T23:12:42Z",
+          "updatedAt": "2026-03-02T23:12:42Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "Ah fair, that's more clear, thank you!",
+              "createdAt": "2026-03-02T23:12:42Z",
+              "updatedAt": "2026-03-02T23:12:43Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 255,
+      "id": "PR_kwDOCvK98s7HHGmo",
+      "title": "Add discussion of using the capsule-based protocol over H3",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/255",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add discussion of using the capsule-based protocol over H3\r\nFixes #223",
+      "createdAt": "2026-03-01T10:39:25Z",
+      "updatedAt": "2026-03-02T20:23:17Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "b4998472bcb8bcb407bd4d17a23c6f32f0305d4f",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/capsule_protocol",
+      "headRefOid": "e80a6c95ded32fdd61dd0078dadd38c5f80b91fb",
+      "closedAt": "2026-03-02T20:23:13Z",
+      "mergedAt": "2026-03-02T20:23:13Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "a16eab63584a6fcbc83b14b3ee949199be99a94c"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7nELfQ",
+          "commit": {
+            "abbreviatedOid": "e80a6c9"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-03-02T14:39:21Z",
+          "updatedAt": "2026-03-02T14:39:21Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 257,
+      "id": "PR_kwDOCvK98s7HHZLD",
+      "title": "Update status code from 404 to 406",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/257",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Update status code from 404 to 406\r\nFixes #256",
+      "createdAt": "2026-03-01T11:32:44Z",
+      "updatedAt": "2026-03-02T15:08:35Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "b4998472bcb8bcb407bd4d17a23c6f32f0305d4f",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/status_code",
+      "headRefOid": "a0cb802e5dcdb8c943a9edcbd7130c38d8f8770e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s7nER4o",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T14:43:42Z",
+          "updatedAt": "2026-03-02T14:44:15Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "Consider instead:\n\n>  Upon receiving an extended CONNECT request with a `:protocol` field set to `webtransport-h3`, the HTTP/3 server can check if the target resource ({{Section 7.1 of HTTP}}) supports WebTransport.",
+              "createdAt": "2026-03-02T14:43:42Z",
+              "updatedAt": "2026-03-02T14:44:16Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\n({{Section 15.5.7 of HTTP}}).\n\nWhen the request contains the `Origin` header,\n```\n\nParagraphs are good for breaking things up.",
+              "createdAt": "2026-03-02T14:44:14Z",
+              "updatedAt": "2026-03-02T14:44:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7nEWr9",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T14:46:37Z",
+          "updatedAt": "2026-03-02T14:46:44Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "This could be read as being exhaustive, when it clearly isn't.  Maybe instead:\n\n> If these checks -- plus any specific to the server and target resource -- pass, the session can be accepted by replying with a 2xx series...\n\nIs it really the case that you can start a session with a 201 or 202?  That is probably wrong.",
+              "createdAt": "2026-03-02T14:46:37Z",
+              "updatedAt": "2026-03-02T14:46:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7nEkRP",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T14:56:21Z",
+          "updatedAt": "2026-03-02T14:56:21Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "While reviewing [RFC 8441](https://www.rfc-editor.org/rfc/rfc8441 ), it appears to do a pretty bad job of defining how to accept/reject extended CONNECT requests of the nature of WebSocket/WebTransport. connect-udp uses the `2xx` language, which [H3](https://datatracker.ietf.org/doc/html/rfc9114#section-4.4) mimics ",
+              "createdAt": "2026-03-02T14:56:21Z",
+              "updatedAt": "2026-03-02T14:56:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s7nE0rC",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-03-02T15:08:29Z",
+          "updatedAt": "2026-03-02T15:08:35Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Did you mean 405?",
+              "createdAt": "2026-03-02T15:08:29Z",
+              "updatedAt": "2026-03-02T15:08:35Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 258,
+      "id": "PR_kwDOCvK98s7HHjR1",
+      "title": "Editorial fixes",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/258",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "editorial"
+      ],
+      "body": "Also remove the very out of date changelog\r\nA bit of rewrap\r\nMinor grammatical errors",
+      "createdAt": "2026-03-01T12:02:09Z",
+      "updatedAt": "2026-03-01T12:03:35Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "b4998472bcb8bcb407bd4d17a23c6f32f0305d4f",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/very_editorial",
+      "headRefOid": "11ed4c862c67d47999eeb3e5e367ced1da2c5e72",
+      "closedAt": "2026-03-01T12:03:33Z",
+      "mergedAt": "2026-03-01T12:03:33Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "7d237ef83fbfd7769fc6d3555552624cbc13cfde"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 260,
+      "id": "PR_kwDOCvK98s7Hd5Xn",
+      "title": "Have the client, for draft versions only, still send SETTINGS_WT_ENABLED",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/260",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Have the client, for draft versions only, still send SETTINGS_WT_ENABLED\r\nFixes #259",
+      "createdAt": "2026-03-02T23:36:11Z",
+      "updatedAt": "2026-03-02T23:49:47Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "9f7dab90e0ad70581e3253166f2ac8b9a19abfd7",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/client_setting",
+      "headRefOid": "db9c31adac451ca7443fd15a8af6d19621b8dc7d",
+      "closedAt": "2026-03-02T23:49:44Z",
+      "mergedAt": "2026-03-02T23:49:44Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "3de996223df337328032fe4bba326a10a4286ad8"
+      },
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Apologies for the short turnaround time here (and thank you @vasilvv for thinking this one through offline). Merging since we've had this behavior in the past.",
+          "createdAt": "2026-03-02T23:49:10Z",
+          "updatedAt": "2026-03-02T23:49:38Z"
+        }
+      ],
+      "reviews": []
     }
   ]
 }
