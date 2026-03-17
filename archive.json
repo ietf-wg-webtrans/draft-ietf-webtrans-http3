@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-03-03T01:13:42.638081+00:00",
+  "timestamp": "2026-03-17T01:12:59.786310+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6146,7 +6146,7 @@
       ],
       "body": "Servers already know what to do when the resource doesn't exist, we don't need more text to say \"use 404\". However, if the resource does exist, but doesn't support WebTransport, we should align with H2 and use 406.",
       "createdAt": "2026-03-01T11:28:52Z",
-      "updatedAt": "2026-03-02T15:07:37Z",
+      "updatedAt": "2026-03-16T03:56:34Z",
       "closedAt": null,
       "comments": [
         {
@@ -6162,6 +6162,13 @@
           "body": "I agree with @LPardue.  Did you mean 405?",
           "createdAt": "2026-03-02T15:07:37Z",
           "updatedAt": "2026-03-02T15:07:37Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This came from https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/61, but happy to use any other status that we think makes the most sense.\n\nFor easy reference:\n[405](https://www.rfc-editor.org/rfc/rfc9110#section-15.5.6)\n> The 405 (Method Not Allowed) status code indicates that the method received in the request-line is known by the origin server but not supported by the [target resource](https://www.rfc-editor.org/rfc/rfc9110#target.resource). The origin server MUST generate an [Allow](https://www.rfc-editor.org/rfc/rfc9110#field.allow) header field in a 405 response containing a list of the target resource's currently supported methods.\n\n[406](https://www.rfc-editor.org/rfc/rfc9110#section-15.5.7)\n> The 406 (Not Acceptable) status code indicates that the [target resource](https://www.rfc-editor.org/rfc/rfc9110#target.resource) does not have a current representation that would be acceptable to the user agent, according to the [proactive negotiation](https://www.rfc-editor.org/rfc/rfc9110#proactive.negotiation) header fields received in the request ([Section 12.1](https://www.rfc-editor.org/rfc/rfc9110#proactive.negotiation)), and the server is unwilling to supply a default representation.",
+          "createdAt": "2026-03-16T03:55:21Z",
+          "updatedAt": "2026-03-16T03:56:34Z"
         }
       ]
     },
