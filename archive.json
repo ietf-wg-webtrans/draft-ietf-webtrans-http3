@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-03-17T01:12:59.786310+00:00",
+  "timestamp": "2026-03-31T01:21:54.976262+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6199,6 +6199,54 @@
           "updatedAt": "2026-03-02T23:28:36Z"
         }
       ]
+    },
+    {
+      "number": 261,
+      "id": "I_kwDOCvK98s74Vkk-",
+      "title": "Version negotiation in RFC ver",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/261",
+      "state": "OPEN",
+      "author": "vasilvv",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The draft currently says:\n\n> [[RFC editor: please remove the following paragraph before publication.]]\n>\n> For draft versions of WebTransport only, clients MUST also send SETTINGS_WT_ENABLED with the draft-specific codepoint to allow the server to identify the client's supported version; see [Section 7.1](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#negotiating-draft-version).\n\nSo, if I am a server, and I speak both draft-02 and RFC, how am I supposed to figure out which codepoints to use when a browser connects to me and says \"I support draft-02\", but also meets the requirements for RFC?",
+      "createdAt": "2026-03-30T01:35:47Z",
+      "updatedAt": "2026-03-30T01:35:47Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 262,
+      "id": "I_kwDOCvK98s74Xspr",
+      "title": "WGLC Review",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/262",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The Abstract could use a rewrite that leads with \u201cThis document \u2026\u201d\n\nThe terminology paragraph flows a little awkwardly as well.\n\n> Stream independence can mitigate head-of-line blocking.\n\nThis sentence feels stilted\n\n> it is unopinionated about their usage\n\nIs this adding value?  Also not a word/misspelled.\n\n> HTTP/3 offers two features in addition to HTTP Semantics: QPACK header compression [RFC9208] and Server Push Section 4.6 of [RFC9114].\n\nDo we need to mention either in this document?  Certainly server push can be dropped?\n\n> is not used for anything else related to an established session\n\nPerhaps: \u201cis only used for minimal framing\u201d\n\n> and perhaps some extra header fields.\n\nAnd any necessary header fields\n\n> and possibly some extra header fields\n\n> A WebTransport endpoint, whether a client or a server, can likely perform several of its HTTP-level requirements using bytestring comparisons.\n\n? I\u2019m not sure what we\u2019re suggesting here.  I recall there was a lot of push back about \u201ch3 is hard\u201d and this section seems to be saying \u201cits not that hard\u201d.  Do we still need this?\n\n> 2.1.2. Capsule-Based WebTransport over HTTP/3\n\nIs this section in the right place?  Maybe should come after overview?\n\n> Endpoints SHOULD always use this protocol\n\nDo we need a reason why one might not?\n\n>  in general are identified by a pair\n\nDrop \u201cin general\u201d?\n\n> The ID of the CONNECT stream\n\n\u201ca CONNECT stream\u201d has better agreement\n\n> f it does not, it SHOULD reply with status code 404\n\nBut overview security considerations has:\n\n> For example, the client must not be able to distinguish between a network address that is unreachable and one that is reachable but is not a WebTransport server.\n\n>  WebTransport server MAY accept the session\n\nThis is a funny MAY - perhaps \u201ccan\u201d or \u201cserver accepts\u201d\n\n> server may reply with a 3xx response, indicating a redirection (\n\nLowercase may\n\n> Clients cannot initiate WebTransport in 0-RTT packets,\n\nWebTransport sessions\n\n> SETTINGS parameters may be retained\n\nLowercase may\n\n> If the server accepts 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport sessions,\n\nI think we dropped max sessions\n\n> such change would be deemed incompatible\n\nBecause these values are incompatible, the server MUST send \u2026\n\n> enumerates the possible protocols \n\nPossible next protocols\n\n> If it does, the server MUST include a single choice from the client's list in that field\n\n\nOtherwise, request error or connection error?  Aha, it\u2019s a couple paragraphs later - \n\n>  If the client receives a WT-Protocol value that was not included in its WT-Available-Protocols list, the client MUST close the WebTransport session with a WT_ALPN_ERROR error code.\n\n> SHALL be 0x54.\n\nWe\u2019re still planning to renumber into the 1 byte varint space, right?\n\n> A WebTransport endpoint may send a \n\nLowercase may\n\n> similarly, intermediaries MUST reset such streams with a corresponding error code when receiving a reset from their peer. \n\nIs this talking about STOP_SENDING -> RST_STREAM behavior?  If so, it\u2019s too vague.\n\n> If a RESET_STREAM or STOP_SENDING frame is received with an error code outside the range reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but the error code is not mapped to a WebTransport application error code. The WebTransport implementation SHOULD deliver this to the application as a stream reset with no application error code.\n\nThis is super annoying.  Essentially your interface now needs to have optional<uint32_t> error code on the off chance that the peer sent a broken code.  Can we reserve the MAX error code in WT space as INTERNAL_ERROR or some such, and say that unknown errors map to INTERNAL_ERROR?  I will file this as a separate issue.\n\n> a WebTransport server could be put into a situation where it receives a stream or a datagram without a corresponding session.\n\nServer can receive\n\n>  client may receive\n\nLowercase may\n\n> a stream SHALL be\n\nAre we consistent with MUST/SHALL?\n\n> it must open a new\n\nLowercase must\n\n> and MAY open new WebTransport streams.\n\nMention datagrams too?\n\n> when the backend shuts down\n\nBackend is used without definition. Might need more explicit text\n\n> QUIC connection may be shared\n\nLowercase may\n\n> SHALL be a TLS exporter\n\nShall\n\n>   WebTransport Application-Supplied Exporter Label (8..),\n\nWhat does (8..) mean?  Is it a typo?\n\n> endpoints can limit the number of sessions that a peer can create on a single HTTP/3 connection\n\nStill true?  Via rate limit header or maybe we just drop it\n\n>  are not used and so are prohibited. \n\nDrop \u2018so\u2019 ?\n\n[throughout - need to update to reference RFC\u2019s of things that have shipped e.g. HTTP-DATAGRAM?\n\n> type of 0x190B4D3F\n\nRenumbering here I assume\n\n> HTTP/3 is considered terminated \n\nis terminated\n\n> the endpoint MUST reset the send side and abort reading on the receive side of all unidirectional and bidirectional streams associated with the session (see Section 2.4 of [RFC9000]) using the WT_SESSION_GONE error code;\n\nWhat error code does the implementation deliver to the application when a stream is reset with WT_SESSION_GONE?  \n\n\n\n\n\n\n",
+      "createdAt": "2026-03-30T03:44:42Z",
+      "updatedAt": "2026-03-30T03:44:42Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 263,
+      "id": "I_kwDOCvK98s74Xybe",
+      "title": "Reserving a WebTransport error code for implementation use",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/263",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> If a RESET_STREAM or STOP_SENDING frame is received with an error code outside the range reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but the error code is not mapped to a WebTransport application error code. The WebTransport implementation SHOULD deliver this to the application as a stream reset with **no application error code**.\n\nThis is super annoying. Essentially your interface now needs to have optional<uint32_t> error code on the off chance that the peer sent a broken code. Can we reserve the MAX error code in WT space as INTERNAL_ERROR or some such, and say that unknown errors map to INTERNAL_ERROR? \n\nThere's a related concern, which is how best to communicate to the application that a stream is closing because the session is terminated.  If we reserve an INTERNAL_ERROR I could use that, but it's a large space, I wouldn't mind a couple more like LOCAL_SESSION_TERMINATED and  PEER_SESSION_TERMINATED.  I grant it is a little ugly to reserve special points in an otherwise application space.",
+      "createdAt": "2026-03-30T03:49:03Z",
+      "updatedAt": "2026-03-30T03:49:03Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
