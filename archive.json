@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-03-31T01:21:54.976262+00:00",
+  "timestamp": "2026-04-07T01:22:35.235215+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6244,9 +6244,17 @@
       "labels": [],
       "body": "> If a RESET_STREAM or STOP_SENDING frame is received with an error code outside the range reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but the error code is not mapped to a WebTransport application error code. The WebTransport implementation SHOULD deliver this to the application as a stream reset with **no application error code**.\n\nThis is super annoying. Essentially your interface now needs to have optional<uint32_t> error code on the off chance that the peer sent a broken code. Can we reserve the MAX error code in WT space as INTERNAL_ERROR or some such, and say that unknown errors map to INTERNAL_ERROR? \n\nThere's a related concern, which is how best to communicate to the application that a stream is closing because the session is terminated.  If we reserve an INTERNAL_ERROR I could use that, but it's a large space, I wouldn't mind a couple more like LOCAL_SESSION_TERMINATED and  PEER_SESSION_TERMINATED.  I grant it is a little ugly to reserve special points in an otherwise application space.",
       "createdAt": "2026-03-30T03:49:03Z",
-      "updatedAt": "2026-03-30T03:49:03Z",
+      "updatedAt": "2026-04-05T10:06:25Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "NONE",
+          "body": "We have encountered the exact API design constraints described in this issue in our implementation.\n\nTo strictly comply with the draft-15 specification\u2014which mandates delivering a stream reset with _no application error code_ when receiving out-of-range codes\u2014this requires us to propagate an `Option<u64>` across our Rust-to-Python FFI boundary.\n\nFrom an architectural perspective, this introduces a non-total API surface and an error model mismatch:\n\n1. **Type Contract Degradation:** Propagating a partial error representation into higher-level languages results in type instability across the FFI boundary. The `error_code` attribute becomes conditionally present, weakening the determinism of the API contract.\n2. **Error Space Ambiguity:** Because the specification translates an invalid peer code into an absence of a code, implementations are left without a total error representation. To maintain a consistent contract, this necessitates mapping the absence to local state errors (in our case, an internal constant `ERR_LIB_STREAM_STATE_ERROR`), which introduces ambiguity between protocol-level network anomalies and local library state.\n\nReserving a standardized fallback code or sentinel values would resolve this model deficiency, allowing implementations to expose a total, strongly-typed integer API contract while strictly maintaining protocol compliance.\n",
+          "createdAt": "2026-04-05T10:06:25Z",
+          "updatedAt": "2026-04-05T10:06:25Z"
+        }
+      ]
     }
   ],
   "pulls": [
