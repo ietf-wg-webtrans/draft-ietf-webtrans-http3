@@ -528,7 +528,10 @@ implementation to the application.
 A WebTransport application MUST provide an error code for those operations.
 Since WebTransport shares the error code space with HTTP/3, WebTransport
 application errors for streams are limited to an unsigned 32-bit integer,
-assuming values between 0x00000000 and 0xffffffff.  WebTransport
+assuming values between 0x00000000 and 0xffffffff.  The range of values
+reserved by the WebTransport framework (see Section 3.3.1 of [OVERVIEW])
+MUST NOT be sent by applications; however, they are valid wire values used
+by the WebTransport implementation as described below.  WebTransport
 implementations MUST remap those error codes into the error range reserved
 for WT_APPLICATION_ERROR, where 0x00000000 corresponds to 0x52e4a40fa8db,
 and 0xffffffff corresponds to 0x52e5ac983162.  Note that there are
@@ -567,10 +570,12 @@ a known session to the application that owns that session; similarly,
 intermediaries MUST reset such streams with a corresponding error code when
 receiving a reset from their peer.  If a RESET_STREAM or STOP_SENDING frame is
 received with an error code outside the range reserved for WT_APPLICATION_ERROR,
-the stream is still considered reset, but the error code is not mapped to a
-WebTransport application error code.  The WebTransport implementation SHOULD
-deliver this to the application as a stream reset with no application error
-code.
+the stream is still considered reset, but the error code cannot be mapped to a
+WebTransport application error code.  If the error code is WT_SESSION_GONE, the
+WebTransport implementation SHALL deliver this to the application as a stream
+reset with the error code WT_ERROR_SESSION_TERMINATED.  For all other
+unmappable error codes, the WebTransport implementation SHALL deliver the
+stream reset with the error code WT_ERROR_INTERNAL.
 
 ## Datagrams
 
