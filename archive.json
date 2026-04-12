@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-04-07T01:22:35.235215+00:00",
+  "timestamp": "2026-04-12T01:28:05.126886+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -20200,6 +20200,32 @@
           "updatedAt": "2026-03-02T23:49:38Z"
         }
       ],
+      "reviews": []
+    },
+    {
+      "number": 264,
+      "id": "PR_kwDOCvK98s7Rijtd",
+      "title": "Clarify handling of reserved and unmappable error codes",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/264",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "See https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-overview/pull/47\r\n\r\nFixes #263",
+      "createdAt": "2026-04-10T18:43:32Z",
+      "updatedAt": "2026-04-10T18:43:33Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
+      "headRepository": "afrind/draft-ietf-webtrans-http3",
+      "headRefName": "afrind/reserved-error-codes",
+      "headRefOid": "49e6081514cee24fba6efa03aa2e6163f16ab823",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
       "reviews": []
     }
   ]
