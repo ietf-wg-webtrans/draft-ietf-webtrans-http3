@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-04-12T01:28:05.126886+00:00",
+  "timestamp": "2026-04-16T01:44:31.206941+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6253,6 +6253,37 @@
           "body": "We have encountered the exact API design constraints described in this issue in our implementation.\n\nTo strictly comply with the draft-15 specification\u2014which mandates delivering a stream reset with _no application error code_ when receiving out-of-range codes\u2014this requires us to propagate an `Option<u64>` across our Rust-to-Python FFI boundary.\n\nFrom an architectural perspective, this introduces a non-total API surface and an error model mismatch:\n\n1. **Type Contract Degradation:** Propagating a partial error representation into higher-level languages results in type instability across the FFI boundary. The `error_code` attribute becomes conditionally present, weakening the determinism of the API contract.\n2. **Error Space Ambiguity:** Because the specification translates an invalid peer code into an absence of a code, implementations are left without a total error representation. To maintain a consistent contract, this necessitates mapping the absence to local state errors (in our case, an internal constant `ERR_LIB_STREAM_STATE_ERROR`), which introduces ambiguity between protocol-level network anomalies and local library state.\n\nReserving a standardized fallback code or sentinel values would resolve this model deficiency, allowing implementations to expose a total, strongly-typed integer API contract while strictly maintaining protocol compliance.\n",
           "createdAt": "2026-04-05T10:06:25Z",
           "updatedAt": "2026-04-05T10:06:25Z"
+        }
+      ]
+    },
+    {
+      "number": 265,
+      "id": "I_kwDOCvK98s7-PSOO",
+      "title": "How to deal with the body of extended CONNECT request stream before accepting webtransport session",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/265",
+      "state": "OPEN",
+      "author": "tatsuhiro-t",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "It seems to me that there is no defined way to deal with the request body of the extended CONNECT request before accepting webtransport session.  Original HTTP CONNECT message has no content as per RFC 9110.  The extended CONNECT for  h2 and h3 seem to be a bit different here.\n\nSo the outcome is either:\n\n1. The request body must be buffered until server decides whether it accepts the webtransport session.  If it does not accept it, throw away the buffer.\n2. The request body can be processed as a capsule protocol even before the acceptance of the session.\n3. Client must not send request body until it sees response from server.  Server can drop connection if it sees request body before it responds to the request.\n\n",
+      "createdAt": "2026-04-15T00:01:09Z",
+      "updatedAt": "2026-04-15T10:30:13Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "There was a recent related thread on this topic on the HTTP mailing list: [HTTP/3 CONNECT requests, body, and trailers](https://lists.w3.org/Archives/Public/ietf-http-wg/2026JanMar/0043.html)\n\nI don't know that extended CONNECT changes anything compared to regular CONNECT. With either CONNECT, client DATA frames do not convey HTTP content and so the processing of that data must depend on the server accepting the proposed `:protocol`\n\nThe request is part of establishing the session, the spec states\n\n> The Capsule Protocol is negotiated when the server sends a 2xx response\n\nThis mirrors the statment in [RFC 9297](https://www.rfc-editor.org/rfc/rfc9297.html#section-3.2-9.1).\n\nI think outcome 1 is the most likely. A client waits to see if WebTransport support is advertised in settings then sends required HEADERS and DATA to minimize delays. Especially if its using the solely [capsule-based version of WebTransport](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#section-2.1.2), where it will want to send settings in capsules such as SETTINGS_WT_INITIAL_MAX_STREAMS_UNI.\n\n",
+          "createdAt": "2026-04-15T00:39:12Z",
+          "updatedAt": "2026-04-15T00:39:36Z"
+        },
+        {
+          "author": "tatsuhiro-t",
+          "authorAssociation": "NONE",
+          "body": "I agree that the option 1 is the most robust way among the choices I suggested.\nI'm wondering it is worth adding some text to explicitly state it, or no need to do that because it is rather \"obvious\" according to RFC 9297.",
+          "createdAt": "2026-04-15T10:30:13Z",
+          "updatedAt": "2026-04-15T10:30:13Z"
         }
       ]
     }
