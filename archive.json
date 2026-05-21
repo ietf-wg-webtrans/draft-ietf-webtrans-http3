@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-04-16T01:44:31.206941+00:00",
+  "timestamp": "2026-05-21T02:11:58.169991+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6286,6 +6286,38 @@
           "updatedAt": "2026-04-15T10:30:13Z"
         }
       ]
+    },
+    {
+      "number": 266,
+      "id": "I_kwDOCvK98s8AAAABCxNqxw",
+      "title": "Receiver behavior for oversized WT_CLOSE_SESSION reason is unspecified",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/266",
+      "state": "OPEN",
+      "author": "lemonsterfy",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "**Reference:** Draft-15, Section 6\n\n**Issue:**\nThe draft constrains senders: the Application Error Message in\nWT_CLOSE_SESSION \"MUST NOT exceed 1024 bytes.\" However, receiver\nbehavior when this limit is violated is not specified. It is unclear\nwhether receivers should truncate the value, ignore excess bytes, or\ntreat the condition as a protocol error.\n\nIn addition, the specification does not define whether senders are\nrequired to preserve UTF-8 character boundaries when enforcing the\n1024-byte limit. Byte-level truncation may result in invalid UTF-8\nsequences.\n\nClarification of both sender and receiver behavior would improve\ninteroperability and implementation consistency.\n",
+      "createdAt": "2026-05-19T20:26:46Z",
+      "updatedAt": "2026-05-19T20:26:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 267,
+      "id": "I_kwDOCvK98s8AAAABCxYDCA",
+      "title": "Clarification requested: error scope for WT_MAX_STREAMS limit violations",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/267",
+      "state": "OPEN",
+      "author": "lemonsterfy",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "\n**Reference:** Draft-15, Section 5.6.2\n\n**Issue:**\nSection 5.6.2 states that receipt of a WT_MAX_STREAMS capsule with a\nMaximum Streams value exceeding 2^60 \"MUST be treated as an HTTP/3\nerror of type H3_DATAGRAM_ERROR.\"\n\nH3_DATAGRAM_ERROR is defined in RFC 9297 as a connection-level error,\noriginally scoped to QUIC DATAGRAM frame parse failures. Applying it\nhere would require terminating the entire HTTP/3 connection for a\ncondition that is local to a single WebTransport session.\n\nBy contrast, other flow control related conditions in this draft appear\nto use session-level errors such as WT_FLOW_CONTROL_ERROR (e.g.,\nSection 5.6.4). The asymmetry is unclear.\n\n**Question:**\nIs connection termination the intended behavior for this condition, or\nshould it be treated as a session-level error consistent with the\nhandling of other flow control violations in this draft?\n",
+      "createdAt": "2026-05-19T20:52:18Z",
+      "updatedAt": "2026-05-19T20:52:18Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
