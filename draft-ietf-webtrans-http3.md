@@ -578,9 +578,10 @@ a WebTransport data stream.  This ensures reliable delivery of the ID field
 associating the data stream with a WebTransport session.
 
 WebTransport endpoints MUST forward the error code for a stream associated with
-a known session to the application that owns that session; similarly,
-intermediaries MUST reset such streams with a corresponding error code when
-receiving a reset from their peer.  If a RESET_STREAM or STOP_SENDING frame is
+a known session to the application that owns that session.  Upon receiving a
+RESET_STREAM or STOP_SENDING frame on a WebTransport stream, an intermediary
+MUST send the same frame type, with the corresponding error code, to the next
+hop on that stream.  If a RESET_STREAM or STOP_SENDING frame is
 received with an error code outside the range reserved for WT_APPLICATION_ERROR,
 the stream is still considered reset, but the error code is not mapped to a
 WebTransport application error code.  The WebTransport implementation SHOULD
