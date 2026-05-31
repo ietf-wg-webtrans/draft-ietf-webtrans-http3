@@ -142,9 +142,6 @@ header field, and any necessary header fields.
 * Generating/parsing the response status code and any necessary header
   fields.
 
-A WebTransport endpoint, whether a client or a server, can likely perform
-several of its HTTP-level requirements using bytestring comparisons.
-
 While HTTP/3 encodes HTTP messages using QPACK, this complexity can be
 minimized.  When receiving, a WebTransport endpoint can disable dynamic
 decompression entirely but must always support static decompression and Huffman
