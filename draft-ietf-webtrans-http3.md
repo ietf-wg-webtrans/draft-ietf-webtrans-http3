@@ -651,10 +651,10 @@ using WebTransport, which is expected to attempt to gracefully terminate the
 session as soon as possible.
 
 The WT_DRAIN_SESSION capsule is useful when an end-to-end WebTransport session
-passes through an intermediary.  For example, when the backend shuts down, it
-sends a GOAWAY to the intermediary.  The intermediary can convert this signal to
-a WT_DRAIN_SESSION capsule on the client-facing session, without impacting other
-requests or sessions carried on that connection.
+passes through an intermediary.  For example, when the origin server shuts
+down, it sends a GOAWAY to the intermediary.  The intermediary can convert this
+signal to a WT_DRAIN_SESSION capsule on the client-facing session, without
+impacting other requests or sessions carried on that connection.
 
 ## Use of Keying Material Exporters
 
