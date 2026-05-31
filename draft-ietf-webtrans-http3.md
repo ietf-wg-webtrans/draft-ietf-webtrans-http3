@@ -151,8 +151,8 @@ static compression, or Huffman encoding.
 ### Capsule-Based WebTransport over HTTP/3
 
 WebTransport over HTTP/3 as defined in this document provides the best
-performance by using native QUIC streams and datagrams. Endpoints SHOULD always
-use this protocol when using WebTransport over an HTTP/3 connection.
+performance by using native QUIC streams and datagrams. Endpoints SHOULD use
+this protocol when using WebTransport over an HTTP/3 connection.
 
 However, it is also possible to use WebTransport over a single HTTP/3 stream
 using the capsule-based protocol defined in
