@@ -687,10 +687,11 @@ zero-length if omitted.
 
 Flow control governs the amount of resources that can be consumed or data that
 can be sent.  When using WebTransport over HTTP/3, endpoints can limit the
-number of sessions that a peer can create on a single HTTP/3 connection and the
-number of streams that a peer can create within a session.  Endpoints can also
-limit the amount of data that can be consumed by each session and by each stream
-within a session.
+number of sessions that a peer can create on a single HTTP/3 connection via
+rate limiting (see {{flow-control-limit-sessions}}), and the number of streams
+that a peer can create within a session via flow control.  Endpoints can also
+apply flow control to the amount of data that can be consumed by each session
+and by each stream within a session.
 
 WebTransport over HTTP/3 provides a connection-level limit that governs the
 number of sessions that can be created on an HTTP/3 connection (see
