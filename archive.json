@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-05-21T02:11:58.169991+00:00",
+  "timestamp": "2026-05-31T02:30:39.364729+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6146,7 +6146,7 @@
       ],
       "body": "Servers already know what to do when the resource doesn't exist, we don't need more text to say \"use 404\". However, if the resource does exist, but doesn't support WebTransport, we should align with H2 and use 406.",
       "createdAt": "2026-03-01T11:28:52Z",
-      "updatedAt": "2026-03-16T03:56:34Z",
+      "updatedAt": "2026-05-29T16:41:55Z",
       "closedAt": null,
       "comments": [
         {
@@ -6169,6 +6169,13 @@
           "body": "This came from https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http2/issues/61, but happy to use any other status that we think makes the most sense.\n\nFor easy reference:\n[405](https://www.rfc-editor.org/rfc/rfc9110#section-15.5.6)\n> The 405 (Method Not Allowed) status code indicates that the method received in the request-line is known by the origin server but not supported by the [target resource](https://www.rfc-editor.org/rfc/rfc9110#target.resource). The origin server MUST generate an [Allow](https://www.rfc-editor.org/rfc/rfc9110#field.allow) header field in a 405 response containing a list of the target resource's currently supported methods.\n\n[406](https://www.rfc-editor.org/rfc/rfc9110#section-15.5.7)\n> The 406 (Not Acceptable) status code indicates that the [target resource](https://www.rfc-editor.org/rfc/rfc9110#target.resource) does not have a current representation that would be acceptable to the user agent, according to the [proactive negotiation](https://www.rfc-editor.org/rfc/rfc9110#proactive.negotiation) header fields received in the request ([Section 12.1](https://www.rfc-editor.org/rfc/rfc9110#proactive.negotiation)), and the server is unwilling to supply a default representation.",
           "createdAt": "2026-03-16T03:55:21Z",
           "updatedAt": "2026-03-16T03:56:34Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Switching to 405.",
+          "createdAt": "2026-05-29T16:41:55Z",
+          "updatedAt": "2026-05-29T16:41:55Z"
         }
       ]
     },
@@ -6228,9 +6235,17 @@
       "labels": [],
       "body": "The Abstract could use a rewrite that leads with \u201cThis document \u2026\u201d\n\nThe terminology paragraph flows a little awkwardly as well.\n\n> Stream independence can mitigate head-of-line blocking.\n\nThis sentence feels stilted\n\n> it is unopinionated about their usage\n\nIs this adding value?  Also not a word/misspelled.\n\n> HTTP/3 offers two features in addition to HTTP Semantics: QPACK header compression [RFC9208] and Server Push Section 4.6 of [RFC9114].\n\nDo we need to mention either in this document?  Certainly server push can be dropped?\n\n> is not used for anything else related to an established session\n\nPerhaps: \u201cis only used for minimal framing\u201d\n\n> and perhaps some extra header fields.\n\nAnd any necessary header fields\n\n> and possibly some extra header fields\n\n> A WebTransport endpoint, whether a client or a server, can likely perform several of its HTTP-level requirements using bytestring comparisons.\n\n? I\u2019m not sure what we\u2019re suggesting here.  I recall there was a lot of push back about \u201ch3 is hard\u201d and this section seems to be saying \u201cits not that hard\u201d.  Do we still need this?\n\n> 2.1.2. Capsule-Based WebTransport over HTTP/3\n\nIs this section in the right place?  Maybe should come after overview?\n\n> Endpoints SHOULD always use this protocol\n\nDo we need a reason why one might not?\n\n>  in general are identified by a pair\n\nDrop \u201cin general\u201d?\n\n> The ID of the CONNECT stream\n\n\u201ca CONNECT stream\u201d has better agreement\n\n> f it does not, it SHOULD reply with status code 404\n\nBut overview security considerations has:\n\n> For example, the client must not be able to distinguish between a network address that is unreachable and one that is reachable but is not a WebTransport server.\n\n>  WebTransport server MAY accept the session\n\nThis is a funny MAY - perhaps \u201ccan\u201d or \u201cserver accepts\u201d\n\n> server may reply with a 3xx response, indicating a redirection (\n\nLowercase may\n\n> Clients cannot initiate WebTransport in 0-RTT packets,\n\nWebTransport sessions\n\n> SETTINGS parameters may be retained\n\nLowercase may\n\n> If the server accepts 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport sessions,\n\nI think we dropped max sessions\n\n> such change would be deemed incompatible\n\nBecause these values are incompatible, the server MUST send \u2026\n\n> enumerates the possible protocols \n\nPossible next protocols\n\n> If it does, the server MUST include a single choice from the client's list in that field\n\n\nOtherwise, request error or connection error?  Aha, it\u2019s a couple paragraphs later - \n\n>  If the client receives a WT-Protocol value that was not included in its WT-Available-Protocols list, the client MUST close the WebTransport session with a WT_ALPN_ERROR error code.\n\n> SHALL be 0x54.\n\nWe\u2019re still planning to renumber into the 1 byte varint space, right?\n\n> A WebTransport endpoint may send a \n\nLowercase may\n\n> similarly, intermediaries MUST reset such streams with a corresponding error code when receiving a reset from their peer. \n\nIs this talking about STOP_SENDING -> RST_STREAM behavior?  If so, it\u2019s too vague.\n\n> If a RESET_STREAM or STOP_SENDING frame is received with an error code outside the range reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but the error code is not mapped to a WebTransport application error code. The WebTransport implementation SHOULD deliver this to the application as a stream reset with no application error code.\n\nThis is super annoying.  Essentially your interface now needs to have optional<uint32_t> error code on the off chance that the peer sent a broken code.  Can we reserve the MAX error code in WT space as INTERNAL_ERROR or some such, and say that unknown errors map to INTERNAL_ERROR?  I will file this as a separate issue.\n\n> a WebTransport server could be put into a situation where it receives a stream or a datagram without a corresponding session.\n\nServer can receive\n\n>  client may receive\n\nLowercase may\n\n> a stream SHALL be\n\nAre we consistent with MUST/SHALL?\n\n> it must open a new\n\nLowercase must\n\n> and MAY open new WebTransport streams.\n\nMention datagrams too?\n\n> when the backend shuts down\n\nBackend is used without definition. Might need more explicit text\n\n> QUIC connection may be shared\n\nLowercase may\n\n> SHALL be a TLS exporter\n\nShall\n\n>   WebTransport Application-Supplied Exporter Label (8..),\n\nWhat does (8..) mean?  Is it a typo?\n\n> endpoints can limit the number of sessions that a peer can create on a single HTTP/3 connection\n\nStill true?  Via rate limit header or maybe we just drop it\n\n>  are not used and so are prohibited. \n\nDrop \u2018so\u2019 ?\n\n[throughout - need to update to reference RFC\u2019s of things that have shipped e.g. HTTP-DATAGRAM?\n\n> type of 0x190B4D3F\n\nRenumbering here I assume\n\n> HTTP/3 is considered terminated \n\nis terminated\n\n> the endpoint MUST reset the send side and abort reading on the receive side of all unidirectional and bidirectional streams associated with the session (see Section 2.4 of [RFC9000]) using the WT_SESSION_GONE error code;\n\nWhat error code does the implementation deliver to the application when a stream is reset with WT_SESSION_GONE?  \n\n\n\n\n\n\n",
       "createdAt": "2026-03-30T03:44:42Z",
-      "updatedAt": "2026-03-30T03:44:42Z",
+      "updatedAt": "2026-05-31T01:07:47Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you @afrind!\n\nPutting up a PR for all of these, except: \n\n> We\u2019re still planning to renumber into the 1 byte varint space, right?\n> Renumbering here I assume\n\nYup, tracking with #136 (which we can do now that we're working through WGLC).\n\n",
+          "createdAt": "2026-05-31T01:07:47Z",
+          "updatedAt": "2026-05-31T01:07:47Z"
+        }
+      ]
     },
     {
       "number": 263,
@@ -20098,13 +20113,13 @@
       "labels": [],
       "body": "Update status code from 404 to 406\r\nFixes #256",
       "createdAt": "2026-03-01T11:32:44Z",
-      "updatedAt": "2026-03-02T15:08:35Z",
+      "updatedAt": "2026-05-29T19:14:24Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "b4998472bcb8bcb407bd4d17a23c6f32f0305d4f",
+      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/status_code",
-      "headRefOid": "a0cb802e5dcdb8c943a9edcbd7130c38d8f8770e",
+      "headRefOid": "962cd8a4ccb110861fae9ab562865ac46569fe89",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -20194,6 +20209,86 @@
               "body": "Did you mean 405?",
               "createdAt": "2026-03-02T15:08:29Z",
               "updatedAt": "2026-03-02T15:08:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBcr_DQ",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-05-29T19:06:21Z",
+          "updatedAt": "2026-05-29T19:06:21Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Updated per the conversation on the issue",
+              "createdAt": "2026-05-29T19:06:21Z",
+              "updatedAt": "2026-05-29T19:06:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBcsGeQ",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-05-29T19:06:43Z",
+          "updatedAt": "2026-05-29T19:06:43Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Updated with the suggested text, but kept 2xx for the moment",
+              "createdAt": "2026-05-29T19:06:43Z",
+              "updatedAt": "2026-05-29T19:06:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBcsMKQ",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-05-29T19:06:58Z",
+          "updatedAt": "2026-05-29T19:06:58Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "Heh, added",
+              "createdAt": "2026-05-29T19:06:58Z",
+              "updatedAt": "2026-05-29T19:06:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBcsRLg",
+          "commit": {
+            "abbreviatedOid": "a0cb802"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-05-29T19:07:14Z",
+          "updatedAt": "2026-05-29T19:07:15Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "Nice, thank you, updated",
+              "createdAt": "2026-05-29T19:07:14Z",
+              "updatedAt": "2026-05-29T19:07:15Z"
             }
           ]
         }
