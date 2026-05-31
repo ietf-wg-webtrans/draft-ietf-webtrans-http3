@@ -1093,7 +1093,11 @@ Upon learning that the session has been terminated, the endpoint MUST reset the
 send side and abort reading on the receive side of all unidirectional and
 bidirectional streams associated with the session
 (see {{Section 2.4 of !RFC9000}}) using the WT_SESSION_GONE error code;
-it MUST NOT send any new datagrams or open any new streams.
+it MUST NOT send any new datagrams or open any new streams.  WT_SESSION_GONE is
+a protocol-level error code rather than an application error code; the
+WebTransport implementation SHOULD report these stream resets to the
+application as part of the session-termination event rather than as separate
+stream-reset events carrying the WT_SESSION_GONE code.
 
 To terminate a session with a detailed error message, an application MAY provide
 such a message for the WebTransport endpoint to send in an HTTP capsule
