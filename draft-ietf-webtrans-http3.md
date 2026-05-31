@@ -41,13 +41,13 @@ informative:
 
 --- abstract
 
-WebTransport {{!OVERVIEW=I-D.ietf-webtrans-overview}} is a protocol framework
-that enables application clients constrained by the Web security model to
+WebTransport over HTTP/3 is a binding of the WebTransport protocol framework
+{{!OVERVIEW=I-D.ietf-webtrans-overview}} to HTTP/3 {{!HTTP3=RFC9114}}.  It
+provides support for unidirectional streams, bidirectional streams, and
+datagrams, all multiplexed within the same HTTP/3 connection.  WebTransport
+enables application clients constrained by the Web security model to
 communicate with a remote application server using a secure multiplexed
-transport.  This document describes a WebTransport protocol that is based on
-HTTP/3 {{!HTTP3=RFC9114}} and provides support for unidirectional streams,
-bidirectional streams, and datagrams, all multiplexed within the same HTTP/3
-connection.
+transport.
 
 --- middle
 
