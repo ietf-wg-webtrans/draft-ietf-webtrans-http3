@@ -358,12 +358,14 @@ intent is to simplify porting existing protocols that use QUIC and rely on this
 functionality.
 
 The client MAY include a `WT-Available-Protocols` header field in the CONNECT
+The client MAY include a `WT-Available-Protocols` header field in the CONNECT
 request.  The `WT-Available-Protocols` field enumerates the possible next
 protocols in preference order, with the most preferred protocol listed first.
 If the server receives such a header, it MAY include a `WT-Protocol` field in
 a successful (2xx) response.  If it does, the server MUST include a single
-choice from the client's list in that field.  Servers MAY reject the request
-if the client did not include a suitable protocol.
+choice from the client's list in that field; client behavior when the server
+response does not satisfy this requirement is described below.  Servers MAY
+reject the request if the client did not include a suitable protocol.
 
 Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
 {{!FIELDS=RFC9651}}.  `WT-Available-Protocols` is a List.  `WT-Protocol` is
