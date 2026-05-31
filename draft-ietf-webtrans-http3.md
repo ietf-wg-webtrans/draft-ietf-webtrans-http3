@@ -645,9 +645,10 @@ WT_DRAIN_SESSION Capsule {
 {: #fig-wt_drain_session title="WT_DRAIN_SESSION Capsule Format"}
 
 After sending or receiving either a WT_DRAIN_SESSION capsule or a HTTP/3 GOAWAY
-frame, an endpoint MAY continue using the session and MAY open new WebTransport
-streams.  The signal is intended for the application using WebTransport, which
-is expected to attempt to gracefully terminate the session as soon as possible.
+frame, an endpoint MAY continue using the session: it MAY open new WebTransport
+streams and MAY send new datagrams.  The signal is intended for the application
+using WebTransport, which is expected to attempt to gracefully terminate the
+session as soon as possible.
 
 The WT_DRAIN_SESSION capsule is useful when an end-to-end WebTransport session
 passes through an intermediary.  For example, when the backend shuts down, it
