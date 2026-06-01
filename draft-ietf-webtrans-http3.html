@@ -1699,6 +1699,12 @@ result in a H3_SETTINGS_ERROR connection error.<a href="#section-3.2-7" class="p
 2xx response.  The <code>capsule-protocol</code> header field
 <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.4" class="relref">Section 3.4</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> is not required by WebTransport and can safely
 be ignored by WebTransport endpoints.<a href="#section-3.2-8" class="pilcrow">¶</a></p>
+<p id="section-3.2-9">To reduce latency at the start of a WebTransport session, a client MAY
+optimistically send capsules on the CONNECT stream before receiving the
+server's response.  A server MUST NOT process these bytes as capsules until
+it sends a 2xx response accepting the session.  Bytes received before the
+server sends the response are processed once the session is accepted or
+discarded if the session is rejected.<a href="#section-3.2-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protocol-negotiation">
