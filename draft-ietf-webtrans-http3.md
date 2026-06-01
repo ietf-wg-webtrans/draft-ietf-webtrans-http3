@@ -1099,7 +1099,11 @@ Application Error Message:
 
 : A UTF-8 encoded error message string provided by the application closing the
   session.  The message takes up the remainder of the capsule, and its
-  length MUST NOT exceed 1024 bytes.
+  length MUST NOT exceed 1024 bytes.  Senders that truncate an
+  application-supplied message MUST do so at a UTF-8 character boundary.
+
+  If the Application Error Message exceeds 1024 bytes or is not valid UTF-8,
+  the receiver MUST reset the stream with code H3_MESSAGE_ERROR.
 
 Note that the Application Error Code field does not mirror the Error Code field
 in QUIC's CONNECTION_CLOSE frame ({{Section 19.19 of !RFC9000}}) because
