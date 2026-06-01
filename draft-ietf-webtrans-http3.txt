@@ -5,10 +5,10 @@
 WEBTRANS                                                     A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 3 September 2026                                     Apple Inc.
+Expires: 3 December 2026                                      Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                            2 March 2026
+                                                             1 June 2026
 
 
                         WebTransport over HTTP/3
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 September 2026.
+   This Internet-Draft will expire on 3 December 2026.
 
 Copyright Notice
 
@@ -1243,7 +1243,12 @@ Table of Contents
    Application Error Message:  A UTF-8 encoded error message string
       provided by the application closing the session.  The message
       takes up the remainder of the capsule, and its length MUST NOT
-      exceed 1024 bytes.
+      exceed 1024 bytes.  Senders that truncate an application-supplied
+      message MUST do so at a UTF-8 character boundary.
+
+      If the Application Error Message exceeds 1024 bytes or is not
+      valid UTF-8, the receiver MUST reset the stream with code
+      H3_MESSAGE_ERROR.
 
    Note that the Application Error Code field does not mirror the Error
    Code field in QUIC's CONNECTION_CLOSE frame (Section 19.19 of
@@ -1694,9 +1699,9 @@ Table of Contents
 
    [OVERVIEW] Kinnear, E. and V. Vasiliev, "The WebTransport Protocol
               Framework", Work in Progress, Internet-Draft, draft-ietf-
-              webtrans-overview-11, 20 October 2025,
+              webtrans-overview-12, 2 March 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-
-              webtrans-overview-11>.
+              webtrans-overview-12>.
 
    [QUIC-DATAGRAM]
               Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
@@ -1762,16 +1767,16 @@ Table of Contents
    [I-D.ietf-httpapi-ratelimit-headers]
               Polli, R., Ruiz, A. M., and D. Miller, "RateLimit header
               fields for HTTP", Work in Progress, Internet-Draft, draft-
-              ietf-httpapi-ratelimit-headers-10, 27 September 2025,
+              ietf-httpapi-ratelimit-headers-11, 23 May 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-
-              ratelimit-headers-10>.
+              ratelimit-headers-11>.
 
    [I-D.ietf-webtrans-http2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
-              Vasiliev, V., and G. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-13,
-              20 October 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-13>.
+              Vasiliev, V., and W. Xie, "WebTransport over HTTP/2", Work
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-14,
+              2 March 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-webtrans-http2-14>.
 
    [ORIGIN]   Fette, I. and A. Melnikov, "The WebSocket Protocol",
               RFC 6455, DOI 10.17487/RFC6455, December 2011,
@@ -1792,10 +1797,10 @@ Table of Contents
 
    [WEBTRANS-H2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
-              Vasiliev, V., and G. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-13,
-              20 October 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-13>.
+              Vasiliev, V., and W. Xie, "WebTransport over HTTP/2", Work
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-14,
+              2 March 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-webtrans-http2-14>.
 
 Index
 
