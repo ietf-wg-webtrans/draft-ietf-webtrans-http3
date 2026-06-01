@@ -917,9 +917,9 @@ WT_MAX_STREAMS capsules contain the following field:
    : A count of the cumulative number of streams of the corresponding type that
      can be opened over the lifetime of the session. This value cannot
      exceed 2<sup>60</sup>, as it is not possible to encode stream IDs larger
-     than 2<sup>62</sup>-1. Receipt of a capsule with a Maximum Streams value
-     larger than this limit MUST be treated as an HTTP/3 error of type
-     H3_DATAGRAM_ERROR.
+     than 2<sup>62</sup>-1. Recipients of a capsule with a Maximum Streams
+     value larger than this limit MUST close the WebTransport session with a
+     WT_FLOW_CONTROL_ERROR error code.
 
 An endpoint MUST NOT open more streams than permitted by the current stream
 limit set by its peer.  For instance, a server that receives a unidirectional
@@ -979,6 +979,9 @@ WT_STREAMS_BLOCKED capsules contain the following field:
    : A variable-length integer indicating the maximum number of streams allowed
      at the time the capsule was sent. This value cannot exceed 2<sup>60</sup>,
      as it is not possible to encode stream IDs larger than 2<sup>62</sup>-1.
+     Recipients of a capsule with a Maximum Streams value larger than this
+     limit MUST close the WebTransport session with a WT_FLOW_CONTROL_ERROR
+     error code.
 
 The WT_STREAMS_BLOCKED capsule defines special intermediary handling, as
 described in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume
