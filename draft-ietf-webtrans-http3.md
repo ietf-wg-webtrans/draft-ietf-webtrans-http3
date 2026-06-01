@@ -87,7 +87,7 @@ congestion control.  QUIC supports application data exchange via streams:
 reliable and ordered byte streams that can be multiplexed.  These streams are
 independent, so head-of-line blocking does not propagate between them.  QUIC
 provides streams as a transport service without prescribing their usage.  The
-applicability of streams is described by section 4 of {{?RFC9308}}.
+applicability of streams is described by {{Section 4 of ?RFC9308}}.
 
 HTTP is an application-layer protocol, defined by "HTTP Semantics" {{HTTP}}.
 HTTP/3 is the application mapping for QUIC, defined in {{!RFC9114}}.  It
@@ -103,7 +103,8 @@ is important for security reasons, especially to ensure that the resource is
 willing to use WebTransport.
 
 Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
-HTTP is only used for minimal framing.  QUIC streams begin with a sequence of
+HTTP is used for session setup and only minimal framing beyond that.
+QUIC streams begin with a sequence of
 header bytes that links them to the established session.  The remainder of the stream is the body, which carries the
 payload supplied by the application using WebTransport.  This process is similar
 to WebSockets over HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the underlying
@@ -665,7 +666,7 @@ defined in {{Section 7.5 of !RFC8446}} with the label set to
 WebTransport Exporter Context {
   WebTransport Session ID (64),
   WebTransport Application-Supplied Exporter Label Length (8),
-  WebTransport Application-Supplied Exporter Label (..),
+  WebTransport Application-Supplied Exporter Label (8..),
   WebTransport Application-Supplied Exporter Context Length (8),
   WebTransport Application-Supplied Exporter Context (..)
 }
