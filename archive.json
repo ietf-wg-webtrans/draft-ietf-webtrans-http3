@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-05-31T02:30:39.364729+00:00",
+  "timestamp": "2026-06-02T02:38:13.094503+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6231,11 +6231,15 @@
       "state": "OPEN",
       "author": "afrind",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "The Abstract could use a rewrite that leads with \u201cThis document \u2026\u201d\n\nThe terminology paragraph flows a little awkwardly as well.\n\n> Stream independence can mitigate head-of-line blocking.\n\nThis sentence feels stilted\n\n> it is unopinionated about their usage\n\nIs this adding value?  Also not a word/misspelled.\n\n> HTTP/3 offers two features in addition to HTTP Semantics: QPACK header compression [RFC9208] and Server Push Section 4.6 of [RFC9114].\n\nDo we need to mention either in this document?  Certainly server push can be dropped?\n\n> is not used for anything else related to an established session\n\nPerhaps: \u201cis only used for minimal framing\u201d\n\n> and perhaps some extra header fields.\n\nAnd any necessary header fields\n\n> and possibly some extra header fields\n\n> A WebTransport endpoint, whether a client or a server, can likely perform several of its HTTP-level requirements using bytestring comparisons.\n\n? I\u2019m not sure what we\u2019re suggesting here.  I recall there was a lot of push back about \u201ch3 is hard\u201d and this section seems to be saying \u201cits not that hard\u201d.  Do we still need this?\n\n> 2.1.2. Capsule-Based WebTransport over HTTP/3\n\nIs this section in the right place?  Maybe should come after overview?\n\n> Endpoints SHOULD always use this protocol\n\nDo we need a reason why one might not?\n\n>  in general are identified by a pair\n\nDrop \u201cin general\u201d?\n\n> The ID of the CONNECT stream\n\n\u201ca CONNECT stream\u201d has better agreement\n\n> f it does not, it SHOULD reply with status code 404\n\nBut overview security considerations has:\n\n> For example, the client must not be able to distinguish between a network address that is unreachable and one that is reachable but is not a WebTransport server.\n\n>  WebTransport server MAY accept the session\n\nThis is a funny MAY - perhaps \u201ccan\u201d or \u201cserver accepts\u201d\n\n> server may reply with a 3xx response, indicating a redirection (\n\nLowercase may\n\n> Clients cannot initiate WebTransport in 0-RTT packets,\n\nWebTransport sessions\n\n> SETTINGS parameters may be retained\n\nLowercase may\n\n> If the server accepts 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport sessions,\n\nI think we dropped max sessions\n\n> such change would be deemed incompatible\n\nBecause these values are incompatible, the server MUST send \u2026\n\n> enumerates the possible protocols \n\nPossible next protocols\n\n> If it does, the server MUST include a single choice from the client's list in that field\n\n\nOtherwise, request error or connection error?  Aha, it\u2019s a couple paragraphs later - \n\n>  If the client receives a WT-Protocol value that was not included in its WT-Available-Protocols list, the client MUST close the WebTransport session with a WT_ALPN_ERROR error code.\n\n> SHALL be 0x54.\n\nWe\u2019re still planning to renumber into the 1 byte varint space, right?\n\n> A WebTransport endpoint may send a \n\nLowercase may\n\n> similarly, intermediaries MUST reset such streams with a corresponding error code when receiving a reset from their peer. \n\nIs this talking about STOP_SENDING -> RST_STREAM behavior?  If so, it\u2019s too vague.\n\n> If a RESET_STREAM or STOP_SENDING frame is received with an error code outside the range reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but the error code is not mapped to a WebTransport application error code. The WebTransport implementation SHOULD deliver this to the application as a stream reset with no application error code.\n\nThis is super annoying.  Essentially your interface now needs to have optional<uint32_t> error code on the off chance that the peer sent a broken code.  Can we reserve the MAX error code in WT space as INTERNAL_ERROR or some such, and say that unknown errors map to INTERNAL_ERROR?  I will file this as a separate issue.\n\n> a WebTransport server could be put into a situation where it receives a stream or a datagram without a corresponding session.\n\nServer can receive\n\n>  client may receive\n\nLowercase may\n\n> a stream SHALL be\n\nAre we consistent with MUST/SHALL?\n\n> it must open a new\n\nLowercase must\n\n> and MAY open new WebTransport streams.\n\nMention datagrams too?\n\n> when the backend shuts down\n\nBackend is used without definition. Might need more explicit text\n\n> QUIC connection may be shared\n\nLowercase may\n\n> SHALL be a TLS exporter\n\nShall\n\n>   WebTransport Application-Supplied Exporter Label (8..),\n\nWhat does (8..) mean?  Is it a typo?\n\n> endpoints can limit the number of sessions that a peer can create on a single HTTP/3 connection\n\nStill true?  Via rate limit header or maybe we just drop it\n\n>  are not used and so are prohibited. \n\nDrop \u2018so\u2019 ?\n\n[throughout - need to update to reference RFC\u2019s of things that have shipped e.g. HTTP-DATAGRAM?\n\n> type of 0x190B4D3F\n\nRenumbering here I assume\n\n> HTTP/3 is considered terminated \n\nis terminated\n\n> the endpoint MUST reset the send side and abort reading on the receive side of all unidirectional and bidirectional streams associated with the session (see Section 2.4 of [RFC9000]) using the WT_SESSION_GONE error code;\n\nWhat error code does the implementation deliver to the application when a stream is reset with WT_SESSION_GONE?  \n\n\n\n\n\n\n",
       "createdAt": "2026-03-30T03:44:42Z",
-      "updatedAt": "2026-05-31T01:07:47Z",
+      "updatedAt": "2026-06-01T10:34:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -6255,11 +6259,15 @@
       "state": "OPEN",
       "author": "afrind",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "afrind"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "> If a RESET_STREAM or STOP_SENDING frame is received with an error code outside the range reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but the error code is not mapped to a WebTransport application error code. The WebTransport implementation SHOULD deliver this to the application as a stream reset with **no application error code**.\n\nThis is super annoying. Essentially your interface now needs to have optional<uint32_t> error code on the off chance that the peer sent a broken code. Can we reserve the MAX error code in WT space as INTERNAL_ERROR or some such, and say that unknown errors map to INTERNAL_ERROR? \n\nThere's a related concern, which is how best to communicate to the application that a stream is closing because the session is terminated.  If we reserve an INTERNAL_ERROR I could use that, but it's a large space, I wouldn't mind a couple more like LOCAL_SESSION_TERMINATED and  PEER_SESSION_TERMINATED.  I grant it is a little ugly to reserve special points in an otherwise application space.",
       "createdAt": "2026-03-30T03:49:03Z",
-      "updatedAt": "2026-04-05T10:06:25Z",
+      "updatedAt": "2026-06-01T10:47:41Z",
       "closedAt": null,
       "comments": [
         {
@@ -6276,15 +6284,19 @@
       "id": "I_kwDOCvK98s7-PSOO",
       "title": "How to deal with the body of extended CONNECT request stream before accepting webtransport session",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/265",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "tatsuhiro-t",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "It seems to me that there is no defined way to deal with the request body of the extended CONNECT request before accepting webtransport session.  Original HTTP CONNECT message has no content as per RFC 9110.  The extended CONNECT for  h2 and h3 seem to be a bit different here.\n\nSo the outcome is either:\n\n1. The request body must be buffered until server decides whether it accepts the webtransport session.  If it does not accept it, throw away the buffer.\n2. The request body can be processed as a capsule protocol even before the acceptance of the session.\n3. Client must not send request body until it sees response from server.  Server can drop connection if it sees request body before it responds to the request.\n\n",
       "createdAt": "2026-04-15T00:01:09Z",
-      "updatedAt": "2026-04-15T10:30:13Z",
-      "closedAt": null,
+      "updatedAt": "2026-06-01T21:38:13Z",
+      "closedAt": "2026-06-01T21:38:13Z",
       "comments": [
         {
           "author": "LPardue",
@@ -6299,6 +6311,13 @@
           "body": "I agree that the option 1 is the most robust way among the choices I suggested.\nI'm wondering it is worth adding some text to explicitly state it, or no need to do that because it is rather \"obvious\" according to RFC 9297.",
           "createdAt": "2026-04-15T10:30:13Z",
           "updatedAt": "2026-04-15T10:30:13Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The request body must be buffered until server decides whether it accepts the webtransport session. If it does not accept it, throw away the buffer.\n\nYeah, I think it makes sense to spell this out more clearly in the document, let me put together some text.",
+          "createdAt": "2026-06-01T05:55:08Z",
+          "updatedAt": "2026-06-01T05:55:08Z"
         }
       ]
     },
@@ -6307,32 +6326,56 @@
       "id": "I_kwDOCvK98s8AAAABCxNqxw",
       "title": "Receiver behavior for oversized WT_CLOSE_SESSION reason is unspecified",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/266",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "lemonsterfy",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "**Reference:** Draft-15, Section 6\n\n**Issue:**\nThe draft constrains senders: the Application Error Message in\nWT_CLOSE_SESSION \"MUST NOT exceed 1024 bytes.\" However, receiver\nbehavior when this limit is violated is not specified. It is unclear\nwhether receivers should truncate the value, ignore excess bytes, or\ntreat the condition as a protocol error.\n\nIn addition, the specification does not define whether senders are\nrequired to preserve UTF-8 character boundaries when enforcing the\n1024-byte limit. Byte-level truncation may result in invalid UTF-8\nsequences.\n\nClarification of both sender and receiver behavior would improve\ninteroperability and implementation consistency.\n",
       "createdAt": "2026-05-19T20:26:46Z",
-      "updatedAt": "2026-05-19T20:26:46Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-06-01T21:37:54Z",
+      "closedAt": "2026-06-01T21:37:54Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Made a PR to specify that the sender MUST NOT send invalid values and that receivers MUST error out if it gets something invalid.\n",
+          "createdAt": "2026-06-01T10:37:28Z",
+          "updatedAt": "2026-06-01T10:37:28Z"
+        }
+      ]
     },
     {
       "number": 267,
       "id": "I_kwDOCvK98s8AAAABCxYDCA",
       "title": "Clarification requested: error scope for WT_MAX_STREAMS limit violations",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/267",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "lemonsterfy",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "ekinnear"
+      ],
+      "labels": [
+        "has pull request"
+      ],
       "body": "\n**Reference:** Draft-15, Section 5.6.2\n\n**Issue:**\nSection 5.6.2 states that receipt of a WT_MAX_STREAMS capsule with a\nMaximum Streams value exceeding 2^60 \"MUST be treated as an HTTP/3\nerror of type H3_DATAGRAM_ERROR.\"\n\nH3_DATAGRAM_ERROR is defined in RFC 9297 as a connection-level error,\noriginally scoped to QUIC DATAGRAM frame parse failures. Applying it\nhere would require terminating the entire HTTP/3 connection for a\ncondition that is local to a single WebTransport session.\n\nBy contrast, other flow control related conditions in this draft appear\nto use session-level errors such as WT_FLOW_CONTROL_ERROR (e.g.,\nSection 5.6.4). The asymmetry is unclear.\n\n**Question:**\nIs connection termination the intended behavior for this condition, or\nshould it be treated as a session-level error consistent with the\nhandling of other flow control violations in this draft?\n",
       "createdAt": "2026-05-19T20:52:18Z",
-      "updatedAt": "2026-05-19T20:52:18Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-06-01T23:16:11Z",
+      "closedAt": "2026-06-01T23:16:11Z",
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Interesting point, now that we have WT_FLOW_CONTROL_ERROR, we can likely use it here as well.",
+          "createdAt": "2026-06-01T10:42:21Z",
+          "updatedAt": "2026-06-01T10:42:21Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -20104,16 +20147,16 @@
     {
       "number": 257,
       "id": "PR_kwDOCvK98s7HHZLD",
-      "title": "Update status code from 404 to 406",
+      "title": "Update status code from 404 to 405",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/257",
       "state": "OPEN",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Update status code from 404 to 406\r\nFixes #256",
+      "body": "Update status code from 404 to 405\r\nFixes #256",
       "createdAt": "2026-03-01T11:32:44Z",
-      "updatedAt": "2026-05-29T19:14:24Z",
+      "updatedAt": "2026-06-01T21:39:23Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
@@ -20385,6 +20428,217 @@
       "mergeCommit": null,
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 268,
+      "id": "PR_kwDOCvK98s7hNis0",
+      "title": "Editorial fixes from Alan's WGLC review",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/268",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "* Reword \"Stream independence can mitigate head-of-line blocking\" and replace \"unopinionated\" with \"without prescribing their usage\".\r\n* Replace \"is not used for anything else related to an established session\" with \"is only used for minimal framing\".\r\n* Use \"any necessary header fields\" rather than \"perhaps some\" or \"possibly some\" in the minimal-handshake bullets.\r\n* Drop \"in general\" from the server-identification paragraph.\r\n* Use \"a CONNECT stream\" rather than \"the CONNECT stream\" for agreement.\r\n* Replace descriptive \"may\" with \"can\" or \"might\", and convert SHALL to MUST for the buffered-stream/datagram drop, GOAWAY follow-up, and TLS exporter cases.\r\n* Use \"WebTransport sessions in 0-RTT packets\" rather than \"WebTransport in 0-RTT packets\".\r\n* Use \"possible next protocols\" in the WT-Available-Protocols description, mirroring TLS ALPN.\r\n* Fix \"(8..)\" to \"(..)\" for the Exporter Label length encoding so it matches the Context field below it.\r\n* Drop \"so\" from \"and so are prohibited\".\r\n* Drop \"considered\" from \"is considered terminated\".",
+      "createdAt": "2026-06-01T03:45:49Z",
+      "updatedAt": "2026-06-01T10:33:32Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/wglc_262_editorial",
+      "headRefOid": "42eedf84ad3962e1c514402982fd06f3bb7dfd4d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBi_QCQ",
+          "commit": {
+            "abbreviatedOid": "05f171d"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-06-01T06:00:32Z",
+          "updatedAt": "2026-06-01T06:47:43Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\napplicability of streams is described by {{Section 4 of ?RFC9308}}.\n```",
+              "createdAt": "2026-06-01T06:00:33Z",
+              "updatedAt": "2026-06-01T06:47:43Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nHTTP is used for session setup and only minimal framing beyond that.\r\nQUIC streams begin with a sequence of\r\n```",
+              "createdAt": "2026-06-01T06:45:29Z",
+              "updatedAt": "2026-06-01T10:32:43Z"
+            },
+            {
+              "originalPosition": 151,
+              "body": "I think that this is wrong.  The exporter label has to be at least one byte in length.  Otherwise all exporter contexts will be equal.\n\n```suggestion\n  WebTransport Application-Supplied Exporter Label (8..),\n```",
+              "createdAt": "2026-06-01T06:47:04Z",
+              "updatedAt": "2026-06-01T06:47:43Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 269,
+      "id": "PR_kwDOCvK98s7hNkFl",
+      "title": "Deeper updates from Alan's WGLC review",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/269",
+      "state": "OPEN",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Each change is in its own commit to make it easy to back out or adjust any of them.\r\n\r\n* Restructure the Abstract so the document subject opens the paragraph\r\n* Smooth the Terminology paragraph flow\r\n* Remove the QPACK and Server Push aside\r\n* Remove the bytestring-comparison note\r\n* Drop \"always\" from \"SHOULD use this protocol\"\r\n* Drop the max-sessions clause from 0-RTT settings and reword the \r\n* Forward-reference the ALPN error path, so the consequence of \r\n* Be explicit about intermediary RESET_STREAM and STOP_SENDING forwarding. \r\n* Note that datagrams can also be sent after WT_DRAIN_SESSION/GOAWAY\r\n* Use \"origin server\" rather than \"backend\"\r\n* Make explicit that connection-level session count is governed by \r\n* Fold session-gone stream resets into the session-termination event \r\n\r\nCloses #262 ",
+      "createdAt": "2026-06-01T03:47:16Z",
+      "updatedAt": "2026-06-01T03:47:47Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/wglc_262_substantive",
+      "headRefOid": "b7d1800c55ea58eaa05058f2b08833254530be31",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 270,
+      "id": "PR_kwDOCvK98s7hPa2g",
+      "title": "Specify handling of CONNECT-stream capsule bytes before session accepted",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/270",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add explicit text that a client MAY optimistically send capsules before the server's response, and that the server MUST NOT process these bytes as capsules until it sends a 2xx accepting the session.\r\n\r\nFixes #265 ",
+      "createdAt": "2026-06-01T06:00:52Z",
+      "updatedAt": "2026-06-01T21:38:15Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/connect_body",
+      "headRefOid": "5636c8261bbd1e308a1634f57db7ba3d059fc222",
+      "closedAt": "2026-06-01T21:38:12Z",
+      "mergedAt": "2026-06-01T21:38:12Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "79cb13a6c8b92ec5013860efa80449bb106274c7"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBlCyIA",
+          "commit": {
+            "abbreviatedOid": "5636c82"
+          },
+          "author": "mxinden",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-06-01T11:54:16Z",
+          "updatedAt": "2026-06-01T11:54:16Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 271,
+      "id": "PR_kwDOCvK98s7hUk4m",
+      "title": "Specify receiver behavior for oversized WT_CLOSE_SESSION message",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/271",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add a MUST that senders truncate at a UTF-8 character boundary, and require receivers to reset the CONNECT stream with H3_MESSAGE_ERROR if the Application Error Message exceeds 1024 bytes or is not valid UTF-8.\r\n\r\nAlso open to not saying anything about UTF-8 boundaries or following some other more established convention.\r\n\r\nFixes #266",
+      "createdAt": "2026-06-01T10:30:23Z",
+      "updatedAt": "2026-06-01T21:37:57Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/close_session_message",
+      "headRefOid": "0ba9cf5419e761afee4bc93f78ae6ed00e75d0e4",
+      "closedAt": "2026-06-01T21:37:53Z",
+      "mergedAt": "2026-06-01T21:37:53Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "27cbbf3a5b13cd655bb92cd8f540dd93927249b6"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBlBGmQ",
+          "commit": {
+            "abbreviatedOid": "0ba9cf5"
+          },
+          "author": "mxinden",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-06-01T11:49:59Z",
+          "updatedAt": "2026-06-01T11:49:59Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 272,
+      "id": "PR_kwDOCvK98s7hU6D5",
+      "title": "Use WT_FLOW_CONTROL_ERROR for invalid Maximum Streams values",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/272",
+      "state": "MERGED",
+      "author": "ekinnear",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Receipt of a Maximum Streams value exceeding 2^60 was previously treated as an HTTP/3 connection error in WT_MAX_STREAMS and left unspecified in WT_STREAMS_BLOCKED.  Use the session-scoped WT_FLOW_CONTROL_ERROR in both places, matching the rest of the flow-control section.\r\n\r\nFixes #267",
+      "createdAt": "2026-06-01T10:46:35Z",
+      "updatedAt": "2026-06-01T23:16:10Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
+      "headRepository": "ekinnear/draft-ietf-webtrans-http3",
+      "headRefName": "ek/streams_error_scope",
+      "headRefOid": "6a5019eb85d07d55f868624f3db9341b4de98188",
+      "closedAt": "2026-06-01T23:16:10Z",
+      "mergedAt": "2026-06-01T23:16:10Z",
+      "mergedBy": "martinthomson",
+      "mergeCommit": {
+        "oid": "aec2f4b59caf68cea70f597eec98d4a604995a63"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBlAk9Q",
+          "commit": {
+            "abbreviatedOid": "6a5019e"
+          },
+          "author": "mxinden",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-06-01T11:48:48Z",
+          "updatedAt": "2026-06-01T11:48:48Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
