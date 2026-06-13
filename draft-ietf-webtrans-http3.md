@@ -312,9 +312,9 @@ verify the `Origin` header to ensure that the specified origin is allowed to
 access the server in question.  If the verification fails, the WebTransport
 server SHOULD reply with status code 403 ({{Section 15.5.4 of HTTP}}).
 
-If these checks, including any specific to the server and target resource,
-pass, the session can be accepted by replying with a 2xx series status code,
-as defined in {{Section 15.3 of HTTP}}.
+A server then performs any checks specific to the server and target resource.
+If all checks pass, the session can be accepted by replying with a 2xx series
+status code, as defined in {{Section 15.3 of HTTP}}.
 
 From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
