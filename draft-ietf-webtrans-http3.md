@@ -22,7 +22,7 @@ author:
   -
     ins: A. Frindell
     name: Alan Frindell
-    org: Facebook
+    org: Meta
     email: afrind@fb.com
   -
     ins: E. Kinnear
