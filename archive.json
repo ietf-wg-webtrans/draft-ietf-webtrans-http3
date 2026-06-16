@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-14T02:38:22.893701+00:00",
+  "timestamp": "2026-06-16T02:45:59.083755+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -20500,7 +20500,7 @@
       "labels": [],
       "body": "Each change is in its own commit to make it easy to back out or adjust any of them.\r\n\r\n* Restructure the Abstract so the document subject opens the paragraph\r\n* Smooth the Terminology paragraph flow\r\n* Remove the QPACK and Server Push aside\r\n* Remove the bytestring-comparison note\r\n* Drop \"always\" from \"SHOULD use this protocol\"\r\n* Drop the max-sessions clause from 0-RTT settings and reword the \r\n* Forward-reference the ALPN error path, so the consequence of \r\n* Be explicit about intermediary RESET_STREAM and STOP_SENDING forwarding. \r\n* Note that datagrams can also be sent after WT_DRAIN_SESSION/GOAWAY\r\n* Use \"origin server\" rather than \"backend\"\r\n* Make explicit that connection-level session count is governed by \r\n* Fold session-gone stream resets into the session-termination event \r\n\r\nCloses #262 ",
       "createdAt": "2026-06-01T03:47:16Z",
-      "updatedAt": "2026-06-13T05:50:21Z",
+      "updatedAt": "2026-06-15T06:57:00Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
@@ -20512,7 +20512,52 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABBjLYdA",
+          "commit": {
+            "abbreviatedOid": "d7831e2"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "I saved comments, but failed to share them.  So you get those.  They might be old, but they didn't look like it.",
+          "createdAt": "2026-06-01T06:48:18Z",
+          "updatedAt": "2026-06-15T06:57:00Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "```suggestion\nThis document follows terminology defined in {{Section 1.2 of OVERVIEW}}.\n```",
+              "createdAt": "2026-06-01T06:48:19Z",
+              "updatedAt": "2026-06-15T06:57:00Z"
+            },
+            {
+              "originalPosition": 37,
+              "body": "```suggestion\nHTTP/3 server, possibly through an intermediary.\n```",
+              "createdAt": "2026-06-01T06:48:49Z",
+              "updatedAt": "2026-06-15T06:57:00Z"
+            },
+            {
+              "originalPosition": 43,
+              "body": "Do you want to mention that the WebTransport client could be a web browser, where the application is the website running in that browser?  Seems like a useful piece of information to share.",
+              "createdAt": "2026-06-01T06:49:55Z",
+              "updatedAt": "2026-06-15T06:57:00Z"
+            },
+            {
+              "originalPosition": 44,
+              "body": "When the text in the document says just \"client\" or \"server\", which of the different client or server roles does that refer to?  It might help to explain that it generally refers to the WebTransport client.\n\nBut the fact that a WebTransport server might be on the other side of an intermediary REALLY complicates things there, because the rules in the protocol need to be implemented in the intermediary.  So you have to be super careful with that server definition.",
+              "createdAt": "2026-06-01T06:53:59Z",
+              "updatedAt": "2026-06-15T06:57:00Z"
+            },
+            {
+              "originalPosition": 74,
+              "body": "```suggestion\nperformance by using native QUIC streams and datagrams. Endpoints SHOULD prefer\n```\n\n?",
+              "createdAt": "2026-06-01T06:54:54Z",
+              "updatedAt": "2026-06-15T06:57:00Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 270,
