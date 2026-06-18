@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-16T02:45:59.083755+00:00",
+  "timestamp": "2026-06-18T02:39:11.034364+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -20681,6 +20681,54 @@
           "body": "",
           "createdAt": "2026-06-01T11:48:48Z",
           "updatedAt": "2026-06-01T11:48:48Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 273,
+      "id": "PR_kwDOCvK98s7m2mkZ",
+      "title": "Prose titles for settings",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/273",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The underscore-ful names for these sections are so long that they are blowing out the narrow table of contents.  Prose is probably more understandable.  Prose FTW.",
+      "createdAt": "2026-06-16T05:10:03Z",
+      "updatedAt": "2026-06-16T05:17:21Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
+      "headRepository": "martinthomson/draft-ietf-webtrans-http3",
+      "headRefName": "setting-title-length",
+      "headRefOid": "f6568358f019090cf4d6c0b4e4d7dc2431833521",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Really underscores the issue",
+          "createdAt": "2026-06-16T05:16:00Z",
+          "updatedAt": "2026-06-16T05:16:00Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABDG1h9g",
+          "commit": {
+            "abbreviatedOid": "f656835"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-06-16T05:17:21Z",
+          "updatedAt": "2026-06-16T05:17:21Z",
           "comments": []
         }
       ]
