@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-21T02:42:22.071884+00:00",
+  "timestamp": "2026-06-28T02:31:28.660321+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6397,6 +6397,22 @@
       "body": "> [4.6. ](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-15.html#section-4.6)[Buffering Incoming Streams and Datagrams](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-15.html#name-buffering-incoming-streams-)\n> \n> In WebTransport over HTTP/3, the client MUST wait for receipt of the server's SETTINGS frame before establishing any WebTransport sessions by sending CONNECT requests using the WebTransport upgrade token (see [Section 3.1](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-15.html#establishing)). This ensures that the client will always know what versions of WebTransport can be used on a given HTTP/3 connection.\n> \n> Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT requests, WebTransport data streams, and WebTransport datagrams all within a single flight. As those can arrive out of order, a WebTransport server could be put into a situation where it receives a stream or a datagram without a corresponding session. Similarly, a client may receive a server-initiated stream or a datagram before receiving the CONNECT response headers from the server.\n> \n> To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams until they can be associated with an established session. To avoid resource exhaustion, endpoints MUST limit the number of buffered streams and datagrams. When the number of buffered streams is exceeded, a stream SHALL be closed by sending a RESET_STREAM and/or STOP_SENDING with the WT_BUFFERED_STREAM_REJECTED error code. When the number of buffered datagrams is exceeded, a datagram SHALL be dropped. It is up to an implementation to choose what stream or datagram to discard.\n\nSection 4.6 explicitly allows clients to send CONNECT requests, WebTransport streams, and WebTransport datagrams within a single flight, where those messages may arrive out of order. The section then recommends buffering via a SHOULD requirement.\n\nBecause buffering is recommended but optional, a compliant endpoint server may choose not to buffer and instead reject streams or drop datagrams received before the corresponding session has been established.\n\nAs a result, one compliant client implementation may send CONNECT requests, WebTransport data streams, and WebTransport datagrams all within a single flight as permitted by Section 4.6, while another compliant implementation may reject or drop those messages because it does not implement buffering. This appears to create a potential interoperability issue between otherwise compliant implementations.\n\n**Interoperability Concern:**\nThis creates a scenario where Implementation A (a client optimising for latency by pipelining) may fail against Implementation B (a server that rejects or drops pre-session data because it does not implement buffering). Both implementations are compliant with the specification, yet successful communication may require fallback behaviour (e.g., retrying without pipelining), effectively negating the latency optimisation permitted by Section 4.6.\n\n**Clarifications needed:**\n\nShould the specification clarify the interoperability implications of omitting buffering?\n\nWhile the existing WT_BUFFERED_STREAM_REJECTED error code may indicate that buffering was unavailable or exhausted, it does not allow a client to distinguish between an endpoint that does not implement buffering and one that has merely reached its configured buffering limits. As a result, clients attempting to optimize latency through pipelining have no deterministic way to know whether such behaviour is supported by the peer.\n\nShould the specification provide additional guidance on whether clients can rely on pre-session streams and datagrams being accepted, or whether implementations requiring maximum interoperability should avoid such pipelining?\n",
       "createdAt": "2026-06-20T18:48:31Z",
       "updatedAt": "2026-06-20T18:49:15Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 275,
+      "id": "I_kwDOCvK98s8AAAABGpjxTA",
+      "title": "What is the value of SETTINGS_WT_ENABLED when enabled?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/275",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Can this be 0 for disabled and 1 for enabled.  Right now, enabled is any non-zero value and that's odd.",
+      "createdAt": "2026-06-25T06:16:45Z",
+      "updatedAt": "2026-06-25T06:16:45Z",
       "closedAt": null,
       "comments": []
     }
