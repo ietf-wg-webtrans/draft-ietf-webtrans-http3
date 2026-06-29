@@ -935,7 +935,7 @@ WT_FLOW_CONTROL_ERROR error code.
 Unlike in QUIC, where MAX_STREAMS frames can be delivered in any order,
 WT_MAX_STREAMS capsules are sent on the WebTransport session's connect stream
 and are delivered in order.  If an endpoint receives a WT_MAX_STREAMS capsule
-that doesn't increase the Maximum Streams value previously received, it MUST
+that does not increase the Maximum Streams value previously received, it MUST
 close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
 
 The WT_MAX_STREAMS capsule defines special intermediary handling, as described
@@ -1028,7 +1028,7 @@ WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
 Unlike in QUIC, where MAX_DATA frames can be delivered in any order, WT_MAX_DATA
 capsules are sent on the WebTransport session's connect stream and are delivered
 in order.  If an endpoint receives a WT_MAX_DATA capsule with a Maximum Data
-value that doesn't increase the Maximum Data value previously received, it MUST
+value that does not increase the Maximum Data value previously received, it MUST
 close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
 
 The WT_MAX_DATA capsule defines special intermediary handling, as described in
