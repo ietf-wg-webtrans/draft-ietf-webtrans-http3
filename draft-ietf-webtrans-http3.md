@@ -703,15 +703,10 @@ flow control.  This prevents an application from consuming excessive resources
 on a single session and starving traffic for other sessions
 (see {{security-considerations}}).
 
-Flow control is enabled when both endpoints declare their intent to use flow
-control by taking any of the following actions:
-
-- Sending SETTINGS_WT_INITIAL_MAX_STREAMS_UNI with any value other than "0".
-- Sending SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI with any value other than "0".
-- Sending SETTINGS_WT_INITIAL_MAX_DATA with any value other than "0".
-
-If both endpoints take at least one of these actions, flow control is enabled,
-and the limits described in the entirety of {{flow-control}} apply.
+Flow control is enabled when both endpoints send at least one of
+SETTINGS_WT_INITIAL_MAX_STREAMS_UNI, SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI, or
+SETTINGS_WT_INITIAL_MAX_DATA.  Zero is valid and grants no initial stream or
+session data credit; the limits in {{flow-control}} then apply.
 
 Flow control can be enabled regardless of the number of WebTransport sessions a
 server supports.
