@@ -803,7 +803,7 @@ WT_STREAM_DATA_BLOCKED capsule as a session error.
 ## Flow Control SETTINGS
 
 Initial flow control limits can be exchanged via HTTP/3 SETTINGS
-({{http3-settings}}) by providing non-zero values for
+({{http3-settings}}) by providing
 
 * WT_MAX_STREAMS via SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
   SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
@@ -938,9 +938,8 @@ in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume WT_MAX_STREAMS
 capsules for flow control purposes and MUST generate and send appropriate flow
 control signals for their limits.
 
-Initial values for these limits MAY be communicated by sending non-zero values
-for SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and
-SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI.
+Initial values for these limits MAY be communicated using
+SETTINGS_WT_INITIAL_MAX_STREAMS_UNI and SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI.
 
 ### WT_STREAMS_BLOCKED Capsule {#WT_STREAMS_BLOCKED}
 
@@ -1031,8 +1030,8 @@ The WT_MAX_DATA capsule defines special intermediary handling, as described in
 capsules for flow control purposes and MUST generate and send appropriate flow
 control signals for their limits (see {{flow-control-intermediaries}}).
 
-The initial value for this limit MAY be communicated by sending a non-zero value
-for SETTINGS_WT_INITIAL_MAX_DATA.
+The initial value for this limit MAY be communicated using
+SETTINGS_WT_INITIAL_MAX_DATA.
 
 ### WT_DATA_BLOCKED Capsule {#WT_DATA_BLOCKED}
 
