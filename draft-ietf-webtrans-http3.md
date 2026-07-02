@@ -221,7 +221,7 @@ This document defines a SETTINGS_WT_ENABLED setting that WebTransport servers
 use to indicate their support for WebTransport.  The default value for the
 SETTINGS_WT_ENABLED setting is "0", meaning that the server does not support
 WebTransport.  A value of "1" indicates support for the variant of WebTransport
-that is described in this document (that is, "webtransport-h3").  Clients MAY
+that is described in this document (that is, "webtransport-h3").  Clients MUST
 treat values greater than "1" as a connection error of type H3_SETTINGS_ERROR.
 Clients MUST NOT attempt to establish WebTransport sessions with the
 "webtransport-h3" token until they have received the setting indicating
