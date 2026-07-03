@@ -1572,8 +1572,12 @@ establishing sessions (see <a href="#upgrade-token" class="auto internal xref">S
 <p id="section-3.1-2">This document defines a SETTINGS_WT_ENABLED setting that WebTransport servers
 use to indicate their support for WebTransport.  The default value for the
 SETTINGS_WT_ENABLED setting is "0", meaning that the server does not support
-WebTransport.  Clients MUST NOT attempt to establish WebTransport sessions until
-they have received the setting indicating WebTransport support from the server.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+WebTransport.  A value of "1" indicates support for the variant of WebTransport
+that is described in this document (that is, "webtransport-h3").  Clients MUST
+treat values greater than "1" as a connection error of type H3_SETTINGS_ERROR.
+Clients MUST NOT attempt to establish WebTransport sessions with the
+"webtransport-h3" token until they have received the setting indicating
+WebTransport support from the server.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <p id="section-3.1-3">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 <span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 <p id="section-3.1-4">WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the Capsule
@@ -1592,7 +1596,7 @@ reset_stream_at transport parameter as described in
 <p id="section-3.1-7">In summary, servers supporting WebTransport over HTTP/3 send:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.1-8.1">
-            <p id="section-3.1-8.1.1">A SETTINGS_WT_ENABLED setting with a value greater than "0"<a href="#section-3.1-8.1.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-8.1.1">A SETTINGS_WT_ENABLED setting with a value of "1"<a href="#section-3.1-8.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-8.2">
             <p id="section-3.1-8.2.1">A SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1"<a href="#section-3.1-8.2.1" class="pilcrow">¶</a></p>
