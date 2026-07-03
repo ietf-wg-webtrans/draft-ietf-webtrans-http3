@@ -2398,7 +2398,7 @@ WT_FLOW_CONTROL_ERROR error code.<a href="#section-5.6.2-8" class="pilcrow">¶</
 <p id="section-5.6.2-9">Unlike in QUIC, where MAX_STREAMS frames can be delivered in any order,
 <span id="iref-wt_max_streams-30" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsules are sent on the WebTransport session's connect stream
 and are delivered in order.  If an endpoint receives a <span id="iref-wt_max_streams-31" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule
-with a Maximum Streams value less than a previously received value, it MUST
+that does not increase the Maximum Streams value previously received, it MUST
 close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.<a href="#section-5.6.2-9" class="pilcrow">¶</a></p>
 <p id="section-5.6.2-10">The <span id="iref-wt_max_streams-32" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a> capsule defines special intermediary handling, as described
 in <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume <span id="iref-wt_max_streams-33" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a>
@@ -2506,8 +2506,8 @@ WebTransport session with a WT_FLOW_CONTROL_ERROR error code.<a href="#section-5
 <p id="section-5.6.4-7">Unlike in QUIC, where MAX_DATA frames can be delivered in any order, <span id="iref-wt_max_data-46" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
 capsules are sent on the WebTransport session's connect stream and are delivered
 in order.  If an endpoint receives a <span id="iref-wt_max_data-47" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule with a Maximum Data
-value less than a previously received value, it MUST close the WebTransport
-session with a WT_FLOW_CONTROL_ERROR error code.<a href="#section-5.6.4-7" class="pilcrow">¶</a></p>
+value that does not increase the Maximum Data value previously received, it MUST
+close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.<a href="#section-5.6.4-7" class="pilcrow">¶</a></p>
 <p id="section-5.6.4-8">The <span id="iref-wt_max_data-48" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule defines special intermediary handling, as described in
 <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.2" class="relref">Section 3.2</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  Intermediaries MUST consume <span id="iref-wt_max_data-49" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a>
 capsules for flow control purposes and MUST generate and send appropriate flow
