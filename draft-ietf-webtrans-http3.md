@@ -68,17 +68,28 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 document are to be interpreted as described in BCP 14 {{!RFC2119}} {{!RFC8174}}
 when, and only when, they appear in all capitals, as shown here.
 
-This document follows terminology defined in Section 1.2 of [OVERVIEW].
+This document follows terminology defined in {{Section 1.2 of OVERVIEW}}.
 WebTransport servers and HTTP/3 servers are distinguished here as two separate
 roles: an HTTP/3 server terminates HTTP/3 connections, while a WebTransport
 server is an application that accepts WebTransport sessions, accessed via an
-HTTP/3 server, possibly through zero or more intermediaries.
+HTTP/3 server, possibly through an intermediary.
 
 An application client is user-provided or developer-provided code, often
 untrusted, that uses the interface offered by the WebTransport client to
 communicate with an application server.  The application server uses the
 interface offered by the WebTransport server to accept incoming WebTransport
-sessions.
+sessions.  For example, when the WebTransport client is a browser, the
+application client is typically a website loaded in that browser.
+
+References to "client" and "server" in this document refer to the
+WebTransport client and WebTransport server, respectively.
+
+An intermediary between a WebTransport client and an upstream WebTransport
+server presents itself as a WebTransport server to the WebTransport client,
+and as a WebTransport client to the upstream WebTransport server.
+Requirements this document places on WebTransport servers therefore apply to
+intermediaries when acting as a server, and requirements on WebTransport
+clients apply when acting as a client.
 
 # Overview
 
@@ -151,7 +162,7 @@ static compression, or Huffman encoding.
 ### Capsule-Based WebTransport over HTTP/3
 
 WebTransport over HTTP/3 as defined in this document provides the best
-performance by using native QUIC streams and datagrams. Endpoints SHOULD use
+performance by using native QUIC streams and datagrams. Endpoints SHOULD prefer
 this protocol when using WebTransport over an HTTP/3 connection.
 
 However, it is also possible to use WebTransport over a single HTTP/3 stream
