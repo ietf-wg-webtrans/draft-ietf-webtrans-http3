@@ -1397,11 +1397,11 @@ accept incoming WebTransport sessions.<a href="#section-1.1-2" class="pilcrow">�
 <a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-quic-webtransport-and-http-" class="section-name selfRef">QUIC, WebTransport, and HTTP/3</a>
         </h3>
 <p id="section-2.1-1">QUIC version 1 <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> is a secure transport protocol with flow control and
-congestion control.  QUIC supports application data exchange via streams;
-reliable and ordered byte streams that can be multiplexed.  Stream independence
-can mitigate head-of-line blocking.  While QUIC provides streams as a transport
-service, it is unopinionated about their usage.  The applicability of streams is
-described by section 4 of <span>[<a href="#RFC9308" class="cite xref">RFC9308</a>]</span>.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+congestion control.  QUIC supports application data exchange via streams:
+reliable and ordered byte streams that can be multiplexed.  These streams are
+independent, so head-of-line blocking does not propagate between them.  QUIC
+provides streams as a transport service without prescribing their usage.  The
+applicability of streams is described by <span><a href="https://rfc-editor.org/rfc/rfc9308#section-4" class="relref">Section 4</a> of [<a href="#RFC9308" class="cite xref">RFC9308</a>]</span>.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
 <p id="section-2.1-2">HTTP is an application-layer protocol, defined by "HTTP Semantics" <span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>.
 HTTP/3 is the application mapping for QUIC, defined in <span>[<a href="#RFC9114" class="cite xref">RFC9114</a>]</span>.  It
 describes how QUIC streams are used to carry control data or HTTP request and
@@ -1414,12 +1414,13 @@ resource.  For Web user agents and other WebTransport clients, this interaction
 is important for security reasons, especially to ensure that the resource is
 willing to use WebTransport.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
 <p id="section-2.1-4">Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
-HTTP is not used for anything else related to an established session.  Instead,
-QUIC streams begin with a sequence of header bytes that links them to the
-established session.  The remainder of the stream is the body, which carries the
-payload supplied by the application using WebTransport.  This process is similar
-to WebSockets over HTTP/1.1 <span>[<a href="#ORIGIN" class="cite xref">ORIGIN</a>]</span>, where access to the underlying
-byte stream is enabled after both sides have completed an initial handshake.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+HTTP is used for session setup and only minimal framing beyond that.  QUIC
+streams begin with a sequence of header bytes that links them to the
+established session.  The remainder of the stream is the body, which carries
+the payload supplied by the application using WebTransport.  This process is
+similar to WebSockets over HTTP/1.1 <span>[<a href="#ORIGIN" class="cite xref">ORIGIN</a>]</span>, where access to the
+underlying byte stream is enabled after both sides have completed an initial
+handshake.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
 <p id="section-2.1-5">The layering of QUIC, HTTP/3, and WebTransport is shown in
 <a href="#fig-webtransport-layers" class="auto internal xref">Figure 1</a>.  Once a WebTransport session is established,
 applications have nearly direct access to QUIC.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
@@ -1466,10 +1467,10 @@ WebTransport handshake:<a href="#section-2.1.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-2.1.1-2.1">
               <p id="section-2.1.1-2.1.1">Generating/parsing the request method, host, path, protocol, optional Origin
-header field, and perhaps some extra header fields.<a href="#section-2.1.1-2.1.1" class="pilcrow">¶</a></p>
+header field, and any necessary header fields.<a href="#section-2.1.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.1.1-2.2">
-              <p id="section-2.1.1-2.2.1">Generating/parsing the response status code and possibly some extra header
+              <p id="section-2.1.1-2.2.1">Generating/parsing the response status code and any necessary header
 fields.<a href="#section-2.1.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
@@ -1515,7 +1516,7 @@ provide unreliable delivery.<a href="#section-2.1.2-4" class="pilcrow">¶</a></p
         <h3 id="name-protocol-overview">
 <a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
         </h3>
-<p id="section-2.2-1">WebTransport servers in general are identified by a pair of authority value and
+<p id="section-2.2-1">WebTransport servers are identified by a pair of authority value and
 path value (defined in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Sections 3.2 and 3.3 respectively).<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <p id="section-2.2-2">When an HTTP/3 connection is established, the server sends a SETTINGS_WT_ENABLED
 setting to indicate support for WebTransport over HTTP/3.  This process also
@@ -1526,7 +1527,7 @@ client, who sends an extended CONNECT request <span>[<a href="#RFC9220" class="c
 accepts the request, a WebTransport session is established.  The resulting
 stream will be further referred to as a <em>CONNECT stream</em>, and its stream ID is
 used to uniquely identify a given WebTransport session within the connection.
-The ID of the CONNECT stream that established a given WebTransport session will
+The ID of a CONNECT stream that established a given WebTransport session will
 be further referred to as a <em>Session ID</em>.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
 <p id="section-2.2-4">After the session is established, the endpoints can exchange data using the
 following mechanisms:<a href="#section-2.2-4" class="pilcrow">¶</a></p>
@@ -1684,14 +1685,14 @@ status code, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#sec
 <p id="section-3.2-7">From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
 established once it sends a 2xx response.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
-<p id="section-3.2-8">The server may reply with a 3xx response, indicating a redirection
+<p id="section-3.2-8">The server can reply with a 3xx response, indicating a redirection
 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.4" class="relref">Section 15.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  The WebTransport client MUST NOT automatically
 follow such redirects, as it potentially could have already sent data for the
 WebTransport session in question; it MAY notify the application client about
 the redirect.<a href="#section-3.2-8" class="pilcrow">¶</a></p>
-<p id="section-3.2-9">Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
-not considered safe (see <span><a href="https://rfc-editor.org/rfc/rfc9114#section-10.9" class="relref">Section 10.9</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>).  However,
-WebTransport-related SETTINGS parameters may be retained from the previous
+<p id="section-3.2-9">Clients cannot initiate WebTransport sessions in 0-RTT packets, as the CONNECT
+method is not considered safe (see <span><a href="https://rfc-editor.org/rfc/rfc9114#section-10.9" class="relref">Section 10.9</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>).  However,
+WebTransport-related SETTINGS parameters can be retained from the previous
 session as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-7.2.4.2" class="relref">Section 7.2.4.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.  If the server accepts
 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
 sessions, or other initial flow control values, from the values negotiated
@@ -1720,12 +1721,12 @@ TLS Application-Layer Protocol Negotiation (ALPN) extension <span>[<a href="#RFC
 intent is to simplify porting existing protocols that use QUIC and rely on this
 functionality.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
 <p id="section-3.3-2">The client MAY include a <code>WT-Available-Protocols</code> header field in the CONNECT
-request.  The <code>WT-Available-Protocols</code> field enumerates the possible protocols
-in preference order, with the most preferred protocol listed first.  If the
-server receives such a header, it MAY include a <code>WT-Protocol</code> field in a
-successful (2xx) response.  If it does, the server MUST include a single choice
-from the client's list in that field.  Servers MAY reject the request if the
-client did not include a suitable protocol.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+request.  The <code>WT-Available-Protocols</code> field enumerates the possible next
+protocols in preference order, with the most preferred protocol listed first.
+If the server receives such a header, it MAY include a <code>WT-Protocol</code> field in
+a successful (2xx) response.  If it does, the server MUST include a single
+choice from the client's list in that field.  Servers MAY reject the request
+if the client did not include a suitable protocol.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
 <p id="section-3.3-3">Both <code>WT-Available-Protocols</code> and <code>WT-Protocol</code> are Structured Fields
 <span>[<a href="#FIELDS" class="cite xref">FIELDS</a>]</span>.  <code>WT-Available-Protocols</code> is a List.  <code>WT-Protocol</code> is
 defined as an Item.  In both cases, the only valid value type is a String.  Any
@@ -1920,7 +1921,7 @@ of type H3_FRAME_ERROR.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
         <h3 id="name-resetting-data-streams">
 <a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-resetting-data-streams" class="section-name selfRef">Resetting Data Streams</a>
         </h3>
-<p id="section-4.4-1">A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING frame for a
+<p id="section-4.4-1">A WebTransport endpoint can send a RESET_STREAM or a STOP_SENDING frame for a
 WebTransport data stream.  Those signals are propagated by the WebTransport
 implementation to the application.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.4-2">A WebTransport application MUST provide an error code for those operations.
@@ -1999,18 +2000,18 @@ ensures that the client will always know what versions of WebTransport can be
 used on a given HTTP/3 connection.<a href="#section-4.6-1" class="pilcrow">¶</a></p>
 <p id="section-4.6-2">Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT
 requests, WebTransport data streams, and WebTransport datagrams all within a
-single flight.  As those can arrive out of order, a WebTransport server could be
-put into a situation where it receives a stream or a datagram without a
-corresponding session.  Similarly, a client may receive a server-initiated
+single flight.  As those can arrive out of order, a WebTransport server can
+receive a stream or a datagram without a
+corresponding session.  Similarly, a client can receive a server-initiated
 stream or a datagram before receiving the CONNECT response headers from the
 server.<a href="#section-4.6-2" class="pilcrow">¶</a></p>
 <p id="section-4.6-3">To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
 until they can be associated with an established session.  To avoid resource
 exhaustion, endpoints MUST limit the number of buffered streams and datagrams.
-When the number of buffered streams is exceeded, a stream SHALL be closed by
+When the number of buffered streams is exceeded, a stream MUST be closed by
 sending a RESET_STREAM and/or STOP_SENDING with the
 <code>WT_BUFFERED_STREAM_REJECTED</code> error code.  When the number of buffered datagrams
-is exceeded, a datagram SHALL be dropped.  It is up to an implementation to
+is exceeded, a datagram MUST be dropped.  It is up to an implementation to
 choose what stream or datagram to discard.<a href="#section-4.6-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2023,7 +2024,7 @@ choose what stream or datagram to discard.<a href="#section-4.6-3" class="pilcro
 allows a peer to send a GOAWAY frame indicating that it will no longer accept
 any new incoming requests or pushes.<a href="#section-4.7-1" class="pilcrow">¶</a></p>
 <p id="section-4.7-2">A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
-sessions on that HTTP/3 connection; it must open a new HTTP/3 connection to
+sessions on that HTTP/3 connection; it MUST open a new HTTP/3 connection to
 initiate new WebTransport sessions with the same peer.<a href="#section-4.7-2" class="pilcrow">¶</a></p>
 <p id="section-4.7-3">An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
 all WebTransport sessions.  To shut down a single WebTransport session, either
@@ -2059,11 +2060,11 @@ requests or sessions carried on that connection.<a href="#section-4.7-6" class="
 <a href="#section-4.8" class="section-number selfRef">4.8. </a><a href="#name-use-of-keying-material-expo" class="section-name selfRef">Use of Keying Material Exporters</a>
         </h3>
 <p id="section-4.8-1">WebTransport over HTTP/3 supports the use of TLS keying material exporters
-<span><a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>.  Since the underlying QUIC connection may be shared
+<span><a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>.  Since the underlying QUIC connection can be shared
 by multiple WebTransport sessions, WebTransport defines a mechanism for deriving
 a TLS exporter that separates keying material for different sessions.  If the
 application requests an exporter for a given WebTransport session with a
-specified label and context, the resulting exporter SHALL be a TLS exporter as
+specified label and context, the resulting exporter MUST be a TLS exporter as
 defined in <span><a href="https://rfc-editor.org/rfc/rfc8446#section-7.5" class="relref">Section 7.5</a> of [<a href="#RFC8446" class="cite xref">RFC8446</a>]</span> with the label set to
 "EXPORTER-WebTransport" and the context set to the serialization of the
 "WebTransport Exporter Context" struct as defined below.<a href="#section-4.8-1" class="pilcrow">¶</a></p>
@@ -2232,7 +2233,7 @@ capsule.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
 stream, per-stream data limits are provided by QUIC natively
 (see <span><a href="https://rfc-editor.org/rfc/rfc9000#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC9000" class="cite xref">RFC9000</a>]</span>).  The WT_MAX_STREAM_DATA and
 WT_STREAM_DATA_BLOCKED capsules
-(Sections <a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-14#section-6.6" class="relref">6.6</a> and <a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-14#section-6.9" class="relref">6.9</a> of <span>[<a href="#I-D.ietf-webtrans-http2" class="cite xref">I-D.ietf-webtrans-http2</a>]</span>) are not used and so are
+(Sections <a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-14#section-6.6" class="relref">6.6</a> and <a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-http2-14#section-6.9" class="relref">6.9</a> of <span>[<a href="#I-D.ietf-webtrans-http2" class="cite xref">I-D.ietf-webtrans-http2</a>]</span>) are not used and are
 prohibited.  Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
 WT_STREAM_DATA_BLOCKED capsule as a session error.<a href="#section-5.4-4" class="pilcrow">¶</a></p>
 </section>
@@ -2561,7 +2562,7 @@ appropriate flow control signals for their limits (see
       <h2 id="name-session-termination">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-session-termination" class="section-name selfRef">Session Termination</a>
       </h2>
-<p id="section-6-1">A WebTransport session over HTTP/3 is considered terminated when either of the
+<p id="section-6-1">A WebTransport session over HTTP/3 is terminated when either of the
 following conditions is met:<a href="#section-6-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6-2.1">
