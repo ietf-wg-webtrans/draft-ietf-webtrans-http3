@@ -1259,13 +1259,13 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                 <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-flow-control-settings" class="internal xref">Flow Control SETTINGS</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5.2.1">
-                    <p id="section-toc.1-1.5.2.5.2.1.1"><a href="#section-5.5.1" class="auto internal xref">5.5.1</a>.  <a href="#name-settings_wt_initial_max_str" class="internal xref">SETTINGS_WT_INITIAL_MAX_STREAMS_UNI</a></p>
+                    <p id="section-toc.1-1.5.2.5.2.1.1"><a href="#section-5.5.1" class="auto internal xref">5.5.1</a>.  <a href="#name-initial-unidirectional-stre" class="internal xref">Initial Unidirectional Stream Limit</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5.2.2">
-                    <p id="section-toc.1-1.5.2.5.2.2.1"><a href="#section-5.5.2" class="auto internal xref">5.5.2</a>.  <a href="#name-settings_wt_initial_max_stre" class="internal xref">SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI</a></p>
+                    <p id="section-toc.1-1.5.2.5.2.2.1"><a href="#section-5.5.2" class="auto internal xref">5.5.2</a>.  <a href="#name-initial-bidirectional-strea" class="internal xref">Initial Bidirectional Stream Limit</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5.2.3">
-                    <p id="section-toc.1-1.5.2.5.2.3.1"><a href="#section-5.5.3" class="auto internal xref">5.5.3</a>.  <a href="#name-settings_wt_initial_max_dat" class="internal xref">SETTINGS_WT_INITIAL_MAX_DATA</a></p>
+                    <p id="section-toc.1-1.5.2.5.2.3.1"><a href="#section-5.5.3" class="auto internal xref">5.5.3</a>.  <a href="#name-initial-session-data-limit" class="internal xref">Initial Session Data Limit</a></p>
 </li>
                 </ul>
 </li>
@@ -2258,10 +2258,10 @@ SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI<a href="#section-5.5-2.1.1" class="pilcrow"
             <p id="section-5.5-2.2.1"><span id="iref-wt_max_data-8" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> via SETTINGS_WT_INITIAL_MAX_DATA<a href="#section-5.5-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<div id="settingswtinitialmaxstreamsuni">
+<div id="initial-unidirectional-stream-limit">
 <section id="section-5.5.1">
-          <h4 id="name-settings_wt_initial_max_str">
-<a href="#section-5.5.1" class="section-number selfRef">5.5.1. </a><a href="#name-settings_wt_initial_max_str" class="section-name selfRef">SETTINGS_WT_INITIAL_MAX_STREAMS_UNI</a>
+          <h4 id="name-initial-unidirectional-stre">
+<a href="#section-5.5.1" class="section-number selfRef">5.5.1. </a><a href="#name-initial-unidirectional-stre" class="section-name selfRef">Initial Unidirectional Stream Limit</a>
           </h4>
 <p id="section-5.5.1-1">The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial value for
 the unidirectional max stream limit, otherwise communicated by the
@@ -2274,10 +2274,10 @@ session.<a href="#section-5.5.1-1" class="pilcrow">¶</a></p>
 connection on which this SETTING is sent.<a href="#section-5.5.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="settingswtinitialmaxstreamsbidi">
+<div id="initial-bidirectional-stream-limit">
 <section id="section-5.5.2">
-          <h4 id="name-settings_wt_initial_max_stre">
-<a href="#section-5.5.2" class="section-number selfRef">5.5.2. </a><a href="#name-settings_wt_initial_max_stre" class="section-name selfRef">SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI</a>
+          <h4 id="name-initial-bidirectional-strea">
+<a href="#section-5.5.2" class="section-number selfRef">5.5.2. </a><a href="#name-initial-bidirectional-strea" class="section-name selfRef">Initial Bidirectional Stream Limit</a>
           </h4>
 <p id="section-5.5.2-1">The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the initial value for
 the bidirectional max stream limit, otherwise communicated by the <span id="iref-wt_max_streams-11" class="iref"></span><a href="#WT_MAX_STREAMS" class="internal xref">WT_MAX_STREAMS</a>
@@ -2290,10 +2290,10 @@ that session.<a href="#section-5.5.2-1" class="pilcrow">¶</a></p>
 connection on which this SETTING is sent.<a href="#section-5.5.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="settingswtinitialmaxdata">
+<div id="initial-session-data-limit">
 <section id="section-5.5.3">
-          <h4 id="name-settings_wt_initial_max_dat">
-<a href="#section-5.5.3" class="section-number selfRef">5.5.3. </a><a href="#name-settings_wt_initial_max_dat" class="section-name selfRef">SETTINGS_WT_INITIAL_MAX_DATA</a>
+          <h4 id="name-initial-session-data-limit">
+<a href="#section-5.5.3" class="section-number selfRef">5.5.3. </a><a href="#name-initial-session-data-limit" class="section-name selfRef">Initial Session Data Limit</a>
           </h4>
 <p id="section-5.5.3-1">The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value for the
 session data limit, otherwise communicated by the <span id="iref-wt_max_data-13" class="iref"></span><a href="#WT_MAX_DATA" class="internal xref">WT_MAX_DATA</a> capsule (see

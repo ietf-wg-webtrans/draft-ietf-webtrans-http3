@@ -101,9 +101,9 @@ Table of Contents
      5.3.  Limiting the Number of Streams Within a Session
      5.4.  Data Limits
      5.5.  Flow Control SETTINGS
-       5.5.1.  SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
-       5.5.2.  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
-       5.5.3.  SETTINGS_WT_INITIAL_MAX_DATA
+       5.5.1.  Initial Unidirectional Stream Limit
+       5.5.2.  Initial Bidirectional Stream Limit
+       5.5.3.  Initial Session Data Limit
      5.6.  Flow Control Capsules
        5.6.1.  Flow Control and Intermediaries
        5.6.2.  WT_MAX_STREAMS Capsule
@@ -968,7 +968,7 @@ Table of Contents
 
    *  WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
 
-5.5.1.  SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
+5.5.1.  Initial Unidirectional Stream Limit
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial
    value for the unidirectional max stream limit, otherwise communicated
@@ -981,7 +981,7 @@ Table of Contents
    Note that this limit applies to all WebTransport sessions that use
    the HTTP/3 connection on which this SETTING is sent.
 
-5.5.2.  SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+5.5.2.  Initial Bidirectional Stream Limit
 
    The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the
    initial value for the bidirectional max stream limit, otherwise
@@ -994,7 +994,7 @@ Table of Contents
    Note that this limit applies to all WebTransport sessions that use
    the HTTP/3 connection on which this SETTING is sent.
 
-5.5.3.  SETTINGS_WT_INITIAL_MAX_DATA
+5.5.3.  Initial Session Data Limit
 
    The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value
    for the session data limit, otherwise communicated by the WT_MAX_DATA
