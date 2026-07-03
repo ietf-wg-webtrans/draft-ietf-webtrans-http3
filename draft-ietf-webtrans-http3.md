@@ -83,11 +83,11 @@ accept incoming WebTransport sessions.
 ## QUIC, WebTransport, and HTTP/3
 
 QUIC version 1 {{!RFC9000}} is a secure transport protocol with flow control and
-congestion control.  QUIC supports application data exchange via streams;
-reliable and ordered byte streams that can be multiplexed.  Stream independence
-can mitigate head-of-line blocking.  While QUIC provides streams as a transport
-service, it is unopinionated about their usage.  The applicability of streams is
-described by section 4 of {{?RFC9308}}.
+congestion control.  QUIC supports application data exchange via streams:
+reliable and ordered byte streams that can be multiplexed.  These streams are
+independent, so head-of-line blocking does not propagate between them.  QUIC
+provides streams as a transport service without prescribing their usage.  The
+applicability of streams is described by {{Section 4 of ?RFC9308}}.
 
 HTTP is an application-layer protocol, defined by "HTTP Semantics" {{HTTP}}.
 HTTP/3 is the application mapping for QUIC, defined in {{!RFC9114}}.  It
@@ -103,12 +103,13 @@ is important for security reasons, especially to ensure that the resource is
 willing to use WebTransport.
 
 Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
-HTTP is not used for anything else related to an established session.  Instead,
-QUIC streams begin with a sequence of header bytes that links them to the
-established session.  The remainder of the stream is the body, which carries the
-payload supplied by the application using WebTransport.  This process is similar
-to WebSockets over HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the underlying
-byte stream is enabled after both sides have completed an initial handshake.
+HTTP is used for session setup and only minimal framing beyond that.  QUIC
+streams begin with a sequence of header bytes that links them to the
+established session.  The remainder of the stream is the body, which carries
+the payload supplied by the application using WebTransport.  This process is
+similar to WebSockets over HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the
+underlying byte stream is enabled after both sides have completed an initial
+handshake.
 
 The layering of QUIC, HTTP/3, and WebTransport is shown in
 {{fig-webtransport-layers}}.  Once a WebTransport session is established,
@@ -136,9 +137,9 @@ can constrain their use of features to only those required to complete a
 WebTransport handshake:
 
 * Generating/parsing the request method, host, path, protocol, optional Origin
-header field, and perhaps some extra header fields.
+header field, and any necessary header fields.
 
-* Generating/parsing the response status code and possibly some extra header
+* Generating/parsing the response status code and any necessary header
   fields.
 
 A WebTransport endpoint, whether a client or a server, can likely perform
@@ -177,7 +178,7 @@ provide unreliable delivery.
 
 ## Protocol Overview
 
-WebTransport servers in general are identified by a pair of authority value and
+WebTransport servers are identified by a pair of authority value and
 path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 respectively).
 
 When an HTTP/3 connection is established, the server sends a SETTINGS_WT_ENABLED
@@ -190,7 +191,7 @@ client, who sends an extended CONNECT request {{!RFC9220}}.  If the server
 accepts the request, a WebTransport session is established.  The resulting
 stream will be further referred to as a *CONNECT stream*, and its stream ID is
 used to uniquely identify a given WebTransport session within the connection.
-The ID of the CONNECT stream that established a given WebTransport session will
+The ID of a CONNECT stream that established a given WebTransport session will
 be further referred to as a *Session ID*.
 
 After the session is established, the endpoints can exchange data using the
@@ -320,15 +321,15 @@ From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
 established once it sends a 2xx response.
 
-The server may reply with a 3xx response, indicating a redirection
+The server can reply with a 3xx response, indicating a redirection
 ({{Section 15.4 of HTTP}}).  The WebTransport client MUST NOT automatically
 follow such redirects, as it potentially could have already sent data for the
 WebTransport session in question; it MAY notify the application client about
 the redirect.
 
-Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
-not considered safe (see {{Section 10.9 of HTTP3}}).  However,
-WebTransport-related SETTINGS parameters may be retained from the previous
+Clients cannot initiate WebTransport sessions in 0-RTT packets, as the CONNECT
+method is not considered safe (see {{Section 10.9 of HTTP3}}).  However,
+WebTransport-related SETTINGS parameters can be retained from the previous
 session as described in {{Section 7.2.4.2 of HTTP3}}.  If the server accepts
 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
 sessions, or other initial flow control values, from the values negotiated
@@ -356,12 +357,12 @@ intent is to simplify porting existing protocols that use QUIC and rely on this
 functionality.
 
 The client MAY include a `WT-Available-Protocols` header field in the CONNECT
-request.  The `WT-Available-Protocols` field enumerates the possible protocols
-in preference order, with the most preferred protocol listed first.  If the
-server receives such a header, it MAY include a `WT-Protocol` field in a
-successful (2xx) response.  If it does, the server MUST include a single choice
-from the client's list in that field.  Servers MAY reject the request if the
-client did not include a suitable protocol.
+request.  The `WT-Available-Protocols` field enumerates the possible next
+protocols in preference order, with the most preferred protocol listed first.
+If the server receives such a header, it MAY include a `WT-Protocol` field in
+a successful (2xx) response.  If it does, the server MUST include a single
+choice from the client's list in that field.  Servers MAY reject the request
+if the client did not include a suitable protocol.
 
 Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
 {{!FIELDS=RFC9651}}.  `WT-Available-Protocols` is a List.  `WT-Protocol` is
@@ -532,7 +533,7 @@ of type H3_FRAME_ERROR.
 
 ## Resetting Data Streams {#resetting-data-streams}
 
-A WebTransport endpoint may send a RESET_STREAM or a STOP_SENDING frame for a
+A WebTransport endpoint can send a RESET_STREAM or a STOP_SENDING frame for a
 WebTransport data stream.  Those signals are propagated by the WebTransport
 implementation to the application.
 
@@ -602,19 +603,19 @@ used on a given HTTP/3 connection.
 
 Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT
 requests, WebTransport data streams, and WebTransport datagrams all within a
-single flight.  As those can arrive out of order, a WebTransport server could be
-put into a situation where it receives a stream or a datagram without a
-corresponding session.  Similarly, a client may receive a server-initiated
+single flight.  As those can arrive out of order, a WebTransport server can
+receive a stream or a datagram without a
+corresponding session.  Similarly, a client can receive a server-initiated
 stream or a datagram before receiving the CONNECT response headers from the
 server.
 
 To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
 until they can be associated with an established session.  To avoid resource
 exhaustion, endpoints MUST limit the number of buffered streams and datagrams.
-When the number of buffered streams is exceeded, a stream SHALL be closed by
+When the number of buffered streams is exceeded, a stream MUST be closed by
 sending a RESET_STREAM and/or STOP_SENDING with the
 `WT_BUFFERED_STREAM_REJECTED` error code.  When the number of buffered datagrams
-is exceeded, a datagram SHALL be dropped.  It is up to an implementation to
+is exceeded, a datagram MUST be dropped.  It is up to an implementation to
 choose what stream or datagram to discard.
 
 ## Interaction with the HTTP/3 GOAWAY frame
@@ -624,7 +625,7 @@ allows a peer to send a GOAWAY frame indicating that it will no longer accept
 any new incoming requests or pushes.
 
 A client receiving GOAWAY cannot initiate CONNECT requests for new WebTransport
-sessions on that HTTP/3 connection; it must open a new HTTP/3 connection to
+sessions on that HTTP/3 connection; it MUST open a new HTTP/3 connection to
 initiate new WebTransport sessions with the same peer.
 
 An HTTP/3 GOAWAY frame is also a signal to applications to initiate shutdown for
@@ -653,11 +654,11 @@ requests or sessions carried on that connection.
 ## Use of Keying Material Exporters
 
 WebTransport over HTTP/3 supports the use of TLS keying material exporters
-{{Section 7.5 of !RFC8446}}.  Since the underlying QUIC connection may be shared
+{{Section 7.5 of !RFC8446}}.  Since the underlying QUIC connection can be shared
 by multiple WebTransport sessions, WebTransport defines a mechanism for deriving
 a TLS exporter that separates keying material for different sessions.  If the
 application requests an exporter for a given WebTransport session with a
-specified label and context, the resulting exporter SHALL be a TLS exporter as
+specified label and context, the resulting exporter MUST be a TLS exporter as
 defined in {{Section 7.5 of !RFC8446}} with the label set to
 "EXPORTER-WebTransport" and the context set to the serialization of the
 "WebTransport Exporter Context" struct as defined below.
@@ -805,7 +806,7 @@ Because WebTransport over HTTP/3 uses a native QUIC stream for each WebTransport
 stream, per-stream data limits are provided by QUIC natively
 (see {{Section 4.1 of !RFC9000}}).  The WT_MAX_STREAM_DATA and
 WT_STREAM_DATA_BLOCKED capsules
-({{Sections 6.6 and 6.9 of ?I-D.ietf-webtrans-http2}}) are not used and so are
+({{Sections 6.6 and 6.9 of ?I-D.ietf-webtrans-http2}}) are not used and are
 prohibited.  Endpoints MUST treat receipt of a WT_MAX_STREAM_DATA or a
 WT_STREAM_DATA_BLOCKED capsule as a session error.
 
@@ -1076,7 +1077,7 @@ appropriate flow control signals for their limits (see
 
 # Session Termination {#session-termination}
 
-A WebTransport session over HTTP/3 is considered terminated when either of the
+A WebTransport session over HTTP/3 is terminated when either of the
 following conditions is met:
 
 * the CONNECT stream is closed, either cleanly or abruptly, on either side; or
