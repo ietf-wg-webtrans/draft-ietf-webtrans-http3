@@ -221,8 +221,12 @@ establishing sessions (see {{upgrade-token}}).
 This document defines a SETTINGS_WT_ENABLED setting that WebTransport servers
 use to indicate their support for WebTransport.  The default value for the
 SETTINGS_WT_ENABLED setting is "0", meaning that the server does not support
-WebTransport.  Clients MUST NOT attempt to establish WebTransport sessions until
-they have received the setting indicating WebTransport support from the server.
+WebTransport.  A value of "1" indicates support for the variant of WebTransport
+that is described in this document (that is, "webtransport-h3").  Clients MUST
+treat values greater than "1" as a connection error of type H3_SETTINGS_ERROR.
+Clients MUST NOT attempt to establish WebTransport sessions with the
+"webtransport-h3" token until they have received the setting indicating
+WebTransport support from the server.
 
 WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 {{!RFC9220}}, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.
@@ -245,7 +249,7 @@ reset_stream_at transport parameter as described in
 
 In summary, servers supporting WebTransport over HTTP/3 send:
 
-- A SETTINGS_WT_ENABLED setting with a value greater than "0"
+- A SETTINGS_WT_ENABLED setting with a value of "1"
 - A SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1"
 - A SETTINGS_H3_DATAGRAM setting with a value of 1
 - A max_datagram_frame_size transport parameter with a value greater than 0
