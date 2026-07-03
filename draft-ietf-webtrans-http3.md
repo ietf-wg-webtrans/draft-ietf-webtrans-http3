@@ -823,7 +823,7 @@ Initial flow control limits can be exchanged via HTTP/3 SETTINGS
   SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
 * WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
 
-### SETTINGS_WT_INITIAL_MAX_STREAMS_UNI
+### Initial Unidirectional Stream Limit
 
 The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial value for
 the unidirectional max stream limit, otherwise communicated by the
@@ -836,7 +836,7 @@ session.
 Note that this limit applies to all WebTransport sessions that use the HTTP/3
 connection on which this SETTING is sent.
 
-### SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
+### Initial Bidirectional Stream Limit
 
 The SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI setting indicates the initial value for
 the bidirectional max stream limit, otherwise communicated by the WT_MAX_STREAMS
@@ -849,7 +849,7 @@ that session.
 Note that this limit applies to all WebTransport sessions that use the HTTP/3
 connection on which this SETTING is sent.
 
-### SETTINGS_WT_INITIAL_MAX_DATA
+### Initial Session Data Limit
 
 The SETTINGS_WT_INITIAL_MAX_DATA setting indicates the initial value for the
 session data limit, otherwise communicated by the WT_MAX_DATA capsule (see
