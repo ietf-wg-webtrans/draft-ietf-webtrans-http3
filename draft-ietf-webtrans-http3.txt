@@ -5,10 +5,10 @@
 WEBTRANS                                                     A. Frindell
 Internet-Draft                                                  Facebook
 Intended status: Standards Track                              E. Kinnear
-Expires: 3 December 2026                                      Apple Inc.
+Expires: 4 January 2027                                       Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                             1 June 2026
+                                                             3 July 2026
 
 
                         WebTransport over HTTP/3
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 December 2026.
+   This Internet-Draft will expire on 4 January 2027.
 
 Copyright Notice
 
@@ -416,16 +416,21 @@ Table of Contents
       Otherwise, the header is OPTIONAL.
 
    Upon receiving an extended CONNECT request with a :protocol field set
-   to webtransport-h3, the HTTP/3 server can check if it has a
-   WebTransport server associated with the specified :authority and
-   :path values.  If it does not, it SHOULD reply with status code 404
-   (Section 15.5.5 of [HTTP]).  When the request contains the Origin
-   header, the WebTransport server MUST verify the Origin header to
-   ensure that the specified origin is allowed to access the server in
-   question.  If the verification fails, the WebTransport server SHOULD
-   reply with status code 403 (Section 15.5.4 of [HTTP]).  If all checks
-   pass, the WebTransport server MAY accept the session by replying with
-   a 2xx series status code, as defined in Section 15.3 of [HTTP].
+   to webtransport-h3, the HTTP/3 server can check if the target
+   resource (Section 7.1 of [HTTP]) supports WebTransport.  If the
+   target resource does not support WebTransport, the server SHOULD
+   reply with status code 405 (Section 15.5.6 of [HTTP]).
+
+   When the request contains the Origin header, the WebTransport server
+   MUST verify the Origin header to ensure that the specified origin is
+   allowed to access the server in question.  If the verification fails,
+   the WebTransport server SHOULD reply with status code 403
+   (Section 15.5.4 of [HTTP]).
+
+   A server then performs any checks specific to the server and target
+   resource.  If all checks pass, the session can be accepted by
+   replying with a 2xx series status code, as defined in Section 15.3 of
+   [HTTP].
 
    From the client's perspective, a WebTransport session is established
    when the client receives a 2xx response.  From the server's
@@ -1699,13 +1704,13 @@ Table of Contents
               DOI 10.17487/RFC9110, June 2022,
               <https://www.rfc-editor.org/rfc/rfc9110>.
 
+   [HTTP3]    Bishop, M., Ed., "HTTP/3", RFC 9114, DOI 10.17487/RFC9114,
+              June 2022, <https://www.rfc-editor.org/rfc/rfc9114>.
+
    [HTTP-DATAGRAM]
               Schinazi, D. and L. Pardue, "HTTP Datagrams and the
               Capsule Protocol", RFC 9297, DOI 10.17487/RFC9297, August
               2022, <https://www.rfc-editor.org/rfc/rfc9297>.
-
-   [HTTP3]    Bishop, M., Ed., "HTTP/3", RFC 9114, DOI 10.17487/RFC9114,
-              June 2022, <https://www.rfc-editor.org/rfc/rfc9114>.
 
    [OVERVIEW] Kinnear, E. and V. Vasiliev, "The WebTransport Protocol
               Framework", Work in Progress, Internet-Draft, draft-ietf-
@@ -1722,9 +1727,9 @@ Table of Contents
    [RESET-STREAM-AT]
               Seemann, M. and K. Oku, "QUIC Stream Resets with Partial
               Delivery", Work in Progress, Internet-Draft, draft-ietf-
-              quic-reliable-stream-reset-07, 14 June 2025,
+              quic-reliable-stream-reset-08, 26 June 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-quic-
-              reliable-stream-reset-07>.
+              reliable-stream-reset-08>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,

@@ -17,22 +17,23 @@ HTTP/3   and provides support for unidirectional streams,
 bidirectional streams, and datagrams, all multiplexed within the same HTTP/3
 connection. 
     " name="description">
-<meta content="xml2rfc 3.33.0" name="generator">
+<meta content="xml2rfc 3.34.0" name="generator">
 <meta content="webtransport" name="keyword">
 <meta content="draft-ietf-webtrans-http3-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.33.0
-    Python 3.12.13
-    ConfigArgParse 1.7
+  xml2rfc 3.34.0
+    Python 3.14.5
+    ConfigArgParse 1.7.5
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
-    lxml 6.0.2
-    platformdirs 4.9.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.10.0
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.7.0
+    wcwidth 0.8.2
 -->
 <link href="draft-ietf-webtrans-http3.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1051,11 +1052,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">WebTransport-H3</td>
-<td class="right">June 2026</td>
+<td class="right">July 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Frindell, et al.</td>
-<td class="center">Expires 3 December 2026</td>
+<td class="center">Expires 4 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1069,12 @@ svg {
 <dd class="internet-draft">draft-ietf-webtrans-http3-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-06-01" class="published">1 June 2026</time>
+<time datetime="2026-07-03" class="published">3 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-12-03">3 December 2026</time></dd>
+<dd class="expires"><time datetime="2027-01-04">4 January 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1138,7 @@ connection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 3 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 4 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1586,7 +1587,7 @@ parameter with a value greater than 0
 <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.  To indicate support,
 both the client and the server enable the extension by sending an empty
 reset_stream_at transport parameter as described in
-<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-08#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 <p id="section-3.1-7">In summary, servers supporting WebTransport over HTTP/3 send:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.1-8.1">
@@ -1669,42 +1670,44 @@ header is OPTIONAL.<a href="#section-3.2-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-3.2-4">Upon receiving an extended CONNECT request with a <code>:protocol</code> field set to
-<code>webtransport-h3</code>, the HTTP/3 server can check if it has a WebTransport server
-associated with the specified <code>:authority</code> and <code>:path</code> values.  If it does not,
-it SHOULD reply with status code 404 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.5" class="relref">Section 15.5.5</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).
-When the request contains the <code>Origin</code> header, the WebTransport server MUST
+<code>webtransport-h3</code>, the HTTP/3 server can check if the target resource
+(<span><a href="https://rfc-editor.org/rfc/rfc9110#section-7.1" class="relref">Section 7.1</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>) supports WebTransport.  If the target resource does
+not support WebTransport, the server SHOULD reply with status code 405
+(<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.6" class="relref">Section 15.5.6</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-5">When the request contains the <code>Origin</code> header, the WebTransport server MUST
 verify the <code>Origin</code> header to ensure that the specified origin is allowed to
 access the server in question.  If the verification fails, the WebTransport
-server SHOULD reply with status code 403 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.4" class="relref">Section 15.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  If all
-checks pass, the WebTransport server MAY accept the session by replying with a
-2xx series status code, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.3" class="relref">Section 15.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
-<p id="section-3.2-5">From the client's perspective, a WebTransport session is established when the
+server SHOULD reply with status code 403 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.5.4" class="relref">Section 15.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">A server then performs any checks specific to the server and target resource.
+If all checks pass, the session can be accepted by replying with a 2xx series
+status code, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.3" class="relref">Section 15.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<p id="section-3.2-7">From the client's perspective, a WebTransport session is established when the
 client receives a 2xx response.  From the server's perspective, a session is
-established once it sends a 2xx response.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
-<p id="section-3.2-6">The server may reply with a 3xx response, indicating a redirection
+established once it sends a 2xx response.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+<p id="section-3.2-8">The server may reply with a 3xx response, indicating a redirection
 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.4" class="relref">Section 15.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>).  The WebTransport client MUST NOT automatically
 follow such redirects, as it potentially could have already sent data for the
 WebTransport session in question; it MAY notify the application client about
-the redirect.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
-<p id="section-3.2-7">Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
+the redirect.<a href="#section-3.2-8" class="pilcrow">¶</a></p>
+<p id="section-3.2-9">Clients cannot initiate WebTransport in 0-RTT packets, as the CONNECT method is
 not considered safe (see <span><a href="https://rfc-editor.org/rfc/rfc9114#section-10.9" class="relref">Section 10.9</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>).  However,
 WebTransport-related SETTINGS parameters may be retained from the previous
 session as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-7.2.4.2" class="relref">Section 7.2.4.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.  If the server accepts
 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
 sessions, or other initial flow control values, from the values negotiated
 during the previous session; such change would be deemed incompatible, and MUST
-result in a H3_SETTINGS_ERROR connection error.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
-<p id="section-3.2-8">The "webtransport-h3" HTTP Upgrade Token uses the Capsule Protocol as defined in
+result in a H3_SETTINGS_ERROR connection error.<a href="#section-3.2-9" class="pilcrow">¶</a></p>
+<p id="section-3.2-10">The "webtransport-h3" HTTP Upgrade Token uses the Capsule Protocol as defined in
 <span>[<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>.  The Capsule Protocol is negotiated when the server sends a
 2xx response.  The <code>capsule-protocol</code> header field
 <span><a href="https://rfc-editor.org/rfc/rfc9297#section-3.4" class="relref">Section 3.4</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span> is not required by WebTransport and can safely
-be ignored by WebTransport endpoints.<a href="#section-3.2-8" class="pilcrow">¶</a></p>
-<p id="section-3.2-9">To reduce latency at the start of a WebTransport session, a client MAY
+be ignored by WebTransport endpoints.<a href="#section-3.2-10" class="pilcrow">¶</a></p>
+<p id="section-3.2-11">To reduce latency at the start of a WebTransport session, a client MAY
 optimistically send capsules on the CONNECT stream before receiving the
 server's response.  A server MUST NOT process these bytes as capsules until
 it sends a 2xx response accepting the session.  Bytes received before the
 server sends the response are processed once the session is accepted or
-discarded if the session is rejected.<a href="#section-3.2-9" class="pilcrow">¶</a></p>
+discarded if the session is rejected.<a href="#section-3.2-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protocol-negotiation">
@@ -3486,13 +3489,13 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
         <dd>
 <span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="HTTP-DATAGRAM">[HTTP-DATAGRAM]</dt>
-        <dd>
-<span class="refAuthor">Schinazi, D.</span> and <span class="refAuthor">L. Pardue</span>, <span class="refTitle">"HTTP Datagrams and the Capsule Protocol"</span>, <span class="seriesInfo">RFC 9297</span>, <span class="seriesInfo">DOI 10.17487/RFC9297</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9297">https://www.rfc-editor.org/rfc/rfc9297</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="HTTP3">[HTTP3]</dt>
         <dd>
 <span class="refAuthor">Bishop, M., Ed.</span>, <span class="refTitle">"HTTP/3"</span>, <span class="seriesInfo">RFC 9114</span>, <span class="seriesInfo">DOI 10.17487/RFC9114</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9114">https://www.rfc-editor.org/rfc/rfc9114</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HTTP-DATAGRAM">[HTTP-DATAGRAM]</dt>
+        <dd>
+<span class="refAuthor">Schinazi, D.</span> and <span class="refAuthor">L. Pardue</span>, <span class="refTitle">"HTTP Datagrams and the Capsule Protocol"</span>, <span class="seriesInfo">RFC 9297</span>, <span class="seriesInfo">DOI 10.17487/RFC9297</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9297">https://www.rfc-editor.org/rfc/rfc9297</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="OVERVIEW">[OVERVIEW]</dt>
         <dd>
@@ -3504,7 +3507,7 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
 <dd class="break"></dd>
 <dt id="RESET-STREAM-AT">[RESET-STREAM-AT]</dt>
         <dd>
-<span class="refAuthor">Seemann, M.</span> and <span class="refAuthor">K. Oku</span>, <span class="refTitle">"QUIC Stream Resets with Partial Delivery"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-quic-reliable-stream-reset-07</span>, <time datetime="2025-06-14" class="refDate">14 June 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07">https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-07</a>&gt;</span>. </dd>
+<span class="refAuthor">Seemann, M.</span> and <span class="refAuthor">K. Oku</span>, <span class="refTitle">"QUIC Stream Resets with Partial Delivery"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-quic-reliable-stream-reset-08</span>, <time datetime="2026-06-26" class="refDate">26 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-08">https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-08</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
