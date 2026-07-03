@@ -103,12 +103,13 @@ is important for security reasons, especially to ensure that the resource is
 willing to use WebTransport.
 
 Although WebTransport requires HTTP for its handshake, when HTTP/3 is in use,
-HTTP is used for session setup and only minimal framing beyond that.
-QUIC streams begin with a sequence of
-header bytes that links them to the established session.  The remainder of the stream is the body, which carries the
-payload supplied by the application using WebTransport.  This process is similar
-to WebSockets over HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the underlying
-byte stream is enabled after both sides have completed an initial handshake.
+HTTP is used for session setup and only minimal framing beyond that.  QUIC
+streams begin with a sequence of header bytes that links them to the
+established session.  The remainder of the stream is the body, which carries
+the payload supplied by the application using WebTransport.  This process is
+similar to WebSockets over HTTP/1.1 {{?ORIGIN=RFC6455}}, where access to the
+underlying byte stream is enabled after both sides have completed an initial
+handshake.
 
 The layering of QUIC, HTTP/3, and WebTransport is shown in
 {{fig-webtransport-layers}}.  Once a WebTransport session is established,
@@ -326,8 +327,8 @@ follow such redirects, as it potentially could have already sent data for the
 WebTransport session in question; it MAY notify the application client about
 the redirect.
 
-Clients cannot initiate WebTransport sessions in 0-RTT packets, as the CONNECT method is
-not considered safe (see {{Section 10.9 of HTTP3}}).  However,
+Clients cannot initiate WebTransport sessions in 0-RTT packets, as the CONNECT
+method is not considered safe (see {{Section 10.9 of HTTP3}}).  However,
 WebTransport-related SETTINGS parameters can be retained from the previous
 session as described in {{Section 7.2.4.2 of HTTP3}}.  If the server accepts
 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport
@@ -357,11 +358,11 @@ functionality.
 
 The client MAY include a `WT-Available-Protocols` header field in the CONNECT
 request.  The `WT-Available-Protocols` field enumerates the possible next
-protocols in preference order, with the most preferred protocol listed first.  If the
-server receives such a header, it MAY include a `WT-Protocol` field in a
-successful (2xx) response.  If it does, the server MUST include a single choice
-from the client's list in that field.  Servers MAY reject the request if the
-client did not include a suitable protocol.
+protocols in preference order, with the most preferred protocol listed first.
+If the server receives such a header, it MAY include a `WT-Protocol` field in
+a successful (2xx) response.  If it does, the server MUST include a single
+choice from the client's list in that field.  Servers MAY reject the request
+if the client did not include a suitable protocol.
 
 Both `WT-Available-Protocols` and `WT-Protocol` are Structured Fields
 {{!FIELDS=RFC9651}}.  `WT-Available-Protocols` is a List.  `WT-Protocol` is
