@@ -705,7 +705,7 @@ on a single session and starving traffic for other sessions
 
 Flow control is enabled when both endpoints send at least one of
 SETTINGS_WT_INITIAL_MAX_STREAMS_UNI, SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI, or
-SETTINGS_WT_INITIAL_MAX_DATA.  Zero is valid and grants no initial stream or
+SETTINGS_WT_INITIAL_MAX_DATA.  A value of "0" is valid and grants no initial stream or
 session data credit; the limits in {{flow-control}} then apply.
 
 Flow control can be enabled regardless of the number of WebTransport sessions a
