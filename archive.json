@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-30T02:26:30.219954+00:00",
+  "timestamp": "2026-07-05T02:02:34.448117+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6135,7 +6135,7 @@
       "id": "I_kwDOCvK98s7u1ZCO",
       "title": "Update status code to be used when rejecting an incoming session because it doesn't support WebTransport",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/256",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -6146,8 +6146,8 @@
       ],
       "body": "Servers already know what to do when the resource doesn't exist, we don't need more text to say \"use 404\". However, if the resource does exist, but doesn't support WebTransport, we should align with H2 and use 406.",
       "createdAt": "2026-03-01T11:28:52Z",
-      "updatedAt": "2026-05-29T16:41:55Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-03T15:28:28Z",
+      "closedAt": "2026-07-03T15:28:28Z",
       "comments": [
         {
           "author": "LPardue",
@@ -6393,27 +6393,51 @@
       "author": "sanjomo",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "question"
+      ],
       "body": "> [4.6. ](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-15.html#section-4.6)[Buffering Incoming Streams and Datagrams](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-15.html#name-buffering-incoming-streams-)\n> \n> In WebTransport over HTTP/3, the client MUST wait for receipt of the server's SETTINGS frame before establishing any WebTransport sessions by sending CONNECT requests using the WebTransport upgrade token (see [Section 3.1](https://www.ietf.org/archive/id/draft-ietf-webtrans-http3-15.html#establishing)). This ensures that the client will always know what versions of WebTransport can be used on a given HTTP/3 connection.\n> \n> Clients can, however, send a SETTINGS frame, multiple WebTransport CONNECT requests, WebTransport data streams, and WebTransport datagrams all within a single flight. As those can arrive out of order, a WebTransport server could be put into a situation where it receives a stream or a datagram without a corresponding session. Similarly, a client may receive a server-initiated stream or a datagram before receiving the CONNECT response headers from the server.\n> \n> To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams until they can be associated with an established session. To avoid resource exhaustion, endpoints MUST limit the number of buffered streams and datagrams. When the number of buffered streams is exceeded, a stream SHALL be closed by sending a RESET_STREAM and/or STOP_SENDING with the WT_BUFFERED_STREAM_REJECTED error code. When the number of buffered datagrams is exceeded, a datagram SHALL be dropped. It is up to an implementation to choose what stream or datagram to discard.\n\nSection 4.6 explicitly allows clients to send CONNECT requests, WebTransport streams, and WebTransport datagrams within a single flight, where those messages may arrive out of order. The section then recommends buffering via a SHOULD requirement.\n\nBecause buffering is recommended but optional, a compliant endpoint server may choose not to buffer and instead reject streams or drop datagrams received before the corresponding session has been established.\n\nAs a result, one compliant client implementation may send CONNECT requests, WebTransport data streams, and WebTransport datagrams all within a single flight as permitted by Section 4.6, while another compliant implementation may reject or drop those messages because it does not implement buffering. This appears to create a potential interoperability issue between otherwise compliant implementations.\n\n**Interoperability Concern:**\nThis creates a scenario where Implementation A (a client optimising for latency by pipelining) may fail against Implementation B (a server that rejects or drops pre-session data because it does not implement buffering). Both implementations are compliant with the specification, yet successful communication may require fallback behaviour (e.g., retrying without pipelining), effectively negating the latency optimisation permitted by Section 4.6.\n\n**Clarifications needed:**\n\nShould the specification clarify the interoperability implications of omitting buffering?\n\nWhile the existing WT_BUFFERED_STREAM_REJECTED error code may indicate that buffering was unavailable or exhausted, it does not allow a client to distinguish between an endpoint that does not implement buffering and one that has merely reached its configured buffering limits. As a result, clients attempting to optimize latency through pipelining have no deterministic way to know whether such behaviour is supported by the peer.\n\nShould the specification provide additional guidance on whether clients can rely on pre-session streams and datagrams being accepted, or whether implementations requiring maximum interoperability should avoid such pipelining?\n",
       "createdAt": "2026-06-20T18:48:31Z",
-      "updatedAt": "2026-06-20T18:49:15Z",
+      "updatedAt": "2026-07-04T21:45:38Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "From the perspective of the client, getting `WT_BUFFERED_STREAM_REJECTED` doesn't result in any different action whether it was a client who exceeded the limit of a buffering server vs. a client encountering a server who chose not to buffer at all. Conceptually, this is the same as the server having a limit of 0, so it seems reasonable that these would have the same outcome.\n\nIn both cases, the client faces the same choice: it can choose to retry opening those streams after getting back the response to its CONNECT request, or it can fail to create those streams.\n\nThe problem that this causes is not one of interoperability, it's that an optional latency optimization may not provided the hoped-for (but not guaranteed) latency benefits.\n\nIf the spec were to provide additional guidance, what would it change about a client implementation? My thinking here is that a client who chooses to send anything pipelined with the CONNECT request already needs to be able to cope with the server rejecting them, regardless of whether or not the server chooses to support buffering them.",
+          "createdAt": "2026-07-04T16:25:43Z",
+          "updatedAt": "2026-07-04T16:25:43Z"
+        },
+        {
+          "author": "sanjomo",
+          "authorAssociation": "NONE",
+          "body": "@ekinnear Thanks for the clarification. I agree that additional guidance alone wouldn't change the client implementation. My question is slightly different: was a SETTINGS parameter for advertising buffering capability ever considered? That would let clients make the decision before attempting pipelining, rather than discovering support by observing rejected streams.",
+          "createdAt": "2026-07-04T16:40:17Z",
+          "updatedAt": "2026-07-04T16:40:17Z"
+        },
+        {
+          "author": "sanjomo",
+          "authorAssociation": "NONE",
+          "body": "@ekinnear \n\nToday, if a client pipelines CONNECT requests and/or WebTransport streams before previous sessions are accepted, a server with buffering disabled (or whose buffering capacity has already been exhausted) responds with WT_BUFFERED_STREAM_REJECTED. The client then falls back to sequential establishment by retrying, so capability discovery is effectively done by infer through probing. **Static protocol capabilities are typically negotiated explicitly, while dynamic conditions are typically discovered through probing.**\n\nSince a client only starts creating WebTransport sessions after processing the server's HTTP/3 SETTINGS, the server could explicitly advertise its buffering capability.\n\nOne possible approach is:\n\nSETTINGS_WT_MAX_BUFFERED_STREAMS (0..N, default 0)\n\n0 indicates that buffering is not supported.\nA value greater than 0 advertises the maximum number of concurrently buffered streams/requests the server is willing to accept.\nClients can pipeline up to the advertised limit instead of probing by receiving WT_BUFFERED_STREAM_REJECTED.\n\n_The motivation is not just to avoid a single rejected attempt, but to remove uncertainty from client behavior. Explicitly advertising the buffering limit enables deterministic behavior across implementations:_\n\n1. Clients can immediately choose the appropriate establishment strategy instead of probing server behavior.\n2. It avoids unnecessary retries, stream creation, and rejection handling when buffering is unsupported.\n3. WT_BUFFERED_STREAM_REJECTED remains available for exceptional situations, such as transient resource exhaustion or when the advertised buffering capacity has already been been reached.\n4. Different client implementations can interoperate consistently without relying on heuristics or implementation-specific probing logic.\n\nThis also naturally subsumes a boolean capability flag, since 0 means buffering is unavailable while values greater than 0 communicate both support and the server's advertised capacity.",
+          "createdAt": "2026-07-04T21:45:38Z",
+          "updatedAt": "2026-07-04T21:45:38Z"
+        }
+      ]
     },
     {
       "number": 275,
       "id": "I_kwDOCvK98s8AAAABGpjxTA",
       "title": "What is the value of SETTINGS_WT_ENABLED when enabled?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/275",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Can this be 0 for disabled and 1 for enabled.  Right now, enabled is any non-zero value and that's odd.",
       "createdAt": "2026-06-25T06:16:45Z",
-      "updatedAt": "2026-06-25T06:16:45Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-03T16:42:29Z",
+      "closedAt": "2026-07-03T16:42:29Z",
       "comments": []
     },
     {
@@ -6421,15 +6445,15 @@
       "id": "I_kwDOCvK98s8AAAABG8jTfQ",
       "title": "Why do we allow WT_MAX_STREAMS / WT_MAX_DATA that don't increase the limit?",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/276",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Section 5.6.2 says:\n> If an endpoint receives a [WT_MAX_STREAMS](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#WT_MAX_STREAMS) capsule with a Maximum Streams value less than a previously received value, it MUST close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.\n\nIf we want a stricter validation logic, this should say \"less than or equal to\", or rephrase to \"that doesn't increase the value\".\n\nSimilar for WT_MAX_DATA in section 5.6.4:\n> If an endpoint receives a [WT_MAX_DATA](https://ietf-wg-webtrans.github.io/draft-ietf-webtrans-http3/draft-ietf-webtrans-http3.html#WT_MAX_DATA) capsule with a Maximum Data value less than a previously received value, it MUST close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.",
       "createdAt": "2026-06-28T04:40:57Z",
-      "updatedAt": "2026-06-28T14:38:13Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-03T17:24:10Z",
+      "closedAt": "2026-07-03T17:24:10Z",
       "comments": [
         {
           "author": "lemonsterfy",
@@ -6459,7 +6483,7 @@
       "labels": [],
       "body": "Section 5.1 enables WebTransport flow control only when both endpoints send at least one non-zero value among:\n\n- `SETTINGS_WT_INITIAL_MAX_STREAMS_UNI`\n- `SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI`\n- `SETTINGS_WT_INITIAL_MAX_DATA`\n\nIf all three are absent or 0, flow control is considered disabled, and endpoints must ignore flow-control capsules.\n\nThis is awkward because setting any of these values to zero is meaningful even if flow control is enabled. It just means that there's no initial limit, but limit Its flow control limits might be granted later on. It is even possible to do this for two any two of these limits, but just not the third one.\n\nFor reference, QUIC does not have this problem: a zero value (or absence) of a transport parameter just means zero in every case.\n\nI can see two options that would would resolve this problem:\n1. introduce a separate settings value that declares if flow control is enabled, e.g. `SETTINGS_WT_ENABLE_FLOW_CONTROL`\n1. remove the special casing of 0, i.e. if any of the three values is sent, no matter what the value, this enables flow control. ",
       "createdAt": "2026-06-28T12:27:17Z",
-      "updatedAt": "2026-06-28T20:07:37Z",
+      "updatedAt": "2026-07-04T08:27:29Z",
       "closedAt": null,
       "comments": [
         {
@@ -6468,6 +6492,27 @@
           "body": "Because WT_MAX_STREAMS and WT_MAX_DATA are cumulative limits, manual credit allocation at the app layer is an anti-pattern.\n\nFurthermore, in standard flow control designs, automated replenishment relies on resource consumption (such as data read or streams closed) to trigger updates. Starting a session with all-zero limits creates an initialization deadlock, unless an endpoint forces an immediate, unprompted capsule\u2014which unnecessarily delays the peer by 1-RTT compared to using initial limits in SETTINGS.\n\nTreating the all-zero state as a fallback to disable session-level flow control (relying solely on the underlying QUIC limits) appears to effectively avoid these edge cases. It provides a clean path forward without requiring the complexity of additional configuration flags.",
           "createdAt": "2026-06-28T20:07:37Z",
           "updatedAt": "2026-06-28T20:07:37Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I know we had talked about this in one of the prior meetings as well, and it seems like it serves a real purpose. \n\n> Starting a session with all-zero limits creates an initialization deadlock, unless an endpoint forces an immediate, unprompted capsule\u2014which unnecessarily delays the peer by 1-RTT compared to using initial limits in SETTINGS.\n\nI think that was the intent, although I'm not sure I'd call it a deadlock, it seems like an intentional ask to start with \"you may send me nothing until I individually allow it for each stream/etc.\". \n\nI'm thinking of things like embedded use cases where you may be super strict about memory usage, in such an environment the additional 1-RTT penalty may be worth paying in order to ensure that literally zero bytes are sent/need to be buffered until you're ready for them.\n\nLet's make sure to document that 1-RTT penalty in the PR, though.",
+          "createdAt": "2026-07-03T17:32:31Z",
+          "updatedAt": "2026-07-03T17:32:57Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@marten-seemann how do you think we should tackle the default value part?\n\ne.g.:\n>  The default value for the SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting is \"0\", indicating that the endpoint needs to send WT_MAX_STREAMS capsules on each individual WebTransport session before its peer is allowed to create any unidirectional streams within that session.\n\nAre implementations now going to need to get a signal from their HTTP/3 implementation about \"this setting value is provided to you because the other side actually sent the SETTING with a value of \"0\" vs. this is the default value specified in the draft\"?",
+          "createdAt": "2026-07-03T17:38:07Z",
+          "updatedAt": "2026-07-03T17:38:07Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "My HTTP/3 stack exposes a map of all SETTINGS values (not consumed by HTTP/3 itself), so it's trivial to do a presence check and a lookup by value.\n\nLayering-wise, I'd argue that it's the WebTransport layer's responsibility to fill in default values.",
+          "createdAt": "2026-07-04T08:27:29Z",
+          "updatedAt": "2026-07-04T08:27:29Z"
         }
       ]
     }
@@ -20243,24 +20288,26 @@
       "id": "PR_kwDOCvK98s7HHZLD",
       "title": "Update status code from 404 to 405",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/257",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Update status code from 404 to 405\r\nFixes #256",
       "createdAt": "2026-03-01T11:32:44Z",
-      "updatedAt": "2026-06-13T05:19:58Z",
+      "updatedAt": "2026-07-03T15:28:30Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/status_code",
       "headRefOid": "175e30e4d45b725ea939d2bb82ffe58d3cfc6cdb",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-07-03T15:28:27Z",
+      "mergedAt": "2026-07-03T15:28:27Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "1046f0c025f26ec32cc338258c94d92870f758c2"
+      },
       "comments": [],
       "reviews": [
         {
@@ -20528,24 +20575,26 @@
       "id": "PR_kwDOCvK98s7hNis0",
       "title": "Editorial fixes from Alan's WGLC review",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/268",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ekinnear",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "* Reword \"Stream independence can mitigate head-of-line blocking\" and replace \"unopinionated\" with \"without prescribing their usage\".\r\n* Replace \"is not used for anything else related to an established session\" with \"is only used for minimal framing\".\r\n* Use \"any necessary header fields\" rather than \"perhaps some\" or \"possibly some\" in the minimal-handshake bullets.\r\n* Drop \"in general\" from the server-identification paragraph.\r\n* Use \"a CONNECT stream\" rather than \"the CONNECT stream\" for agreement.\r\n* Replace descriptive \"may\" with \"can\" or \"might\", and convert SHALL to MUST for the buffered-stream/datagram drop, GOAWAY follow-up, and TLS exporter cases.\r\n* Use \"WebTransport sessions in 0-RTT packets\" rather than \"WebTransport in 0-RTT packets\".\r\n* Use \"possible next protocols\" in the WT-Available-Protocols description, mirroring TLS ALPN.\r\n* Fix \"(8..)\" to \"(..)\" for the Exporter Label length encoding so it matches the Context field below it.\r\n* Drop \"so\" from \"and so are prohibited\".\r\n* Drop \"considered\" from \"is considered terminated\".",
       "createdAt": "2026-06-01T03:45:49Z",
-      "updatedAt": "2026-06-01T10:33:32Z",
+      "updatedAt": "2026-07-03T15:58:02Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "3de996223df337328032fe4bba326a10a4286ad8",
+      "baseRefOid": "1046f0c025f26ec32cc338258c94d92870f758c2",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/wglc_262_editorial",
-      "headRefOid": "42eedf84ad3962e1c514402982fd06f3bb7dfd4d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "275fea6038511c1a7501d38f82c383c7837908d8",
+      "closedAt": "2026-07-03T15:58:00Z",
+      "mergedAt": "2026-07-03T15:57:59Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "9ffe6a1c9298e1095ebc748a21aec49bdfb8edf0"
+      },
       "comments": [],
       "reviews": [
         {
@@ -20594,13 +20643,13 @@
       "labels": [],
       "body": "Each change is in its own commit to make it easy to back out or adjust any of them.\r\n\r\n* Restructure the Abstract so the document subject opens the paragraph\r\n* Smooth the Terminology paragraph flow\r\n* Remove the QPACK and Server Push aside\r\n* Remove the bytestring-comparison note\r\n* Drop \"always\" from \"SHOULD use this protocol\"\r\n* Drop the max-sessions clause from 0-RTT settings and reword the \r\n* Forward-reference the ALPN error path, so the consequence of \r\n* Be explicit about intermediary RESET_STREAM and STOP_SENDING forwarding. \r\n* Note that datagrams can also be sent after WT_DRAIN_SESSION/GOAWAY\r\n* Use \"origin server\" rather than \"backend\"\r\n* Make explicit that connection-level session count is governed by \r\n* Fold session-gone stream resets into the session-termination event \r\n\r\nCloses #262 ",
       "createdAt": "2026-06-01T03:47:16Z",
-      "updatedAt": "2026-06-15T06:57:00Z",
+      "updatedAt": "2026-07-03T16:14:58Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
-      "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
+      "baseRefOid": "9ffe6a1c9298e1095ebc748a21aec49bdfb8edf0",
       "headRepository": "ekinnear/draft-ietf-webtrans-http3",
       "headRefName": "ek/wglc_262_substantive",
-      "headRefOid": "d7831e2f3c4247f002fc7c6f5de359cb0cb2737d",
+      "headRefOid": "fb593dab18cf61e2b6d9e357c5a0b4d685408799",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -20648,6 +20697,46 @@
               "body": "```suggestion\nperformance by using native QUIC streams and datagrams. Endpoints SHOULD prefer\n```\n\n?",
               "createdAt": "2026-06-01T06:54:54Z",
               "updatedAt": "2026-06-15T06:57:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABE8r5lw",
+          "commit": {
+            "abbreviatedOid": "b7d1800"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-03T16:14:32Z",
+          "updatedAt": "2026-07-03T16:14:32Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "Good point. Added a note about assuming it's WebTransport client and WebTransport server. \r\n\r\nI took a pass at explaining the intermediary part, very open to suggestions: \r\n> An intermediary between a WebTransport client and an upstream WebTransport\r\nserver presents itself as a WebTransport server to the WebTransport client,\r\nand as a WebTransport client to the upstream WebTransport server.\r\nRequirements this document places on WebTransport servers therefore apply to\r\nintermediaries when acting as a server, and requirements on WebTransport\r\nclients apply when acting as a client.",
+              "createdAt": "2026-07-03T16:14:32Z",
+              "updatedAt": "2026-07-03T16:14:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABE8r7rw",
+          "commit": {
+            "abbreviatedOid": "b7d1800"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-03T16:14:41Z",
+          "updatedAt": "2026-07-03T16:14:41Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "Added!",
+              "createdAt": "2026-07-03T16:14:41Z",
+              "updatedAt": "2026-07-03T16:14:41Z"
             }
           ]
         }
@@ -20784,24 +20873,26 @@
       "id": "PR_kwDOCvK98s7m2mkZ",
       "title": "Prose titles for settings",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/273",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "martinthomson",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The underscore-ful names for these sections are so long that they are blowing out the narrow table of contents.  Prose is probably more understandable.  Prose FTW.",
       "createdAt": "2026-06-16T05:10:03Z",
-      "updatedAt": "2026-06-16T05:17:21Z",
+      "updatedAt": "2026-07-03T17:59:51Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
       "headRepository": "martinthomson/draft-ietf-webtrans-http3",
       "headRefName": "setting-title-length",
       "headRefOid": "f6568358f019090cf4d6c0b4e4d7dc2431833521",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-07-03T17:59:51Z",
+      "mergedAt": "2026-07-03T17:59:51Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "5303b815fddd5718782009140d375df017e0c97f"
+      },
       "comments": [
         {
           "author": "LPardue",
@@ -20824,6 +20915,19 @@
           "createdAt": "2026-06-16T05:17:21Z",
           "updatedAt": "2026-06-16T05:17:21Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABE9Dwtw",
+          "commit": {
+            "abbreviatedOid": "f656835"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-07-03T17:59:40Z",
+          "updatedAt": "2026-07-03T17:59:40Z",
+          "comments": []
         }
       ]
     },
@@ -20839,13 +20943,13 @@
       "labels": [],
       "body": "Fixes #277.",
       "createdAt": "2026-06-29T02:53:19Z",
-      "updatedAt": "2026-06-29T03:01:03Z",
+      "updatedAt": "2026-07-04T08:35:44Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
       "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
       "headRefName": "flow-control-negotiation-zero",
-      "headRefOid": "e94bff8b2e5187212078cac358ec43d30c713c30",
+      "headRefOid": "90fc66202f751b051bb992d8919e65821bf986ef",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -20877,6 +20981,26 @@
               "updatedAt": "2026-06-29T02:55:32Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABE9A5WQ",
+          "commit": {
+            "abbreviatedOid": "e94bff8"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "First pass done, mechanically it looks good. Left a comment on the issue about how to handle the optionality of flow control vs. a default value of \"0\" that we should resolve before this is ready to merge.",
+          "createdAt": "2026-07-03T17:47:24Z",
+          "updatedAt": "2026-07-03T17:48:21Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\nSETTINGS_WT_INITIAL_MAX_DATA.  A value of \"0\" is valid and grants no initial stream or\n```",
+              "createdAt": "2026-07-03T17:47:24Z",
+              "updatedAt": "2026-07-03T17:48:22Z"
+            }
+          ]
         }
       ]
     },
@@ -20885,25 +21009,35 @@
       "id": "PR_kwDOCvK98s7rmWhx",
       "title": "Reject WT_MAX_STREAMS and WT_MAX_DATA capsules that don't increase the limit",
       "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/279",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "marten-seemann",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #276.",
       "createdAt": "2026-06-29T02:56:39Z",
-      "updatedAt": "2026-06-29T03:04:10Z",
+      "updatedAt": "2026-07-03T17:24:10Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
       "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
       "headRefName": "no-wasteful-flow-control-capsules",
       "headRefOid": "01720b6579c0ed6ee9a5a8bf0022a1fbf40967a7",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "closedAt": "2026-07-03T17:24:09Z",
+      "mergedAt": "2026-07-03T17:24:09Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "8be271f2a8846df768582f4d4e2439fbded1b313"
+      },
+      "comments": [
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Looks good, thank you!",
+          "createdAt": "2026-07-03T17:24:04Z",
+          "updatedAt": "2026-07-03T17:24:04Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOCvK98s8AAAABEYFFhw",
@@ -20930,6 +21064,141 @@
               "updatedAt": "2026-06-29T02:58:10Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABE876YA",
+          "commit": {
+            "abbreviatedOid": "01720b6"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-07-03T17:23:55Z",
+          "updatedAt": "2026-07-03T17:23:55Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 280,
+      "id": "PR_kwDOCvK98s7s9i_Y",
+      "title": "WebTransport is enabled with a \"1\"",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/280",
+      "state": "MERGED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Only.  Other values result in `H3_SETTINGS_ERROR`.\r\n\r\nThis is consistent with `SETTINGS_ENABLE_CONNECT_PROTOCOL`, where the only valid values are 0 or 1.\r\n\r\nI've also added a mention of the setting have no effect when sent by a client.\r\n\r\nCloses #275.",
+      "createdAt": "2026-07-02T04:25:57Z",
+      "updatedAt": "2026-07-03T16:42:28Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
+      "headRepository": "martinthomson/draft-ietf-webtrans-http3",
+      "headRefName": "setting-01",
+      "headRefOid": "00a31c5710b3f71fdb4b60281a8234e160d4f8ff",
+      "closedAt": "2026-07-03T16:42:28Z",
+      "mergedAt": "2026-07-03T16:42:28Z",
+      "mergedBy": "ekinnear",
+      "mergeCommit": {
+        "oid": "e1df016d0d70371492699f1bc6dea31a9a7cb807"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABEwwN_A",
+          "commit": {
+            "abbreviatedOid": "dbb623d"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "I'm wondering if we should keep higher values as an extension point, but it's probably easier to just a different SETTINGS value for that.",
+          "createdAt": "2026-07-02T04:31:26Z",
+          "updatedAt": "2026-07-02T04:32:08Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\nthat is described in this document (that is, \"webtransport-h3\").  Clients MUST\n```",
+              "createdAt": "2026-07-02T04:31:26Z",
+              "updatedAt": "2026-07-02T04:32:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABEwyd9w",
+          "commit": {
+            "abbreviatedOid": "dbb623d"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-02T04:42:46Z",
+          "updatedAt": "2026-07-02T04:42:46Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "The reason I say \"MAY\" is that clients might not bother checking settings that they don't plan on using.  For instance, a client might not check the setting until a WebTransport session is requested.  Our code wouldn't be able to generate an error, for instance.  (At least, not without some reworking.)",
+              "createdAt": "2026-07-02T04:42:46Z",
+              "updatedAt": "2026-07-02T05:03:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABEw4rhg",
+          "commit": {
+            "abbreviatedOid": "dbb623d"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-02T05:08:15Z",
+          "updatedAt": "2026-07-02T05:08:15Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "If you don't understand the setting, it's totally fine to ignore it. But if you understand it, you MUST validate it. At least that's how we deal with it on the QUIC side, for example if a transport parameter be set to 0 or 1.",
+              "createdAt": "2026-07-02T05:08:15Z",
+              "updatedAt": "2026-07-02T05:08:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABEw_UVQ",
+          "commit": {
+            "abbreviatedOid": "dbb623d"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-02T05:33:39Z",
+          "updatedAt": "2026-07-02T05:33:39Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "Sure.  Also, I just found where we check the value and we already reject values >1.  So MUST is fine with me.",
+              "createdAt": "2026-07-02T05:33:39Z",
+              "updatedAt": "2026-07-02T05:33:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOCvK98s8AAAABE8yoXw",
+          "commit": {
+            "abbreviatedOid": "00a31c5"
+          },
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-07-03T16:42:03Z",
+          "updatedAt": "2026-07-03T16:42:03Z",
+          "comments": []
         }
       ]
     }
