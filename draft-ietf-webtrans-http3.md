@@ -1132,9 +1132,11 @@ need to fit within those bounds, see {{resetting-data-streams}}.
 An endpoint that sends a WT_CLOSE_SESSION capsule MUST immediately send a FIN on
 the CONNECT Stream.  The endpoint MAY also send a STOP_SENDING with error code
 WT_SESSION_GONE to indicate it is no longer reading from the CONNECT stream.
-The recipient MUST either close or reset the stream in response.  If any
-additional stream data is received on the CONNECT stream after receiving a
-WT_CLOSE_SESSION capsule, the stream MUST be reset with code H3_MESSAGE_ERROR.
+The recipient MUST either close or reset the stream in response.  After receiving
+the WT_CLOSE_SESSION capsule, the receiver MAY send a STOP_SENDING with error code
+WT_SESSION_GONE.  If it continues reading from the stream, and if any additional 
+stream data is received on the CONNECT stream after receiving a WT_CLOSE_SESSION
+capsule, the stream MUST be reset with code H3_MESSAGE_ERROR.
 
 Cleanly terminating a CONNECT stream without a WT_CLOSE_SESSION capsule SHALL be
 semantically equivalent to terminating it with a WT_CLOSE_SESSION capsule that
