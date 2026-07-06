@@ -84,12 +84,10 @@ application client is typically a website loaded in that browser.
 References to "client" and "server" in this document refer to the
 WebTransport client and WebTransport server, respectively.
 
-An intermediary between a WebTransport client and an upstream WebTransport
-server presents itself as a WebTransport server to the WebTransport client,
-and as a WebTransport client to the upstream WebTransport server.
-Requirements this document places on WebTransport servers therefore apply to
-intermediaries when acting as a server, and requirements on WebTransport
-clients apply when acting as a client.
+An intermediary between a client and an upstream server presents itself as a
+server to the client, and as a client to the upstream server.  Requirements
+this document places on servers therefore apply to intermediaries when acting
+as a server, and requirements on clients apply when acting as a client.
 
 # Overview
 
@@ -588,16 +586,16 @@ Reliable Size set to at least the size of the WebTransport header when resetting
 a WebTransport data stream.  This ensures reliable delivery of the ID field
 associating the data stream with a WebTransport session.
 
-WebTransport endpoints MUST forward the error code for a stream associated with
-a known session to the application that owns that session.  Upon receiving a
-RESET_STREAM or STOP_SENDING frame on a WebTransport stream, an intermediary
-MUST send the same frame type, with the corresponding error code, to the next
-hop on that stream.  If a RESET_STREAM or STOP_SENDING frame is
-received with an error code outside the range reserved for WT_APPLICATION_ERROR,
-the stream is still considered reset, but the error code is not mapped to a
-WebTransport application error code.  The WebTransport implementation SHOULD
-deliver this to the application as a stream reset with no application error
-code.
+The error code from a WebTransport stream reset MUST be delivered unchanged,
+both by intermediaries forwarding on the wire and by endpoints delivering to
+the application.  Upon receiving a RESET_STREAM or STOP_SENDING frame on a
+WebTransport stream, an intermediary MUST send the same frame type, with the
+corresponding error code, to the next hop on that stream.  If a RESET_STREAM
+or STOP_SENDING frame is received with an error code outside the range
+reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but
+the error code is not mapped to a WebTransport application error code.  The
+WebTransport implementation SHOULD deliver this to the application as a
+stream reset with no application error code.
 
 ## Datagrams
 
@@ -1102,13 +1100,12 @@ following conditions is met:
 
 Upon learning that the session has been terminated, the endpoint MUST reset the
 send side and abort reading on the receive side of all unidirectional and
-bidirectional streams associated with the session
-(see {{Section 2.4 of !RFC9000}}) using the WT_SESSION_GONE error code;
-it MUST NOT send any new datagrams or open any new streams.  WT_SESSION_GONE is
-a protocol-level error code rather than an application error code; the
-WebTransport implementation SHOULD report these stream resets to the
-application as part of the session-termination event rather than as separate
-stream-reset events carrying the WT_SESSION_GONE code.
+bidirectional streams associated with the session (see
+{{Section 2.4 of !RFC9000}}) using the WT_SESSION_GONE error code; it MUST NOT
+send any new datagrams or open any new streams.  WT_SESSION_GONE is a
+protocol-level error code rather than an application error code and indicates
+that the reset was caused by session termination rather than by the peer
+application.
 
 To terminate a session with a detailed error message, an application MAY provide
 such a message for the WebTransport endpoint to send in an HTTP capsule
