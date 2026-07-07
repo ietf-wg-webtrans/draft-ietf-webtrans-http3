@@ -367,7 +367,6 @@ intent is to simplify porting existing protocols that use QUIC and rely on this
 functionality.
 
 The client MAY include a `WT-Available-Protocols` header field in the CONNECT
-The client MAY include a `WT-Available-Protocols` header field in the CONNECT
 request.  The `WT-Available-Protocols` field enumerates the possible next
 protocols in preference order, with the most preferred protocol listed first.
 If the server receives such a header, it MAY include a `WT-Protocol` field in
