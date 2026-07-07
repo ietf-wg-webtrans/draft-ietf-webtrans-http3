@@ -5,10 +5,10 @@
 WEBTRANS                                                     A. Frindell
 Internet-Draft                                                      Meta
 Intended status: Standards Track                              E. Kinnear
-Expires: 7 January 2027                                       Apple Inc.
+Expires: 8 January 2027                                       Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                             6 July 2026
+                                                             7 July 2026
 
 
                         WebTransport over HTTP/3
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 January 2027.
+   This Internet-Draft will expire on 8 January 2027.
 
 Copyright Notice
 
@@ -483,16 +483,14 @@ Table of Contents
    protocols that use QUIC and rely on this functionality.
 
    The client MAY include a WT-Available-Protocols header field in the
-   CONNECT The client MAY include a WT-Available-Protocols header field
-   in the CONNECT request.  The WT-Available-Protocols field enumerates
-   the possible next protocols in preference order, with the most
-   preferred protocol listed first.  If the server receives such a
-   header, it MAY include a WT-Protocol field in a successful (2xx)
-   response.  If it does, the server MUST include a single choice from
-   the client's list in that field; client behavior when the server
-   response does not satisfy this requirement is described below.
-   Servers MAY reject the request if the client did not include a
-   suitable protocol.
+   CONNECT request.  The WT-Available-Protocols field enumerates the
+   possible next protocols in preference order, with the most preferred
+   protocol listed first.  If the server receives such a header, it MAY
+   include a WT-Protocol field in a successful (2xx) response.  If it
+   does, the server MUST include a single choice from the client's list
+   in that field; client behavior when the server response does not
+   satisfy this requirement is described below.  Servers MAY reject the
+   request if the client did not include a suitable protocol.
 
    Both WT-Available-Protocols and WT-Protocol are Structured Fields
    [FIELDS].  WT-Available-Protocols is a List.  WT-Protocol is defined
@@ -1733,9 +1731,9 @@ Table of Contents
 
    [OVERVIEW] Kinnear, E. and V. Vasiliev, "The WebTransport Protocol
               Framework", Work in Progress, Internet-Draft, draft-ietf-
-              webtrans-overview-12, 2 March 2026,
+              webtrans-overview-13, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-
-              webtrans-overview-12>.
+              webtrans-overview-13>.
 
    [QUIC-DATAGRAM]
               Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
@@ -1808,9 +1806,9 @@ Table of Contents
    [I-D.ietf-webtrans-http2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
               Vasiliev, V., and W. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-14,
-              2 March 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-14>.
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-15,
+              6 July 2026, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-webtrans-http2-15>.
 
    [ORIGIN]   Fette, I. and A. Melnikov, "The WebSocket Protocol",
               RFC 6455, DOI 10.17487/RFC6455, December 2011,
@@ -1828,9 +1826,9 @@ Table of Contents
    [WEBTRANS-H2]
               Frindell, A., Kinnear, E., Pauly, T., Thomson, M.,
               Vasiliev, V., and W. Xie, "WebTransport over HTTP/2", Work
-              in Progress, Internet-Draft, draft-ietf-webtrans-http2-14,
-              2 March 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-webtrans-http2-14>.
+              in Progress, Internet-Draft, draft-ietf-webtrans-http2-15,
+              6 July 2026, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-webtrans-http2-15>.
 
 Index
 
