@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-09T01:56:09.392325+00:00",
+  "timestamp": "2026-07-12T01:45:30.251691+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -3919,7 +3919,7 @@
       ],
       "body": "Our current codepoints are often two-bytes or four-bytes where they could be smaller.  This matters, especially for prefixes we use for user data.  We should renumber them after WGLC, this is a bug to not forget this.",
       "createdAt": "2023-09-19T22:37:33Z",
-      "updatedAt": "2023-11-28T23:37:19Z",
+      "updatedAt": "2026-07-10T08:06:19Z",
       "closedAt": null,
       "comments": []
     },
@@ -6600,6 +6600,22 @@
       "createdAt": "2026-07-06T04:33:16Z",
       "updatedAt": "2026-07-06T21:01:04Z",
       "closedAt": "2026-07-06T21:01:04Z",
+      "comments": []
+    },
+    {
+      "number": 284,
+      "id": "I_kwDOCvK98s8AAAABIb5RmA",
+      "title": "0-RTT SETTINGS validation is needlessly complex",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/284",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> WebTransport-related SETTINGS parameters may be retained from the previous session as described in [Section 7.2.4.2](https://rfc-editor.org/rfc/rfc9114#section-7.2.4.2) of [[HTTP3](https://www.rfc-editor.org/rfc/rfc9114)]. If the server accepts 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport sessions, or other initial flow control values, from the values negotiated during the previous session; such change would be deemed incompatible, and MUST result in a H3_SETTINGS_ERROR connection error.\n\nSince WebTransport uses CONNECT, a client can't establish a WebTransport connection in 0-RTT anyway (the draft explicitly calls this out), i.e. the client has to wait for completion of the QUIC handshake. \nServers send HTTP/3 SETTINGS in 0.5-RTT data, therefore the SETTINGS are sent in the same flight as the TLS Finished message.\n\nThis means that practically speaking, there's no time during which the old SETTINGS apply (unless the server doesn't coalesce them into the same packet AND there's packet loss or reordering).\n\nThis suggests the following simplication:\n* Don't remember WebTransport-related SETTINGS parameters at all, neither on the client nor on the server side\n* Instead, always use the fresh SETTINGS sent by the server",
+      "createdAt": "2026-07-11T07:06:00Z",
+      "updatedAt": "2026-07-11T07:06:00Z",
+      "closedAt": null,
       "comments": []
     }
   ],
