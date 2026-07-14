@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-12T01:45:30.251691+00:00",
+  "timestamp": "2026-07-14T01:24:48.199222+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6614,9 +6614,31 @@
       "labels": [],
       "body": "> WebTransport-related SETTINGS parameters may be retained from the previous session as described in [Section 7.2.4.2](https://rfc-editor.org/rfc/rfc9114#section-7.2.4.2) of [[HTTP3](https://www.rfc-editor.org/rfc/rfc9114)]. If the server accepts 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport sessions, or other initial flow control values, from the values negotiated during the previous session; such change would be deemed incompatible, and MUST result in a H3_SETTINGS_ERROR connection error.\n\nSince WebTransport uses CONNECT, a client can't establish a WebTransport connection in 0-RTT anyway (the draft explicitly calls this out), i.e. the client has to wait for completion of the QUIC handshake. \nServers send HTTP/3 SETTINGS in 0.5-RTT data, therefore the SETTINGS are sent in the same flight as the TLS Finished message.\n\nThis means that practically speaking, there's no time during which the old SETTINGS apply (unless the server doesn't coalesce them into the same packet AND there's packet loss or reordering).\n\nThis suggests the following simplication:\n* Don't remember WebTransport-related SETTINGS parameters at all, neither on the client nor on the server side\n* Instead, always use the fresh SETTINGS sent by the server",
       "createdAt": "2026-07-11T07:06:00Z",
-      "updatedAt": "2026-07-11T07:06:00Z",
+      "updatedAt": "2026-07-13T18:07:24Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "sanjomo",
+          "authorAssociation": "NONE",
+          "body": "Wouldn't this simplification assume that the WebTransport implementation is responsible for creating and managing the HTTP/3 connection and its SETTINGS state? Since WebTransport is an HTTP/3 extension, couldn't a WebTransport client also reuse an existing HTTP/3 connection created by a generic HTTP/3 implementation? In that case, the WebTransport layer may not control whether SETTINGS are retained. Would mandating this behavior in the specification unnecessarily constrain such implementations?\n",
+          "createdAt": "2026-07-13T17:12:09Z",
+          "updatedAt": "2026-07-13T17:12:09Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Actually, it's exactly the opposite. The current draft requires very tight coupling between WebTransport and HTTP/3 (and QUIC, actually), since the server needs to have the ability to reject 0-RTT **during the QUIC handshake**.\n\nWith the new proposal, you don't care if the HTTP/3 stack saves the WebTransport settings to the session ticket. You just ignore them and use the new SETTINGS.",
+          "createdAt": "2026-07-13T17:31:10Z",
+          "updatedAt": "2026-07-13T17:31:10Z"
+        },
+        {
+          "author": "sanjomo",
+          "authorAssociation": "NONE",
+          "body": "That does make sense. Since WebTransport cannot use 0-RTT, even if the underlying HTTP/3 server supports 0-RTT for other requests, the client will still receive the server's fresh SETTINGS during the 0.5-RTT/TLS handshake before establishing a WebTransport session. So, technically, WebTransport can always rely on the freshly received SETTINGS, as you mentioned.\n",
+          "createdAt": "2026-07-13T18:07:24Z",
+          "updatedAt": "2026-07-13T18:07:24Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -21152,7 +21174,7 @@
       "labels": [],
       "body": "Fixes #277.",
       "createdAt": "2026-06-29T02:53:19Z",
-      "updatedAt": "2026-07-06T22:11:59Z",
+      "updatedAt": "2026-07-13T17:38:25Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
@@ -21173,10 +21195,17 @@
         },
         {
           "author": "lemonsterfy",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "@vasilvv Some implementations preserve this distinction in their settings representation. For example, representations based on maps or optional values naturally distinguish between an absent setting and an explicitly received setting with value 0.\r\nHowever, whether this information is available to the WebTransport layer depends on the HTTP/3 API exposed by the implementation. Some APIs expose only the effective settings values, while others provide access to the received settings.\r\nTherefore, adopting this semantic distinction requires the HTTP/3/WebTransport interface to make the presence of a setting available in addition to its effective value.",
           "createdAt": "2026-07-06T22:11:58Z",
           "updatedAt": "2026-07-06T22:11:58Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> This makes sense to me; do we currently have a precedent for settings where zero value is distinct from absent?\r\n\r\nNot in HTTP, as far as I can tell, but in QUIC we have the `max_udp_payload_size` with a default value of 65527 (0 being invalid though, since it has a 1200 byte minimum).\r\n\r\n---\r\n\r\nAs mentioned in the issue, the alternative would be introducing a `SETTINGS_WT_ENABLE_FLOW_CONTROL`, which would determine if the flow control values are valid. I feel like that would be a much more invasive change though, since it would break flow control negotiation between draft versions, whereas this PR only changes a pretty rare corner, which can probably just be ignored when deploying support for draft-17.",
+          "createdAt": "2026-07-13T17:38:25Z",
+          "updatedAt": "2026-07-13T17:38:25Z"
         }
       ],
       "reviews": [
