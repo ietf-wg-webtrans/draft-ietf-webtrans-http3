@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-14T01:24:48.199222+00:00",
+  "timestamp": "2026-07-16T01:42:09.471388+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -21647,6 +21647,58 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 285,
+      "id": "PR_kwDOCvK98s7xgBmT",
+      "title": "ignore retained WebTransport SETTINGS on resumed connections",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/285",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #284.",
+      "createdAt": "2026-07-14T10:37:27Z",
+      "updatedAt": "2026-07-14T10:37:28Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "ed853aaa08c74ed1b50d81dd6a65dad94489e4e4",
+      "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
+      "headRefName": "no-0rtt-settings",
+      "headRefOid": "b8691ef18361adeb10dff7168d751fafed3b1da9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 286,
+      "id": "PR_kwDOCvK98s7xh06Z",
+      "title": "codepoint SETTINGS_WT_ENABLED  in draft version",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/286",
+      "state": "OPEN",
+      "author": "sanjomo",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR updates the wording to clarify that SETTINGS_WT_ENABLED codepoints distinguish wire-format incompatible protocol versions, rather than every individual draft version, since draft-15 and draft-16 use the same codepoint.",
+      "createdAt": "2026-07-14T11:56:03Z",
+      "updatedAt": "2026-07-14T11:56:04Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "ed853aaa08c74ed1b50d81dd6a65dad94489e4e4",
+      "headRepository": "sanjomo/draft-ietf-webtrans-http3",
+      "headRefName": "patch-1",
+      "headRefOid": "d9d1d26a4511a654788d1f86d602591d82b9360b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
