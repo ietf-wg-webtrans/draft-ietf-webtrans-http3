@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-16T01:42:09.471388+00:00",
+  "timestamp": "2026-07-19T01:43:27.530518+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6614,7 +6614,7 @@
       "labels": [],
       "body": "> WebTransport-related SETTINGS parameters may be retained from the previous session as described in [Section 7.2.4.2](https://rfc-editor.org/rfc/rfc9114#section-7.2.4.2) of [[HTTP3](https://www.rfc-editor.org/rfc/rfc9114)]. If the server accepts 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport sessions, or other initial flow control values, from the values negotiated during the previous session; such change would be deemed incompatible, and MUST result in a H3_SETTINGS_ERROR connection error.\n\nSince WebTransport uses CONNECT, a client can't establish a WebTransport connection in 0-RTT anyway (the draft explicitly calls this out), i.e. the client has to wait for completion of the QUIC handshake. \nServers send HTTP/3 SETTINGS in 0.5-RTT data, therefore the SETTINGS are sent in the same flight as the TLS Finished message.\n\nThis means that practically speaking, there's no time during which the old SETTINGS apply (unless the server doesn't coalesce them into the same packet AND there's packet loss or reordering).\n\nThis suggests the following simplication:\n* Don't remember WebTransport-related SETTINGS parameters at all, neither on the client nor on the server side\n* Instead, always use the fresh SETTINGS sent by the server",
       "createdAt": "2026-07-11T07:06:00Z",
-      "updatedAt": "2026-07-13T18:07:24Z",
+      "updatedAt": "2026-07-16T07:24:53Z",
       "closedAt": null,
       "comments": [
         {
@@ -6637,6 +6637,27 @@
           "body": "That does make sense. Since WebTransport cannot use 0-RTT, even if the underlying HTTP/3 server supports 0-RTT for other requests, the client will still receive the server's fresh SETTINGS during the 0.5-RTT/TLS handshake before establishing a WebTransport session. So, technically, WebTransport can always rely on the freshly received SETTINGS, as you mentioned.\n",
           "createdAt": "2026-07-13T18:07:24Z",
           "updatedAt": "2026-07-13T18:07:24Z"
+        },
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "We support this change. Retained SETTINGS handling is already covered generically by \u00a77.2.4.2 of RFC 9114, so extensions generally shouldn't need to restate it. Could this paragraph be dropped from the WT draft rather than just simplified?",
+          "createdAt": "2026-07-16T06:20:04Z",
+          "updatedAt": "2026-07-16T06:20:04Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "RFC 9114 specifies what to do with the SETTINGS values it defines. I think it makes sense (or might even be required?) for WebTransport to specify what to do with the WebTransport settings. ",
+          "createdAt": "2026-07-16T07:00:41Z",
+          "updatedAt": "2026-07-16T07:00:41Z"
+        },
+        {
+          "author": "lemonsterfy",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "That's a fair point. However, since WebTransport sessions cannot be initiated in 0-RTT, retained WebTransport SETTINGS don't affect WebTransport session establishment. We wonder if this retention behavior needs to be specified by WebTransport at all.",
+          "createdAt": "2026-07-16T07:24:52Z",
+          "updatedAt": "2026-07-16T07:24:52Z"
         }
       ]
     }
