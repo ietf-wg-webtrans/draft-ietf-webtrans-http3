@@ -339,7 +339,7 @@ the redirect.
 
 Clients cannot initiate WebTransport sessions in 0-RTT packets, as the CONNECT
 method is not considered safe (see {{Section 10.9 of HTTP3}}).  Endpoints MUST
-ignore WebTransport-related SETTINGS parameters retained from a previous
+discard WebTransport-related SETTINGS parameters retained from a previous
 connection and use the values received on the current connection.
 
 The "webtransport-h3" HTTP Upgrade Token uses the Capsule Protocol as defined in
