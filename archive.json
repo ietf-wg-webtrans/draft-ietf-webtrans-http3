@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-19T01:43:27.530518+00:00",
+  "timestamp": "2026-07-23T01:49:49.099044+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6614,7 +6614,7 @@
       "labels": [],
       "body": "> WebTransport-related SETTINGS parameters may be retained from the previous session as described in [Section 7.2.4.2](https://rfc-editor.org/rfc/rfc9114#section-7.2.4.2) of [[HTTP3](https://www.rfc-editor.org/rfc/rfc9114)]. If the server accepts 0-RTT, the server MUST NOT reduce the limit of maximum open WebTransport sessions, or other initial flow control values, from the values negotiated during the previous session; such change would be deemed incompatible, and MUST result in a H3_SETTINGS_ERROR connection error.\n\nSince WebTransport uses CONNECT, a client can't establish a WebTransport connection in 0-RTT anyway (the draft explicitly calls this out), i.e. the client has to wait for completion of the QUIC handshake. \nServers send HTTP/3 SETTINGS in 0.5-RTT data, therefore the SETTINGS are sent in the same flight as the TLS Finished message.\n\nThis means that practically speaking, there's no time during which the old SETTINGS apply (unless the server doesn't coalesce them into the same packet AND there's packet loss or reordering).\n\nThis suggests the following simplication:\n* Don't remember WebTransport-related SETTINGS parameters at all, neither on the client nor on the server side\n* Instead, always use the fresh SETTINGS sent by the server",
       "createdAt": "2026-07-11T07:06:00Z",
-      "updatedAt": "2026-07-16T07:24:53Z",
+      "updatedAt": "2026-07-22T12:38:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -6658,6 +6658,13 @@
           "body": "That's a fair point. However, since WebTransport sessions cannot be initiated in 0-RTT, retained WebTransport SETTINGS don't affect WebTransport session establishment. We wonder if this retention behavior needs to be specified by WebTransport at all.",
           "createdAt": "2026-07-16T07:24:52Z",
           "updatedAt": "2026-07-16T07:24:52Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "The thing is: it IS safe to make a new WebTransport session in 0-RTT, it's just not (always) safe to use it.",
+          "createdAt": "2026-07-22T12:38:54Z",
+          "updatedAt": "2026-07-22T12:38:54Z"
         }
       ]
     }
@@ -21681,19 +21688,40 @@
       "labels": [],
       "body": "Fixes #284.",
       "createdAt": "2026-07-14T10:37:27Z",
-      "updatedAt": "2026-07-14T10:37:28Z",
+      "updatedAt": "2026-07-22T13:07:46Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "ed853aaa08c74ed1b50d81dd6a65dad94489e4e4",
       "headRepository": "marten-seemann/draft-ietf-webtrans-http3",
       "headRefName": "no-0rtt-settings",
-      "headRefOid": "b8691ef18361adeb10dff7168d751fafed3b1da9",
+      "headRefOid": "ebcf45603a15178b584ad513a52f139248422b9a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABG2Fbng",
+          "commit": {
+            "abbreviatedOid": "b8691ef"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-22T12:34:46Z",
+          "updatedAt": "2026-07-22T12:34:47Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\ndiscard WebTransport-related SETTINGS parameters retained from a previous\n```",
+              "createdAt": "2026-07-22T12:34:46Z",
+              "updatedAt": "2026-07-22T12:34:47Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 286,
