@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-23T01:49:49.099044+00:00",
+  "timestamp": "2026-07-30T01:23:43.422067+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6667,6 +6667,22 @@
           "updatedAt": "2026-07-22T12:38:54Z"
         }
       ]
+    },
+    {
+      "number": 287,
+      "id": "I_kwDOCvK98s8AAAABKsYeMg",
+      "title": "Is URI query part of server identity?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/287",
+      "state": "OPEN",
+      "author": "michalhosna",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Text in Protocol Overview section mentions `path` in RFC3986 sense,  i.e. distinct from `query`. \nhttps://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/blob/ed853aaa08c74ed1b50d81dd6a65dad94489e4e4/draft-ietf-webtrans-http3.md#L187-L188\n\nBut later text in Creating a New Session mentions `:path` in http sense, i.e. `path` + `query`\n\nhttps://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/blob/ed853aaa08c74ed1b50d81dd6a65dad94489e4e4/draft-ietf-webtrans-http3.md#L309-L310\n",
+      "createdAt": "2026-07-29T18:42:33Z",
+      "updatedAt": "2026-07-29T18:42:33Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
