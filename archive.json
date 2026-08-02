@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-30T01:23:43.422067+00:00",
+  "timestamp": "2026-08-02T01:47:53.958685+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6680,9 +6680,17 @@
       "labels": [],
       "body": "Text in Protocol Overview section mentions `path` in RFC3986 sense,  i.e. distinct from `query`. \nhttps://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/blob/ed853aaa08c74ed1b50d81dd6a65dad94489e4e4/draft-ietf-webtrans-http3.md#L187-L188\n\nBut later text in Creating a New Session mentions `:path` in http sense, i.e. `path` + `query`\n\nhttps://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/blob/ed853aaa08c74ed1b50d81dd6a65dad94489e4e4/draft-ietf-webtrans-http3.md#L309-L310\n",
       "createdAt": "2026-07-29T18:42:33Z",
-      "updatedAt": "2026-07-29T18:42:33Z",
+      "updatedAt": "2026-07-31T16:21:18Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "sanjomo",
+          "authorAssociation": "NONE",
+          "body": "I think the current text is reasonable. Although the Protocol Overview references the RFC 3986 path component, the session establishment text doesn't discuss URI components at all. it simply requires the HTTP :authority and :path pseudo-headers to identify the desired WebTransport server resource. Since :path in HTTP carries both the path and query components, applications are free to use either or both when identifying resources. **How those values are interpreted is left entirely to the application layer**, so I don't think the draft needs to explicitly discuss query semantics.",
+          "createdAt": "2026-07-31T16:21:17Z",
+          "updatedAt": "2026-07-31T16:21:17Z"
+        }
+      ]
     }
   ],
   "pulls": [
