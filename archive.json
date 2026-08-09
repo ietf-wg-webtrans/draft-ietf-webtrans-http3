@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-02T01:47:53.958685+00:00",
+  "timestamp": "2026-08-09T00:54:09.671514+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6691,6 +6691,22 @@
           "updatedAt": "2026-07-31T16:21:17Z"
         }
       ]
+    },
+    {
+      "number": 288,
+      "id": "I_kwDOCvK98s8AAAABLrP-AA",
+      "title": "What is left for RFC?",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/288",
+      "state": "OPEN",
+      "author": "ValorZard",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Hello!\nI\u2019ve been keeping track of everything webtransport related as best as I can, and it seems things are coming to a head somewhat. \n\nThe w3c webtransport spec is now in Candidate Recommendation, which seems like a huge deal!\n\nWhat I\u2019m curious about is: what\u2019s left for this to become an RFC? According to what I can tell, this draft is in \u201cLast Call\u201d, which means I think it\u2019s about to be turned into an RFC, but there\u2019s also still some open PRs. \n\nIs there a roadmap I can look at that would give me more information?",
+      "createdAt": "2026-08-06T06:57:50Z",
+      "updatedAt": "2026-08-06T06:57:50Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
