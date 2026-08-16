@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-09T00:54:09.671514+00:00",
+  "timestamp": "2026-08-16T00:39:51.924275+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -21788,6 +21788,46 @@
       "mergeCommit": null,
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 289,
+      "id": "PR_kwDOCvK98s7-6orV",
+      "title": "Unexpected receipt of WT_STREAM should result in H3_FRAME_UNEXPECTED",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/289",
+      "state": "OPEN",
+      "author": "AnkshitJain",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "From [HTTP/3 RFC 9114](https://datatracker.ietf.org/doc/html/rfc9114#name-http-3-error-codes)\r\n\r\n```\r\nH3_FRAME_UNEXPECTED (0x0105): A frame was received that was not permitted in the current state or on the current stream.\r\nH3_FRAME_ERROR (0x0106): A frame that fails to satisfy layout requirements or with an invalid size was received.\r\n```",
+      "createdAt": "2026-08-14T03:47:43Z",
+      "updatedAt": "2026-08-14T05:30:18Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "ed853aaa08c74ed1b50d81dd6a65dad94489e4e4",
+      "headRepository": "AnkshitJain/draft-ietf-webtrans-http3",
+      "headRefName": "h3_frame_unexpected",
+      "headRefOid": "ba3677550492370bb5ddd874a87d125efd386625",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOCvK98s8AAAABJhrcRw",
+          "commit": {
+            "abbreviatedOid": "ba36775"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-08-14T05:30:18Z",
+          "updatedAt": "2026-08-14T05:30:18Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
