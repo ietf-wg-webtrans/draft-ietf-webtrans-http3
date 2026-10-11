@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-16T00:39:51.924275+00:00",
+  "timestamp": "2026-10-11T02:51:34.759669+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -6705,6 +6705,22 @@
       "body": "Hello!\nI\u2019ve been keeping track of everything webtransport related as best as I can, and it seems things are coming to a head somewhat. \n\nThe w3c webtransport spec is now in Candidate Recommendation, which seems like a huge deal!\n\nWhat I\u2019m curious about is: what\u2019s left for this to become an RFC? According to what I can tell, this draft is in \u201cLast Call\u201d, which means I think it\u2019s about to be turned into an RFC, but there\u2019s also still some open PRs. \n\nIs there a roadmap I can look at that would give me more information?",
       "createdAt": "2026-08-06T06:57:50Z",
       "updatedAt": "2026-08-06T06:57:50Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 290,
+      "id": "I_kwDOCvK98s8AAAABV-h-6w",
+      "title": "Intermediaries are not required to preserve Reliable Size",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/issues/290",
+      "state": "OPEN",
+      "author": "lemonsterfy",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Section 4.4 requires implementations to reset WT data streams with\nRESET_STREAM_AT, with a Reliable Size covering at least the WT header. For\nintermediaries it says:\n\n> Upon receiving a RESET_STREAM or STOP_SENDING frame on a WebTransport\n> stream, an intermediary MUST send the same frame type, with the\n> corresponding error code, to the next hop on that stream.\n\nNothing requires the intermediary to carry the Reliable Size over. It only\nhas to cover its own WT header on the next hop, so the offset given to abort\nsend side in the overview (commit() in the W3C API) is no longer guaranteed\npast that hop.\n\nSuggested text, after the sentence above:\n\n> When forwarding a RESET_STREAM_AT frame, the intermediary MUST set the\n> Reliable Size so that the same amount of stream data after any\n> WebTransport header is delivered reliably; the size of that header can\n> differ between hops.",
+      "createdAt": "2026-10-08T22:29:40Z",
+      "updatedAt": "2026-10-08T22:29:40Z",
       "closedAt": null,
       "comments": []
     }
@@ -21828,6 +21844,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 291,
+      "id": "PR_kwDOCvK98s8AAAABHbhWVw",
+      "title": "Require intermediaries to preserve Reliable Size",
+      "url": "https://github.com/ietf-wg-webtrans/draft-ietf-webtrans-http3/pull/291",
+      "state": "OPEN",
+      "author": "lemonsterfy",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Intermediaries forwarding RESET_STREAM_AT now keep the same amount of\nreliably delivered data after any WebTransport header. The header can differ\nin size between hops, so the Reliable Size is adjusted rather than copied.\n\nFixes #290 ",
+      "createdAt": "2026-10-08T22:33:09Z",
+      "updatedAt": "2026-10-08T22:33:10Z",
+      "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
+      "baseRefName": "main",
+      "baseRefOid": "ed853aaa08c74ed1b50d81dd6a65dad94489e4e4",
+      "headRepository": "lemonsterfy/draft-ietf-webtrans-http3",
+      "headRefName": "main",
+      "headRefOid": "4ad1c4387cedf1eab834cfce64e8ade23e40096e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
