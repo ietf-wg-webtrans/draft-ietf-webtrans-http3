@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-11T02:51:34.759669+00:00",
+  "timestamp": "2026-10-29T03:26:56.081702+00:00",
   "repo": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
   "labels": [
     {
@@ -21258,7 +21258,7 @@
       "labels": [],
       "body": "Fixes #277.",
       "createdAt": "2026-06-29T02:53:19Z",
-      "updatedAt": "2026-07-13T17:38:25Z",
+      "updatedAt": "2026-10-28T12:12:03Z",
       "baseRepository": "ietf-wg-webtrans/draft-ietf-webtrans-http3",
       "baseRefName": "main",
       "baseRefOid": "aec2f4b59caf68cea70f597eec98d4a604995a63",
@@ -21290,6 +21290,13 @@
           "body": "> This makes sense to me; do we currently have a precedent for settings where zero value is distinct from absent?\r\n\r\nNot in HTTP, as far as I can tell, but in QUIC we have the `max_udp_payload_size` with a default value of 65527 (0 being invalid though, since it has a 1200 byte minimum).\r\n\r\n---\r\n\r\nAs mentioned in the issue, the alternative would be introducing a `SETTINGS_WT_ENABLE_FLOW_CONTROL`, which would determine if the flow control values are valid. I feel like that would be a much more invasive change though, since it would break flow control negotiation between draft versions, whereas this PR only changes a pretty rare corner, which can probably just be ignored when deploying support for draft-17.",
           "createdAt": "2026-07-13T17:38:25Z",
           "updatedAt": "2026-07-13T17:38:25Z"
+        },
+        {
+          "author": "ekinnear",
+          "authorAssociation": "COLLABORATOR",
+          "body": "What's the difference between this and sending something like `SETTINGS_WT_INITIAL_MAX_DATA = 1`?",
+          "createdAt": "2026-10-28T12:12:03Z",
+          "updatedAt": "2026-10-28T12:12:03Z"
         }
       ],
       "reviews": [
