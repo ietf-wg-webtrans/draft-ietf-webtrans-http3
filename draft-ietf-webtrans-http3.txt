@@ -5,10 +5,10 @@
 WEBTRANS                                                     A. Frindell
 Internet-Draft                                                      Meta
 Intended status: Standards Track                              E. Kinnear
-Expires: 8 January 2027                                       Apple Inc.
+Expires: 4 May 2027                                           Apple Inc.
                                                              V. Vasiliev
                                                                   Google
-                                                             7 July 2026
+                                                         31 October 2026
 
 
                         WebTransport over HTTP/3
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 January 2027.
+   This Internet-Draft will expire on 4 May 2027.
 
 Copyright Notice
 
@@ -667,7 +667,7 @@ Table of Contents
    Endpoints MUST NOT send WT_STREAM as a frame type on HTTP/3 streams
    other than the very first bytes of a request stream.  Receiving this
    frame type in any other circumstances MUST be treated as a connection
-   error of type H3_FRAME_ERROR.
+   error of type H3_FRAME_UNEXPECTED.
 
 4.4.  Resetting Data Streams
 
@@ -1744,9 +1744,9 @@ Table of Contents
    [RESET-STREAM-AT]
               Seemann, M. and K. Oku, "QUIC Stream Resets with Partial
               Delivery", Work in Progress, Internet-Draft, draft-ietf-
-              quic-reliable-stream-reset-09, 4 July 2026,
+              quic-reliable-stream-reset-11, 6 September 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-quic-
-              reliable-stream-reset-09>.
+              reliable-stream-reset-11>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
