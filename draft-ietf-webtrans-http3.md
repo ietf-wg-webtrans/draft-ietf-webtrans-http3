@@ -540,7 +540,7 @@ Endpoints that implement this extension are also subject to additional frame
 handling requirements.  Endpoints MUST NOT send WT_STREAM as a frame type on
 HTTP/3 streams other than the very first bytes of a request stream.  Receiving
 this frame type in any other circumstances MUST be treated as a connection error
-of type H3_FRAME_ERROR.
+of type H3_FRAME_UNEXPECTED.
 
 ## Resetting Data Streams {#resetting-data-streams}
 
