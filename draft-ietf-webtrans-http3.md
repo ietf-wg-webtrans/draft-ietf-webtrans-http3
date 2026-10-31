@@ -1189,8 +1189,7 @@ session associated with that stream.
 \[\[RFC editor: please remove this section before publication.]]
 
 The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WT_ENABLED setting.  Each draft version defines a distinct
-codepoint for SETTINGS_WT_ENABLED.  Both the client and the server MUST send
+used for the SETTINGS_WT_ENABLED setting.  Draft versions that introduce incompatible wire-format changes define distinct SETTINGS_WT_ENABLED codepoints.  Both the client and the server MUST send
 SETTINGS_WT_ENABLED with the codepoint corresponding to their supported draft
 version.  An endpoint that supports multiple draft versions sends a
 SETTINGS_WT_ENABLED value for each supported version, as each version uses a
