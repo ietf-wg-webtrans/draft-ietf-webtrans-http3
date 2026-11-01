@@ -1474,9 +1474,17 @@ Description:
   has been closed.  Also used to indicate that the endpoint is no longer
   reading from the CONNECT stream.
 
-Specification:
+Reference:
 
 : This document.
+
+Change Controller:
+
+: IETF
+
+Contact:
+
+: WebTransport Working Group <webtransport@ietf.org>
 
 Name:
 
