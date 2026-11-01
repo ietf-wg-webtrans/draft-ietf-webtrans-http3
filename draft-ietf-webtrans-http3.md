@@ -587,13 +587,14 @@ associating the data stream with a WebTransport session.
 
 The error code from a WebTransport stream reset MUST be delivered unchanged,
 both by intermediaries forwarding on the wire and by endpoints delivering to
-the application.  Upon receiving a RESET_STREAM or STOP_SENDING frame on a
-WebTransport stream, an intermediary MUST send the same frame type, with the
-corresponding error code, to the next hop on that stream.  When forwarding a
-RESET_STREAM_AT frame, the intermediary MUST set the Reliable Size so that the
-same amount of stream data after any WebTransport header is delivered reliably;
-the size of that header can differ between hops.  If a RESET_STREAM
-or STOP_SENDING frame is received with an error code outside the range
+the application.  Upon receiving a RESET_STREAM, RESET_STREAM_AT, or
+STOP_SENDING frame on a WebTransport stream, an intermediary MUST send the same
+frame type, with the corresponding error code, to the next hop on that stream.
+When forwarding a RESET_STREAM_AT frame, the intermediary MUST set the Reliable
+Size so that at least the same amount of stream data after any WebTransport
+header is delivered reliably; the size of that header can differ between hops.
+If a RESET_STREAM, RESET_STREAM_AT, or STOP_SENDING frame is received with an
+error code outside the range
 reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but
 the error code is not mapped to a WebTransport application error code.  The
 WebTransport implementation SHOULD deliver this to the application as a
