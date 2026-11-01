@@ -833,6 +833,10 @@ Initial flow control limits can be exchanged via HTTP/3 SETTINGS
   SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
 * WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
 
+When flow control is enabled, these initial values count as values previously
+received for the checks in {{WT_MAX_STREAMS}} and {{WT_MAX_DATA}}, and a capsule
+that repeats an initial value does not increase the limit.
+
 ### Initial Unidirectional Stream Limit
 
 The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial value for
@@ -899,7 +903,8 @@ that data cannot be immediately forwarded to the next hop.
 In practice, an intermediary that translates flow control signals between
 similar WebTransport protocols, such as between two HTTP/3 connections, can
 often simply reexpress the same limits received on one connection directly on
-the other connection.
+the other connection, as long as each capsule it sends increases the
+corresponding limit on that connection.
 
 An intermediary that does not want to be responsible for storing data that
 cannot be immediately sent on its translated connection can ensure that it does
