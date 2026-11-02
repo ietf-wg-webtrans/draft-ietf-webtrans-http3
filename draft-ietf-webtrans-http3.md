@@ -1206,19 +1206,26 @@ supported draft version.  An endpoint that supports multiple draft versions
 sends SETTINGS_WT_ENABLED once for each distinct codepoint.  The highest version
 supported by both endpoints is selected.
 
-{{establishing}} requires servers to ignore SETTINGS_WT_ENABLED when it is sent
-by a client.  Servers that support draft versions instead use the codepoints a
-client sends to select the version, as described in this section.  An endpoint
-that supports both a draft version and the version described in this document
-also sends SETTINGS_WT_ENABLED with a value of "1" using the codepoint in
-{{http3-settings}}.  A server that supports both selects the version described
-in this document if the client sends that codepoint.  The server also selects
-that version if the client sends no SETTINGS_WT_ENABLED codepoint that the
-server recognizes.  This is the case for a client that supports only the
-version described in this document, since such clients do not send
-SETTINGS_WT_ENABLED.  It is also the case for a client that supports only draft
-versions that the server does not support.  That client does not recognize any
-of the codepoints in the server's SETTINGS, so it treats the server as not
+A server that supports draft versions uses the SETTINGS_WT_ENABLED codepoints
+that a client sends to select a version.  This is an exception to
+{{establishing}}, which otherwise requires servers to ignore SETTINGS_WT_ENABLED
+sent by a client.
+
+An endpoint that supports both a draft version and the version described in this
+document also sends SETTINGS_WT_ENABLED with a value of "1" using the codepoint
+in {{http3-settings}}.  A server that supports both selects a version as
+follows:
+
+- If the client sends the codepoint in {{http3-settings}}, the server selects
+  the version described in this document.
+- Otherwise, if the client sends codepoints for draft versions that the server
+  supports, the server selects the highest of those versions.
+- Otherwise, the server selects the version described in this document.
+
+For example, a client that supports only the version described in this document
+does not send SETTINGS_WT_ENABLED, so the server selects that version.  A client
+that supports only draft versions that the server does not support finds none of
+its codepoints in the server's SETTINGS, so it treats the server as not
 supporting WebTransport and never attempts to establish a session.
 
 Because data streams can arrive at the server before the CONNECT request that
