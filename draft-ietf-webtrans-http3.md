@@ -275,10 +275,13 @@ identify the client's supported version; see {{negotiating-draft-version}}.
 
 Servers should note that CONNECT requests to establish new WebTransport
 sessions, in addition to other messages, can arrive before the client's SETTINGS
-are received (see {{buffering-incoming}}).  If the server receives SETTINGS that
-do not have correct values for every required setting, or transport parameters
-that do not have correct values for every required transport parameter, the
-server MUST treat all established and newly incoming WebTransport sessions as
+are received (see {{buffering-incoming}}).  The server MUST NOT process any
+incoming WebTransport requests until the client's SETTINGS have been received,
+because they determine whether flow control is enabled and set the client's
+initial flow control limits (see {{flow-control-negotiate}}).  If the server
+receives SETTINGS that do not have correct values for every required setting, or
+transport parameters that do not have correct values for every required
+transport parameter, the server MUST treat all incoming WebTransport requests as
 malformed, as described in {{Section 4.1.2 of HTTP3}}.
 
 A client MUST NOT establish WebTransport sessions if the server's SETTINGS do
@@ -288,12 +291,6 @@ If a client does not wish to use the connection for purposes other than
 WebTransport when the requirements for WebTransport are not met, the client MAY
 close the HTTP/3 connection with a `WT_REQUIREMENTS_NOT_MET` error code to aid
 in debugging.
-
-\[\[RFC editor: please remove the following paragraph before publication.]]
-
-For draft versions of WebTransport only, the server MUST NOT process any
-incoming WebTransport requests until the client's SETTINGS have been received;
-see {{negotiating-draft-version}}.
 
 ## Creating a New Session
 
@@ -745,9 +742,7 @@ MUST reset the excessive CONNECT streams with a `H3_REQUEST_REJECTED` status
 (see {{flow-control-limit-sessions}}).
 
 Also, if flow control is not enabled, an endpoint MUST ignore receipt of any
-flow control capsules (see {{flow-control-capsules}}), since the peer might not
-have received SETTINGS at the time they were sent or packets might have been
-reordered.
+flow control capsules (see {{flow-control-capsules}}).
 
 ## Limiting the Number of Simultaneous Sessions {#flow-control-limit-sessions}
 
