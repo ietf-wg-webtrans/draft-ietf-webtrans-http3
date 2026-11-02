@@ -1237,9 +1237,11 @@ new streams.
 When flow control is not enabled, a WebTransport session is limited only by the
 stream and data limits of the underlying QUIC connection.  The session can use
 all of that capacity, which prevents other HTTP requests on the same connection
-from making progress.  An endpoint that sends other HTTP requests on the same
-connection can avoid this by enabling flow control, or by using a separate
-connection for the WebTransport session.
+from making progress.  Because HTTP responses and the QPACK streams use the same
+connection-level flow control, an application that waits for an HTTP response
+before reading data from the session can deadlock.  An endpoint that sends other
+HTTP requests on the same connection can avoid this by enabling flow control, or
+by using a separate connection for the WebTransport session.
 
 An application could attempt to exhaust resources by opening too many
 WebTransport sessions at once.  In cases when the application is untrusted, a
