@@ -580,10 +580,12 @@ application errors and HTTP/3 error codes" }
 WebTransport data streams are associated with sessions through a header at the
 beginning of the stream; resetting a stream might result in that data being
 discarded when using a RESET_STREAM frame.  To prevent this, WebTransport
-implementations MUST use the RESET_STREAM_AT frame {{RESET-STREAM-AT}} with a
-Reliable Size set to at least the size of the WebTransport header when resetting
-a WebTransport data stream.  This ensures reliable delivery of the ID field
-associating the data stream with a WebTransport session.
+implementations MUST use the RESET_STREAM_AT frame {{RESET-STREAM-AT}} when
+resetting a WebTransport data stream, with a Reliable Size set to the size of
+the WebTransport header on that stream plus any offset provided by the
+application (see "abort send side" in {{Section 4.3 of OVERVIEW}}).  This
+ensures reliable delivery of the ID field associating the data stream with a
+WebTransport session, along with any data the application asked to deliver.
 
 The error code from a WebTransport stream reset MUST be delivered unchanged,
 both by intermediaries forwarding on the wire and by endpoints delivering to
