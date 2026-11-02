@@ -587,7 +587,7 @@ application (see "abort send side" in {{Section 4.3 of OVERVIEW}}).  This
 ensures reliable delivery of the ID field associating the data stream with a
 WebTransport session, along with any data the application asked to deliver.
 
-The error code from a WebTransport stream reset MUST be delivered unchanged,
+An error code in the WT_APPLICATION_ERROR range MUST be delivered unchanged,
 both by intermediaries forwarding on the wire and by endpoints delivering to
 the application.  Upon receiving a RESET_STREAM, RESET_STREAM_AT, or
 STOP_SENDING frame on a WebTransport stream, an intermediary MUST send the same
