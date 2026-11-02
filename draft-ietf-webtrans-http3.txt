@@ -1505,7 +1505,7 @@ Table of Contents
 
    Setting Name:  SETTINGS_WT_ENABLED
 
-   Value:  0x2c7cf000
+   Value:  0x20b8933b
 
    Default:  0
 
