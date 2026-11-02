@@ -1966,10 +1966,12 @@ codepoints). An example pseudocode can be seen in <a href="#fig-remap-errors" cl
 <p id="section-4.4-4">WebTransport data streams are associated with sessions through a header at the
 beginning of the stream; resetting a stream might result in that data being
 discarded when using a RESET_STREAM frame.  To prevent this, WebTransport
-implementations MUST use the RESET_STREAM_AT frame <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span> with a
-Reliable Size set to at least the size of the WebTransport header when resetting
-a WebTransport data stream.  This ensures reliable delivery of the ID field
-associating the data stream with a WebTransport session.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+implementations MUST use the RESET_STREAM_AT frame <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span> when
+resetting a WebTransport data stream, with a Reliable Size set to the size of
+the WebTransport header on that stream plus any offset provided by the
+application (see "abort send side" in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-13#section-4.3" class="relref">Section 4.3</a> of [<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span>).  This
+ensures reliable delivery of the ID field associating the data stream with a
+WebTransport session, along with any data the application asked to deliver.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
 <p id="section-4.4-5">The error code from a WebTransport stream reset MUST be delivered unchanged,
 both by intermediaries forwarding on the wire and by endpoints delivering to
 the application.  Upon receiving a RESET_STREAM, RESET_STREAM_AT, or
