@@ -1979,11 +1979,10 @@ When forwarding a RESET_STREAM_AT frame, the intermediary MUST set the Reliable
 Size so that at least the same amount of stream data after any WebTransport
 header is delivered reliably; the size of that header can differ between hops.
 If a RESET_STREAM, RESET_STREAM_AT, or STOP_SENDING frame is received with an
-error code outside the range
-reserved for WT_APPLICATION_ERROR, the stream is still considered reset, but
-the error code is not mapped to a WebTransport application error code.  The
-WebTransport implementation SHOULD deliver this to the application as a
-stream reset with no application error code.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
+error code outside the range reserved for WT_APPLICATION_ERROR, the stream is
+still considered reset, but the error code is not mapped to a WebTransport
+application error code.  The WebTransport implementation SHOULD deliver this to
+the application as a stream reset with no application error code.<a href="#section-4.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="datagrams">
