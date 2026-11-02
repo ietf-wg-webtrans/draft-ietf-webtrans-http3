@@ -184,8 +184,8 @@ provide unreliable delivery.
 
 ## Protocol Overview
 
-WebTransport servers are identified by a pair of authority value and
-path value (defined in {{!RFC3986}} Sections 3.2 and 3.3 respectively).
+WebTransport servers are identified by an HTTPS URI as defined in
+{{Section 4.2.2 of HTTP}}.
 
 When an HTTP/3 connection is established, the server sends a SETTINGS_WT_ENABLED
 setting to indicate support for WebTransport over HTTP/3.  This process also
