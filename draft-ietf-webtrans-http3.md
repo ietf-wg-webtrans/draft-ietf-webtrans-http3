@@ -833,10 +833,6 @@ Initial flow control limits can be exchanged via HTTP/3 SETTINGS
   SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI
 * WT_MAX_DATA via SETTINGS_WT_INITIAL_MAX_DATA
 
-When flow control is enabled, these initial values count as values previously
-received for the checks in {{WT_MAX_STREAMS}} and {{WT_MAX_DATA}}, and a capsule
-that repeats an initial value does not increase the limit.
-
 ### Initial Unidirectional Stream Limit
 
 The SETTINGS_WT_INITIAL_MAX_STREAMS_UNI setting indicates the initial value for
@@ -959,8 +955,11 @@ WT_FLOW_CONTROL_ERROR error code.
 Unlike in QUIC, where MAX_STREAMS frames can be delivered in any order,
 WT_MAX_STREAMS capsules are sent on the WebTransport session's connect stream
 and are delivered in order.  If an endpoint receives a WT_MAX_STREAMS capsule
-that does not increase the Maximum Streams value previously received, it MUST
-close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
+that does not increase the Maximum Streams value previously received, or the
+corresponding initial value (SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI or
+SETTINGS_WT_INITIAL_MAX_STREAMS_UNI) if no WT_MAX_STREAMS capsule of that type
+has been received, it MUST close the WebTransport session with a
+WT_FLOW_CONTROL_ERROR error code.
 
 The WT_MAX_STREAMS capsule defines special intermediary handling, as described
 in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume WT_MAX_STREAMS
@@ -1052,8 +1051,10 @@ WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
 Unlike in QUIC, where MAX_DATA frames can be delivered in any order, WT_MAX_DATA
 capsules are sent on the WebTransport session's connect stream and are delivered
 in order.  If an endpoint receives a WT_MAX_DATA capsule with a Maximum Data
-value that does not increase the Maximum Data value previously received, it MUST
-close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
+value that does not increase the Maximum Data value previously received, or the
+value of SETTINGS_WT_INITIAL_MAX_DATA if no WT_MAX_DATA capsule has been
+received, it MUST close the WebTransport session with a WT_FLOW_CONTROL_ERROR
+error code.
 
 The WT_MAX_DATA capsule defines special intermediary handling, as described in
 {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume WT_MAX_DATA
