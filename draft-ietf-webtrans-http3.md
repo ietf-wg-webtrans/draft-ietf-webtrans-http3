@@ -585,7 +585,7 @@ Reliable Size set to at least the size of the WebTransport header when resetting
 a WebTransport data stream.  This ensures reliable delivery of the ID field
 associating the data stream with a WebTransport session.
 
-The error code from a WebTransport stream reset MUST be delivered unchanged,
+An error code in the WT_APPLICATION_ERROR range MUST be delivered unchanged,
 both by intermediaries forwarding on the wire and by endpoints delivering to
 the application.  Upon receiving a RESET_STREAM, RESET_STREAM_AT, or
 STOP_SENDING frame on a WebTransport stream, an intermediary MUST send the same
