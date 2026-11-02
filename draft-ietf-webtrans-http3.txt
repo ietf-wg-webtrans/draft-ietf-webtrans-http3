@@ -1557,7 +1557,12 @@ Table of Contents
       WebTransport session has been closed.  Also used to indicate that
       the endpoint is no longer reading from the CONNECT stream.
 
-   Specification:  This document.
+   Reference:  This document.
+
+   Change Controller:  IETF
+
+   Contact:  WebTransport Working Group webtransport@ietf.org
+      (mailto:webtransport@ietf.org)
 
    Name:  WT_FLOW_CONTROL_ERROR
 
