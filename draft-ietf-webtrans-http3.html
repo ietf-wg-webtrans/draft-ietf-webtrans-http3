@@ -2733,15 +2733,23 @@ sessions.  WebTransport endpoints SHOULD implement a fairness scheme that
 ensures that each session that shares a transport connection gets a reasonable
 share of controlled resources; this applies both to sending data and to opening
 new streams.<a href="#section-8-3" class="pilcrow">¶</a></p>
-<p id="section-8-4">An application could attempt to exhaust resources by opening too many
+<p id="section-8-4">When flow control is not enabled, a WebTransport session is limited only by the
+stream and data limits of the underlying QUIC connection.  The session can use
+all of that capacity, which prevents other HTTP requests on the same connection
+from making progress.  Because HTTP responses and the QPACK streams use the same
+connection-level flow control, an application that waits for an HTTP response
+before reading data from the session can deadlock.  An endpoint that sends other
+HTTP requests on the same connection can avoid this by enabling flow control, or
+by using a separate connection for the WebTransport session.<a href="#section-8-4" class="pilcrow">¶</a></p>
+<p id="section-8-5">An application could attempt to exhaust resources by opening too many
 WebTransport sessions at once.  In cases when the application is untrusted, a
-WebTransport client SHOULD limit the number of outgoing sessions it will open.<a href="#section-8-4" class="pilcrow">¶</a></p>
-<p id="section-8-5">Note that the security considerations of HTTP/3 <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span> apply to WebTransport
+WebTransport client SHOULD limit the number of outgoing sessions it will open.<a href="#section-8-5" class="pilcrow">¶</a></p>
+<p id="section-8-6">Note that the security considerations of HTTP/3 <span>[<a href="#HTTP3" class="cite xref">HTTP3</a>]</span> apply to WebTransport
 over HTTP/3.  In particular, the denial-of-service considerations in
 <span><a href="https://rfc-editor.org/rfc/rfc9114#section-10.5" class="relref">Section 10.5</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span> are relevant.  WebTransport extends HTTP/3 with
 additional features that have legitimate uses but can become a burden when they
-are used unnecessarily or to excess.<a href="#section-8-5" class="pilcrow">¶</a></p>
-<p id="section-8-6">WebTransport introduces new interaction modes that permit either endpoint to
+are used unnecessarily or to excess.<a href="#section-8-6" class="pilcrow">¶</a></p>
+<p id="section-8-7">WebTransport introduces new interaction modes that permit either endpoint to
 send streams and datagrams to its peer.  This is particularly novel for clients,
 which previously had limited exposure to unsolicited server-initiated traffic
 beyond server push (see <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.6" class="relref">Section 4.6</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>).  An endpoint that does not
@@ -2749,7 +2757,7 @@ monitor use of these features exposes itself to a risk of denial-of-service
 attack.  Implementations SHOULD track the use of WebTransport features, such as
 the number of incoming streams and datagrams, and set limits on their use.  An
 endpoint MAY treat activity that is suspicious as a connection error of type
-H3_EXCESSIVE_LOAD.<a href="#section-8-6" class="pilcrow">¶</a></p>
+H3_EXCESSIVE_LOAD.<a href="#section-8-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
