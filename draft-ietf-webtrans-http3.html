@@ -1917,9 +1917,9 @@ lacks length and is not a proper HTTP/3 frame; it is an extension of HTTP/3
 frame syntax that MUST be supported by any peer negotiating WebTransport.
 Endpoints that implement this extension are also subject to additional frame
 handling requirements.  Endpoints MUST NOT send WT_STREAM as a frame type on
-HTTP/3 streams other than the very first bytes of a request stream.  Receiving
-this frame type in any other circumstances MUST be treated as a connection error
-of type H3_FRAME_UNEXPECTED.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
+HTTP/3 streams other than as the very first bytes sent by the initiator of a
+bidirectional stream.  Receiving this frame type in any other circumstances MUST
+be treated as a connection error of type H3_FRAME_UNEXPECTED.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="resetting-data-streams">
