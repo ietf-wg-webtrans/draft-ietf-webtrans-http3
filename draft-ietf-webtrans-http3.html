@@ -1517,8 +1517,8 @@ provide unreliable delivery.<a href="#section-2.1.2-4" class="pilcrow">¶</a></p
         <h3 id="name-protocol-overview">
 <a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-protocol-overview" class="section-name selfRef">Protocol Overview</a>
         </h3>
-<p id="section-2.2-1">WebTransport servers are identified by a pair of authority value and
-path value (defined in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> Sections 3.2 and 3.3 respectively).<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-1">WebTransport servers are identified by an HTTPS URI as defined in
+<span><a href="https://rfc-editor.org/rfc/rfc9110#section-4.2.2" class="relref">Section 4.2.2</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <p id="section-2.2-2">When an HTTP/3 connection is established, the server sends a SETTINGS_WT_ENABLED
 setting to indicate support for WebTransport over HTTP/3.  This process also
 negotiates the use of additional HTTP/3 extensions to enable both endpoints to
@@ -3540,10 +3540,6 @@ established in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" c
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC3986">[RFC3986]</dt>
-        <dd>
-<span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC6454">[RFC6454]</dt>
         <dd>

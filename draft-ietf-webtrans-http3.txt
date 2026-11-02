@@ -271,8 +271,8 @@ Table of Contents
 
 2.2.  Protocol Overview
 
-   WebTransport servers are identified by a pair of authority value and
-   path value (defined in [RFC3986] Sections 3.2 and 3.3 respectively).
+   WebTransport servers are identified by an HTTPS URI as defined in
+   Section 4.2.2 of [HTTP].
 
    When an HTTP/3 connection is established, the server sends a
    SETTINGS_WT_ENABLED setting to indicate support for WebTransport over
@@ -1763,11 +1763,6 @@ Table of Contents
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
-
-   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
-              Resource Identifier (URI): Generic Syntax", STD 66,
-              RFC 3986, DOI 10.17487/RFC3986, January 2005,
-              <https://www.rfc-editor.org/rfc/rfc3986>.
 
    [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
               DOI 10.17487/RFC6454, December 2011,
