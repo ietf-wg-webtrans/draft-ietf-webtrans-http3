@@ -1578,74 +1578,79 @@ that is described in this document (that is, "webtransport-h3").  Clients MUST
 treat values greater than "1" as a connection error of type H3_SETTINGS_ERROR.
 Clients MUST NOT attempt to establish WebTransport sessions with the
 "webtransport-h3" token until they have received the setting indicating
-WebTransport support from the server.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
-<p id="section-3.1-3">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
-<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the Capsule
+WebTransport support from the server.  SETTINGS_WT_ENABLED has no meaning when
+sent by a client; a server MUST ignore it.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-4">Servers that advertise draft versions of WebTransport do not ignore
+SETTINGS_WT_ENABLED sent by clients; see <a href="#negotiating-draft-version" class="auto internal xref">Section 7.1</a>.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-5">WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
+<span>[<a href="#RFC9220" class="cite xref">RFC9220</a>]</span>, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">WebTransport over HTTP/3 requires support for HTTP/3 datagrams and the Capsule
 Protocol, and both the client and the server indicate support for HTTP/3
 datagrams by sending a SETTINGS_H3_DATAGRAM setting value set to 1 in their
-SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>).<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
+SETTINGS frame (see <span><a href="https://rfc-editor.org/rfc/rfc9297#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#HTTP-DATAGRAM" class="cite xref">HTTP-DATAGRAM</a>]</span>).<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+<p id="section-3.1-7">WebTransport over HTTP/3 also requires support for QUIC datagrams.  To indicate
 support, both the client and the server send a max_datagram_frame_size transport
 parameter with a value greater than 0
-(see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
+(see <span><a href="https://rfc-editor.org/rfc/rfc9221#section-3" class="relref">Section 3</a> of [<a href="#QUIC-DATAGRAM" class="cite xref">QUIC-DATAGRAM</a>]</span>).<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<p id="section-3.1-8">WebTransport over HTTP/3 relies on the RESET_STREAM_AT frame defined in
 <span>[<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.  To indicate support,
 both the client and the server enable the extension by sending an empty
 reset_stream_at transport parameter as described in
-<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-11#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
-<p id="section-3.1-7">In summary, servers supporting WebTransport over HTTP/3 send:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3.1-8.1">
-            <p id="section-3.1-8.1.1">A SETTINGS_WT_ENABLED setting with a value of "1"<a href="#section-3.1-8.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.1-8.2">
-            <p id="section-3.1-8.2.1">A SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1"<a href="#section-3.1-8.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.1-8.3">
-            <p id="section-3.1-8.3.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-8.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.1-8.4">
-            <p id="section-3.1-8.4.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-8.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.1-8.5">
-            <p id="section-3.1-8.5.1">An empty reset_stream_at transport parameter<a href="#section-3.1-8.5.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-3.1-9">Clients supporting WebTransport over HTTP/3 send:<a href="#section-3.1-9" class="pilcrow">¶</a></p>
+<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-quic-reliable-stream-reset-11#section-3" class="relref">Section 3</a> of [<a href="#RESET-STREAM-AT" class="cite xref">RESET-STREAM-AT</a>]</span>.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
+<p id="section-3.1-9">In summary, servers supporting WebTransport over HTTP/3 send:<a href="#section-3.1-9" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.1-10.1">
-            <p id="section-3.1-10.1.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-10.1.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-10.1.1">A SETTINGS_WT_ENABLED setting with a value of "1"<a href="#section-3.1-10.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-10.2">
-            <p id="section-3.1-10.2.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-10.2.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-10.2.1">A SETTINGS_ENABLE_CONNECT_PROTOCOL setting with a value of "1"<a href="#section-3.1-10.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-10.3">
-            <p id="section-3.1-10.3.1">An empty reset_stream_at transport parameter<a href="#section-3.1-10.3.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-10.3.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-10.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-10.4">
+            <p id="section-3.1-10.4.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-10.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-10.5">
+            <p id="section-3.1-10.5.1">An empty reset_stream_at transport parameter<a href="#section-3.1-10.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-3.1-11">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-11" class="pilcrow">¶</a></p>
-<p id="section-3.1-12">For draft versions of WebTransport only, clients MUST also send
-SETTINGS_WT_ENABLED with the draft-specific codepoint to allow the server to
-identify the client's supported version; see <a href="#negotiating-draft-version" class="auto internal xref">Section 7.1</a>.<a href="#section-3.1-12" class="pilcrow">¶</a></p>
-<p id="section-3.1-13">Servers should note that CONNECT requests to establish new WebTransport
+<p id="section-3.1-11">Clients supporting WebTransport over HTTP/3 send:<a href="#section-3.1-11" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.1-12.1">
+            <p id="section-3.1-12.1.1">A SETTINGS_H3_DATAGRAM setting with a value of 1<a href="#section-3.1-12.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-12.2">
+            <p id="section-3.1-12.2.1">A max_datagram_frame_size transport parameter with a value greater than 0<a href="#section-3.1-12.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-12.3">
+            <p id="section-3.1-12.3.1">An empty reset_stream_at transport parameter<a href="#section-3.1-12.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.1-13">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-13" class="pilcrow">¶</a></p>
+<p id="section-3.1-14">For draft versions of WebTransport only, clients MUST also send
+SETTINGS_WT_ENABLED for each draft version they support, and for the version
+described in this document if they support it, so that the server can identify
+which version the client will use; see <a href="#negotiating-draft-version" class="auto internal xref">Section 7.1</a>.<a href="#section-3.1-14" class="pilcrow">¶</a></p>
+<p id="section-3.1-15">Servers should note that CONNECT requests to establish new WebTransport
 sessions, in addition to other messages, can arrive before the client's SETTINGS
 are received (see <a href="#buffering-incoming" class="auto internal xref">Section 4.6</a>).  If the server receives SETTINGS that
 do not have correct values for every required setting, or transport parameters
 that do not have correct values for every required transport parameter, the
 server MUST treat all established and newly incoming WebTransport sessions as
-malformed, as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-13" class="pilcrow">¶</a></p>
-<p id="section-3.1-14">A client MUST NOT establish WebTransport sessions if the server's SETTINGS do
+malformed, as described in <span><a href="https://rfc-editor.org/rfc/rfc9114#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#HTTP3" class="cite xref">HTTP3</a>]</span>.<a href="#section-3.1-15" class="pilcrow">¶</a></p>
+<p id="section-3.1-16">A client MUST NOT establish WebTransport sessions if the server's SETTINGS do
 not have correct values for every required setting or if the server's transport
 parameters do not have correct values for every required transport parameter.
 If a client does not wish to use the connection for purposes other than
 WebTransport when the requirements for WebTransport are not met, the client MAY
 close the HTTP/3 connection with a <code>WT_REQUIREMENTS_NOT_MET</code> error code to aid
-in debugging.<a href="#section-3.1-14" class="pilcrow">¶</a></p>
-<p id="section-3.1-15">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-15" class="pilcrow">¶</a></p>
-<p id="section-3.1-16">For draft versions of WebTransport only, the server MUST NOT process any
+in debugging.<a href="#section-3.1-16" class="pilcrow">¶</a></p>
+<p id="section-3.1-17">[[RFC editor: please remove the following paragraph before publication.]]<a href="#section-3.1-17" class="pilcrow">¶</a></p>
+<p id="section-3.1-18">For draft versions of WebTransport only, the server MUST NOT process any
 incoming WebTransport requests until the client's SETTINGS have been received;
-see <a href="#negotiating-draft-version" class="auto internal xref">Section 7.1</a>.<a href="#section-3.1-16" class="pilcrow">¶</a></p>
+see <a href="#negotiating-draft-version" class="auto internal xref">Section 7.1</a>.<a href="#section-3.1-18" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="creating-a-new-session">
@@ -2690,20 +2695,45 @@ session associated with that stream.<a href="#section-7-3" class="pilcrow">¶</a
 <a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-negotiating-the-draft-versi" class="section-name selfRef">Negotiating the Draft Version</a>
         </h3>
 <p id="section-7.1-1">[[RFC editor: please remove this section before publication.]]<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.1-2">The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WT_ENABLED setting.  Draft versions that introduce
-incompatible changes define distinct SETTINGS_WT_ENABLED codepoints.  Both the
-client and the server MUST send SETTINGS_WT_ENABLED with the codepoint
-corresponding to their supported draft version.  An endpoint that supports
-multiple draft versions sends a SETTINGS_WT_ENABLED value for each supported
-version, as each version uses a different setting identifier.  The highest
-version supported by both endpoints is selected.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
-<p id="section-7.1-3">Because data streams can arrive at the server before the CONNECT request that
+<p id="section-7.1-2">The draft version in use is negotiated using the codepoint for the
+SETTINGS_WT_ENABLED setting.  Draft versions that introduce incompatible changes
+define distinct SETTINGS_WT_ENABLED codepoints.  Both the client and the server
+MUST send SETTINGS_WT_ENABLED with the codepoint corresponding to their
+supported draft version.  An endpoint that supports multiple draft versions
+sends SETTINGS_WT_ENABLED once for each distinct codepoint.  The highest version
+supported by both endpoints is selected.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.1-3">A server that supports draft versions uses the SETTINGS_WT_ENABLED codepoints
+that a client sends to select a version.  This is an exception to
+<a href="#establishing" class="auto internal xref">Section 3.1</a>, which otherwise requires servers to ignore SETTINGS_WT_ENABLED
+sent by a client.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+<p id="section-7.1-4">An endpoint that supports both a draft version and the version described in this
+document also sends SETTINGS_WT_ENABLED with a value of "1" using the codepoint
+in <a href="#http3-settings" class="auto internal xref">Section 9.2</a>.  A server that supports both selects a version as
+follows:<a href="#section-7.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.1-5.1">
+            <p id="section-7.1-5.1.1">If the client sends the codepoint in <a href="#http3-settings" class="auto internal xref">Section 9.2</a>, the server selects
+the version described in this document.<a href="#section-7.1-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.1-5.2">
+            <p id="section-7.1-5.2.1">Otherwise, if the client sends codepoints for draft versions that the server
+supports, the server selects the highest of those versions.<a href="#section-7.1-5.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.1-5.3">
+            <p id="section-7.1-5.3.1">Otherwise, the server selects the version described in this document.<a href="#section-7.1-5.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-7.1-6">For example, a client that supports only the version described in this document
+does not send SETTINGS_WT_ENABLED, so the server selects that version.  A client
+that supports only draft versions that the server does not support finds none of
+its codepoints in the server's SETTINGS, so it treats the server as not
+supporting WebTransport and never attempts to establish a session.<a href="#section-7.1-6" class="pilcrow">¶</a></p>
+<p id="section-7.1-7">Because data streams can arrive at the server before the CONNECT request that
 establishes the associated session, and the wire format of the stream header
 depends on the negotiated version, the server needs to know the client's version
 before processing any incoming WebTransport streams.  For this reason, the
 server MUST NOT process any incoming WebTransport requests until the client's
-SETTINGS have been received.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+SETTINGS have been received.<a href="#section-7.1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
