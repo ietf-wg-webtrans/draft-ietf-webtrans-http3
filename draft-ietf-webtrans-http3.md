@@ -232,7 +232,13 @@ that is described in this document (that is, "webtransport-h3").  Clients MUST
 treat values greater than "1" as a connection error of type H3_SETTINGS_ERROR.
 Clients MUST NOT attempt to establish WebTransport sessions with the
 "webtransport-h3" token until they have received the setting indicating
-WebTransport support from the server.
+WebTransport support from the server.  SETTINGS_WT_ENABLED has no meaning when
+sent by a client; a server MUST ignore it.
+
+\[\[RFC editor: please remove the following paragraph before publication.]]
+
+Servers that advertise draft versions of WebTransport do not ignore
+SETTINGS_WT_ENABLED sent by clients; see {{negotiating-draft-version}}.
 
 WebTransport over HTTP/3 uses extended CONNECT in HTTP/3 as described in
 {{!RFC9220}}, which defines the SETTINGS_ENABLE_CONNECT_PROTOCOL setting.
@@ -270,8 +276,9 @@ Clients supporting WebTransport over HTTP/3 send:
 \[\[RFC editor: please remove the following paragraph before publication.]]
 
 For draft versions of WebTransport only, clients MUST also send
-SETTINGS_WT_ENABLED with the draft-specific codepoint to allow the server to
-identify the client's supported version; see {{negotiating-draft-version}}.
+SETTINGS_WT_ENABLED for each draft version they support, and for the version
+described in this document if they support it, so that the server can identify
+which version the client will use; see {{negotiating-draft-version}}.
 
 Servers should note that CONNECT requests to establish new WebTransport
 sessions, in addition to other messages, can arrive before the client's SETTINGS
@@ -1191,14 +1198,28 @@ session associated with that stream.
 
 \[\[RFC editor: please remove this section before publication.]]
 
-The wire format aspects of the protocol are negotiated by changing the codepoint
-used for the SETTINGS_WT_ENABLED setting.  Draft versions that introduce
-incompatible changes define distinct SETTINGS_WT_ENABLED codepoints.  Both the
-client and the server MUST send SETTINGS_WT_ENABLED with the codepoint
-corresponding to their supported draft version.  An endpoint that supports
-multiple draft versions sends a SETTINGS_WT_ENABLED value for each supported
-version, as each version uses a different setting identifier.  The highest
-version supported by both endpoints is selected.
+The draft version in use is negotiated using the codepoint for the
+SETTINGS_WT_ENABLED setting.  Draft versions that introduce incompatible changes
+define distinct SETTINGS_WT_ENABLED codepoints.  Both the client and the server
+MUST send SETTINGS_WT_ENABLED with the codepoint corresponding to their
+supported draft version.  An endpoint that supports multiple draft versions
+sends SETTINGS_WT_ENABLED once for each distinct codepoint.  The highest version
+supported by both endpoints is selected.
+
+{{establishing}} requires servers to ignore SETTINGS_WT_ENABLED when it is sent
+by a client.  Servers that support draft versions instead use the codepoints a
+client sends to select the version, as described in this section.  An endpoint
+that supports both a draft version and the version described in this document
+also sends SETTINGS_WT_ENABLED with a value of "1" using the codepoint in
+{{http3-settings}}.  A server that supports both selects the version described
+in this document if the client sends that codepoint.  The server also selects
+that version if the client sends no SETTINGS_WT_ENABLED codepoint that the
+server recognizes.  This is the case for a client that supports only the
+version described in this document, since such clients do not send
+SETTINGS_WT_ENABLED.  It is also the case for a client that supports only draft
+versions that the server does not support.  That client does not recognize any
+of the codepoints in the server's SETTINGS, so it treats the server as not
+supporting WebTransport and never attempts to establish a session.
 
 Because data streams can arrive at the server before the CONNECT request that
 establishes the associated session, and the wire format of the stream header
