@@ -1972,7 +1972,7 @@ the WebTransport header on that stream plus any offset provided by the
 application (see "abort send side" in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-13#section-4.3" class="relref">Section 4.3</a> of [<a href="#OVERVIEW" class="cite xref">OVERVIEW</a>]</span>).  This
 ensures reliable delivery of the ID field associating the data stream with a
 WebTransport session, along with any data the application asked to deliver.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
-<p id="section-4.4-5">The error code from a WebTransport stream reset MUST be delivered unchanged,
+<p id="section-4.4-5">An error code in the WT_APPLICATION_ERROR range MUST be delivered unchanged,
 both by intermediaries forwarding on the wire and by endpoints delivering to
 the application.  Upon receiving a RESET_STREAM, RESET_STREAM_AT, or
 STOP_SENDING frame on a WebTransport stream, an intermediary MUST send the same
