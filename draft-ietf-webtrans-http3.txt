@@ -766,6 +766,15 @@ Table of Contents
    dropped.  It is up to an implementation to choose what stream or
    datagram to discard.
 
+   Rejecting a buffered stream does not affect the session it was
+   intended for.  Because buffering is not required and buffering limits
+   can be reached, a client that opens streams or sends datagrams
+   without waiting for the 2xx response to its CONNECT request needs to
+   be prepared for them to be rejected or dropped.  The same applies to
+   a server, since its streams and datagrams can reach the client before
+   the 2xx response does.  An endpoint can open new streams for the
+   session to resend any data that was rejected.
+
 4.7.  Interaction with the HTTP/3 GOAWAY frame
 
    HTTP/3 defines a graceful shutdown mechanism (Section 5.2 of [HTTP3])
