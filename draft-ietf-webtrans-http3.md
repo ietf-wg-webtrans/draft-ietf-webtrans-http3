@@ -919,7 +919,8 @@ that data cannot be immediately forwarded to the next hop.
 In practice, an intermediary that translates flow control signals between
 similar WebTransport protocols, such as between two HTTP/3 connections, can
 often simply reexpress the same limits received on one connection directly on
-the other connection.
+the other connection, as long as each capsule it sends increases the
+corresponding limit on that connection.
 
 An intermediary that does not want to be responsible for storing data that
 cannot be immediately sent on its translated connection can ensure that it does
@@ -974,8 +975,11 @@ WT_FLOW_CONTROL_ERROR error code.
 Unlike in QUIC, where MAX_STREAMS frames can be delivered in any order,
 WT_MAX_STREAMS capsules are sent on the WebTransport session's connect stream
 and are delivered in order.  If an endpoint receives a WT_MAX_STREAMS capsule
-that does not increase the Maximum Streams value previously received, it MUST
-close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
+that does not increase the Maximum Streams value previously received, or the
+corresponding initial value (SETTINGS_WT_INITIAL_MAX_STREAMS_BIDI or
+SETTINGS_WT_INITIAL_MAX_STREAMS_UNI) if no WT_MAX_STREAMS capsule of that type
+has been received, it MUST close the WebTransport session with a
+WT_FLOW_CONTROL_ERROR error code.
 
 The WT_MAX_STREAMS capsule defines special intermediary handling, as described
 in {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume WT_MAX_STREAMS
@@ -1067,8 +1071,10 @@ WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
 Unlike in QUIC, where MAX_DATA frames can be delivered in any order, WT_MAX_DATA
 capsules are sent on the WebTransport session's connect stream and are delivered
 in order.  If an endpoint receives a WT_MAX_DATA capsule with a Maximum Data
-value that does not increase the Maximum Data value previously received, it MUST
-close the WebTransport session with a WT_FLOW_CONTROL_ERROR error code.
+value that does not increase the Maximum Data value previously received, or the
+value of SETTINGS_WT_INITIAL_MAX_DATA if no WT_MAX_DATA capsule has been
+received, it MUST close the WebTransport session with a WT_FLOW_CONTROL_ERROR
+error code.
 
 The WT_MAX_DATA capsule defines special intermediary handling, as described in
 {{Section 3.2 of HTTP-DATAGRAM}}.  Intermediaries MUST consume WT_MAX_DATA
