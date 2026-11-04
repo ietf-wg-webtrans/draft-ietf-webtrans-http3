@@ -551,8 +551,8 @@ be treated as a connection error of type H3_FRAME_UNEXPECTED.
 
 ## Resetting Data Streams {#resetting-data-streams}
 
-A WebTransport endpoint can send a RESET_STREAM or a STOP_SENDING frame for a
-WebTransport data stream.  Those signals are propagated by the WebTransport
+A WebTransport endpoint can send a RESET_STREAM_AT or a STOP_SENDING frame for
+a WebTransport data stream.  Those signals are propagated by the WebTransport
 implementation to the application.
 
 A WebTransport application MUST provide an error code for those operations.
@@ -589,8 +589,8 @@ beginning of the stream; resetting a stream might result in that data being
 discarded when using a RESET_STREAM frame.  To prevent this, WebTransport
 implementations MUST use the RESET_STREAM_AT frame {{RESET-STREAM-AT}} when
 resetting a WebTransport data stream, with a Reliable Size set to the size of
-the WebTransport header on that stream plus any offset provided by the
-application (see "abort send side" in {{Section 4.3 of OVERVIEW}}).  This
+the WebTransport header, if they opened the stream, plus any offset provided by
+the application (see "abort send side" in {{Section 4.3 of OVERVIEW}}).  This
 ensures reliable delivery of the ID field associating the data stream with a
 WebTransport session, along with any data the application asked to deliver.
 
@@ -598,10 +598,12 @@ An error code in the WT_APPLICATION_ERROR range MUST be delivered unchanged,
 both by intermediaries forwarding on the wire and by endpoints delivering to
 the application.  Upon receiving a RESET_STREAM, RESET_STREAM_AT, or
 STOP_SENDING frame on a WebTransport stream, an intermediary MUST send the same
-frame type, with the corresponding error code, to the next hop on that stream.
-When forwarding a RESET_STREAM_AT frame, the intermediary MUST set the Reliable
-Size so that at least the same amount of stream data after any WebTransport
-header is delivered reliably; the size of that header can differ between hops.
+frame type, with the corresponding error code, to the next hop on that stream,
+except that a RESET_STREAM frame is forwarded as a RESET_STREAM_AT frame.  When
+forwarding a RESET_STREAM_AT frame, the intermediary MUST set the Reliable Size
+so that at least the same amount of stream data after any WebTransport header
+is delivered reliably, treating a received RESET_STREAM frame as having a
+Reliable Size of 0; the size of that header can differ between hops.
 If a RESET_STREAM, RESET_STREAM_AT, or STOP_SENDING frame is received with an
 error code outside the range reserved for WT_APPLICATION_ERROR, the stream is
 still considered reset, but the error code is not mapped to a WebTransport
@@ -637,7 +639,7 @@ To handle this case, WebTransport endpoints SHOULD buffer streams and datagrams
 until they can be associated with an established session.  To avoid resource
 exhaustion, endpoints MUST limit the number of buffered streams and datagrams.
 When the number of buffered streams is exceeded, a stream MUST be closed by
-sending a RESET_STREAM and/or STOP_SENDING with the
+sending a RESET_STREAM_AT and/or STOP_SENDING with the
 `WT_BUFFERED_STREAM_REJECTED` error code.  When the number of buffered datagrams
 is exceeded, a datagram MUST be dropped.  It is up to an implementation to
 choose what stream or datagram to discard.
